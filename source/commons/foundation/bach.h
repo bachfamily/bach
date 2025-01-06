@@ -196,6 +196,7 @@
 #define T_EXPORT __declspec(dllexport)
 //#define snprintf sprintf_s
 #define strncasecmp _strnicmp
+typedef __int8 Byte;
 #else // MAC_VERSION
 // the mac uses the standard gcc syntax, you should also set the -fvisibility=hidden flag to hide the non-marked symbols
 #define T_EXPORT __attribute__((visibility("default")))
