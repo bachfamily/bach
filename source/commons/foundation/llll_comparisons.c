@@ -72,7 +72,7 @@ long llll_leq_hatom(t_hatom *a_hatom, t_hatom *b_hatom)
                             return a_hatom->h_w.w_rat.r_num <= b_hatom->h_w.w_double * a_hatom->h_w.w_rat.r_den;
                             break;
                         case H_PITCH:
-                            return a_hatom->h_w.w_rat <= b_hatom->h_w.w_pitch.toMCdouble();
+                            return (double) a_hatom->h_w.w_rat <= b_hatom->h_w.w_pitch.toMCdouble();
                             break;
                     }
                     break;
@@ -98,7 +98,7 @@ long llll_leq_hatom(t_hatom *a_hatom, t_hatom *b_hatom)
                             return a_hatom->h_w.w_pitch.toMCdouble() <= b_hatom->h_w.w_long;
                             break;
                         case H_RAT:
-                            return a_hatom->h_w.w_pitch.toMCdouble() <= b_hatom->h_w.w_rat;
+                            return a_hatom->h_w.w_pitch.toMCdouble() <= (double) b_hatom->h_w.w_rat;
                             break;
                         case H_DOUBLE:
                             return double(a_hatom->h_w.w_pitch.toMCdouble()) <= double(b_hatom->h_w.w_double);

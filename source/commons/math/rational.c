@@ -21,6 +21,7 @@
 #include "stdlib.h"
 #include "math/rational.h"
 #include "math/llll_math.h"
+#include <algorithm>
 
 
 // TODO: @Andrea: how can I take this from bach's prime table? rational.h doesn't link the llll_ stuff

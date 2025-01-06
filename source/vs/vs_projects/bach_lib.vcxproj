@@ -55,9 +55,7 @@
     <ClCompile Include="..\..\commons\foundation\llll_sort.cpp" />
     <ClCompile Include="..\..\commons\graphics\bach_cursors.c" />
     <ClCompile Include="..\..\commons\graphics\bach_graphics.c" />
-    <ClCompile Include="..\..\commons\graphics\bach_inspector.c" />
     <ClCompile Include="..\..\commons\graphics\bach_jit.c" />
-    <ClCompile Include="..\..\commons\graphics\bach_slots.c" />
     <ClCompile Include="..\..\commons\graphics\llll_modifiers.c" />
     <ClCompile Include="..\..\commons\libraries\MTS-ESP-main\Master\libMTSMaster.cpp" />
     <ClCompile Include="..\..\commons\libraries\SDIF-3.11.4-src\sdif\SdifCheck.c" />
