@@ -2168,7 +2168,7 @@ goto find_rule; \
     
     #include "parsers/bach_parser.hpp"
     #include "bell/ast.hpp"
-    #include "bellparser_commons.h"
+    #include "bell/bellparser_commons.h"
 
     #include "bisonparserV3_tab_nolines.h"
     
