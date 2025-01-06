@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 20.0, 151.0, 945.0, 639.0 ],
+		"rect" : [ 34.0, 151.0, 945.0, 639.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -297,7 +297,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 250.0, 9.0, 208.0, 19.0 ],
-					"text" : "v0.8.9.0 beta (build 20241229141603)",
+					"text" : "v0.8.9.0 beta (build 20250106185845)",
 					"textcolor" : [ 0.10980399698019, 0.10980399698019, 0.10980399698019, 1.0 ],
 					"varname" : "autohelp_top_digest[3]"
 				}
@@ -558,7 +558,7 @@
 					"name" : "bach.overviewswitch.maxpat",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"offset" : [ 0.0, -5381.0 ],
+					"offset" : [ 0.0, -3272.0 ],
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
@@ -1273,6 +1273,7 @@
 									"fontface" : 0,
 									"fontname" : "Arial",
 									"fontsize" : 14.0,
+									"hidden" : 1,
 									"id" : "obj-58",
 									"linkend" : [ ":", "\u003b", "\u002c", "(", ")", "[", "]", "{", "}" ],
 									"linkstart" : [ "w" ],
@@ -7335,12 +7336,12 @@
 									"fontname" : "Arial",
 									"fontsize" : 14.0,
 									"id" : "obj-48",
-									"linecount" : 22,
+									"linecount" : 21,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 7.0, 3277.0, 926.0, 351.0 ],
-									"text" : "bach is an independent project by composers Andrea Agostini and Daniele Ghisi, supported by generous on Patreon. \nOur top-tier institutional supporters are, in alphabetical order:\n• Haute École de Musique de Genève - Centre de musique électroacoustique\n• IRCAM-Centre Pompidou (Paris).\n\nClick here to check out the full list of supporters: \n\nbach is distributed under the terms of the GNU General Public License version 3 (GPL-v3.0). \nSee the License file in the package to know more.\nThe source code of bach can be obtained at the following URL:  \n\nbach includes:\n- A modified version of Simon Tatham's listsort, released under the terms of the MIT License.\n- A modified version of The Mini-XML library version 2.7, released under the terms of the GNU Lesser General Public License version 2 (LGPL-v2.0)\n- The Kiss FFT library, released under the terms of the BSD License.\n- A modified version of the IRCAM SDIF library, released under the terms of the GNU Lesser General Public License version 2 (LGPL-v2.0)\n\nThe default font for bach is now Bravura, automatically loaded at bach startup, released under the terms of the SIL Open Font License version 1.1 (OFL-1.1): \nThe bach package also includes the formerly official bach font: \"November for bach\", created by Robert Piéchaud (                                          ), released under the terms of the SIL Open Font License version 1.1 (OFL-1.1). \n\"November for bach\" is the light version of the November font:",
+									"patching_rect" : [ 7.0, 3277.0, 926.0, 335.0 ],
+									"text" : "bach is an independent project by composers Andrea Agostini and Daniele Ghisi, supported by generous on Patreon. \nOur top-tier institutional supporters are, in alphabetical order:\n• Haute École de Musique de Genève - Centre de musique électroacoustique\n• IRCAM-Centre Pompidou (Paris).\n\nClick here to check out the full list of supporters: \n\nbach is distributed under the terms of the GNU General Public License version 3 (GPL-v3.0). \nSee the License file in the package to know more.\nThe source code of bach can be obtained at the following URL:  \n\nbach includes:\n- A modified version of Simon Tatham's listsort, released under the terms of the MIT License.\n- A modified version of The Mini-XML library version 2.7, released under the terms of the GNU Lesser General Public License version 2 (LGPL-v2.0)\n- The Kiss FFT library, released under the terms of the BSD License.\n- A modified version of the IRCAM SDIF library, released under the terms of the GNU Lesser General Public License version 2 (LGPL-v2.0)\n\nThe default font for bach is now Bravura, automatically loaded at bach startup, released under the terms of the SIL Open Font License version 1.1 (OFL-1.1): \nThe bach package also includes the formerly official bach font: \"November for bach\", created by Robert Piéchaud (                                          ), released under the terms of the SIL Open Font License version 1.1 (OFL-1.1). \"November for bach\" is the light version of the November font.",
 									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
 								}
 

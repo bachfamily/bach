@@ -210,6 +210,23 @@
 
 	<!--ATTRIBUTES-->
 	<attributelist>
+		<attribute name="bellversion" get="1" set="1" type="int" size="1">
+			<digest>
+				Bell Language Version
+			</digest>
+			<description>
+				The <m>bellversion</m> attribute
+				sets the version of the bell language to be used by the object.
+				When set to 0, the version used is the default one (currently version 2).<br/>
+				Changing the value of the attribute will not affect the interpretation of code
+				that has already been loaded. For the change to be effective, the code must be reloaded.
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Bell Language Version" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
 		<attribute name="embed" get="1" set="1" type="int" size="1">
 			<digest>
 				Save Data With Patcher
