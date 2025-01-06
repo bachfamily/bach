@@ -2057,6 +2057,33 @@
       "pic": "bach.jiwheel.svg"
     }
   },
+  "bach.pitch": {
+    "digest": "Construction and query of pitches",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach notation",
+      "bach pitches"
+    ],
+    "keywords": [
+      "convert",
+      "pitch",
+      "note",
+      "name",
+      "commas",
+      "ji",
+      "exponents",
+      "monzo",
+      "ratio"
+    ],
+    "seealso": [
+      "bach.mc2p",
+      "bach.f2mc",
+      "bach.mc2f",
+      "bach.makepitch"
+    ]
+  },
   "bach.transcribe": {
     "digest": "Fills a <o>bach.roll</o> according to incoming MIDI data",
     "module": "bach",

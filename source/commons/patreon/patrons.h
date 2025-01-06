@@ -2,7 +2,7 @@
  *  patrons.h
  * (This file has been generated automatically by Doctor Max. You may not want to edit this file directly).
  *
- * Copyright (C) 2010-2024 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -28,19 +28,15 @@
 void post_institutional_supporters()
 {
 	post("- Haute école de musique de Genève - CME");
-	post("- Vinet");
+	post("- IRCAM");
 }
 
 void post_top_supporters()
 {
-	post("- Andres Ferrari");
 	post("- Brian Berry");
-	post("- Francisco Colasanto");
-	post("- Januibe");
+	post("- Felipe Tovar-Henao");
 	post("- Jean-Baptiste Barrière");
 	post("- John Crooks");
-	post("- Juan Vassallo");
-	post("- Julien Vincenot");
 	post("- Paul V. Miller");
 	post("- Sean Ferguson");
 	post("- Seidenberg");
@@ -50,37 +46,33 @@ void post_top_supporters()
 
 void post_ordinary_supporters()
 {
-	post("98123981293 1293812397123, A M, Agustin Issidoro, Alexis Baskind, Alonso Huerta, Alvaro, Anders Tveit, Andrea Nicoli, ");
-	post("Andrew Milne, Ashlin Hunter, Balint Bolcso, Billy Newman, Bob Falesch, Brian Kirkbride, Brooks, Bruno Schaer, Chris Chandler, ");
-	post("Christopher Lane, Christopher Michael Trapani, David Brynjar Franzson, Dionysios, Douglas Geers, Drake Andersen, Erik Peters, ");
-	post("Felipe Tovar-Henao, Fernando Villanueva, Florent Caron Darras, Gabriel José Bolaños, Germán Toro Pérez, Gratkowski, Guido, ");
-	post("Gustavo Chritaro, Hannes Kerschbaumer, Hans Leeuw, Hans Tutschku, Jack Hamill, Jean-Julien Filatriau, Jesse Timm, Jim Dunn, ");
-	post("Jim Poole, Johannes Schuett, Joost Van kerkhoven, Jose Miguel Fernandez, Jose Veliz, Joseph Leonard Heutmekers, Joshua Cook, ");
-	post("José Martínez, João Pais, Julian Stein, Kenn Kumpf, Kenneth Stewart, Kevin Gironnay, Kwan Leung LING, Laurie Radford, ");
-	post("Liam Fisher, Ljubomir Nikolic, Lotus Open Factory, Louis Goldford, Luca Morino, Luca Richelli, Lucas Rei Ramos, ");
-	post("Luciano Azzigotti, Lucie Jones, Manfred Schreier, Marc Garcia Vitoria, Marlon Schumacher, Martino Marini, Matias Brizuela, ");
-	post("Matthew Goodheart, Matthew Lane, Michael Monhart, Michele, Nicholas Brown, Nick Brown, Nikola Kołodziejczyk, Ofer Pelz, ");
-	post("Orjan Sandred, Pierre Alexandre Tremblay, Pierre Relaño, Reso Kiknadze, Robert White, Roméo Monteiro, Rubens Askenar, ");
-	post("Rubik Ernő Zoltán, Sebastian Adams, Seth, Seth Cluett, Seth Shafer, Solaris, Stefan Grimus, Takuya Imahori, Timothy Roy, ");
-	post("Vens R., Viktor Velthuijs, Wilco Alkema, Wolfgang Schnitzer, Yido Chae, akio, ignatius, johnmatter, linazero, manueltripero, ");
-	post("micron, millot, sandro, scott mc laughlin, Øyvind Torvund.");
+	post("Alberto Barberis, Alonso Huerta, Anders Tveit, Andrea Nicoli, Andrew Milne, Balint Bolcso, Billy Newman, Bob Falesch, ");
+	post("Brian Kirkbride, Brooks, Bruno Schaer, Charles Baker, Chris Chandler, Christopher Lane, Christopher Michael Trapani, ");
+	post("DianArpeggio, Diego Torres, Dionysios, Douglas Geers, Erik Halvorsen, Florent Caron Darras, Francisco Colasanto, ");
+	post("Gabriel José Bolaños, Graham Hadfield, Gratkowski, Guido, Gustavo Chritaro, Hannes Kerschbaumer, Hans Tutschku, Ishino Hiroaki, ");
+	post("Jack Hamill, Jean-Julien Filatriau, Jim Dunn, Joost Van kerkhoven, Jose Miguel Fernandez, Joshua Cook, José Martínez, ");
+	post("Julien Vincenot, Kabuki, Kenn Kumpf, Kenneth Stewart, Kobedrums, Kwan Leung LING, Larry Nelson, Laurie Radford, ");
+	post("Leonardo Matteucci, Leonid Zvolinsky, Liam Fisher, Ljubomir Nikolic, Lotus Open Factory, Louis Goldford, Luca Morino, ");
+	post("Lucie Jones, Luigi Pizzaleo, Marc Garcia Vitoria, Marlon Schumacher, Matias Brizuela, Matthew Goodheart, Matías Rosales, ");
+	post("Michael Monhart, Michele Tadini, Nicholas Brown, Nicola Evangelisti, Orjan Sandred, Pierre Alexandre Tremblay, Pierre Relaño, ");
+	post("Reso Kiknadze, Robert Appleton, Robert White, Roméo Monteiro, Rubik Ernő Zoltán, Samir Amarouch, Seth, Seth Cluett, ");
+	post("Seth Shafer, Solaris, Stefan Lienenkämper, Storyflower, Timothy Roy, Vens R., Viktor Velthuijs, Wolfgang Schnitzer, akio, ");
+	post("ignatius, johnmatter, millot, scott mc laughlin, tokaku mushroom.");
 }
 void post_all_patrons()
 {
-	post("98123981293 1293812397123, A M, Agustin Issidoro, Alexis Baskind, Alonso Huerta, Alvaro, Anders Tveit, Andrea Nicoli, ");
-	post("Andres Ferrari, Andrew Milne, Ashlin Hunter, Balint Bolcso, Billy Newman, Bob Falesch, Brian Berry, Brian Kirkbride, Brooks, ");
-	post("Bruno Schaer, Chris Chandler, Christopher Lane, Christopher Michael Trapani, David Brynjar Franzson, Dionysios, Douglas Geers, ");
-	post("Drake Andersen, Erik Peters, Felipe Tovar-Henao, Fernando Villanueva, Florent Caron Darras, Francisco Colasanto, ");
-	post("Gabriel José Bolaños, Germán Toro Pérez, Gratkowski, Guido, Gustavo Chritaro, Hannes Kerschbaumer, Hans Leeuw, Hans Tutschku, ");
-	post("Haute école de musique de Genève - CME, Jack Hamill, Januibe, Jean-Baptiste Barrière, Jean-Julien Filatriau, Jesse Timm, ");
-	post("Jim Dunn, Jim Poole, Johannes Schuett, John Crooks, Joost Van kerkhoven, Jose Miguel Fernandez, Jose Veliz, ");
-	post("Joseph Leonard Heutmekers, Joshua Cook, José Martínez, João Pais, Juan Vassallo, Julian Stein, Julien Vincenot, Kenn Kumpf, ");
-	post("Kenneth Stewart, Kevin Gironnay, Kwan Leung LING, Laurie Radford, Liam Fisher, Ljubomir Nikolic, Lotus Open Factory, ");
-	post("Louis Goldford, Luca Morino, Luca Richelli, Lucas Rei Ramos, Luciano Azzigotti, Lucie Jones, Manfred Schreier, ");
-	post("Marc Garcia Vitoria, Marlon Schumacher, Martino Marini, Matias Brizuela, Matthew Goodheart, Matthew Lane, Michael Monhart, ");
-	post("Michele, Nicholas Brown, Nick Brown, Nikola Kołodziejczyk, Ofer Pelz, Orjan Sandred, Paul V. Miller, Pierre Alexandre Tremblay, ");
-	post("Pierre Relaño, Reso Kiknadze, Robert White, Roméo Monteiro, Rubens Askenar, Rubik Ernő Zoltán, Sean Ferguson, ");
-	post("Sebastian Adams, Seidenberg, Seth, Seth Cluett, Seth Shafer, Solaris, Stefan Grimus, Takuya Imahori, Timothy Roy, Vens R., ");
-	post("Viktor Velthuijs, Vinet, Wilco Alkema, Wolfgang Schnitzer, Yan Maresz, Yido Chae, Yoshiaki Onishi, akio, ignatius, johnmatter, ");
-	post("linazero, manueltripero, micron, millot, sandro, scott mc laughlin, Øyvind Torvund.");
+	post("Alberto Barberis, Alonso Huerta, Anders Tveit, Andrea Nicoli, Andrew Milne, Balint Bolcso, Billy Newman, Bob Falesch, ");
+	post("Brian Berry, Brian Kirkbride, Brooks, Bruno Schaer, Charles Baker, Chris Chandler, Christopher Lane, Christopher Michael Trapani, ");
+	post("DianArpeggio, Diego Torres, Dionysios, Douglas Geers, Erik Halvorsen, Felipe Tovar-Henao, Florent Caron Darras, ");
+	post("Francisco Colasanto, Gabriel José Bolaños, Graham Hadfield, Gratkowski, Guido, Gustavo Chritaro, Hannes Kerschbaumer, ");
+	post("Hans Tutschku, Haute école de musique de Genève - CME, Ishino Hiroaki, Jack Hamill, Jean-Baptiste Barrière, ");
+	post("Jean-Julien Filatriau, Jim Dunn, John Crooks, Joost Van kerkhoven, Jose Miguel Fernandez, Joshua Cook, José Martínez, ");
+	post("Julien Vincenot, Kabuki, Kenn Kumpf, Kenneth Stewart, Kobedrums, Kwan Leung LING, Larry Nelson, Laurie Radford, ");
+	post("Leonardo Matteucci, Leonid Zvolinsky, Liam Fisher, Ljubomir Nikolic, Lotus Open Factory, Louis Goldford, Luca Morino, ");
+	post("Lucie Jones, Luigi Pizzaleo, Marc Garcia Vitoria, Marlon Schumacher, Matias Brizuela, Matthew Goodheart, Matías Rosales, ");
+	post("Michael Monhart, Michele Tadini, Nicholas Brown, Nicola Evangelisti, Orjan Sandred, Paul V. Miller, Pierre Alexandre Tremblay, ");
+	post("Pierre Relaño, Reso Kiknadze, Robert Appleton, Robert White, Roméo Monteiro, Rubik Ernő Zoltán, Samir Amarouch, ");
+	post("Sean Ferguson, Seidenberg, Seth, Seth Cluett, Seth Shafer, Solaris, Stefan Lienenkämper, Storyflower, Timothy Roy, Vens R., ");
+	post("Viktor Velthuijs, Vinet, Wolfgang Schnitzer, Yan Maresz, Yoshiaki Onishi, akio, ignatius, johnmatter, millot, scott mc laughlin, ");
+	post("tokaku mushroom, ");
 }
