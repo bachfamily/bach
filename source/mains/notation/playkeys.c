@@ -64,7 +64,7 @@
 #include "foundation/llll_commons_ext.h"
 
 #include "notation/notation.h"
-#include "libMTSMaster.h"
+#include "libraries/MTS-ESP-main/Master/libMTSMaster.h"
 
 long PLAYKEYS_MTSESP_COUNT = 0;
 bool PLAYKEYS_MTSESP_IS_MASTER = false;
