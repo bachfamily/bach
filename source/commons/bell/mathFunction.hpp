@@ -101,6 +101,16 @@ public:
     }
 };
 
+class t_fnRandom : public t_mathFunction<3>
+{
+public:
+    t_fnRandom() : t_mathFunction<3>((method) hatom_fn_random_seed, "random") {
+        setArgument("low");
+        setArgument("high");
+        setArgument("seed", 0L);
+    }
+};
+
 class t_fnMakepitch : public t_mathFunction<9>
 {
 public:

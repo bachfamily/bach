@@ -21,6 +21,7 @@
 #include "foundation/hatom.h"
 #include "math/llll_math.h"
 #include "foundation/llll_commons.h"
+#include <random>
 
 #ifdef WIN_VERSION
 
@@ -494,6 +495,23 @@ void hatom_fn_random(t_hatom *a1, t_hatom *a2, t_hatom *res)
     t_atom_long randRange = randZeroOne * range;
     t_atom_long r = randRange + d1;
     hatom_setlong(res, r);
+}
+
+void hatom_fn_random_seed(t_hatom *a1, t_hatom *a2, t_hatom *a3, t_hatom *res)
+{
+    std::default_random_engine engine;
+    t_atom_long s = hatom_getlong(a3);
+    engine.seed(s ? (int) s : std::random_device()());
+    
+    t_atom_long d1 = hatom_getlong(a1);
+    t_atom_long d2 = hatom_getlong(a2);
+    if (d1 > d2) {
+        t_atom_long swap = d1;
+        d1 = d2;
+        d2 = swap;
+    }
+    std::uniform_int_distribution<t_atom_long> distribution(d1, d2);
+    hatom_setlong(res, distribution(engine));
 }
 
 void hatom_fn_pow(t_hatom *h1, t_hatom *h2, t_hatom *res)

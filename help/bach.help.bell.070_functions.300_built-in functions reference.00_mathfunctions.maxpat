@@ -16,34 +16,6 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-28",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 17.0, 441.0, 199.0, 21.0 ],
-					"text" : "makepitch (degree, alter, octave)",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-27",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 17.0, 422.0, 111.0, 21.0 ],
-					"text" : "Ternary functions:",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
 					"id" : "obj-26",
 					"linecount" : 16,
 					"maxclass" : "comment",
@@ -60,12 +32,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-25",
-					"linecount" : 16,
+					"linecount" : 17,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 209.0, 116.0, 33.0, 239.0 ],
-					"text" : "#-\r#!=\r#*\r#/\r#//\r#&\r#&&\r#^\r#^^\r#+\r#<\r#<<\r#<=\r#==\r#>\r#>=",
+					"patching_rect" : [ 209.0, 116.0, 33.0, 253.0 ],
+					"text" : "#-\r#!=\r#*\r#/\r#//\r#&\r#&&\r#^\r#^^\n#!\r#+\r#<\r#<<\r#<=\r#==\r#>\r#>=",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -198,7 +170,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 68.0 ],
-					"text" : "Tags: evaluation, language, script, scripting, code, bell, built, in, function, math, mathematics, functional, form, operator, #!, #~, #u-, abs, acos, acosh, alter, asin, asinh, atan, atanh, ceil, cents, cos, cosh, degree, den, exp, exp2, float, floor, int, log, log10, log2, num, octave, pitch, rat, round, sgn, sin, sinh, sqrt. tan. tanh. trunc, #-, #!=, #*, #/. #//, #&, #&&, #^, #^^, #+, #<, #<<, #<=, #==, #>, #>=, #>>, #|, #||, #|||, approx, atan2, bessel, enharm, fmod, hypot, makepitchsc, max, min, mod, pow, random, makepitch",
+					"text" : "Tags: evaluation, language, script, scripting, code, bell, built, in, function, math, mathematics, functional, form, operator, #!, #~, #u-, abs, acos, acosh, alter, asin, asinh, atan, atanh, ceil, cents, cos, cosh, degree, den, exp, exp2, float, floor, int, log, log10, log2, num, octave, pitch, rat, round, sgn, sin, sinh, sqrt. tan. tanh. trunc, #-, #!=, #*, #/. #//, #&, #&&, #^, #^^, #+, #<, #<<, #<=, #==, #>, #>=, #>>, #|, #||, #|||, #!, approx, atan2, bessel, enharm, fmod, hypot, makepitchsc, max, min, mod, pow, random",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
@@ -206,7 +178,7 @@
 			}
  ],
 		"lines" : [  ],
-		"originid" : "pat-178",
+		"originid" : "pat-189",
 		"dependency_cache" : [  ],
 		"autosave" : 0
 	}

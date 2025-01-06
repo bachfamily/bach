@@ -104,7 +104,16 @@ CLASS_ATTR_ACCESSORS(c, "file", nullptr, codableobj_file_set);
 // Its contents override those of the code in both the object box
 // and the editor.
 // @copy BACH_DOC_STATIC_ATTR
-
+//
+CLASS_ATTR_ATOM_LONG(c, "bellversion",    0,    t_codableobj, c_bellversion);
+CLASS_ATTR_LABEL(c, "bellversion", 0, "Bell Language Version");
+CLASS_ATTR_FILTER_CLIP(c, "bellversion", 0, 2);
+// @description The <m>bellversion</m> attribute
+// sets the version of the bell language to be used by the object.
+// When set to 0, the version used is the default one (currently version 2).<br/>
+// Changing the value of the attribute will not affect the interpretation of code
+// that has already been loaded. For the change to be effective, the code must be reloaded.
+//
 
 #define codableclass_add_extended_methods_and_attrs
 // @method (doubleclick) @digest Edit bell code for <m>lambda</m> attribute

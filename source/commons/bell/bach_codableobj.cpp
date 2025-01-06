@@ -112,10 +112,12 @@ t_max_err codableobj_buildAst(t_codableobj *x,
     t_atom_long version = x->c_bellversion != 0 ? x->c_bellversion : bach->b_defaultbellversion;
     
     switch(version) {
-        case 2:
+#ifdef MAC_VERSION
+        case -1:
             newMain = codableobj_parse_buffer_antlr(x, codeac, dataInlets, dataOutlets, directInlets, directOutlets);
             break;
-        case 3:
+#endif
+        case 2:
             newMain = codableobj_parse_buffer_v3(x, codeac, dataInlets, dataOutlets, directInlets, directOutlets);
             break;
         default:
@@ -996,17 +998,22 @@ void codableclass_add_standard_methods_and_attrs(t_class *c)
     CLASS_ATTR_FILTER_MIN(c, "maxtime", 0);
     
     CLASS_ATTR_LONG(c, "watch", 0, t_codableobj, c_watch);
-    CLASS_ATTR_LABEL(c, "watch", 0, "Reload files if changed");
+    CLASS_ATTR_LABEL(c, "watch", 0, "Reload Files If Changed");
     CLASS_ATTR_ACCESSORS(c, "watch", nullptr, codableobj_watch_set);
     CLASS_ATTR_FILTER_CLIP(c, "watch", 0, 1);
     CLASS_ATTR_STYLE(c, "watch", 0, "onoff");
     
     CLASS_ATTR_SYM(c, "file", 0, t_codableobj, c_file);
-    CLASS_ATTR_LABEL(c, "file", 0, "Code file to be read at initialization");
+    CLASS_ATTR_LABEL(c, "file", 0, "Code File To Be Read At Initialization");
     CLASS_ATTR_ACCESSORS(c, "file", nullptr, codableobj_file_set);
     
     CLASS_ATTR_ATOM_LONG(c, "bellversion",    0,    t_codableobj, c_bellversion);
-
+    CLASS_ATTR_LABEL(c, "bellversion", 0, "Bell Language Version");
+#ifdef MAC_VERSION
+    CLASS_ATTR_FILTER_CLIP(c, "bellversion", -1, 2);
+#else
+    CLASS_ATTR_FILTER_CLIP(c, "bellversion", 0, 2);
+#endif
 }
 
 
