@@ -232,7 +232,7 @@ public:
         t_int8 octave;
         std::vector<int8_t> commas;
         if (*next != '{') {
-            plof = eatPlofAndSharps(pos, &next);
+            plof = eatPlofAndSharps(next, &next);
             commas = eatJICommas(next, &next);
             octave = (t_int8) strtol(next, const_cast<char**>(&next), 10);
         } else {

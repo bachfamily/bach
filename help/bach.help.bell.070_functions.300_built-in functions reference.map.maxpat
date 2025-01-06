@@ -2,42 +2,16 @@
 	"patcher" : 	{
 		"fileversion" : 1,
 		"appversion" : 		{
-			"major" : 8,
-			"minor" : 1,
-			"revision" : 9,
+			"major" : 9,
+			"minor" : 0,
+			"revision" : 3,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
 		"classnamespace" : "box",
 		"rect" : [ 243.0, 155.0, 617.0, 539.0 ],
-		"bglocked" : 0,
-		"openinpresentation" : 0,
-		"default_fontsize" : 13.0,
-		"default_fontface" : 0,
-		"default_fontname" : "Arial",
-		"gridonopen" : 1,
 		"gridsize" : [ 15.0, 15.0 ],
-		"gridsnaponopen" : 1,
-		"objectsnaponopen" : 1,
-		"statusbarvisible" : 2,
-		"toolbarvisible" : 1,
-		"lefttoolbarpinned" : 0,
-		"toptoolbarpinned" : 0,
-		"righttoolbarpinned" : 0,
-		"bottomtoolbarpinned" : 0,
-		"toolbars_unpinned_last_save" : 0,
-		"tallnewobj" : 0,
-		"boxanimatetime" : 200,
-		"enablehscroll" : 1,
-		"enablevscroll" : 1,
-		"devicewidth" : 0.0,
-		"description" : "",
-		"digest" : "",
-		"tags" : "",
-		"style" : "",
-		"subpatcher_template" : "",
-		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
 					"fontname" : "Arial",
@@ -79,7 +53,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 503.0, 396.0, 104.0, 69.0 ],
+					"patching_rect" : [ 472.0, 395.5, 104.0, 69.0 ],
 					"text" : "Unwrap the sublists only if their length is > 2."
 				}
 
@@ -91,7 +65,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 9.0, 389.0, 157.0, 23.0 ],
+					"patching_rect" : [ 9.0, 389.0, 157.0, 22.0 ],
 					"text" : "10 [20] 30 [40 50] 60 [] 70"
 				}
 
@@ -102,7 +76,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 9.0, 448.0, 135.0, 23.0 ],
+					"patching_rect" : [ 9.0, 448.0, 135.0, 22.0 ],
 					"text" : "print return @popup 1"
 				}
 
@@ -115,7 +89,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 9.0, 419.0, 492.0, 23.0 ],
+					"patching_rect" : [ 9.0, 419.0, 454.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
 						"versionnumber" : 80104
@@ -135,7 +109,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 9.0, 313.0, 521.0, 65.0 ],
-					"text" : "If a sublist is encountered and maxdepth has not been received yet, it is possible to choose whether to enter it and run pass the modification function its elements one by one, or pass the whole sublist. This is accomplished through the \"askfunction\" argument, that can be set to a function receiving the same arguments as the modification function.",
+					"text" : "If a sublist is encountered and maxdepth has not been reached yet, it is possible to choose whether to enter it and run pass the modification function its elements one by one, or pass the whole sublist. This is accomplished through the \"askfunction\" argument, that can be set to a function receiving the same arguments as the modification function.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -147,7 +121,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 9.0, 222.0, 131.0, 23.0 ],
+					"patching_rect" : [ 9.0, 222.0, 131.0, 22.0 ],
 					"text" : "10 20 30 40 50 60 70"
 				}
 
@@ -158,26 +132,26 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 9.0, 281.0, 135.0, 23.0 ],
+					"patching_rect" : [ 9.0, 281.0, 135.0, 22.0 ],
 					"text" : "print return @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "map($x1, ($item, $old, $new -> if $old % 2 == 1 then $item + $new else null)) ",
+					"code" : "map($x1, ($item, $old, $new -> if $old % 2 == 1 then $item + $new)) ",
 					"id" : "obj-9",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 9.0, 252.0, 561.0, 23.0 ],
+					"patching_rect" : [ 9.0, 252.0, 471.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
-						"versionnumber" : 80001
+						"versionnumber" : 80900
 					}
 ,
-					"text" : "bach.eval map($x1\\, ($item\\, $old\\, $new -> if $old % 2 == 1 then $item + $new else null)) @out m"
+					"text" : "bach.eval map($x1\\, ($item\\, $old\\, $new -> if $old % 2 == 1 then $item + $new)) @out m"
 				}
 
 			}
@@ -203,7 +177,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 9.0, 75.0, 59.0, 23.0 ],
+					"patching_rect" : [ 9.0, 75.0, 59.0, 22.0 ],
 					"text" : "10 20 30"
 				}
 
@@ -214,7 +188,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 9.0, 134.0, 135.0, 23.0 ],
+					"patching_rect" : [ 9.0, 134.0, 135.0, 22.0 ],
 					"text" : "print return @popup 1"
 				}
 
@@ -227,7 +201,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 9.0, 105.0, 255.0, 23.0 ],
+					"patching_rect" : [ 9.0, 105.0, 255.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
 						"versionnumber" : 80001
@@ -379,16 +353,17 @@
 
 			}
  ],
+		"originid" : "pat-221",
 		"dependency_cache" : [ 			{
+				"name" : "bach.eval.mxo",
+				"type" : "iLaX"
+			}
+, 			{
 				"name" : "bach.help.searchtag.maxpat",
 				"bootpath" : "~/Documents/Max 8/Packages/bach/help",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
-			}
-, 			{
-				"name" : "bach.eval.mxo",
-				"type" : "iLaX"
 			}
 , 			{
 				"name" : "bach.hypercomment.mxo",

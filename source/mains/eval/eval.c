@@ -478,7 +478,7 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av)
 
     if ((x = (t_eval *) object_alloc_debug(eval_class))) {
         // @arg 0 @name expression @optional 1 @type anything @digest Expression to evaluate
-        // @description The syntax of the expression is based upon <o>bach.expr</o>'s,
+        // @description The syntax of the expression is based upon that of <o>bach.expr</o>,
         // but it can contain branching and loop statements, and user-defined variables and functions.
         // For a complete description of the expression syntax, please refer to the help file.
         

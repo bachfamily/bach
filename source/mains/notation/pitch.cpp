@@ -19,13 +19,13 @@
 
 /**
     @file
-    pitchobj.c
+    pitch.c
     
     @name
-    bach.pitchobj
+    bach.pitch
     
     @realname
-    bach.pitchobj
+    bach.pitch
 
     @type
     object
@@ -37,10 +37,10 @@
     bachproject
     
     @digest
-    Pitches to MIDIcents conversion
+    Construction and query of pitches
     
     @description
-    Converts an llll containing pitches into the corresponding llll of MIDIcents.
+    Performs conversions, queries and construction of pitches.
     
     @discussion
     bach.pitchobj accepts microtones following the ASCII convention used throughout bach. <br />
@@ -50,13 +50,13 @@
     bach, bach objects, bach notation, bach pitches
 
     @keywords
-    convert, midicent, cent, note, name
+    convert, pitch, note, name, commas, ji, exponents, monzo, ratio
 
     @seealso
-    bach.mc2p, bach.f2mc, bach.mc2f, bach.approx
+    bach.mc2p, bach.f2mc, bach.mc2f, bach.makepitch
     
     @owner
-    Daniele Ghisi
+    Andrea Agostini
 */
 
 #include "foundation/llllobj.h"
@@ -84,11 +84,13 @@ typedef enum {
 
 typedef struct _pitchobj
 {
-    struct llllobj_object     n_ob;
+    struct llllobj_object n_ob;
     t_pitchKeys fromKeys[LLLL_MAX_INLETS];
     int nFromKeys;
     t_pitchKeys toKeys[LLLL_MAX_INLETS];
     int nToKeys;
+    void **proxies;
+    t_atom_long inlet;
     t_symbol **dummySym;
     t_atom_long dummyLong;
 } t_pitchobj;
@@ -108,24 +110,21 @@ void pitchobj_anything(t_pitchobj *x, t_symbol *msg, long ac, t_atom *av);
 t_max_err pitchobj_setattr_from(t_pitchobj *x, t_object *attr, long ac, t_atom *av);
 t_max_err pitchobj_setattr_to(t_pitchobj *x, t_object *attr, long ac, t_atom *av);
 
-
-
 t_class *pitchobj_class;
 
-
-std::unordered_map<std::string, t_pitchKeys> keys;
+std::unordered_map<t_symbol*, t_pitchKeys> keys;
 
 void pitchobj_setkeys() {
-    keys["pitch"] = p_PITCH;
-    keys["etwhitekey"] = p_ETWHITEKEY;
-    keys["etalter"] = p_ETALTER;
-    keys["octave"] = p_OCTAVE;
-    keys["jiwhitekey"] = p_JIWHITEKEY;
-    keys["jisharps"] = p_JISHARPS;
-    keys["jiplof"] = p_JIPLOF;
-    keys["commas"] = p_COMMAS;
-    keys["jiratio"] = p_JIRATIO;
-    keys["monzo"] = p_MONZO;
+    keys[gensym("pitch")] = p_PITCH;
+    keys[gensym("etwhitekey")] = p_ETWHITEKEY;
+    keys[gensym("etalter")] = p_ETALTER;
+    keys[gensym("octave")] = p_OCTAVE;
+    keys[gensym("jiwhitekey")] = p_JIWHITEKEY;
+    keys[gensym("jisharps")] = p_JISHARPS;
+    keys[gensym("jiplof")] = p_JIPLOF;
+    keys[gensym("commas")] = p_COMMAS;
+    keys[gensym("jiratio")] = p_JIRATIO;
+    keys[gensym("monzo")] = p_MONZO;
 }
 
 void C74_EXPORT ext_main(void *moduleRef)
@@ -181,7 +180,7 @@ t_max_err pitchobj_setattr_from(t_pitchobj *x, t_object *attr, long ac, t_atom *
     if (ac && av && !x->n_ob.l_running) {
         int i;
         for (i = 0; i < ac && i < LLLL_MAX_INLETS; i++) {
-            if (auto k = keys.find(atom_getsym(av + i)->s_name); k != keys.end()) {
+            if (auto k = keys.find(atom_getsym(av + i)); k != keys.end()) {
                 t_pitchKeys key = k->second;
                 x->fromKeys[i] = key;
             } else {
@@ -199,7 +198,7 @@ t_max_err pitchobj_setattr_to(t_pitchobj *x, t_object *attr, long ac, t_atom *av
     if (ac && av && !x->n_ob.l_running) {
         int i;
         for (i = 0; i < ac && i < LLLL_MAX_INLETS; i++) {
-            if (auto k = keys.find(atom_getsym(av + i)->s_name); k != keys.end()) {
+            if (auto k = keys.find(atom_getsym(av + i)); k != keys.end()) {
                 t_pitchKeys key = k->second;
                 x->toKeys[i] = key;
             } else {
@@ -215,7 +214,153 @@ t_max_err pitchobj_setattr_to(t_pitchobj *x, t_object *attr, long ac, t_atom *av
 
 void pitchobj_bang(t_pitchobj *x)
 {
-    llllobj_shoot_llll((t_object *) x, LLLL_OBJ_VANILLA, 0);
+    if (x->n_ob.l_rebuild) {
+        t_pitch p = t_pitch::C0;
+        for (int i = x->nFromKeys - 1; i >= 0; i--) {
+            t_llll *ll = llllobj_get_retained_store_contents((t_object *) x, LLLL_OBJ_VANILLA, i);
+            if (ll->l_size != 0) {
+                switch (x->fromKeys[i]) {
+                    case p_PITCH: {
+                        const t_hatom *h = &ll->l_head->l_hatom;
+                        p += hatom_getpitch(h);
+                        break;
+                    }
+                    case p_ETWHITEKEY: {
+                        const t_hatom *h = &ll->l_head->l_hatom;
+                        const t_atom_short l = (t_atom_short) hatom_getlong(h);
+                        p += t_pitch(l);
+                        break;
+                    }
+                    case p_ETALTER: {
+                        const t_hatom *h = &ll->l_head->l_hatom;
+                        const t_tinyRational r = (t_tinyRational) hatom_getrational(h);
+                        p.p_alterET += r;
+                        break;
+                    }
+                    case p_OCTAVE: {
+                        const t_hatom *h = &ll->l_head->l_hatom;
+                        const t_int8 i = (t_int8) hatom_getlong(h);
+                        p.addOctaves(i);
+                        break;
+                    }
+                    case p_JIWHITEKEY: {
+                        const t_hatom *h = &ll->l_head->l_hatom;
+                        const t_atom_long l = (t_int8) hatom_getlong(h);
+                        const t_int8 plof = t_pitch::whiteKey2Plof_safe(l);
+                        p += t_pitch(plof, std::vector<int8_t>(), 0);
+                        break;
+                    }
+                    case p_JISHARPS: {
+                        const t_hatom *h = &ll->l_head->l_hatom;
+                        const t_atom_long l =  hatom_getlong(h);
+                        const t_int8 plof = l * 7;
+                        p += t_pitch(plof, std::vector<int8_t>(), 0);
+                        break;
+                    }
+                    case p_JIPLOF: {
+                        const t_hatom *h = &ll->l_head->l_hatom;
+                        const t_atom_long plof = (t_int8) hatom_getlong(h);
+                        p += t_pitch(plof, std::vector<int8_t>(), 0);
+                        break;
+                    }
+                    case p_COMMAS: {
+                        int i;
+                        t_llllelem *el;
+                        std::vector<int8_t> commas;
+                        for (el = ll->l_head, i = 0; el && i < BACH_PRIMES_JI_SIZE - 2; el = el->l_next) {
+                            const int8_t c = (int8_t) hatom_getlong(&el->l_hatom);
+                            commas.push_back(c);
+                        }
+                        p += t_pitch(0, commas, 0);
+                        break;
+                    }
+                    case p_JIRATIO: {
+                        const t_hatom *h = &ll->l_head->l_hatom;
+                        const t_rational r =  hatom_getrational(h);
+                        p += t_pitch(r);
+                        break;
+                    }
+                    case p_MONZO: {
+                        int i;
+                        t_llllelem *el;
+                        std::vector<int8_t> monzo;
+                        for (el = ll->l_head, i = 0; el && i < BACH_PRIMES_JI_SIZE; el = el->l_next) {
+                            const int8_t e = (int8_t) hatom_getlong(&el->l_hatom);
+                            monzo.push_back(e);
+                        }
+                        p += t_pitch(monzo);
+                        break;
+                    }
+                    default:
+                        break;
+                }
+                llll_release(ll);
+            }
+        }
+        
+        for (int i = x->nToKeys - 1; i >= 0; i--) {
+            t_llll *ll;
+            switch (x->toKeys[i]) {
+                case p_PITCH: {
+                    ll = llll_get();
+                    llll_appendpitch(ll, p);
+                    break;
+                }
+                case p_ETWHITEKEY: {
+                    ll = llll_get();
+                    llll_appendlong(ll, p.getWhiteKeyET());
+                    break;
+                }
+                case p_ETALTER: {
+                    ll = llll_get();
+                    llll_appendrat(ll, p.getAlterET());
+                    break;
+                }
+                case p_OCTAVE: {
+                    ll = llll_get();
+                    llll_appendlong(ll, p.getOctave());
+                    break;
+                }
+                case p_JIWHITEKEY: {
+                    ll = llll_get();
+                    llll_appendlong(ll, p.getWhiteKeyJI());
+                    break;
+                }
+                case p_JISHARPS: {
+                    ll = llll_get();
+                    llll_appendlong(ll, p.getSharpsJI());
+                    break;
+                }
+                case p_JIPLOF: {
+                    ll = llll_get();
+                    llll_appendlong(ll, p.getPlofJI());
+                    break;
+                }
+                case p_COMMAS: {
+                    ll = getHEJICommas(p);
+                    break;
+                }
+                case p_JIRATIO: {
+                    ll = llll_get();
+                    llll_appendrat(ll, p.getJIRatio());
+                    break;
+                }
+                case p_MONZO: {
+                    ll = getMonzo(p);
+                    break;
+                }
+                default: {
+                    ll = llll_get();
+                    break;
+                }
+            }
+            llllobj_gunload_llll((t_object *) x, LLLL_OBJ_VANILLA, ll, i);
+        }
+    }
+        
+    for (int i = x->nToKeys - 1; i >= 0; i--) {
+        llllobj_shoot_llll((t_object *) x, LLLL_OBJ_VANILLA, i);
+    }
 }
 
 void pitchobj_int(t_pitchobj *x, t_atom_long num){
@@ -234,34 +379,41 @@ void pitchobj_anything(t_pitchobj *x, t_symbol *msg, long ac, t_atom *av)
 {
     
     long inlet = proxy_getinlet((t_object *) x);
-
     
+    llllobj_parse_and_store((t_object *) x, LLLL_OBJ_VANILLA, msg, ac, av, inlet);
+    x->n_ob.l_rebuild = 1;
     
-    t_llll *inlist;
-
-
-    if (msg != _sym_bang) {
-        llllobj_parse_and_store((t_object *) x, LLLL_OBJ_VANILLA, msg, ac, av, 0);
-        x->n_ob.l_rebuild = 1;
-    }
-
-    //inlist = llllobj_get_store_contents((t_object *) x, 
-    if (inlist)
-        llllobj_gunload_llll((t_object *) x, LLLL_OBJ_VANILLA, inlist, 0);
-    
-    x->n_ob.l_rebuild = 0;
-    pitchobj_bang(x);
+    if (inlet == 0)
+        pitchobj_bang(x);
 }
 
 
 void pitchobj_assist(t_pitchobj *x, void *b, long m, long a, char *s)
 {
     if (m == ASSIST_INLET) { // @in 0 @type llll @digest The llll containing the pitches
-        sprintf(s, "llll: Pitches");
+        t_symbol *sym = nullptr;
+        for (auto k: keys) {
+            if (k.second == x->fromKeys[a]) {
+                sym = k.first;
+                break;
+            }
+        }
+        if (sym) {
+            snprintf_zero(s, 64, "llll: %s", sym->s_name);
+        }
     } else {
         char *type = NULL; // @out 0 @type llll @digest The llll containing the MIDIcents
+        t_symbol *sym = nullptr;
         llllobj_get_llll_outlet_type_as_string((t_object *) x, LLLL_OBJ_VANILLA, a, &type);
-        sprintf(s, "llll (%s): Cents", type);
+        for (auto k: keys) {
+            if (k.second == x->toKeys[a]) {
+                sym = k.first;
+                break;
+            }
+        }
+        if (sym) {
+            snprintf_zero(s, 64, "llll (%s): %s", type, sym->s_name);
+        }
     }
 }
 
@@ -274,6 +426,10 @@ void pitchobj_inletinfo(t_pitchobj *x, void *b, long a, char *t)
 
 void pitchobj_free(t_pitchobj *x)
 {
+    long i;
+    for (i = x->nFromKeys - 1; i > 0; i--)
+        object_free_debug(x->proxies[i]);
+    bach_freeptr(x->proxies);
     llllobj_obj_free((t_llllobj_object *) x);
 }
 
@@ -284,10 +440,21 @@ t_pitchobj *pitchobj_new(t_symbol *s, short ac, t_atom *av)
     
     if ((x = (t_pitchobj *) object_alloc_debug(pitchobj_class))) {
         attr_args_process(x, ac, av);
+        if (x->nFromKeys == 0) {
+            x->nFromKeys = 1;
+            x->fromKeys[0] = p_PITCH;
+        }
+        if (x->nToKeys == 0) {
+            x->nToKeys = 1;
+            x->toKeys[0] = p_PITCH;
+        }
         char outTypes[LLLL_MAX_INLETS + 1];
         memset(outTypes, '4', x->nToKeys);
         outTypes[x->nToKeys] = 0;
         llllobj_obj_setup((t_llllobj_object *) x, x->nFromKeys, outTypes);
+        x->proxies = (void **) bach_newptr((x->nFromKeys + 1) * sizeof(void *));
+        for (int i = x->nFromKeys - 1; i > 0; i--)
+            x->proxies[i] = proxy_new_debug((t_object *) x, i, &x->inlet);
     } else
         error(BACH_CANT_INSTANTIATE);
     
