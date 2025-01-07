@@ -2,42 +2,74 @@
 	"patcher" : 	{
 		"fileversion" : 1,
 		"appversion" : 		{
-			"major" : 8,
+			"major" : 9,
 			"minor" : 0,
-			"revision" : 6,
+			"revision" : 3,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
 		"classnamespace" : "box",
 		"rect" : [ 53.0, 116.0, 617.0, 539.0 ],
-		"bglocked" : 0,
-		"openinpresentation" : 0,
-		"default_fontsize" : 13.0,
-		"default_fontface" : 0,
-		"default_fontname" : "Arial",
-		"gridonopen" : 1,
 		"gridsize" : [ 15.0, 15.0 ],
-		"gridsnaponopen" : 1,
-		"objectsnaponopen" : 1,
-		"statusbarvisible" : 2,
-		"toolbarvisible" : 1,
-		"lefttoolbarpinned" : 0,
-		"toptoolbarpinned" : 0,
-		"righttoolbarpinned" : 0,
-		"bottomtoolbarpinned" : 0,
-		"toolbars_unpinned_last_save" : 0,
-		"tallnewobj" : 0,
-		"boxanimatetime" : 200,
-		"enablehscroll" : 1,
-		"enablevscroll" : 1,
-		"devicewidth" : 0.0,
-		"description" : "",
-		"digest" : "",
-		"tags" : "",
-		"style" : "",
-		"subpatcher_template" : "",
 		"boxes" : [ 			{
+				"box" : 				{
+					"bubble" : 1,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-19",
+					"linecount" : 3,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 297.0, 239.5, 227.0, 54.0 ],
+					"presentation_linecount" : 3,
+					"text" : "...and, with the pick operator, you can replace the contents of a sublist."
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-20",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 15.0, 230.0, 64.0, 23.0 ],
+					"text" : "a b [x y z]"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-23",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 15.0, 280.0, 98.0, 23.0 ],
+					"text" : "print @popup 1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "$a = $x1 ; $a::3 = `m `n ; $a ",
+					"id" : "obj-24",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 15.0, 255.0, 278.0, 23.0 ],
+					"saved_object_attributes" : 					{
+						"embed" : 1,
+						"versionnumber" : 80900
+					}
+,
+					"text" : "bach.eval $a = $x1 \\; $a::3 = `m `n \\; $a @out m"
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"bubble" : 1,
 					"fontname" : "Arial",
@@ -46,7 +78,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 351.0, 420.0, 234.0, 25.0 ],
+					"patching_rect" : [ 351.0, 423.0, 234.0, 25.0 ],
 					"text" : "Addresses and keys are just values!"
 				}
 
@@ -59,7 +91,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "bang" ],
-					"patching_rect" : [ 120.0, 366.0, 41.0, 17.0 ],
+					"patching_rect" : [ 411.0, 396.0, 41.0, 17.0 ],
 					"text" : "loadbang"
 				}
 
@@ -71,7 +103,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 65.0, 387.0, 35.0, 23.0 ],
+					"patching_rect" : [ 65.0, 396.0, 35.0, 23.0 ],
 					"text" : "Paul"
 				}
 
@@ -83,7 +115,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 15.0, 387.0, 37.0, 23.0 ],
+					"patching_rect" : [ 15.0, 393.0, 37.0, 23.0 ],
 					"text" : "John"
 				}
 
@@ -95,8 +127,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 120.0, 387.0, 277.0, 23.0 ],
-					"presentation_linecount" : 2,
+					"patching_rect" : [ 120.0, 396.0, 277.0, 23.0 ],
 					"text" : "[ Paul \"Hey Jude\" ] [ John \"Strawberry Fields\" ]"
 				}
 
@@ -107,7 +138,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 15.0, 448.0, 98.0, 23.0 ],
+					"patching_rect" : [ 15.0, 451.0, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -120,7 +151,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 15.0, 420.0, 329.0, 23.0 ],
+					"patching_rect" : [ 15.0, 423.0, 329.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
 						"versionnumber" : 80006
@@ -140,8 +171,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 318.0, 196.0, 227.0, 40.0 ],
-					"text" : "The assignment can be performed in a sublist as well."
+					"patching_rect" : [ 318.0, 169.0, 227.0, 40.0 ],
+					"text" : "The assignment can be performed in a sublist as well..."
 				}
 
 			}
@@ -152,8 +183,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 15.0, 177.0, 67.0, 23.0 ],
-					"text" : "a b (x y z)"
+					"patching_rect" : [ 15.0, 154.0, 64.0, 23.0 ],
+					"text" : "a b [x y z]"
 				}
 
 			}
@@ -163,7 +194,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 15.0, 229.5, 98.0, 23.0 ],
+					"patching_rect" : [ 15.0, 203.0, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -176,7 +207,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 15.0, 204.5, 295.0, 23.0 ],
+					"patching_rect" : [ 15.0, 178.0, 295.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
 						"versionnumber" : 80006
@@ -196,8 +227,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 335.0, 296.5, 239.0, 40.0 ],
-					"text" : "What is associated to the \"John\" key is replaced."
+					"patching_rect" : [ 403.0, 326.5, 213.0, 40.0 ],
+					"text" : "What is associated with the \"John\" key is replaced."
 				}
 
 			}
@@ -208,7 +239,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 15.0, 270.0, 224.0, 23.0 ],
+					"patching_rect" : [ 15.0, 310.0, 224.0, 23.0 ],
 					"text" : "[ Paul \"Hey Jude\" ] [ John Yesterday ]"
 				}
 
@@ -219,7 +250,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 15.0, 341.0, 98.0, 23.0 ],
+					"patching_rect" : [ 15.0, 365.0, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -228,12 +259,11 @@
 				"box" : 				{
 					"code" : "$a = $x1 ; $a.'John' = 'Strawberry Fields' ; $a ",
 					"id" : "obj-7",
-					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 15.0, 297.5, 313.0, 38.0 ],
+					"patching_rect" : [ 15.0, 335.0, 376.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
 						"versionnumber" : 80006
@@ -252,7 +282,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 295.0, 111.5, 229.0, 25.0 ],
+					"patching_rect" : [ 295.0, 100.0, 229.0, 25.0 ],
 					"text" : "The third element of $a is replaced."
 				}
 
@@ -264,7 +294,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 15.0, 86.0, 58.0, 23.0 ],
+					"patching_rect" : [ 15.0, 76.0, 58.0, 23.0 ],
 					"text" : "a b c d e"
 				}
 
@@ -278,7 +308,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 43.0, 585.0, 36.0 ],
+					"patching_rect" : [ 6.0, 36.0, 585.0, 36.0 ],
 					"text" : "It is possible to modify the llll contained in a variable by assigning new values to specific parts of it by address or keys. This mechanism is called \"rich assignment\".",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -290,7 +320,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 15.0, 139.0, 98.0, 23.0 ],
+					"patching_rect" : [ 15.0, 126.0, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -303,7 +333,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 15.0, 112.5, 269.0, 23.0 ],
+					"patching_rect" : [ 15.0, 101.0, 269.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
 						"versionnumber" : 80001
@@ -367,7 +397,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: evaluation, language, script, scripting, code, bell, variable, rich, assignment, substitution",
+					"text" : "Tags: evaluation, language, script, scripting, code, bell, variable, rich, assignment, substitution, nth, dot, key, pick",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
@@ -390,8 +420,22 @@
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-24", 0 ],
+					"source" : [ "obj-20", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-21", 0 ],
 					"source" : [ "obj-22", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-23", 0 ],
+					"source" : [ "obj-24", 0 ]
 				}
 
 			}
@@ -452,6 +496,7 @@
 
 			}
  ],
+		"originid" : "pat-189",
 		"dependency_cache" : [ 			{
 				"name" : "bach.eval.mxo",
 				"type" : "iLaX"

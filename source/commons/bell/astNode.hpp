@@ -676,7 +676,8 @@ public:
     enum lvalueOpTypes {
         E_LV_NONE,
         E_LV_NTH,
-        E_LV_KEY
+        E_LV_KEY,
+        E_LV_PICK
     };
     
     lvalueOpTypes type;
@@ -732,6 +733,9 @@ public:
                     break;
                 case lvalueStep::E_LV_KEY:
                     n = new astKeyOp<e_keyOpStandard>(n, node, owner);
+                    break;
+                case lvalueStep::E_LV_PICK:
+                    n = new astPickOp(n, node, owner);
                     break;
                 default:
                     break;
@@ -828,15 +832,19 @@ protected:
         llll_free(key);
     }
     
-    
-    
-    void lastNth(lvalueStep** step, int nStep, t_llllelem* &lookHere, t_llll* &current, t_llll* origV, t_bool previousWasKey, t_execEnv const &context) {
-        t_bool created = nonLastNth(step, nStep, lookHere, current, previousWasKey, context);
-        if (current && lookHere)
-            lastNthDo(current, lookHere, origV, created, context);
+    void lastNth(lvalueStep** step, int nStep, t_llllelem* &lookHere, t_llll* &current, t_llll* origV, t_bool previousWasKey, t_bool pick, t_execEnv const &context) {
+        t_bool created = nonLastNth(step, nStep, lookHere, current, previousWasKey, false, context);
+        if (current && lookHere) {
+            t_llll *subll = hatom_getllll(&lookHere->l_hatom);
+            if (pick && subll) {
+                lastPickDo(subll, origV, context);
+            } else {
+                lastNthDo(current, lookHere, origV, created, context);
+            }
+        }
     }
     
-    static t_bool nonLastNth(lvalueStep** step, int nStep, t_llllelem* &lookHere, t_llll* &current, t_bool previousWasKey, t_execEnv const &context) {
+    static t_bool nonLastNth(lvalueStep** step, int nStep, t_llllelem* &lookHere, t_llll* &current, t_bool previousWasKey, t_bool pick, t_execEnv const &context) {
         t_bool created = false;
         t_llll *address = (*step)->value->eval(context);
         if (address->l_depth > 1) {
@@ -858,7 +866,7 @@ protected:
                     return false;
                 }
             } else
-                created = consumeNthAddressLevel(lookHere, current, address_step, previousWasKey);
+                created = consumeNthAddressLevel(lookHere, current, address_step, previousWasKey, pick);
             
             if ((address_elem = address_elem->l_next)) {
                 address_step = hatom_getlong(&address_elem->l_hatom);
@@ -875,7 +883,7 @@ protected:
             // THIS DOES THE FIRST TERM OF THE ADDRESS, BUT WHAT ABOUT THE NEXT ONES?
             
             for (; address_elem; ) {
-                created = consumeNthAddressLevel(lookHere, current, address_step, previousWasKey);
+                created = consumeNthAddressLevel(lookHere, current, address_step, previousWasKey, pick);
                 
                 if ((address_elem = address_elem->l_next)) {
                     address_step = hatom_getlong(&address_elem->l_hatom);
@@ -899,6 +907,12 @@ protected:
     virtual void lastKeyDo(t_llll *subll, t_llll *origV, t_execEnv const &context) {
         llll_destroy_everything_but_head(subll);
         llll_chain(subll, llll_clone(origV));
+        return;
+    }
+    
+    virtual void lastPickDo(t_llll *subll, t_llll *origV, t_execEnv const &context) {
+        llll_clear(subll);
+        llll_clone_upon(origV, subll);
         return;
     }
     
@@ -942,11 +956,16 @@ private:
     }
 
     
-    static t_bool consumeNthAddressLevel(t_llllelem* &lookHere, t_llll* &current, long& address_step, t_bool previousWasKey) {
+    static t_bool consumeNthAddressLevel(t_llllelem* &lookHere, t_llll* &current, long& address_step, t_bool previousWasKey, t_bool pick) {
         t_bool created = false;
         if (address_step > 0) {
             for ( ; lookHere && address_step > 1; address_step--) {
                 lookHere = lookHere->l_next;
+                if (pick) {
+                    if (t_llll *subll = hatom_getllll(&lookHere->l_hatom); subll) {
+                        lookHere = subll->l_head;
+                    }
+                }
             }
             if (!lookHere) {
                 for ( ; address_step > 0; address_step--) {
@@ -966,6 +985,10 @@ private:
                         llll_appendllll(current, llll_get());
                 }
                 created = true;
+            } else if (pick) {
+                if (t_llll *subll = hatom_getllll(&lookHere->l_hatom); subll) {
+                    lookHere = subll->l_head;
+                }
             }
         }
         return created;
@@ -1029,7 +1052,12 @@ public:
                     break;
                     
                 case lvalueStep::E_LV_NTH:
-                    nonLastNth(lvStep + i, i, lookHere, current, previousWasKey, context);
+                    nonLastNth(lvStep + i, i, lookHere, current, previousWasKey, false, context);
+                    previousWasKey = false;
+                    break;
+                    
+                case lvalueStep::E_LV_PICK:
+                    nonLastNth(lvStep + i, i, lookHere, current, previousWasKey, true, context);
                     previousWasKey = false;
                     break;
             }
@@ -1043,7 +1071,12 @@ public:
                     break;
                     
                 case lvalueStep::E_LV_NTH: {
-                    lastNth(lvStep + i, i, lookHere, current, origV, previousWasKey, context);
+                    lastNth(lvStep + i, i, lookHere, current, origV, previousWasKey, false, context);
+                    break;
+                }
+                    
+                case lvalueStep::E_LV_PICK: {
+                    lastNth(lvStep + i, i, lookHere, current, origV, previousWasKey, true, context);
                     break;
                 }
             }

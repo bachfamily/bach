@@ -793,6 +793,17 @@ NTHOP lvalueSpecsItemForNth {
     $1->addStep(step);
     $$ = $1;
 }
+| PICKOP lvalueSpecsItemForNth {
+    auto s = new lvalueSpecs;
+    auto step = new lvalueStep(lvalueStep::E_LV_PICK, $2);
+    s->addStep(step);
+    $$ = s;
+}
+| lvalueSpecs PICKOP lvalueSpecsItemForNth {
+    auto step = new lvalueStep(lvalueStep::E_LV_PICK, $3);
+    $1->addStep(step);
+    $$ = $1;
+}
 | APPLY lvalueSpecsItemForDot {
     auto s = new lvalueSpecs;
     auto step = new lvalueStep(lvalueStep::E_LV_KEY, $2);
@@ -817,6 +828,17 @@ NTHOP lvalueSpecsFinal {
 }
 | lvalueSpecsNonFinalized NTHOP lvalueSpecsFinal {
     auto step = new lvalueStep(lvalueStep::E_LV_NTH, $3);
+    $1->addStep(step);
+    $$ = $1;
+}
+| PICKOP lvalueSpecsFinal {
+    auto s = new lvalueSpecs;
+    auto step = new lvalueStep(lvalueStep::E_LV_PICK, $2);
+    s->addStep(step);
+    $$ = s;
+}
+| lvalueSpecsNonFinalized PICKOP lvalueSpecsFinal {
+    auto step = new lvalueStep(lvalueStep::E_LV_PICK, $3);
     $1->addStep(step);
     $$ = $1;
 }
@@ -978,10 +1000,6 @@ item
     $$ = new astSCAndExt($1, $3, params->owner);
     code_dev_post ("parse: &&&\n");
 }
-| expr PICKOP expr {
-    $$ = new astPickOp($1, $3, params->owner);
-    code_dev_post ("parse: nthop\n");
-}
 | expr RANGE expr {
     $$ = new astRangeOp($1, $3, params->owner);
     code_dev_post ("parse: range\n");
@@ -1096,10 +1114,6 @@ item
 | expr LOGANDEXT listEnd {
     $$ = new astSCAndExt($1, $3, params->owner);
     code_dev_post ("parse: &&&\n");
-}
-| expr PICKOP listEnd {
-    $$ = new astPickOp($1, $3, params->owner);
-    code_dev_post ("parse: nthop\n");
 }
 | expr RANGE listEnd {
     $$ = new astRangeOp($1, $3, params->owner);
