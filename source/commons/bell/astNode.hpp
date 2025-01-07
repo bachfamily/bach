@@ -425,7 +425,7 @@ protected:
     std::vector<astNode*> *n;
 public:
     astConcat(astNode *n1, astNode *n2, t_codableobj *owner) : astNode(owner) {
-        n = new std::vector<astNode*>(2, nullptr);
+        n = new std::vector<astNode*>;
         n->push_back(n1);
         n->push_back(n2);
     }
