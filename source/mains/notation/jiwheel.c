@@ -1092,25 +1092,25 @@ const char *jiwheel_ratio_to_common_interval_name(t_rational r, long *num_octave
             break;
         case 176:
             switch (r.den()) {
-                case 117: return "minthmic fifth";
+//                case 117: return "minthmic fifth";
                 default: break;
             }
             break;
         case 180:
             switch (r.den()) {
-                case 121: return "narrow biyatismic fifth";
+//                case 121: return "narrow biyatismic fifth";
                 default: break;
             }
             break;
         case 182:
             switch (r.den()) {
-                case 121: return "13-limit gentle fifth";
+//                case 121: return "13-limit gentle fifth";
                 default: break;
             }
             break;
         case 224:
             switch (r.den()) {
-                case 195: return "quasi-tempered 1/5-octave";
+//                case 195: return "quasi-tempered 1/5-octave";
                 default: break;
             }
             break;

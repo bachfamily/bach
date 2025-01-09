@@ -1931,7 +1931,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 689.0, 113.0, 62.0, 23.0 ],
-									"presentation_linecount" : 2,
 									"text" : "F#{0:-1}0"
 								}
 
@@ -1948,7 +1947,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 698.0, 33.0, 112.0, 69.0 ],
-									"presentation_linecount" : 2,
 									"text" : "Or send pitch (preferably in 0th octave)"
 								}
 
@@ -1976,7 +1974,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 594.0, 15.0, 84.0, 55.0 ],
+									"patching_rect" : [ 594.0, 15.0, 88.0, 55.0 ],
 									"text" : "Send ratio to locate it"
 								}
 
