@@ -501,7 +501,7 @@ const char *jiwheel_ratio_to_common_interval_name(t_rational r, long *num_octave
         case 10:
             switch (r.den()) {
                 case 7: return "greater septimal tritone";
-                case 9: return "5-limit whole tone";
+                case 9: return "just whole tone";
                 default: break;
             }
             break;
@@ -543,7 +543,7 @@ const char *jiwheel_ratio_to_common_interval_name(t_rational r, long *num_octave
             break;
         case 15:
             switch (r.den()) {
-                case 8: return "5-limit major seventh";
+                case 8: return "just major seventh";
                 case 11: return "11-limit semiaugmented fourth";
                 case 13: return "13-limit semidiminished third";
                 case 14: return "greater septimal semitone";
@@ -555,7 +555,7 @@ const char *jiwheel_ratio_to_common_interval_name(t_rational r, long *num_octave
                 case 9: return "Pythagorean minor seventh";
                 case 11: return "11-limit semidiminished fifth";
                 case 13: return "13-limit neutral third";
-                case 15: return "5-limit minor second";
+                case 15: return "just minor second";
                 default: break;
             }
             break;
@@ -641,10 +641,10 @@ const char *jiwheel_ratio_to_common_interval_name(t_rational r, long *num_octave
         case 25:
             switch (r.den()) {
                 case 14: return "septimal middle minor seventh";
-                case 16: return "5-limit augmented fifth";
-                case 18: return "5-limit augmented fourth";
+                case 16: return "just augmented fifth";
+                case 18: return "just augmented fourth";
                 case 21: return "septimal quasi-equal minor third";
-                case 24: return "5-limit chromatic semitone";
+                case 24: return "just chromatic semitone";
                 default: break;
             }
             break;
