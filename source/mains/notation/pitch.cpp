@@ -90,7 +90,7 @@ typedef struct _pitchobj
     t_pitchKeys toKeys[LLLL_MAX_INLETS];
     int nToKeys;
     void **proxies;
-    t_atom_long inlet;
+    long inlet;
     t_symbol **dummySym;
     t_atom_long dummyLong;
 } t_pitchobj;
