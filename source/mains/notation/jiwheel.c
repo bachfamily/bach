@@ -164,7 +164,8 @@ typedef struct _jiwheel // [bach.jiwheel] structure
     t_rational              rotation_ratio_intwheel;
     double                  zoom;
     double                  zoom_angle;
-    long                    formaloctave; // by default it's 2, use 3 for bohlen pierce
+    t_rational              formaloctave; // by default it's 2, use 3 for bohlen pierce
+    t_llll                  *formaloctave_ll;
 
     char                    mode; // 0 = up to a maxterm; 1 = JI limits combination;
     t_atom                  maxterm; // fixed integer for a maxterm (in mode = 0), "auto" symbol for automatic zooming (then tailor #auto_density)
@@ -313,7 +314,7 @@ void jiwheel_clear_selection(t_jiwheel *x);
 
 t_llll *jiwheel_get_wheelpitch_as_llll(t_jiwheel *x, t_wheelpitch *p, bool as_interval);
 void jiwheel_output_selection(t_jiwheel *x);
-void ensure_ratio_is_between_1_and_formaloctave(t_rational *r, long formaloctave);
+void ensure_ratio_is_between_1_and_formaloctave(t_rational *r, t_rational formaloctave);
 t_llll *jiwheel_get_wheelpitch_as_llll(t_jiwheel *x, t_wheelpitch *p, bool as_interval);
 
 void jiwheel_set_pitch(t_jiwheel *x, t_pitch p);
@@ -321,27 +322,24 @@ void jiwheel_set_interval(t_jiwheel *x, t_pitch p1, t_pitch p2);
 
 
 DEFINE_LLLL_ATTR_DEFAULT_GETTER_AND_SETTER(t_jiwheel, allowed_commas, jiwheel_getattr_commas, jiwheel_setattr_commas);
+DEFINE_LLLL_ATTR_DEFAULT_GETTER_AND_SETTER(t_jiwheel, formaloctave_ll, jiwheel_getattr_formaloctave, jiwheel_setattr_formaloctave);
 
 // or pseudo octaves!
-void remove_octaves(long formaloctave, t_rational *r)
+void remove_octaves(t_rational formaloctave, t_rational *r)
 {
-    if (formaloctave >= 2) {
-        while (r->r_num != 0 && r->r_num % formaloctave == 0)
-            r->r_num /= formaloctave;
-        while (r->r_den != 0 && r->r_den % formaloctave == 0)
-            r->r_den /= formaloctave;
+    if (*r > 0) {
+        while (*r >= formaloctave) {
+            *r /= formaloctave;
+        }
+        while (*r < 1) {
+            *r *= formaloctave;
+        }
     }
 }
 
 void remove_octaves(t_jiwheel *x, t_rational *r)
 {
-    long octave = x->formaloctave;
-    if (octave >= 2) {
-        while (r->r_num != 0 && r->r_num % octave == 0)
-            r->r_num /= octave;
-        while (r->r_den != 0 && r->r_den % octave == 0)
-            r->r_den /= octave;
-    }
+    remove_octaves(x->formaloctave, r);
 }
 
 
@@ -435,7 +433,7 @@ const char *jiwheel_ratio_to_common_interval_name(t_rational r, long *num_octave
     if (num_octaves) {
         if (rat_rat_cmp(r, long2rat(2)) > 0) {
             *num_octaves = (long)floor(rat2double(r)/2);
-            ensure_ratio_is_between_1_and_formaloctave(&r, 2);
+            ensure_ratio_is_between_1_and_formaloctave(&r, long2rat(2));
         }
     }
     
@@ -1499,11 +1497,11 @@ void C74_EXPORT ext_main(void *moduleRef)
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"outputoctave",0,"5");
         // @description Sets the output octave
     
-        CLASS_ATTR_LONG(c, "formaloctave", 0, t_jiwheel, formaloctave);
-        CLASS_ATTR_STYLE_LABEL(c,"formaloctave",0,"text","Formal Octave Harmonic");
+        CLASS_ATTR_LLLL(c, "formaloctave", 0, t_jiwheel, formaloctave_ll, jiwheel_getattr_formaloctave, jiwheel_setattr_formaloctave);
+        CLASS_ATTR_STYLE_LABEL(c,"formaloctave",0,"text","Formal Octave Ratio");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"formaloctave",0,"2");
         CLASS_ATTR_FILTER_MIN(c, "formaloctave", 2)
-        // @description Sets the harmonic number corresponding to the formal octave (defaults to 2: actual octave)
+        // @description Sets the harmonic ratio corresponding to the formal octave (defaults to 2: actual octave)
     
         CLASS_ATTR_SYM(c, "jibase", 0, t_jiwheel, base_diatonic_pitch);
         CLASS_ATTR_STYLE_LABEL(c,"jibase",0,"text","Reference Diatonic Pitch Class");
@@ -1546,12 +1544,12 @@ void C74_EXPORT ext_main(void *moduleRef)
         // @description Sets the number of Pythagorean fifths calculated at every side of the basis pitch,
         // used if <m>mode</m> is 1. Leave this to "auto" for automatic zooming.
 
-        CLASS_ATTR_LLLL(c, "commas", 0, t_jiwheel, allowed_commas, jiwheel_getattr_commas, jiwheel_setattr_commas);
-        CLASS_ATTR_STYLE_LABEL(c,"commas",0,"text_large","Allowed Commas");
-        CLASS_ATTR_SAVE(c, "commas", 0);
-        CLASS_ATTR_PAINT(c, "commas", 0);
-        CLASS_ATTR_BASIC(c, "commas", 0);
-        // @description Sets the commas used if <m>mode</m> is 1. Leave this to "auto" for automatic zooming
+        CLASS_ATTR_LLLL(c, "jicommas", 0, t_jiwheel, allowed_commas, jiwheel_getattr_commas, jiwheel_setattr_commas);
+        CLASS_ATTR_STYLE_LABEL(c,"jicommas",0,"text_large","Allowed Commas");
+        CLASS_ATTR_SAVE(c, "jicommas", 0);
+        CLASS_ATTR_PAINT(c, "jicommas", 0);
+        CLASS_ATTR_BASIC(c, "jicommas", 0);
+        // @description Sets the Just Intonation commas used if <m>mode</m> is 1. Leave this to "auto" for automatic zooming
         // (and tailor the <m>density</m> attribute in this case).
 
         CLASS_ATTR_DOUBLE(c, "density", 0, t_jiwheel, density);
@@ -1719,6 +1717,7 @@ void C74_EXPORT ext_main(void *moduleRef)
         CLASS_ATTR_DOUBLE(c,"zoom",0, t_jiwheel, zoom);
         CLASS_ATTR_STYLE_LABEL(c,"zoom",0,"text","Zoom");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"zoom",0,"100.");
+        CLASS_ATTR_FILTER_MIN(c, "zoom", 100)
         // @description Zoom percentage.
 
         CLASS_ATTR_DOUBLE(c,"zoomangle",0, t_jiwheel, zoom_angle);
@@ -1829,11 +1828,21 @@ t_max_err jiwheel_notify(t_jiwheel *x, t_symbol *s, t_symbol *msg, void *sender,
         if (attrname == gensym("jilimit") || attrname == gensym("jiprimes") || attrname == gensym("formaloctave")) {
             x->rebuild = true;
             jiwheel_clear_selection(x);
-        } else if (attrname == gensym("mode") || attrname == gensym("commas") || attrname == gensym("maxterm") || attrname == gensym("maxfifths") || attrname == gensym("density") || attrname == gensym("display") || attrname == gensym("basis") || attrname == gensym("alwayswhitekeys") || attrname == gensym("mapping")) {
+        } else if (attrname == gensym("mode") || attrname == gensym("jicommas") || attrname == gensym("maxterm") || attrname == gensym("maxfifths") || attrname == gensym("density") || attrname == gensym("display") || attrname == gensym("basis") || attrname == gensym("alwayswhitekeys") || attrname == gensym("mapping") || attrname == gensym("fifthext") || attrname == gensym("boostpythagorean") || gensym("boostwhitekeys") || gensym("intwheelpitchestofront")) {
             x->rebuild = true;
         } else if (attrname == gensym("zoom") || attrname == gensym("zoomangle")){
             if (x->auto_zooming)
                 x->rebuild = true;
+        }
+        
+        if (attrname == gensym("formaloctave")) {
+            if (x->formaloctave_ll && x->formaloctave_ll->l_head) {
+                x->formaloctave = hatom_getrational(&x->formaloctave_ll->l_head->l_hatom);
+                if (x->formaloctave <= 1) {
+                    object_error((t_object *)x, "Formal octave cannot be less or equal to 1. Defaulting to 2.");
+                    x->formaloctave = long2rat(2);
+                }
+            }
         }
     }
     
@@ -2053,7 +2062,8 @@ t_jiwheel* jiwheel_new(t_symbol *s, long argc, t_atom *argv)
     x->n_importance_lexpr = NULL;
     x->show_focus = 1;
     x->j_has_focus = 0;
-    x->formaloctave = 2;
+    x->formaloctave_ll = llll_from_text_buf("2");
+    x->formaloctave = long2rat(2);
     x->allowed_commas = llll_from_text_buf("auto");
     x->jilimit = 0; // means: none;
     atom_setsym(x->allowed_primes, gensym("any"));
@@ -2106,6 +2116,9 @@ void jiwheel_free(t_jiwheel *x){
     if (x->n_importance_lexpr)
         lexpr_free(x->n_importance_lexpr);
     llll_free(x->allowed_commas);
+    
+    if (x->formaloctave_ll)
+        llll_free(x->formaloctave_ll);
 
     for (i = 1; i < 3; i++)
         object_free_debug(x->n_proxy[i]);
@@ -2137,7 +2150,7 @@ long num_to_prime_idx(long num)
     return t_pitch::primes_locate[num];
 }
 
-void rational_to_wheelpitch(t_rational r, char base_diatonic_pitch, long formaloctave, bool frequential_mapping, t_wheelpitch *wp)
+void rational_to_wheelpitch(t_rational r, char base_diatonic_pitch, t_rational formaloctave, bool frequential_mapping, t_wheelpitch *wp)
 {
     long mp = 0;
     long numacc = 0;
@@ -2154,9 +2167,9 @@ void rational_to_wheelpitch(t_rational r, char base_diatonic_pitch, long formalo
     // filling angle
     double val = rat2double(r);
     if (!frequential_mapping) { // linear pitch
-        wp->angle = PIOVERTWO - TWOPI * log(val)/log(formaloctave);
+        wp->angle = PIOVERTWO - TWOPI * log(val)/log(rat2double(formaloctave));
     } else { // linear frequency
-        wp->angle = PIOVERTWO - TWOPI * (val - 1) / (formaloctave - 1);
+        wp->angle = PIOVERTWO - TWOPI * (val - 1) / (rat2double(formaloctave) - 1);
     }
     
     
@@ -2579,12 +2592,12 @@ t_llll *get_default_commamix(t_jiwheel *x, t_object *view)
     return commamix;
 }
 
-void ensure_ratio_is_between_1_and_formaloctave(t_rational *r, long formaloctave)
+void ensure_ratio_is_between_1_and_formaloctave(t_rational *r, t_rational formaloctave)
 {
     while (rat_long_cmp(*r, 1) < 0 && r->num() != 0 && r->den() != 0)
-        *r = rat_long_prod(*r, formaloctave);
+        *r = rat_rat_prod(*r, formaloctave);
     while (rat_long_cmp(*r, formaloctave) > 0 && r->num() != 0 && r->den() != 0)
-        *r = rat_long_div(*r, formaloctave);
+        *r = rat_rat_div(*r, formaloctave);
 }
 
 void jiwheel_build_pitches(t_jiwheel *x, t_object *view)
@@ -2685,7 +2698,7 @@ void jiwheel_build_pitches(t_jiwheel *x, t_object *view)
         for (long n = 1; n <= ji_maxterm; n++) {
             for (long m = n; m <= ji_maxterm; m++) {
                 t_rational r = genrat(m, n);
-                if (rat_long_cmp(r, x->formaloctave) < 0) {
+                if (rat_rat_cmp(r, x->formaloctave) < 0) {
                     if (only_limits_up_to_this_number_are_ok == LLLL_PRIMES_TABLE_MAX && only_primes_up_to_this_number_are_ok == LLLL_PRIMES_TABLE_MAX) {
                         llll_appendrat(curr_pitches_ll, r);
                     } else {
@@ -2695,18 +2708,20 @@ void jiwheel_build_pitches(t_jiwheel *x, t_object *view)
                             llll_appendrat(curr_pitches_ll, r);
                         } else {
                             bool must_append = true;
-                            // must check limit and every prime
-                            long idx = num_to_prime_idx(limit);
-                            if (idx < 0 || (x->jilimit != 0 && limit > x->jilimit)) {
-                                must_append = false;
-                            }
-                            t_llll *factors = llll_factorize_rational(r);
-                            for (t_llllelem *el = factors->l_head; el; el = el->l_next) {
-                                long f = hatom_getlong(&hatom_getllll(&el->l_hatom)->l_head->l_hatom);
-                                long fidx = num_to_prime_idx(f);
-                                if (fidx < 0 || !prime_is_ok[fidx]) {
+                            if (r != 1) {
+                                // must check limit and every prime
+                                long idx = num_to_prime_idx(limit);
+                                if (idx < 0 || (x->jilimit != 0 && limit > x->jilimit)) {
                                     must_append = false;
-                                    break;
+                                }
+                                t_llll *factors = llll_factorize_rational(r);
+                                for (t_llllelem *el = factors->l_head; el; el = el->l_next) {
+                                    long f = hatom_getlong(&hatom_getllll(&el->l_hatom)->l_head->l_hatom);
+                                    long fidx = num_to_prime_idx(f);
+                                    if (fidx < 0 || !prime_is_ok[fidx]) {
+                                        must_append = false;
+                                        break;
+                                    }
                                 }
                             }
                             if (must_append)
@@ -2726,7 +2741,38 @@ void jiwheel_build_pitches(t_jiwheel *x, t_object *view)
             x->auto_zooming = true;
             commamix = get_default_commamix(x, view);
         } else {
-            commamix = llll_clone(x->allowed_commas);
+            if (x->allowed_commas) {
+                commamix = llll_get();
+
+                llll_appendllll(commamix, repeat_long(0, numcommas));
+
+                for (t_llllelem* el = x->allowed_commas->l_head; el; el = el->l_next) {
+                    if (hatom_gettype(&el->l_hatom) == H_LLLL) {
+                        t_llll *this_ll = hatom_getllll(&el->l_hatom);
+                        if (this_ll) {
+                            long cc[BACH_PRIMES_JI_SIZE];
+                            for (long j = 0; j < numcommas; j++)
+                                cc[j] = 0;
+                            for (t_llllelem *pel = this_ll->l_head; pel; pel = pel->l_next) {
+                                if (hatom_gettype(&pel->l_hatom) == H_LONG) {
+                                    long l = hatom_getlong(&pel->l_hatom);
+                                    long li = num_to_prime_idx(abs(l));
+                                    if (li < BACH_PRIMES_JI_SIZE && li > 1) { // exclude 2 and 3
+                                        cc[li-2] += (l < 0 ? -1 : 1);
+                                    }
+                                }
+                            }
+                            t_llll *subll = llll_get();
+                            for (long j = 0; j < numcommas; j++) {
+                                llll_appendlong(subll, cc[j]);
+                            }
+                            llll_appendllll(commamix, subll);
+                        }
+                    }
+                }
+            } else {
+                commamix = get_default_commamix(x, view);
+            }
         }
         if (atom_gettype(&x->maxfifths) == A_LONG) {
             fifthsext = atom_getlong(&x->maxfifths);
@@ -2738,6 +2784,8 @@ void jiwheel_build_pitches(t_jiwheel *x, t_object *view)
         if (x->jilimit < 3 && x->jilimit != 0)
             fifthsext = 0;
         
+//        llll_print(commamix);
+        
         for (long n = -fifthsext; n <= fifthsext; n++) {
             t_rational baseratio = rat_long_pow(genrat(3, 2), n);
             if (commamix) {
@@ -2745,21 +2793,22 @@ void jiwheel_build_pitches(t_jiwheel *x, t_object *view)
                     t_rational ratio = baseratio;
                     long c = 0;
                     bool accept = true;
-                    for (t_llllelem *c_el = hatom_getllll(&el->l_hatom)->l_head; c_el && c < numcommas; c_el = c_el->l_next, c++) {
-                        long e = hatom_getlong(&c_el->l_hatom);
-                        if (e != 0) {
-//                            if (limit_is_ok[c+2] == false || prime_is_ok[c+2] == false) {
-                            if ((x->jilimit > 0 && c+2 < BACH_PRIMES_JI_SIZE && t_pitch::primes[c+2] > x->jilimit) || prime_is_ok[c+2] == false) {
-                                accept = false;
-                                break;
+                    if (hatom_gettype(&el->l_hatom) == H_LLLL) {
+                        for (t_llllelem *c_el = hatom_getllll(&el->l_hatom)->l_head; c_el && c < numcommas; c_el = c_el->l_next, c++) {
+                            long e = hatom_getlong(&c_el->l_hatom);
+                            if (e != 0) {
+                                if ((x->jilimit > 0 && c+2 < BACH_PRIMES_JI_SIZE && t_pitch::primes[c+2] > x->jilimit) || prime_is_ok[c+2] == false) {
+                                    accept = false;
+                                    break;
+                                }
+                                ratio = rat_rat_prod(ratio, rat_long_pow(t_pitch::HEJIcommasRatios[c], e));
                             }
-                            ratio = rat_rat_prod(ratio, rat_long_pow(t_pitch::HEJIcommasRatios[c], e));
                         }
-                    }
-                    if (accept) {
-                        ensure_ratio_is_between_1_and_formaloctave(&ratio, x->formaloctave);
-                        if (ratio.num() != 0 && ratio.den() != 0) {
-                            llll_appendrat(curr_pitches_ll, ratio);
+                        if (accept) {
+                            ensure_ratio_is_between_1_and_formaloctave(&ratio, x->formaloctave);
+                            if (ratio.num() != 0 && ratio.den() != 0) {
+                                llll_appendrat(curr_pitches_ll, ratio);
+                            }
                         }
                     }
                 }
@@ -3219,9 +3268,9 @@ double jiwheel_integer_to_theta(t_jiwheel *x, long i)
 {
     double theta = 0;
     if (x->display_mapping == 0) { // linear pitch
-        theta = (fmod(log(i)/log(x->formaloctave), 1.)) * TWOPI - x->rotation_angle + x->rotation_angle_intwheel;
+        theta = (fmod(log(i)/log(rat2double(x->formaloctave)), 1.)) * TWOPI - x->rotation_angle + x->rotation_angle_intwheel;
     } else { // linear frequency
-        theta = TWOPI * ((i * 1. / (ipow(x->formaloctave, floor(log(i)/log(x->formaloctave))))) / (x->formaloctave - 1)) - x->rotation_angle + x->rotation_angle_intwheel;
+        theta = TWOPI * ((i * 1. / (ipow(x->formaloctave, floor(log(i)/log(rat2double(x->formaloctave)))))) / (rat2double(x->formaloctave) - 1)) - x->rotation_angle + x->rotation_angle_intwheel;
     }
     theta = PIOVERTWO - theta;
     theta = positive_fmod(theta, TWOPI);
@@ -3325,7 +3374,7 @@ void jiwheel_paint(t_jiwheel *x, t_object *view)
             t_jrgba etwheel_color = x->etwheel_color;
 //            paint_arc_stroken(g, black, center_x, center_y, radius + x->et_wheel_size, 2, anglemin_for_stroken, anglemax_for_stroken);
             double r_avg = radius - x->et_wheel_size/2.;
-            double octave_interval_cents = ratio_to_cents(genrat(x->formaloctave, 1));
+            double octave_interval_cents = ratio_to_cents(x->formaloctave);
             for (long i = 0; i < octave_interval_cents; i++) {
                 double et_importance = 0;
                 if (i % 100 == 0) et_importance = 1.;
@@ -3357,9 +3406,9 @@ void jiwheel_paint(t_jiwheel *x, t_object *view)
 
             }
             if (x->display_mapping == 1) // frequency mapping
-                max_int_integers_wheel = ipow(x->formaloctave, (long)ceil(log(max_int_integers_wheel)/log(x->formaloctave)));
+                max_int_integers_wheel = ipow(x->formaloctave, (long)ceil(log(max_int_integers_wheel)/log(rat2double(x->formaloctave))));
             for (long i = 1; i < max_int_integers_wheel; i++) {
-                if (i % x->formaloctave == 0)
+                if (rat_rat_mod(long2rat(i), x->formaloctave, true) == 0)
                     continue;
                 double int_importance = 1./i;
                 double theta = jiwheel_integer_to_theta(x, i);
