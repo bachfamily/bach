@@ -42,9 +42,9 @@ t_rational note_get_display_accidentals_JIcommas(t_note *nt)
     if (nt->pitch_displayed.isPureET()) {
         return genrat(1, 1);
     } else if (nt->pitch_displayed.isPureJI()) {
-        return nt->pitch_displayed.getHEJICommasAsRational();
+        return nt->pitch_displayed.getHEJICommasAsRationalIncludePythagorean();
     } else {
-        return nt->pitch_displayed.getDisplayPitchAsJI().getHEJICommasAsRational();
+        return nt->pitch_displayed.getDisplayPitchAsJI().getHEJICommasAsRationalIncludePythagorean();
     }
 }
 
@@ -53,9 +53,9 @@ double note_get_display_accidentals_cents(t_note *nt)
     if (nt->pitch_displayed.isPureET()) {
         return nt->pitch_displayed.getAlterET() * 200.;
     } else if (nt->pitch_displayed.isPureJI()) {
-        return log2((double)nt->pitch_displayed.getHEJICommasAsRational())*1200.;
+        return log2(nt->pitch_displayed.getHEJICommasAsDoubleIncludePythagorean())*1200.;
     } else {
-        return nt->pitch_displayed.getAlterET() * 200. + log2((double)nt->pitch_displayed.getHEJICommasAsRational())*1200.;
+        return nt->pitch_displayed.getAlterET() * 200. + log2(nt->pitch_displayed.getHEJICommasAsDoubleIncludePythagorean())*1200.;
     }
 }
 
@@ -149,10 +149,10 @@ void note_get_accidental_as_fraction(t_notation_obj *r_ob, t_note *nt, char *buf
         else
             snprintf_zero(buf, 20, "-%d/%d", -num, den);
     } else if (nt->pitch_displayed.isPureJI()) {
-        t_rational comma = nt->pitch_displayed.getHEJICommasAsRational();
+        t_rational comma = nt->pitch_displayed.getHEJICommasAsRationalIncludePythagorean();
         snprintf_zero(buf, 20, "%d/%d", comma.r_num, comma.r_den);
     } else {
-        t_rational comma = nt->pitch_displayed.getHEJICommasAsRational();
+        t_rational comma = nt->pitch_displayed.getHEJICommasAsRationalIncludePythagorean();
         t_rational alterET = nt->pitch_displayed.getAlterET();
         snprintf_zero(buf, 20, "%d/%d%s%d/%dst", comma.r_num, comma.r_den, alterET > 0 ? "+" : "-", abs(alterET.r_num), alterET.r_den); // TODO: improve!
     }
@@ -166,12 +166,10 @@ void note_get_accidental_as_cents(t_notation_obj *r_ob, t_note *nt, char *buf)
     if (nt->pitch_displayed.isPureET()) {
         cents = nt->pitch_displayed.getAlterET() * 200.;
     } else if (nt->pitch_displayed.isPureJI()) {
-        t_rational comma = nt->pitch_displayed.getHEJICommasAsRational();
-        double cents = log2(comma.num()*1./comma.den())*1200.;
+        cents = log2(nt->pitch_displayed.getHEJICommasAsDoubleIncludePythagorean())*1200.;
     } else {
         t_pitch p = nt->pitch_displayed.getDisplayPitchAsJI();
-        t_rational comma = p.getHEJICommasAsRational();
-        cents = log2(comma.num()*1./comma.den())*1200. + p.getAlterET()*200.;
+        cents = log2(p.getHEJICommasAsDoubleIncludePythagorean())*1200. + p.getAlterET()*200.;
     }
     
     if (cents >= 0)

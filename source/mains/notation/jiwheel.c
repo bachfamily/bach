@@ -1919,14 +1919,45 @@ void jiwheel_dump(t_jiwheel *x, t_symbol *s, long argc, t_atom *argv){
     llll_free(ll);
 }
 
+t_pitch jiwheel_incoming_hatom_to_pitch(t_jiwheel *x, t_hatom *h)
+{
+    t_pitch p = t_pitch::C0;
+    switch (hatom_gettype(h)) {
+        case H_PITCH:
+            p = hatom_getpitch(h);
+            break;
+
+        case H_LONG:
+            p = t_pitch(genrat(hatom_getlong(h), 1));
+            break;
+
+        case H_RAT:
+        {
+            t_rational r = hatom_getrational(h);
+            if (r.r_den != 0)
+                p = t_pitch(r);
+            else {
+                object_error((t_object *)x, "Wrong input pitch or rational. Defaulting to C0.");
+            }
+        }
+            break;
+
+        default:
+            object_error((t_object *)x, "Wrong input pitch or rational. Defaulting to C0.");
+            break;
+    }
+    return p;
+}
+
 void jiwheel_anything(t_jiwheel *x, t_symbol *s, long argc, t_atom *argv)
 {
     t_llll *inllll = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, s, argc, argv, LLLL_PARSE_CLONE);
     
     if (inllll->l_size == 1) {
-        jiwheel_set_pitch(x, hatom_gettype(&inllll->l_head->l_hatom) == H_PITCH ? hatom_getpitch(&inllll->l_head->l_hatom) : t_pitch(hatom_getrational(&inllll->l_head->l_hatom)));
+        jiwheel_set_pitch(x, jiwheel_incoming_hatom_to_pitch(x, &inllll->l_head->l_hatom));
     } else if (inllll->l_size == 2) {
-        jiwheel_set_interval(x, hatom_gettype(&inllll->l_head->l_hatom) == H_PITCH ? hatom_getpitch(&inllll->l_head->l_hatom) : t_pitch(hatom_getrational(&inllll->l_head->l_hatom)), hatom_gettype(&inllll->l_head->l_next->l_hatom) == H_PITCH ? hatom_getpitch(&inllll->l_head->l_next->l_hatom) : t_pitch(hatom_getrational(&inllll->l_head->l_next->l_hatom)));
+        jiwheel_set_interval(x, jiwheel_incoming_hatom_to_pitch(x, &inllll->l_head->l_hatom),
+                             jiwheel_incoming_hatom_to_pitch(x, &inllll->l_head->l_next->l_hatom));
     }
     
     llll_free(inllll);

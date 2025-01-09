@@ -1884,6 +1884,8 @@ t_atom_long ipow(t_atom_long num, int power)
 t_rational rat_long_pow(t_rational base, t_atom_long power)
 {
 	t_rational res;
+    if (power == 0)
+        return long2rat(1);
 	res.r_num = ipow(power > 0 ? base.r_num : base.r_den, power > 0 ? power : -power);
 	res.r_den = ipow(power > 0 ? base.r_den : base.r_num, power > 0 ? power : -power);
     if (res.r_den == 0)
@@ -1895,6 +1897,8 @@ t_rational rat_long_pow(t_rational base, t_atom_long power)
 t_rational long_long_pow(long base, t_atom_long power)
 {
     t_rational res;
+    if (power == 0)
+        return long2rat(1);
     res.r_num = ipow(power > 0 ? base : 1, power > 0 ? power : -power);
     res.r_den = ipow(power > 0 ? 1 : base, power > 0 ? power : -power);
     if (res.r_den == 0)

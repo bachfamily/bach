@@ -241,7 +241,6 @@
 							}
 , 							{
 								"box" : 								{
-									"alwayswhitekeys" : 0,
 									"fontface" : 0,
 									"fontname" : "Times",
 									"id" : "obj-1",
@@ -1305,12 +1304,41 @@
 									"bubble" : 1,
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
+									"id" : "obj-6",
+									"linecount" : 3,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 704.0, 432.0, 105.0, 54.0 ],
+									"presentation_linecount" : 3,
+									"text" : "also see \"importance\" tab"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"attr" : "hidecollisions",
+									"id" : "obj-3",
+									"maxclass" : "attrui",
+									"numinlets" : 1,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"parameter_enable" : 0,
+									"patching_rect" : [ 550.0, 445.0, 150.0, 23.0 ]
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"bubble" : 1,
+									"fontname" : "Arial",
+									"fontsize" : 13.0,
 									"id" : "obj-10",
 									"linecount" : 4,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 734.0, 550.0, 93.0, 69.0 ],
+									"patching_rect" : [ 725.0, 566.0, 93.0, 69.0 ],
 									"text" : "maximum term in the integer wheel"
 								}
 
@@ -1325,7 +1353,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 734.0, 488.0, 80.0, 54.0 ],
+									"patching_rect" : [ 725.0, 504.0, 80.0, 54.0 ],
 									"text" : "Integers wheel \ndensity"
 								}
 
@@ -1339,7 +1367,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 559.0, 573.0, 191.0, 23.0 ],
+									"patching_rect" : [ 550.0, 589.0, 191.0, 23.0 ],
 									"text_width" : 125.0
 								}
 
@@ -1353,7 +1381,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 559.0, 508.0, 191.0, 23.0 ],
+									"patching_rect" : [ 550.0, 524.0, 191.0, 23.0 ],
 									"text_width" : 123.0
 								}
 
@@ -1745,6 +1773,13 @@
 								"patchline" : 								{
 									"destination" : [ "obj-1", 0 ],
 									"source" : [ "obj-21", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-1", 0 ],
+									"source" : [ "obj-3", 0 ]
 								}
 
 							}

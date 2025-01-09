@@ -297,7 +297,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 250.0, 9.0, 208.0, 19.0 ],
-					"text" : "v0.8.9.0 beta (build 20250106185845)",
+					"text" : "v0.8.9.0 beta (build 20250109131620)",
 					"textcolor" : [ 0.10980399698019, 0.10980399698019, 0.10980399698019, 1.0 ],
 					"varname" : "autohelp_top_digest[3]"
 				}
@@ -558,7 +558,7 @@
 					"name" : "bach.overviewswitch.maxpat",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"offset" : [ 0.0, -3272.0 ],
+					"offset" : [ 0.0, -5381.0 ],
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
@@ -599,6 +599,76 @@
 						"subpatcher_template" : "",
 						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
+								"box" : 								{
+									"hidden" : 1,
+									"id" : "obj-382",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 711.0, 5804.0, 90.0, 22.0 ],
+									"presentation_linecount" : 2,
+									"text" : "MarkerRegions"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"bubble" : 1,
+									"fontsize" : 12.0,
+									"id" : "obj-380",
+									"linecount" : 2,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 368.0, 5651.0, 102.0, 37.0 ],
+									"presentation_linecount" : 2,
+									"text" : "...and marker regions"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontsize" : 22.0,
+									"id" : "obj-381",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 209.0, 5653.0, 155.0, 33.0 ],
+									"presentation_linecount" : 4,
+									"text" : "Marker regions"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"bubble" : 1,
+									"fontsize" : 12.0,
+									"id" : "obj-316",
+									"linecount" : 2,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 77.0, 5651.0, 102.0, 37.0 ],
+									"text" : "Finally, we have slurs..."
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontsize" : 22.0,
+									"id" : "obj-379",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 16.0, 5651.0, 59.0, 33.0 ],
+									"text" : "Slurs"
+								}
+
+							}
+, 							{
 								"box" : 								{
 									"hidden" : 1,
 									"id" : "obj-378",
@@ -8925,6 +8995,30 @@
 									"destination" : [ "obj-362", 0 ],
 									"hidden" : 1,
 									"source" : [ "obj-378", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-378", 0 ],
+									"hidden" : 1,
+									"source" : [ "obj-379", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-382", 0 ],
+									"hidden" : 1,
+									"source" : [ "obj-381", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-378", 0 ],
+									"hidden" : 1,
+									"source" : [ "obj-382", 0 ]
 								}
 
 							}

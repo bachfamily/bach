@@ -605,6 +605,9 @@ public:
     }
 
     t_rational getHEJICommasAsRational() const;
+    double getHEJICommasAsDouble() const;
+    t_rational getHEJICommasAsRationalIncludePythagorean() const;
+    double getHEJICommasAsDoubleIncludePythagorean() const;
 
     t_shortRational getAlterET() const { return p_alterET; }
     

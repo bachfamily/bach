@@ -559,14 +559,42 @@ std::vector<t_rational> t_pitch::getJIconvergents(long howmany, double threshMC,
     return conv;
 }
 
+t_rational flipToGreaterThanOne(t_rational r)
+{
+    if (r.r_num < r.r_den)
+        return 1/r;
+    return r;
+}
+
+double t_pitch::getHEJICommasAsDouble() const {
+    std::vector<int8_t> commas = getHEJICommas();
+    long s = commas.size();
+    double r = 1;
+    for (long i = 0; i < s; i++) {
+        if (commas[i] != 0)
+            r *= pow((double)flipToGreaterThanOne(HEJIcommasRatios[i]), commas[i]) ; // TODO: check, test
+    }
+    return r;
+}
+
+double t_pitch::getHEJICommasAsDoubleIncludePythagorean() const {
+    return getHEJICommasAsDouble() * pow(2187./2048.,(double)getSharpsJI());
+}
+
+
 t_rational t_pitch::getHEJICommasAsRational() const {
     std::vector<int8_t> commas = getHEJICommas();
     long s = commas.size();
     t_rational r = genrat(1, 1);
     for (long i = 0; i < s; i++) {
-        r *= HEJIcommasRatios[i]; // TODO: check, test
+        if (commas[i] != 0)
+            r *= rat_long_pow(flipToGreaterThanOne(HEJIcommasRatios[i]), commas[i]); // TODO: check, test
     }
     return r;
+}
+
+t_rational t_pitch::getHEJICommasAsRationalIncludePythagorean() const {
+    return getHEJICommasAsRational() * rat_long_pow(genrat(2187,2048),(long)getSharpsJI());
 }
 
 std::string t_pitch::toString(t_bool include_octave, t_bool always_positive, t_bool addTrailingSpace) const
