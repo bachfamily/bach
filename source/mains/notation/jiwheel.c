@@ -174,8 +174,7 @@ typedef struct _jiwheel // [bach.jiwheel] structure
     double                  density; // density factor used while using automatic zooming
     double                  density_intwheel; // similar, but for the integers wheel
     bool                    auto_zooming; // 1 if the object needs auto-zooming (and hence rebuilding of pitches)
-    t_atom                  allowed_limits[MAX_ALLOWED_LIMITS]; // list of allowed limits (or <= for less-than as first element), or "any" to leave it open
-    long                    allowed_limits_count; // length of allowed_limits array (for real)
+    long                    jilimit;
     t_atom                  allowed_primes[MAX_ALLOWED_PRIMES]; // list of allowed primes (or <= for less-than as first element), or "any" to leave it open
     long                    allowed_primes_count; // length of allowed_primes array (for real)
 
@@ -1521,11 +1520,11 @@ void C74_EXPORT ext_main(void *moduleRef)
 
         CLASS_ATTR_CHAR(c, "mode", 0, t_jiwheel, mode);
         CLASS_ATTR_STYLE_LABEL(c,"mode",0,"enumindex","Mode");
-        CLASS_ATTR_ENUMINDEX(c,"mode", 0, "Maximum Term Prime Limits");
+        CLASS_ATTR_ENUMINDEX(c,"mode", 0, "Maximum Term Combine Commas");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"mode",0,"0");
         CLASS_ATTR_BASIC(c,"mode",0);
-        // @description Sets the representation mode: either up to a maximum term for numerator/denominator (0) or using prime limits,
-        // by combining just intonation commas (1). In the first case, see <m>maxterm</m>. In the second, see <m>fifthext</m> and <m>commas</m>.
+        // @description Sets the representation mode: either up to a maximum term for numerator/denominator (0) or by combining
+        // just intonation commas (1). In the first case, see <m>maxterm</m>. In the second, see <m>fifthext</m> and <m>commas</m>.
 
         CLASS_ATTR_ATOM(c, "maxterm", 0, t_jiwheel, maxterm);
         CLASS_ATTR_STYLE_LABEL(c,"maxterm",0,"text","Maximum Term");
@@ -1567,17 +1566,17 @@ void C74_EXPORT ext_main(void *moduleRef)
         CLASS_ATTR_BASIC(c,"intwheeldensity",0);
         // @description Sets the density of integers in the integers wheel, used when display is in automatic zooming.
 
-        CLASS_ATTR_ATOM_VARSIZE(c, "limits", 0, t_jiwheel, allowed_limits, allowed_limits_count, MAX_ALLOWED_LIMITS);
-        CLASS_ATTR_STYLE_LABEL(c,"limits",0,"text","Allowed Limits");
-        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"limits",0,"any");
-        CLASS_ATTR_BASIC(c,"limits",0);
-        // @description Sets the allowed limits for the displayed pitches. Leave "any" to unconstrain.
-        // Use the less or equal sign as first symbol to select limits less or equal to a certain number.
+        CLASS_ATTR_LONG(c, "jilimit",  0, t_jiwheel, jilimit);
+        CLASS_ATTR_LABEL(c, "jilimit", 0, "JI Limit");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"jilimit",0,"0");
+        CLASS_ATTR_BASIC(c,"jilimit",0);
+        // @description The <m>jilimit</m> attributes allows you to set a maximum just intonation limit
+        // for an interval (as frequency ratio) showing up in the output. (0 means: any, which is the default.)
 
-        CLASS_ATTR_ATOM_VARSIZE(c, "primes", 0, t_jiwheel, allowed_primes, allowed_primes_count, MAX_ALLOWED_PRIMES);
-        CLASS_ATTR_STYLE_LABEL(c,"primes",0,"text","Allowed Primes");
-        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"primes",0,"any");
-        CLASS_ATTR_BASIC(c,"primes",0);
+        CLASS_ATTR_ATOM_VARSIZE(c, "jiprimes", 0, t_jiwheel, allowed_primes, allowed_primes_count, MAX_ALLOWED_PRIMES);
+        CLASS_ATTR_STYLE_LABEL(c,"jiprimes",0,"text","Allowed Primes");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"jiprimes",0,"any");
+        CLASS_ATTR_BASIC(c,"jiprimes",0);
         // @description Sets the allowed primes for the displayed pitches. Leave "any" to unconstrain.
         // Use the less or equal sign as first symbol to select limits less or equal to a certain number.
         // Notice that this is slightly different than <m>limits</m>: when using <m>limits</m> one
@@ -1827,7 +1826,7 @@ t_max_err jiwheel_notify(t_jiwheel *x, t_symbol *s, t_symbol *msg, void *sender,
 {
     if (msg == gensym("attr_modified")) {
         t_symbol *attrname = (t_symbol *)object_method((t_object *)data, _sym_getname);
-        if (attrname == gensym("limits") || attrname == gensym("primes") || attrname == gensym("formaloctave")) {
+        if (attrname == gensym("jilimit") || attrname == gensym("jiprimes") || attrname == gensym("formaloctave")) {
             x->rebuild = true;
             jiwheel_clear_selection(x);
         } else if (attrname == gensym("mode") || attrname == gensym("commas") || attrname == gensym("maxterm") || attrname == gensym("maxfifths") || attrname == gensym("density") || attrname == gensym("display") || attrname == gensym("basis") || attrname == gensym("alwayswhitekeys") || attrname == gensym("mapping")) {
@@ -2056,9 +2055,9 @@ t_jiwheel* jiwheel_new(t_symbol *s, long argc, t_atom *argv)
     x->j_has_focus = 0;
     x->formaloctave = 2;
     x->allowed_commas = llll_from_text_buf("auto");
-    atom_setsym(x->allowed_limits, gensym("any"));
+    x->jilimit = 0; // means: none;
     atom_setsym(x->allowed_primes, gensym("any"));
-    x->allowed_limits_count = x->allowed_primes_count = 1;
+    x->allowed_primes_count = 1;
     x->sel1_ratio = x->sel2_ratio = x->mouseover_ratio = genrat(0, 1);
     x->curr_interval.ratio = genrat(0, 1);
     x->rotation_angle = x->rotation_angle_intwheel = 0;
@@ -2132,6 +2131,9 @@ double ratio_to_cents(t_rational r)
 
 long num_to_prime_idx(long num)
 {
+    if (num >= 51)
+        return -1;
+    
     return t_pitch::primes_locate[num];
 }
 
@@ -2591,7 +2593,6 @@ void jiwheel_build_pitches(t_jiwheel *x, t_object *view)
     t_llll *curr_pitches_ll = llll_get();
     
     // building mask for limits
-    bool *limit_is_ok = (bool *)bach_newptrclear(LLLL_PRIMES_TABLE_SIZE * sizeof(bool));
     bool *prime_is_ok = (bool *)bach_newptrclear(LLLL_PRIMES_TABLE_SIZE * sizeof(bool));
     long only_limits_up_to_this_number_are_ok = -1, only_primes_up_to_this_number_are_ok = -1;
 
@@ -2638,49 +2639,6 @@ void jiwheel_build_pitches(t_jiwheel *x, t_object *view)
         only_primes_up_to_this_number_are_ok = LLLL_PRIMES_TABLE_MAX;
     }
     
-    if (x->allowed_limits_count == 1) {
-        if (atom_gettype(x->allowed_limits) == A_LONG) {
-            long i = num_to_prime_idx(atom_getlong(x->allowed_limits));
-            if (i >= 0)
-                limit_is_ok[i] = 1;
-        } else {
-            for (long i = 0; i < LLLL_PRIMES_TABLE_SIZE; i++)
-                limit_is_ok[i] = 1;
-            only_limits_up_to_this_number_are_ok = LLLL_PRIMES_TABLE_MAX;
-        }
-    } else if (x->allowed_limits_count >= 2) {
-        if (atom_gettype(x->allowed_limits) == A_SYM && atom_getsym(x->allowed_limits) == gensym("<=")) {
-            long n = atom_getlong(x->allowed_limits+1);
-            long i = num_to_prime_idx(n);
-            if (i >= 0) {
-                for (long j = 0; j <= i; j++)
-                    limit_is_ok[j] = 1;
-            }
-            only_limits_up_to_this_number_are_ok = n;
-        } else if (atom_gettype(x->allowed_limits) == A_SYM && atom_getsym(x->allowed_limits) == gensym("<")) {
-            long n = atom_getlong(x->allowed_limits+1);
-            long i = num_to_prime_idx(n);
-            if (i >= 0) {
-                for (long j = 0; j < i; j++)
-                    limit_is_ok[j] = 1;
-            }
-            only_limits_up_to_this_number_are_ok = n-1;
-        } else {
-            for (long i = 0; i < x->allowed_limits_count; i++) {
-                if (atom_gettype(x->allowed_limits+i) == A_LONG) {
-                    long j = num_to_prime_idx(atom_getlong(x->allowed_limits+i));
-                    if (j >= 0)
-                        limit_is_ok[j] = 1;
-                }
-            }
-        }
-    } else {
-        object_warn((t_object *)x, "No limits defined. Defaulting to 'any'.");
-        for (long i = 0; i < LLLL_PRIMES_TABLE_SIZE; i++)
-            limit_is_ok[i] = 1;
-        only_limits_up_to_this_number_are_ok = LLLL_PRIMES_TABLE_MAX;
-    }
-    
     // always display selected ratios
     if (x->sel1_ratio.r_num != 0)
         llll_appendrat(curr_pitches_ll, x->sel1_ratio);
@@ -2690,9 +2648,12 @@ void jiwheel_build_pitches(t_jiwheel *x, t_object *view)
         llll_appendrat(curr_pitches_ll, x->mouseover_ratio);
     
     // formal octave must always be admitted:
-    prime_is_ok[x->formaloctave] = true;
+    long foj = num_to_prime_idx(x->formaloctave);
+    if (foj >= 0) {
+        prime_is_ok[foj] = true;
+    }
 
-    if (x->always_display_whitekeys && x->formaloctave == 2 && limit_is_ok[1] && prime_is_ok[0] && prime_is_ok[1]) {
+    if (x->always_display_whitekeys && x->formaloctave == 2 && (x->jilimit == 0 || x->jilimit >= 2) && prime_is_ok[0] && prime_is_ok[1]) {
         // adding Pythagorean whitekeys
         char base_diatonic_pitch = x->base_diatonic_pitch ? x->base_diatonic_pitch->s_name[0] : 'A';
         long start = 0;
@@ -2736,7 +2697,7 @@ void jiwheel_build_pitches(t_jiwheel *x, t_object *view)
                             bool must_append = true;
                             // must check limit and every prime
                             long idx = num_to_prime_idx(limit);
-                            if (idx < 0 || !limit_is_ok[idx]) {
+                            if (idx < 0 || (x->jilimit != 0 && limit > x->jilimit)) {
                                 must_append = false;
                             }
                             t_llll *factors = llll_factorize_rational(r);
@@ -2774,7 +2735,7 @@ void jiwheel_build_pitches(t_jiwheel *x, t_object *view)
             fifthsext = get_default_fifthsext(x, view);
         }
         
-        if (limit_is_ok[1] == false)
+        if (x->jilimit < 3 && x->jilimit != 0)
             fifthsext = 0;
         
         for (long n = -fifthsext; n <= fifthsext; n++) {
@@ -2787,7 +2748,8 @@ void jiwheel_build_pitches(t_jiwheel *x, t_object *view)
                     for (t_llllelem *c_el = hatom_getllll(&el->l_hatom)->l_head; c_el && c < numcommas; c_el = c_el->l_next, c++) {
                         long e = hatom_getlong(&c_el->l_hatom);
                         if (e != 0) {
-                            if (limit_is_ok[c+2] == false || prime_is_ok[c+2] == false) {
+//                            if (limit_is_ok[c+2] == false || prime_is_ok[c+2] == false) {
+                            if ((x->jilimit > 0 && c+2 < BACH_PRIMES_JI_SIZE && t_pitch::primes[c+2] > x->jilimit) || prime_is_ok[c+2] == false) {
                                 accept = false;
                                 break;
                             }
@@ -2863,7 +2825,6 @@ void jiwheel_build_pitches(t_jiwheel *x, t_object *view)
     
     llll_free(curr_pitches_ll);
     systhread_mutex_unlock(x->c_mutex);
-    bach_freeptr(limit_is_ok);
     bach_freeptr(prime_is_ok);
 }
 
@@ -2969,7 +2930,10 @@ void jiwheel_get_label_specs(t_jiwheel *x, t_wheelpitch *p, t_pt center, double 
             break;
 
         default:
-            // TO DO!
+            *fontsize = jbox_get_fontsize((t_object *) x);
+            *font = jfont_create_debug(jbox_get_fontname((t_object *) x)->s_name, (t_jgraphics_font_slant)jbox_get_font_slant((t_object *) x), (t_jgraphics_font_weight)jbox_get_font_weight((t_object *) x), *fontsize);
+            *number_txt = (char *)bach_newptr(2 * sizeof(char));
+            (*number_txt)[0] = 0;
             break;
     }
 
