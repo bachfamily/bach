@@ -477,9 +477,9 @@ const char *jiwheel_ratio_to_common_interval_name(t_rational r, long *num_octave
             break;
         case 7:
             switch (r.den()) {
-                case 4: return "septimal minor seventh";
-                case 5: return "septimal tritone";
-                case 6: return "septimal minor third";
+                case 4: return "harmonic seventh";
+                case 5: return "lesser septimal tritone";
+                case 6: return "septimal subminor third";
                 default: break;
             }
             break;
@@ -492,42 +492,42 @@ const char *jiwheel_ratio_to_common_interval_name(t_rational r, long *num_octave
             break;
         case 9:
             switch (r.den()) {
-                case 5: return "classic minor seventh";
-                case 7: return "septimal major third";
+                case 5: return "just minor seventh";
+                case 7: return "septimal supermajor third";
                 case 8: return "Pythagorean whole tone";
                 default: break;
             }
             break;
         case 10:
             switch (r.den()) {
-                case 7: return "superaugmented fourth";
-                case 9: return "classic whole tone";
+                case 7: return "greater septimal tritone";
+                case 9: return "5-limit whole tone";
                 default: break;
             }
             break;
         case 11:
             switch (r.den()) {
                 case 6: return "undecimal neutral seventh";
-                case 7: return "undecimal augmented fifth";
-                case 8: return "undecimal semi-augmented fourth";
-                case 9: return "undecimal neutral third";
-                case 10: return "undecimal submajor second";
+                case 7: return "undecimal minor sixth";
+                case 8: return "11-limit semiaugmented fourth";
+                case 9: return "11-limit neutral third";
+                case 10: return "11-limit submajor second";
                 default: break;
             }
             break;
         case 12:
             switch (r.den()) {
                 case 7: return "septimal major sixth";
-                case 11: return "small undecimal neutral second";
+                case 11: return "11-limit neutral second";
                 default: break;
             }
             break;
         case 13:
             switch (r.den()) {
                 case 7: return "13-limit submajor seventh";
-                case 8: return "lesser 13-limit neutral sixth";
+                case 8: return "13-limit neutral sixth";
                 case 9: return "13-limit diminished fifth";
-                case 10: return "13-limit semisixth";
+                case 10: return "13-limit semidiminished fourth";
                 case 11: return "13-limit minor third";
                 case 12: return "13-limit neutral second";
                 default: break;
@@ -535,37 +535,37 @@ const char *jiwheel_ratio_to_common_interval_name(t_rational r, long *num_octave
             break;
         case 14:
             switch (r.den()) {
-                case 9: return "subminor sixth";
-                case 11: return "undecimal major third";
+                case 9: return "septimal subminor sixth";
+                case 11: return "11-limit major third";
                 case 13: return "13-limit supraminor second";
                 default: break;
             }
             break;
         case 15:
             switch (r.den()) {
-                case 8: return "classic major seventh";
-                case 11: return "undecimal augmented fourth";
-                case 13: return "13-limit semifourth";
-                case 14: return "septimal diatonic semitone";
+                case 8: return "5-limit major seventh";
+                case 11: return "11-limit semiaugmented fourth";
+                case 13: return "13-limit semidiminished third";
+                case 14: return "greater septimal semitone";
                 default: break;
             }
             break;
         case 16:
             switch (r.den()) {
                 case 9: return "Pythagorean minor seventh";
-                case 11: return "Sub-fifth";
-                case 13: return "greater 13-limit neutral third";
-                case 15: return "classic minor second";
+                case 11: return "11-limit semidiminished fifth";
+                case 13: return "13-limit neutral third";
+                case 15: return "5-limit minor second";
                 default: break;
             }
             break;
         case 17:
             switch (r.den()) {
-                case 9: return "17-limit major seventh";
+                case 9: return "greater 17-limit major seventh";
                 case 10: return "17-limit diminished seventh";
-                case 11: return "17-limit subminor sixth";
-                case 12: return "larger 17-limit tritone";
-                case 13: return "17-limit sub-fourth";
+                case 11: return "17-limit semiagumented fifth";
+                case 12: return "greater 17-limit tritone";
+                case 13: return "17-limit semidiminished fourth";
                 case 14: return "17-limit supraminor third";
                 case 15: return "17-limit whole tone";
                 case 16: return "large 17-limit semitone";
@@ -574,105 +574,106 @@ const char *jiwheel_ratio_to_common_interval_name(t_rational r, long *num_octave
             break;
         case 18:
             switch (r.den()) {
-                case 11: return "undecimal neutral sixth";
+                case 11: return "11-limit neutral sixth";
                 case 13: return "13-limit augmented fourth";
-                case 17: return "small 17-limit semitone";
+                case 17: return "17-limit quasi-equal semitone";
                 default: break;
             }
             break;
         case 19:
             switch (r.den()) {
                 case 10: return "19-limit diminished octave";
-                case 11: return "19-limit semitwelfth";
-                case 14: return "hendrix fourth";
-                case 15: return "Eratosthenes' major third";
-                case 16: return "otonal minor third";
-                case 17: return "quasi-meantone";
-                case 18: return "septimal minor semitone";
+                case 11: return "19-limit semidiminished seventh";
+                case 14: return "19-limit acute fourth";
+                case 15: return "greater 19-limit major third";
+                case 17: return "19-limit quasi-meantone";
+                case 16: return "19-limit minor third";
+                case 18: return "greater 19-limit semitone";
                 default: break;
             }
             break;
         case 20:
             switch (r.den()) {
-                case 11: return "small undecimal neutral seventh";
-                case 13: return "13-limit semitenth";
+                case 11: return "11-limit supraminor seventh";
+                case 13: return "13-limit semiaugmented fifth";
                 case 17: return "17-limit augmented second";
-                case 19: return "small 19-limit semitone";
+                case 19: return "lesser 19-limit semitone";
                 default: break;
             }
             break;
         case 21:
             switch (r.den()) {
                 case 13: return "13-limit supraminor sixth";
-                case 16: return "narrow fourth";
+                case 16: return "septimal fourth";
                 case 17: return "17-limit submajor third";
-                case 20: return "minor semitone";
+                case 20: return "lesser septimal semitone";
                 default: break;
             }
             break;
         case 22:
             switch (r.den()) {
                 case 13: return "13-limit major sixth";
-                case 15: return "undecimal diminished fifth";
-                case 17: return "17-limit supermajor third";
-                case 19: return "19-limit semifourth";
-                case 21: return "undecimal minor semitone";
+                case 15: return "11-limit semi  diminished fifth";
+                case 17: return "17-limit semidiminished fourth";
+                case 19: return "19-limit semidiminished third";
+                case 21: return "11-limit minor semitone";
                 default: break;
             }
             break;
         case 23:
             switch (r.den()) {
-                case 16: return "23-limit superaugmented fourth";
+                case 16: return "23-limit diminished fifth";
                 case 18: return "23-limit diminished fourth";
                 case 19: return "23-limit supraminor third";
+                case 22: return "greater 23-limit semitone";
                 default: break;
             }
             break;
         case 24:
             switch (r.den()) {
                 case 13: return "13-limit neutral seventh";
-                case 17: return "smaller 17-limit tritone";
-                case 19: return "Boethius' major third";
+                case 17: return "lesser 17-limit tritone";
+                case 19: return "lesser 19-limit major third";
                 case 23: return "lesser 23-limit semitone";
                 default: break;
             }
             break;
         case 25:
             switch (r.den()) {
-                case 14: return "middle minor seventh";
+                case 14: return "septimal middle minor seventh";
                 case 16: return "5-limit augmented fifth";
-                case 18: return "classic augmented fourth";
-                case 21: return "quasi-tempered minor third";
-                case 24: return "classic chromatic semitone";
+                case 18: return "5-limit augmented fourth";
+                case 21: return "septimal quasi-equal minor third";
+                case 24: return "5-limit chromatic semitone";
                 default: break;
             }
             break;
-        case 26:
+        case 26: // TILl HERE
             switch (r.den()) {
-                case 15: return "13-limit semitwelfth";
-                case 17: return "17-limit super-fifth";
-                case 25: return "large 13-limit third tone";
+                case 15: return "13-limit semidiminished seventh";
+                case 17: return "17-limit acute fifth";
+                case 25: return "greater 13-limit third-tone";
                 default: break;
             }
             break;
         case 27:
             switch (r.den()) {
-                case 14: return "septimal major seventh";
+                case 14: return "septimal supermajor seventh";
                 case 16: return "Pythagorean major sixth";
-                case 20: return "acute fourth";
-                case 22: return "rastmic neutral third";
-                case 25: return "large limma";
-                case 26: return "small 13-limit third tone";
+                case 20: return "just acute fourth";
+//                case 22: return "rastmic neutral third";
+                case 25: return "just acute minor second";
+                case 26: return "lesser 13-limit third-tone";
                 default: break;
             }
             break;
         case 28:
             switch (r.den()) {
-                case 15: return "grave major seventh";
+                case 15: return "lesser septimal major seventh";
                 case 17: return "17-limit submajor sixth";
-                case 19: return "hendrix fifth";
-                case 25: return "middle major second";
-                case 27: return "septimal third-tone";
+                case 19: return "19-limit grave fifth";
+                case 25: return "septimal middle whole tone";
+                case 27: return "septimal large quartertone";
                 default: break;
             }
             break;
@@ -691,41 +692,41 @@ const char *jiwheel_ratio_to_common_interval_name(t_rational r, long *num_octave
         case 31:
             switch (r.den()) {
                 case 16: return "23-limit semidiminished octave";
-                case 24: return "sensi supermajor third";
+//                case 24: return "sensi supermajor third";
                 default: break;
             }
             break;
         case 32:
             switch (r.den()) {
-                case 17: return "17-limit diminished octave";
-                case 19: return "utonal major sixth";
-                case 21: return "super-fifth, wide fifth";
-                case 25: return "classic diminished fourth";
+                case 17: return "lesser 17-limit major seventh";
+//                case 19: return "utonal major sixth";
+                case 21: return "septimal acute fifth";
+                case 25: return "just diminished fourth";
                 case 27: return "Pythagorean minor third";
                 default: break;
             }
             break;
         case 33:
             switch (r.den()) {
-                case 25: return "5EDO-esque fourth";
+                case 25: return "11-limit 5-EDO-esque fourth";
                 case 26: return "13-limit major third";
-                case 32: return "undecimal diesis";
+                case 32: return "11-limit quartertone";
                 default: break;
             }
             break;
         case 34:
             switch (r.den()) {
-                case 19: return "quasi-meantone minor seventh";
+                case 19: return "19-limit quasi-meantone minor seventh";
                 default: break;
             }
             break;
         case 35:
             switch (r.den()) {
                 case 18: return "septimal semidiminished octave";
-                case 24: return "septimal sub-fifth";
-                case 26: return "animist fourth";
+                case 24: return "septimal semidiminished fifth";
+//                case 26: return "animist fourth";
                 case 27: return "septimal semidiminished fourth";
-                case 29: return "doublewide minor third";
+//                case 29: return "doublewide minor third";
                 case 32: return "septimal neutral second";
                 default: break;
             }
@@ -734,8 +735,8 @@ const char *jiwheel_ratio_to_common_interval_name(t_rational r, long *num_octave
             switch (r.den()) {
                 case 19: return "19-limit major seventh";
                 case 23: return "23-limit augmented fifth";
-                case 25: return "5-limit diminished fifth";
-                case 35: return "septimal quarter tone";
+                case 25: return "just diminished fifth";
+                case 35: return "septimal quartertone";
                 default: break;
             }
             break;
@@ -753,81 +754,81 @@ const char *jiwheel_ratio_to_common_interval_name(t_rational r, long *num_octave
             break;
         case 40:
             switch (r.den()) {
-                case 21: return "septimal acute major seventh";
+                case 21: return "greater septimal major seventh";
                 case 27: return "grave fifth";
                 default: break;
             }
             break;
         case 42:
             switch (r.den()) {
-                case 25: return "quasi-tempered major sixth";
+                case 25: return "septimal quasi-equal major sixth";
                 default: break;
             }
             break;
         case 45:
             switch (r.den()) {
-                case 32: return "smaller 5-limit tritone";
-                case 44: return "undecimal diesis";
+                case 32: return "lesser just tritone";
+                case 44: return "11-limit fifth-tone";
                 default: break;
             }
             break;
         case 48:
             switch (r.den()) {
-                case 25: return "classic diminished octave";
-                case 35: return "septimal super-fourth";
+                case 25: return "just diminished octave";
+                case 35: return "septimal semiaugmented fourth";
                 default: break;
             }
             break;
         case 49:
             switch (r.den()) {
                 case 25: return "Bohlen-Pierce eighth";
-                case 32: return "superduper fifth";
-                case 36: return "Arabic lute acute fourth";
+//                case 32: return "superduper fifth";
+//                case 36: return "Arabic lute acute fourth";
                 case 40: return "larger septimal neutral third";
-                case 44: return "mothwellsmic major second";
-                case 45: return "swetismic neutral second";
-                case 48: return "slendro diesis";
+//                case 44: return "mothwellsmic major second";
+//                case 45: return "swetismic neutral second";
+//                case 48: return "slendro diesis";
                 default: break;
             }
             break;
         case 50:
             switch (r.den()) {
-                case 33: return "5EDO-esque fifth";
-                case 49: return "tritonic diesis";
+                case 33: return "11-limit 5-EDO-esque fifth";
+                case 49: return "septimal sixth-tone";
                 default: break;
             }
             break;
         case 51:
             switch (r.den()) {
-                case 41: return "maja third";
+//                case 41: return "maja third";
                 default: break;
             }
             break;
         case 52:
             switch (r.den()) {
                 case 33: return "13-limit minor sixth";
-                case 35: return "animist fifth";
+//                case 35: return "animist fifth";
                 default: break;
             }
             break;
         case 54:
             switch (r.den()) {
-                case 49: return "Zalzal's mujannab";
+//                case 49: return "Zalzal's mujannab";
                 default: break;
             }
             break;
         case 55:
             switch (r.den()) {
-                case 32: return "keenanismic supermajor sixth";
-                case 39: return "smaller gassormic tritone";
-                case 48: return "keenanismic supermajor second";
-                case 49: return "werckismic tone";
+//                case 32: return "keenanismic supermajor sixth";
+//                case 39: return "smaller gassormic tritone";
+//                case 48: return "keenanismic supermajor second";
+//                case 49: return "werckismic tone";
                 default: break;
             }
             break;
         case 56:
             switch (r.den()) {
-                case 45: return "marvelous major third";
+//                case 45: return "marvelous major third";
                 default: break;
             }
             break;
@@ -839,220 +840,228 @@ const char *jiwheel_ratio_to_common_interval_name(t_rational r, long *num_octave
             break;
         case 61:
             switch (r.den()) {
-                case 32: return "octave-reduced 61st harmonic";
-                case 51: return "myna third";
+//                case 32: return "octave-reduced 61st harmonic";
+//                case 51: return "myna third";
                 default: break;
             }
             break;
         case 62:
             switch (r.den()) {
-                case 53: return "orwell subminor third";
+//                case 53: return "orwell subminor third";
                 default: break;
             }
             break;
         case 63:
             switch (r.den()) {
-                case 40: return "narrow minor sixth";
-                case 50: return "quasi-tempered major third";
-                case 55: return "werckismic supermajor second";
+//                case 40: return "narrow minor sixth";
+//                case 50: return "quasi-tempered major third";
+//                case 55: return "werckismic supermajor second";
                 default: break;
             }
             break;
         case 64:
             switch (r.den()) {
-                case 33: return "undecimal semidiminished octave";
+                case 33: return "11-limit semidiminished octave";
                 case 35: return "septimal neutral seventh";
-                case 45: return "larger 5-limit tritone";
-                case 49: return "septatonic major third";
+                case 45: return "greater just tritone";
+                case 49: return "septimal narrow fourth";
                 case 55: return "keenanismic subminor third";
-                case 57: return "quasi-tempered whole tone";
-                case 61: return "harry minor semitone";
+//                case 57: return "quasi-tempered whole tone";
+//                case 61: return "harry minor semitone";
                 case 63: return "septimal comma";
                 default: break;
             }
             break;
         case 65:
             switch (r.den()) {
-                case 64: return "wilsorma";
+//                case 64: return "wilsorma";
                 default: break;
             }
             break;
         case 66:
             switch (r.den()) {
-                case 65: return "winmeanma";
+//                case 65: return "winmeanma";
                 default: break;
             }
             break;
         case 68:
             switch (r.den()) {
-                case 65: return "valentine semitone";
+//                case 65: return "valentine semitone";
                 default: break;
             }
             break;
         case 71:
             switch (r.den()) {
-                case 40: return "harmonic/just minor seventh meantone";
-                case 57: return "witchcraft major third";
+//                case 40: return "harmonic/just minor seventh meantone";
+//                case 57: return "witchcraft major third";
                 default: break;
             }
             break;
         case 72:
             switch (r.den()) {
-                case 49: return "septimal catafifth";
+//                case 49: return "septimal catafifth";
                 default: break;
             }
             break;
         case 73:
             switch (r.den()) {
-                case 60: return "amity supraminor third";
+//                case 60: return "amity supraminor third";
                 default: break;
             }
             break;
         case 75:
             switch (r.den()) {
-                case 56: return "marvelous fourth";
-                case 64: return "classic augmented second";
+//                case 56: return "marvelous fourth";
+                case 64: return "just augmented second";
                 default: break;
             }
             break;
         case 76:
             switch (r.den()) {
-                case 61: return "magic major third";
+//                case 61: return "magic major third";
                 default: break;
             }
             break;
         case 77:
             switch (r.den()) {
-                case 60: return "swetismic supermajor third";
-                case 64: return "keenanismic minor third";
-                case 72: return "undecimal secor";
+//                case 60: return "swetismic supermajor third";
+//                case 64: return "keenanismic minor third";
+//                case 72: return "undecimal secor";
                 default: break;
             }
             break;
         case 78:
             switch (r.den()) {
-                case 55: return "larger gassormic tritone";
-                case 71: return "porcupine neutral second";
+//                case 55: return "larger gassormic tritone";
+//                case 71: return "porcupine neutral second";
                 default: break;
             }
             break;
         case 80:
             switch (r.den()) {
-                case 63: return "5/7-kleismic major third";
+//                case 63: return "5/7-kleismic major third";
                 default: break;
             }
             break;
         case 81:
             switch (r.den()) {
-                case 55: return "undecimal catafifth";
+//                case 55: return "undecimal catafifth";
                 case 64: return "Pythagorean major third";
-                case 70: return "septimal semi-augmented second";
+//                case 70: return "septimal semi-augmented second";
                 case 80: return "syntonic comma";
                 default: break;
             }
             break;
         case 88:
             switch (r.den()) {
-                case 63: return "pentacircle diminished fifth";
-                case 81: return "undecimal subtone";
+//                case 63: return "pentacircle diminished fifth";
+//                case 81: return "undecimal subtone";
                 default: break;
             }
             break;
         case 90:
             switch (r.den()) {
-                case 77: return "swetismic subminor third";
+//                case 77: return "swetismic subminor third";
                 default: break;
             }
             break;
         case 91:
             switch (r.den()) {
-                case 64: return "larger huntmic tritone";
+//                case 64: return "larger huntmic tritone";
                 default: break;
             }
             break;
         case 96:
             switch (r.den()) {
-                case 77: return "undecimal perde segah";
+//                case 77: return "undecimal perde segah";
                 default: break;
             }
             break;
         case 97:
             switch (r.den()) {
-                case 56: return "homothetic semitwelth";
-                case 84: return "homothetic semifourth";
+//                case 56: return "homothetic semidiminished seventh";
+//                case 84: return "homothetic semidiminished third";
                 default: break;
             }
             break;
         case 99:
             switch (r.den()) {
-                case 70: return "homothetic quasi-tempered tritone";
-                case 98: return "mothwellsma";
+//                case 70: return "homothetic quasi-tempered tritone";
+//                case 98: return "mothwellsma";
                 default: break;
             }
             break;
         case 100:
             switch (r.den()) {
-                case 97: return "shrutar quarter tone";
-                case 99: return "ptolemisma";
+//                case 97: return "shrutar quarter tone";
+//                case 99: return "ptolemisma";
                 default: break;
             }
             break;
         case 105:
             switch (r.den()) {
-                case 64: return "quasi-tempered 5/7-octave";
+//                case 64: return "quasi-tempered 5/7-octave";
                 default: break;
             }
             break;
         case 108:
             switch (r.den()) {
-                case 77: return "swetismic augmented fourth";
+//                case 77: return "swetismic augmented fourth";
                 default: break;
             }
             break;
         case 112:
             switch (r.den()) {
-                case 75: return "marvelous fifth";
+//                case 75: return "marvelous fifth";
                 default: break;
             }
             break;
         case 117:
             switch (r.den()) {
-                case 88: return "minthmic fourth";
+//                case 88: return "minthmic fourth";
                 default: break;
             }
             break;
         case 121:
             switch (r.den()) {
-                case 80: return "wide biyatismic fifth";
-                case 90: return "wide biyatismic fourth";
+//                case 80: return "wide biyatismic fifth";
+//                case 90: return "wide biyatismic fourth";
+                default: break;
+            }
+            break;
+        case 125:
+            switch (r.den()) {
+                case 64: return "just augmented seventh";
+                case 72: return "just augmented sixth";
                 default: break;
             }
             break;
         case 126:
             switch (r.den()) {
-                case 125: return "starling comma";
+//                case 125: return "starling comma";
                 default: break;
             }
             break;
         case 127:
             switch (r.den()) {
-                case 72: return "harmonic/Pythagorean minor seventh meantone";
+//                case 72: return "harmonic/Pythagorean minor seventh meantone";
                 default: break;
             }
             break;
         case 128:
             switch (r.den()) {
+                case 75: return "cassic diminished seventh";
                 case 81: return "Pythagorean minor sixth";
-                case 91: return "smaller huntmic tritone";
-                case 105: return "quasi-tempered 2/7-octave";
-                case 125: return "minor diesis";
+//                case 91: return "smaller huntmic tritone";
+//                case 105: return "quasi-tempered 2/7-octave";
+                case 125: return "just diminished second";
                 default: break;
             }
             break;
         case 135:
             switch (r.den()) {
-                case 112: return "large septimal minor third";
-                case 128: return "major limma";
+                case 112: return "septimal supraminor third";
+//                case 128: return "major limma";
                 default: break;
             }
             break;
@@ -1062,16 +1071,22 @@ const char *jiwheel_ratio_to_common_interval_name(t_rational r, long *num_octave
                 default: break;
             }
             break;
+        case 144:
+            switch (r.den()) {
+                case 125: return "just diminished third";
+                default: break;
+            }
+            break;
         case 160:
             switch (r.den()) {
                 case 81: return "octave minus syntonic comma";
-                case 121: return "narrow biyatismic fourth";
+//                case 121: return "narrow biyatismic fourth";
                 default: break;
             }
             break;
         case 161:
             switch (r.den()) {
-                case 128: return "just/Pythagorean major third meantone";
+                case 128: return "just-Pythagorean mean major third";
                 default: break;
             }
             break;
@@ -1101,33 +1116,33 @@ const char *jiwheel_ratio_to_common_interval_name(t_rational r, long *num_octave
             break;
         case 225:
             switch (r.den()) {
-                case 128: return "marvel five-limit harmonic seventh";
-                case 224: return "marvel comma";
+                case 128: return "5-limit harmonic seventh";
+//                case 224: return "marvel comma";
                 default: break;
             }
             break;
         case 243:
             switch (r.den()) {
                 case 128: return "Pythagorean major seventh";
-                case 224: return "septimal subtone";
+//                case 224: return "septimal subtone";
                 default: break;
             }
             break;
         case 250:
             switch (r.den()) {
-                case 243: return "porcupine comma";
+//                case 243: return "porcupine comma";
                 default: break;
             }
             break;
         case 256:
             switch (r.den()) {
-                case 243: return "Pythagorean limma";
+                case 243: return "Pythagorean minor second";
                 default: break;
             }
             break;
         case 525:
             switch (r.den()) {
-                case 512: return "avicennma";
+//                case 512: return "avicennma";
                 default: break;
             }
             break;
@@ -1139,25 +1154,25 @@ const char *jiwheel_ratio_to_common_interval_name(t_rational r, long *num_octave
             break;
         case 648:
             switch (r.den()) {
-                case 625: return "major diesis";
+//                case 625: return "major diesis";
                 default: break;
             }
             break;
         case 729:
             switch (r.den()) {
-                case 490: return "septimal sesquiaugmented acute fourth";
+//                case 490: return "septimal grave fifth";
                 default: break;
             }
             break;
         case 959:
             switch (r.den()) {
-                case 540: return "harmonic/Pythagorean/just minor seventh meantone";
+//                case 540: return "harmonic/Pythagorean/just minor seventh meantone";
                 default: break;
             }
             break;
         case 980:
             switch (r.den()) {
-                case 729: return "septimal sesquidiminished grave fifth";
+//                case 729: return "septimal sesquidiminished grave fifth";
                 default: break;
             }
             break;
@@ -1181,19 +1196,19 @@ const char *jiwheel_ratio_to_common_interval_name(t_rational r, long *num_octave
             break;
         case 3125:
             switch (r.den()) {
-                case 3072: return "small diesis";
+//                case 3072: return "small diesis";
                 default: break;
             }
             break;
         case 6272:
             switch (r.den()) {
-                case 5625: return "double marvelous second";
+//                case 5625: return "double marvelous second";
                 default: break;
             }
             break;
         case 16384:
             switch (r.den()) {
-                case 10935: return "12EDO-esque fifth";
+//                case 10935: return "12EDO-esque fifth";
                 default: break;
             }
             break;
@@ -1205,7 +1220,7 @@ const char *jiwheel_ratio_to_common_interval_name(t_rational r, long *num_octave
             break;
         case 59049:
             switch (r.den()) {
-                case 57344: return "Harrison's comma";
+//                case 57344: return "Harrison's comma";
                 default: break;
             }
             break;

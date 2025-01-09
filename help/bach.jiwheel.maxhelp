@@ -1925,6 +1925,94 @@
 						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
 								"box" : 								{
+									"id" : "obj-10",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 689.0, 113.0, 62.0, 23.0 ],
+									"presentation_linecount" : 2,
+									"text" : "F#{0:-1}0"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"bubble" : 1,
+									"bubbleside" : 2,
+									"fontname" : "Arial",
+									"fontsize" : 13.0,
+									"id" : "obj-9",
+									"linecount" : 3,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 698.0, 33.0, 112.0, 69.0 ],
+									"presentation_linecount" : 2,
+									"text" : "Or send pitch (preferably in 0th octave)"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-5",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 760.0, 113.0, 45.0, 23.0 ],
+									"text" : "C{-1}0"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"bubble" : 1,
+									"bubbleside" : 2,
+									"fontname" : "Arial",
+									"fontsize" : 13.0,
+									"id" : "obj-12",
+									"linecount" : 2,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 594.0, 15.0, 84.0, 55.0 ],
+									"text" : "Send ratio to locate it"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-6",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 611.0, 79.0, 41.0, 23.0 ],
+									"text" : "15/13"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontface" : 0,
+									"fontname" : "Arial",
+									"fontsize" : 13.0,
+									"id" : "obj-3",
+									"maxclass" : "bach.ratnum",
+									"maximum" : "none",
+									"minimum" : "none",
+									"numinlets" : 1,
+									"numoutlets" : 2,
+									"out" : "n",
+									"outlettype" : [ "", "bang" ],
+									"patching_rect" : [ 611.0, 113.0, 50.0, 23.0 ],
+									"text" : "15/13"
+								}
+
+							}
+, 							{
+								"box" : 								{
 									"attr" : "display",
 									"id" : "obj-15",
 									"maxclass" : "attrui",
@@ -1932,7 +2020,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 321.0, 107.0, 263.0, 23.0 ]
+									"patching_rect" : [ 10.0, 107.0, 263.0, 23.0 ]
 								}
 
 							}
@@ -1945,7 +2033,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 598.0, 107.0, 150.0, 23.0 ]
+									"patching_rect" : [ 283.0, 107.0, 150.0, 23.0 ]
 								}
 
 							}
@@ -2145,19 +2233,6 @@
 							}
 , 							{
 								"box" : 								{
-									"attr" : "colormode",
-									"id" : "obj-4",
-									"maxclass" : "attrui",
-									"numinlets" : 1,
-									"numoutlets" : 1,
-									"outlettype" : [ "" ],
-									"parameter_enable" : 0,
-									"patching_rect" : [ 10.0, 107.0, 296.0, 23.0 ]
-								}
-
-							}
-, 							{
-								"box" : 								{
 									"bubble" : 1,
 									"bubbleside" : 3,
 									"fontname" : "Arial",
@@ -2224,6 +2299,13 @@
  ],
 						"lines" : [ 							{
 								"patchline" : 								{
+									"destination" : [ "obj-1", 0 ],
+									"source" : [ "obj-10", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
 									"destination" : [ "obj-274", 0 ],
 									"hidden" : 1,
 									"source" : [ "obj-11", 0 ]
@@ -2256,7 +2338,21 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-1", 0 ],
-									"source" : [ "obj-4", 0 ]
+									"source" : [ "obj-3", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-1", 0 ],
+									"source" : [ "obj-5", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-3", 0 ],
+									"source" : [ "obj-6", 0 ]
 								}
 
 							}
@@ -2367,6 +2463,10 @@
 			}
 , 			{
 				"name" : "bach.jiwheel.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.ratnum.mxo",
 				"type" : "iLaX"
 			}
 , 			{
