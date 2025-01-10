@@ -1410,9 +1410,10 @@ void bach_init_bifs(t_bach *x)
     (*bifTable)["enharm"] = new t_mathBinaryFunctionAAA<hatom_fn_enharm>("enharm", "x", "y");
     (*bifTable)["makepitchsc"] = new t_mathBinaryFunctionAAA<hatom_fn_makepitchsc>("makepitchsc", "steps", "cents");
 
-    //(*bifTable)["makepitch"] = new t_mathTernaryFunctionAAAA<hatom_fn_makepitch>("makepitch", "degree", "alter", "octave");
+    //(*bifTable)["makepitch"] = new t_mathUnaryFunctionAA<hatom_fn_makepitch>("makepitch", "degree", "alter", "octave");
     (*bifTable)["makepitch"] = new t_fnMakepitch;
-    
+    (*bifTable)["makepitchji"] = new t_math4aryFunction<hatom_fn_makepitchji>("makepitchji", "whitekeyji", "sharps", "octave", "ratio");
+
     (*bifTable)["#u-"] = new t_mathUnaryFunctionAA<hatom_op_uminus>("#u-");
     (*bifTable)["#!"] = new t_mathUnaryFunctionAA<hatom_op_lognot>("#!");
     (*bifTable)["#~"] = new t_mathUnaryFunctionAA<hatom_op_bitnot>("#~");

@@ -2,41 +2,16 @@
 	"patcher" : 	{
 		"fileversion" : 1,
 		"appversion" : 		{
-			"major" : 8,
+			"major" : 9,
 			"minor" : 0,
-			"revision" : 2,
+			"revision" : 3,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 94.0, 79.0, 726.0, 638.0 ],
-		"bglocked" : 0,
-		"openinpresentation" : 0,
-		"default_fontsize" : 12.0,
-		"default_fontface" : 0,
-		"default_fontname" : "Arial",
-		"gridonopen" : 1,
+		"rect" : [ 134.0, 172.0, 726.0, 638.0 ],
 		"gridsize" : [ 15.0, 15.0 ],
-		"gridsnaponopen" : 1,
-		"objectsnaponopen" : 1,
-		"statusbarvisible" : 2,
-		"toolbarvisible" : 1,
-		"lefttoolbarpinned" : 0,
-		"toptoolbarpinned" : 0,
-		"righttoolbarpinned" : 0,
-		"bottomtoolbarpinned" : 0,
-		"toolbars_unpinned_last_save" : 0,
-		"tallnewobj" : 0,
-		"boxanimatetime" : 200,
-		"enablehscroll" : 1,
-		"enablevscroll" : 1,
-		"devicewidth" : 0.0,
-		"description" : "",
-		"digest" : "",
-		"tags" : "",
-		"style" : "",
-		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
 					"fontface" : 0,
@@ -49,7 +24,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 15.0, 2078.0, 664.0, 33.0 ],
-					"presentation_linecount" : 3,
 					"text" : "There is actually much more you can do with bell, but this would go far beyond the scope of this brief introduction. If you find all this intriguing, have a look at the bell help center, which contains the full documentation of the language."
 				}
 
@@ -65,8 +39,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 15.0, 2003.0, 585.0, 33.0 ],
-					"presentation_linecount" : 2,
+					"patching_rect" : [ 15.0, 2003.0, 588.0, 33.0 ],
 					"text" : "The lambda attribute is actually a code snippet written in bell, replacing a whole lambda loop built around the bach.intersection object!"
 				}
 
@@ -136,7 +109,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 15.0, 1836.0, 664.0, 33.0 ],
-					"presentation_linecount" : 2,
 					"text" : "Moreover, the bell language is not implemented in the bach.eval object only: you can use it to fine-tune the behavior of a growing number of other bach object. See this:"
 				}
 
@@ -178,7 +150,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$fibo = 1 1 ; \r\nwhile length($fibo) < $x1 repeat \r\n   $fibo _= $fibo:-1 + $fibo:-2 ",
+					"code" : "$fibo = 1 1 ; \nwhile length($fibo) < $x1 do \n   $fibo _= $fibo:-1 + $fibo:-2 ",
 					"fontsize" : 13.0,
 					"id" : "obj-2",
 					"maxclass" : "newobj",
@@ -187,6 +159,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 32.0, 1752.0, 113.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -205,8 +178,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 15.0, 1550.0, 663.0, 167.0 ],
-					"presentation_linecount" : 12,
+					"patching_rect" : [ 15.0, 1550.0, 664.0, 167.0 ],
 					"text" : "If you come from a traditional programming background, you might be interested in knowing that bach.eval is a full-fledged, if small, programming language, with a clear, but not strongly enforced, functional style. As such, it implements variables, user-defined functions (as first-class citizens, and including anonymous functions), looping structures and so on. You might wonder if it was really necessary to invent a new programming language, and the answer might even be no: but everything in bell has been conceived with Max and bach in mind, and is meant to integrate seamlessly with them, much more than a binding of any other language (say, Python or Lisp) would have allowed. \n\nIn principle, there is no limit to the complexity of the code you provide to bach.eval (you can write actual programs in bell), and you're not required to type it directly in the object box—it can be loaded from a text file, or entered into the text editor window which appears if you double-click on the object. Here's a slightly more complex example (a Fibonacci calculator) with the code in the editor window. Don't worry about the syntax for now—it's just for giving you a idea of the ground you can cover:"
 				}
 
@@ -219,7 +191,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 92.0, 1410.0, 42.0, 22.0 ],
-					"presentation_linecount" : 2,
 					"text" : "[1 2 3]"
 				}
 
@@ -269,6 +240,7 @@
 					"outlettype" : [ "", "", "" ],
 					"patching_rect" : [ 32.0, 1448.5, 368.0, 22.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -288,8 +260,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 15.0, 1349.0, 668.0, 47.0 ],
-					"presentation_linecount" : 4,
-					"text" : "Is that all? Of course not! Another cool feature of bell is that you can easily send data to different outlets, thus building your own spiced-up versions of objects such as route, if, and much more. Have a look at this example, ignoring some subtleties for now (such as the fact that bach.eval has a third outlet which we're not using, or the difference between = and ==):"
+					"text" : "Is that all? Of course not! Another cool feature of bell is that you can easily send data to different outlets, thus building your own spiced-up versions of objects such as route, if, and much more. Have a look at this example, ignoring some subtleties for now (such as the fact that bach.eval has a third outlet we're not using, or the difference between = and ==):"
 				}
 
 			}
@@ -314,41 +285,16 @@
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
-							"major" : 8,
+							"major" : 9,
 							"minor" : 0,
-							"revision" : 2,
+							"revision" : 3,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
 						"classnamespace" : "box",
 						"rect" : [ 135.0, 117.0, 369.0, 348.0 ],
-						"bglocked" : 0,
-						"openinpresentation" : 0,
-						"default_fontsize" : 12.0,
-						"default_fontface" : 0,
-						"default_fontname" : "Arial",
-						"gridonopen" : 1,
 						"gridsize" : [ 15.0, 15.0 ],
-						"gridsnaponopen" : 1,
-						"objectsnaponopen" : 1,
-						"statusbarvisible" : 2,
-						"toolbarvisible" : 1,
-						"lefttoolbarpinned" : 0,
-						"toptoolbarpinned" : 0,
-						"righttoolbarpinned" : 0,
-						"bottomtoolbarpinned" : 0,
-						"toolbars_unpinned_last_save" : 0,
-						"tallnewobj" : 0,
-						"boxanimatetime" : 200,
-						"enablehscroll" : 1,
-						"enablevscroll" : 1,
-						"devicewidth" : 0.0,
-						"description" : "",
-						"digest" : "",
-						"tags" : "",
-						"style" : "",
-						"subpatcher_template" : "",
 						"boxes" : [ 							{
 								"box" : 								{
 									"id" : "obj-57",
@@ -620,15 +566,13 @@
 								}
 
 							}
- ]
+ ],
+						"originid" : "pat-364"
 					}
 ,
 					"patching_rect" : [ 319.75, 928.0, 88.0, 22.0 ],
 					"saved_object_attributes" : 					{
-						"description" : "",
-						"digest" : "",
-						"globalpatchername" : "",
-						"tags" : ""
+						"globalpatchername" : ""
 					}
 ,
 					"text" : "p \"the old way\""
@@ -643,8 +587,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 58.0, 1194.0, 206.0, 22.0 ],
-					"text" : "addchord 1 [ 3000 [ 7200 500 127 ] ]"
+					"patching_rect" : [ 58.0, 1194.0, 206.0, 22.0 ]
 				}
 
 			}
@@ -702,13 +645,13 @@
 					"numinlets" : 6,
 					"numoutlets" : 8,
 					"numvoices" : 1,
-					"out" : "nnnnnnn",
-					"outlettype" : [ "", "", "", "", "", "", "", "bang" ],
+					"out" : "nnnnnnnn",
+					"outlettype" : [ "", "", "", "", "", "", "", "" ],
 					"patching_rect" : [ 32.25, 1233.0, 536.0, 76.0 ],
 					"pitcheditrange" : [ "null" ],
 					"stafflines" : [ 5 ],
 					"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ],
-					"versionnumber" : 80001,
+					"versionnumber" : 80900,
 					"voicenames" : [ "[", "]" ],
 					"voicespacing" : [ 0.0, 17.0 ]
 				}
@@ -725,6 +668,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 32.25, 1133.5, 320.0, 22.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -782,7 +726,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 15.0, 911.0, 685.0, 87.0 ],
-					"presentation_linecount" : 7,
 					"text" : "Of course you can do this with a combination of regular bach objects, but that would require many objects and connections, and the result would likely be much less easily readable:\n\nAnyway, we've barely scratched the surface yet! \nAmong the other things you can do with bell, here's a nice one: you can type lllls directly in the expression, and intermingle them with function calls, conditionals and all the other stuff we haven't seen yet."
 				}
 
@@ -832,6 +775,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 32.25, 848.0, 515.0, 22.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -851,7 +795,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 15.0, 773.0, 685.0, 33.0 ],
-					"presentation_linecount" : 2,
 					"text" : "Ok, this is not really interesting per se (we could have used the bach.intersection object), but imagine what you can do if you combine it with a conditional:"
 				}
 
@@ -876,7 +819,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 32.25, 636.0, 55.0, 22.0 ],
-					"presentation_linecount" : 3,
 					"text" : "1 2 3 4 5"
 				}
 
@@ -902,6 +844,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 32.25, 668.0, 223.0, 22.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -921,7 +864,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 15.0, 597.0, 685.0, 33.0 ],
-					"presentation_linecount" : 3,
 					"text" : "Did you notice the length($x1) part? It hints at something quite powerful: the idea is that functions in bach.eval are not just mathematical ones, but they replicate the behavior of the most important bach objects for manipulating lllls. For instance:"
 				}
 
@@ -946,7 +888,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 366.25, 470.0, 69.0, 22.0 ],
-					"presentation_linecount" : 3,
 					"text" : "0 3.141592"
 				}
 
@@ -984,6 +925,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 32.25, 502.0, 353.0, 22.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -1002,7 +944,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 15.0, 442.0, 490.0, 20.0 ],
-					"presentation_linecount" : 3,
 					"text" : "One thing you can't do with bach.expr is adding conditions to your expression. Look at this:"
 				}
 
@@ -1066,7 +1007,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 174.25, 309.0, 52.0, 22.0 ],
-					"presentation_linecount" : 2,
 					"text" : "100 200"
 				}
 
@@ -1119,6 +1059,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 32.25, 341.0, 161.0, 22.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -1480,16 +1421,25 @@
 
 			}
  ],
+		"originid" : "pat-362",
 		"dependency_cache" : [ 			{
-				"name" : "bach.hypercomment.mxo",
-				"type" : "iLaX"
-			}
-, 			{
 				"name" : "bach.eval.mxo",
 				"type" : "iLaX"
 			}
 , 			{
 				"name" : "bach.expr.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.hypercomment.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.intersection.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.length.mxo",
 				"type" : "iLaX"
 			}
 , 			{
@@ -1501,15 +1451,7 @@
 				"type" : "iLaX"
 			}
 , 			{
-				"name" : "bach.length.mxo",
-				"type" : "iLaX"
-			}
-, 			{
 				"name" : "bach.union.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.intersection.mxo",
 				"type" : "iLaX"
 			}
  ],

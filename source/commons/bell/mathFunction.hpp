@@ -101,6 +101,18 @@ public:
     }
 };
 
+template <void (*FN)(t_hatom*, t_hatom*, t_hatom*, t_hatom*, t_hatom*)>
+class t_math4aryFunction : public t_mathFunction<4>
+{
+public:
+    t_math4aryFunction(const char *n, const char *pn1, const char *pn2, const char *pn3, const char *pn4) : t_mathFunction<4>((method) FN, n) {
+        setArgument(pn1);
+        setArgument(pn2);
+        setArgument(pn3);
+        setArgument(pn4);
+    }
+};
+
 class t_fnRandom : public t_mathFunction<3>
 {
 public:

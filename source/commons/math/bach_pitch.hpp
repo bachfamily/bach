@@ -130,6 +130,8 @@ private:
             int i = 0;
             
             clear();
+            if (r.den() == 0)
+                return;
             
             if (what < 0)
                 what *= -1;
@@ -156,7 +158,7 @@ private:
         }
         
         void addFromRatio(const t_shortRational r) {
-            if (r.num() == 0)
+            if (r.num() == 0 || r.den() == 0)
                 return;
             t_shortRational what = r;
             int8_t exponent;
@@ -283,7 +285,7 @@ public:
     static const t_shortRational qrtrflat;
     static const t_shortRational eighthflat;
     
-    static const t_shortRational illegal;
+    static const t_tinyRational illegal;
     
     typedef struct _stepsAndMC {
         t_atom_long steps;
@@ -434,17 +436,31 @@ public:
         p_JIexpVector.addOctaves(addOctave);
     }
     
-    t_pitch(t_int8 whiteKeyJI, t_int8 sharps, t_int8 plof, const std::vector<t_int8> &HEJIcommas, const std::vector<t_int8> &exponents, const t_shortRational &r, const t_int8 octave = 0): p_whiteKeyET(0), p_alterET(0) {
-        plof += whiteKey2Plof_safe(whiteKeyJI) + sharps * 7;
+    inline static t_int8 whiteKeyAndSharps2Plof(const t_atom_long whiteKeyJI, const t_int8 sharps) {
+        return whiteKey2Plof_safe(whiteKeyJI) + sharps * 7;
+    }
+    
+    t_pitch(t_int8 whiteKeyJI, t_int8 sharps, t_int8 plof, const std::vector<t_int8> &HEJIcommas, const std::vector<t_int8> &exponents, const t_shortRational &r, const t_int8 octave = 0): p_whiteKeyET(0), p_alterET({0, 1}) {
+        plof += whiteKeyAndSharps2Plof(whiteKeyJI, sharps);
         setJI(plof, HEJIcommas, octave - sharps * 4 / 7);
         p_JIexpVector += exponents;
-        p_JIexpVector.addFromRatio(r);
+        if (r.den())
+            p_JIexpVector.addFromRatio(r);
+        else {
+            p_alterET = illegal;
+            p_JIexpVector.clear();
+        }
     }
     
     void setJI(const t_shortRational r) {
-        p_JIexpVector.setFromRatio(r);
         p_whiteKeyET = 0;
-        p_alterET = {0, 1};
+        if (r.den()) {
+            p_alterET = {0, 1};
+            p_JIexpVector.setFromRatio(r);
+        } else {
+            p_alterET = illegal;
+            p_JIexpVector.clear();
+        }
     }
     
     void setET(const t_atom_short whiteKey) {
@@ -468,9 +484,14 @@ public:
     
     void set(const t_atom_short degree, const t_tinyRational &alter, const t_shortRational &r, const t_int8 addOctave = 0) {
         p_whiteKeyET = degree;
-        p_alterET = alter;
-        setJI(r);
-        p_JIexpVector.addOctaves(addOctave);
+        if (r.den()) {
+            p_alterET = alter;
+            setJI(r);
+            p_JIexpVector.addOctaves(addOctave);
+        } else {
+            p_alterET = illegal;
+            p_JIexpVector.clear();
+        }
     }
     
     double toMCdouble() const;
@@ -511,12 +532,15 @@ public:
     bool isPureJI() const { return !isNaP() && p_whiteKeyET == 0 && p_alterET.num() == 0; }
     bool isPurePythagorean() const { return isPureJI() && p_JIexpVector.allZerosButOctavesAndTwelfths(); }
     
-    
-    
     void setJI(const t_rational r) {
         p_whiteKeyET = 0;
-        p_alterET.set(0);
-        p_JIexpVector.setFromRatio(r);
+        if (r.den()) {
+            p_alterET.set(0);
+            p_JIexpVector.setFromRatio(r);
+        } else {
+            p_alterET = illegal;
+            p_JIexpVector.clear();
+        }
     }
     
     void addJIratio(const t_shortRational r) {
@@ -824,7 +848,7 @@ public:
             std::vector<int8_t> commas = getHEJICommas();
             long len_commas = commas.size();
             long primeidx = primes_locate[primelimit];
-            for (int i = MAX(0, primeidx-1); i < len_commas; i++) {
+            for (long i = MAX(0, primeidx-1); i < len_commas; i++) {
                 commas[i] = 0;
             }
             return t_pitch(p_whiteKeyET, p_alterET, getPlofJI(), commas, getOctave());
