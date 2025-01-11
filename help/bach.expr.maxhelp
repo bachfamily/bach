@@ -3,14 +3,14 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 3,
-			"revision" : 0,
+			"minor" : 6,
+			"revision" : 1,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 119.0, 113.0, 1051.0, 521.0 ],
+		"rect" : [ 100.0, 100.0, 1051.0, 521.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -52,8 +52,8 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 3,
-							"revision" : 0,
+							"minor" : 6,
+							"revision" : 1,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -534,8 +534,8 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 3,
-							"revision" : 0,
+							"minor" : 6,
+							"revision" : 1,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -1136,8 +1136,8 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 3,
-							"revision" : 0,
+							"minor" : 6,
+							"revision" : 1,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -1637,14 +1637,14 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 3,
-							"revision" : 0,
+							"minor" : 6,
+							"revision" : 1,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 119.0, 139.0, 1051.0, 495.0 ],
+						"rect" : [ 100.0, 126.0, 1051.0, 495.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -1723,7 +1723,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 318.0, 780.0, 166.0 ],
 									"text" : "mod (positive modulo)\npow, sqrt, exp, exp2, log, log2, log10\ncos, sin, tan, acos, asin, atan, atan2, cosh, sinh, tanh, acosh, asinh, atanh, hypot\nbessel (integer-order bessel functions. First parameter is order, second is x).\nsgn, abs, floor, ceil, round, trunc, fmod\nrandom (int random number within a range - takes two arguments)\nint, float, rat (force to the corresponding data type)\nnum, den (return the corresponding element of a rational)\n\nall the functions always return floats, except pow, abs (whose return type depends on the incoming types), sgn, int, num, den, random (which return ints), rat (which returns a rational or an int), makepitch, degree, alter and octave (see the \"pitch functions\" tab).",
-									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
+									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
 
 							}
@@ -1738,7 +1738,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 326.0, 188.0, 346.0, 108.0 ],
 									"text" : "** raises to power (equivalent to the pow function)\n/ with two int operands returns an int or a rational\n// with two int operands always returns an int\n^ is bitwise xor\n^^ is logical xor\nsymbol + symbol concatenates them\nsymbol * number concatenates the symbol to itself N times",
-									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
+									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
 
 							}
@@ -1753,7 +1753,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 92.0, 276.0, 210.0 ],
 									"text" : "14 ! ~ right to left\n13  ** right to left\n12  + - (unary) right to left\n11  * / % // left to right\n10 + - left to right\n9   << >> left to right\n8   < <= > >= left to right\n7   == != left to right\n6   & left to right\n5   ^ left to right\n4   | left to right\n3  && left to right\n2  ^^ left to right\n1  || left to right",
-									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
+									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
 
 							}
@@ -1803,8 +1803,8 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 3,
-							"revision" : 0,
+							"minor" : 6,
+							"revision" : 1,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -2099,7 +2099,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 10.0, 70.0, 811.0, 50.0 ],
+									"patching_rect" : [ 10.0, 70.0, 814.0, 50.0 ],
 									"text" : "In addition to the usual variable prefixes $i... (integers), $f... (floats) and the bach prefixes $r... (rationals), $p... (pitches) and $s... (symbols), bach.expr accepts a \"neutral\" variable type, expressed as $x...\nWhen a $x... variable is encountered, the type of the corresponding incoming value is simply preserved."
 								}
 
@@ -2234,8 +2234,8 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 3,
-							"revision" : 0,
+							"minor" : 6,
+							"revision" : 1,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -2694,8 +2694,8 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 3,
-							"revision" : 0,
+							"minor" : 6,
+							"revision" : 1,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -3378,8 +3378,8 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 3,
-							"revision" : 0,
+							"minor" : 6,
+							"revision" : 1,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -3863,8 +3863,8 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 3,
-							"revision" : 0,
+							"minor" : 6,
+							"revision" : 1,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -4381,8 +4381,8 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 3,
-							"revision" : 0,
+							"minor" : 6,
+							"revision" : 1,
 							"architecture" : "x64",
 							"modernui" : 1
 						}

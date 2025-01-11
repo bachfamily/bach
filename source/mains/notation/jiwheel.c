@@ -1396,9 +1396,9 @@ void C74_EXPORT ext_main(void *moduleRef)
 
     CLASS_ATTR_DEFAULT(c, "fontsize", 0, "24"); // new font size
     // @exclude bach.jiwheel
-    CLASS_ATTR_DEFAULT(c, "patching_rect", 0, "0 0 850 600"); // new dimensions
+    CLASS_ATTR_DEFAULT(c, "patching_rect", 0, "0 0 600 400"); // new dimensions
     // @exclude bach.jiwheel
-    CLASS_ATTR_DEFAULT(c, "presentation_rect", 0, "0 0 850 600"); // new dimensions
+    CLASS_ATTR_DEFAULT(c, "presentation_rect", 0, "0 0 600 400"); // new dimensions
     // @exclude bach.jiwheel
     CLASS_ATTR_DEFAULT(c, "fontname", 0, "Times New Roman"); // new dimensions
     // @exclude bach.jiwheel
