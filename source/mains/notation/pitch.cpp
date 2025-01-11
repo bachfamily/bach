@@ -166,6 +166,8 @@ void C74_EXPORT ext_main(void *moduleRef)
     CLASS_ATTR_SYM_VARSIZE(c, "from", 0, t_pitchobj, dummySym, dummyLong, LLLL_MAX_INLETS);
     CLASS_ATTR_ACCESSORS(c, "from", nullptr, pitchobj_setattr_from);
     CLASS_ATTR_INVISIBLE(c, "from", ATTR_GET_OPAQUE | ATTR_SET_OPAQUE_USER);
+    CLASS_ATTR_LABEL(c, "from", 0, "Incoming Pitch Information");
+
     // @description The <m>from</m> static attribute declares the types of information
     // that will be received by <o>bach.pitch</o>'s individual inlets. <br />
     // Each inlet type is specified by a symbol,
@@ -200,6 +202,7 @@ void C74_EXPORT ext_main(void *moduleRef)
     CLASS_ATTR_SYM_VARSIZE(c, "to", 0, t_pitchobj, dummySym, dummyLong, LLLL_MAX_INLETS);
     CLASS_ATTR_ACCESSORS(c, "to", nullptr, pitchobj_setattr_to);
     CLASS_ATTR_INVISIBLE(c, "to", ATTR_GET_OPAQUE | ATTR_SET_OPAQUE_USER);
+    CLASS_ATTR_LABEL(c, "to", 0, "Resulting Pitch Information");
     // @description The <m>from</m> static attribute declares the types of information
     // that will be received by <o>bach.pitch</o>'s individual inlets. <br />
     // Each inlet type is specified by a symbol,
