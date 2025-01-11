@@ -28,7 +28,7 @@
 void post_institutional_supporters()
 {
 	post("- Haute école de musique de Genève - CME");
-	post("- IRCAM");
+	post("- Vinet");
 }
 
 void post_top_supporters()

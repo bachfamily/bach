@@ -43,7 +43,7 @@
     Performs construction of pitches, as well as queries of their components.
     
     @discussion
-    bach.pitchobj accepts microtones following the ASCII convention used throughout bach. <br/>
+    bach.pitchobj accepts microtones following the ASCII convention used throughout bach.  <br />
     @copy BACH_DOC_ASCII_ACCIDENTALS_SYNTAX
     
     @category
@@ -167,21 +167,22 @@ void C74_EXPORT ext_main(void *moduleRef)
     CLASS_ATTR_ACCESSORS(c, "from", nullptr, pitchobj_setattr_from);
     CLASS_ATTR_INVISIBLE(c, "from", ATTR_GET_OPAQUE | ATTR_SET_OPAQUE_USER);
     // @description The <m>from</m> static attribute declares the types of information
-    // that will be received by <o>bach.pitch</o>'s individual inlets.<br/>
+    // that will be received by <o>bach.pitch</o>'s individual inlets. <br />
     // Each inlet type is specified by a symbol,
     // and as many inlets as symbols provided through the <m>from</m> attribute are created.
-    // The available symbols and corresponding inlet types are:<br/>
-    // <b>pitch</b> (a whole pitch literal, such as <m>C#0+1/6t+C{1:-1}4+17/16r<m/><br/>
-    // <b>etwhitekey</b> (the "white key" of the equal-tempered part, expressed as an integer from 0 to 6: for instance, 0 is C and 4 is G)<br/>
-    // <b>etalter</b> (the alteration in whole tones or fractions thereof of the equal-tempered part, expressed as an integer or fraction: for instance, -1/2 is a descending chromatic semitone, that is, a flat)<br/>
-    // <b>octave</b> (the octave of the pitch, with middle C at octave 5)<br/>
-    // <b>jiwhitekey</b> (the "white key" of the just intonation part, expressed as above)<br/>
-    // <b>jisharps</b> (the Pythagorean alteration of the just intonation part, expressed as the number of sharps or, if negative, flats, with respect to the white key: for instance, 1 means one sharp above the white key; -2 means one double flat below the white key)<br/>
-    // <b>jiplof</b> (the "PLOF", or Pitch in the Line of Fifths, that is, an integer counting how many Pythagorean fifths the just intonation part is above C0: for example, 4 means E{}2; -1 means F{}-1 or, equivalently, -G{}0)<br/>
-    // <b>commas</b> (a list containing a vector of HEJI commas for the just intonation part)<br/>
-    // <b>jiratio</b> (a rational expressing the frequency ratio of the just intonation part with respect to C0: for example, 3/2 means one Pythagorean fifth above C0, that is, G{}0)<br/>
-    // <b>monzo</b> (the Monzo vector of the just intonation part, that is, the list of the prime-factor exponents that constitute the frequency ratio)<br/>
-    // So, for example, <m>from jiwhitekey commas octave</m> creates three inlets, one for each corresponding symbol.<br/>
+    // The available symbols and corresponding inlet types are: <br />
+    // <b>pitch</b> (a whole pitch literal, such as <m>C#0+1/6t+C{1:-1}4+17/16r</m> <br />
+    // <b>etwhitekey</b> (the "white key" of the equal-tempered part, expressed as an integer from 0 to 6:
+    // for instance, 0 is C and 4 is G)  <br />
+    // <b>etalter</b> (the alteration in whole tones or fractions thereof of the equal-tempered part, expressed as an integer or fraction: for instance, -1/2 is a descending chromatic semitone, that is, a flat) <br />
+    // <b>octave</b> (the octave of the pitch, with middle C at octave 5) <br />
+    // <b>jiwhitekey</b> (the "white key" of the just intonation part, expressed as above) <br />
+    // <b>jisharps</b> (the Pythagorean alteration of the just intonation part, expressed as the number of sharps or, if negative, flats, with respect to the white key: for instance, 1 means one sharp above the white key; -2 means one double flat below the white key) <br />
+    // <b>jiplof</b> (the "PLOF", or Pitch in the Line of Fifths, that is, an integer counting how many Pythagorean fifths the just intonation part is above C0: for example, 4 means E{}2; -1 means F{}-1 or, equivalently, -G{}0) <br />
+    // <b>commas</b> (a list containing a vector of HEJI commas for the just intonation part) <br />
+    // <b>jiratio</b> (a rational expressing the frequency ratio of the just intonation part with respect to C0: for example, 3/2 means one Pythagorean fifth above C0, that is, G{}0) <br />
+    // <b>monzo</b> (the Monzo vector of the just intonation part, that is, the list of the prime-factor exponents that constitute the frequency ratio) <br />
+    // So, for example, <m>from jiwhitekey commas octave</m> creates three inlets, one for each corresponding symbol. <br />
     // If the attribute is not set, a single <b>pitch</b> inlet is created by default.
     // @copy BACH_DOC_STATIC_ATTR
     
@@ -189,21 +190,30 @@ void C74_EXPORT ext_main(void *moduleRef)
     CLASS_ATTR_ACCESSORS(c, "to", nullptr, pitchobj_setattr_to);
     CLASS_ATTR_INVISIBLE(c, "to", ATTR_GET_OPAQUE | ATTR_SET_OPAQUE_USER);
     // @description The <m>to</m> static attribute declares the types of information
-    // that will be output by <o>bach.pitch</o>'s individual outlets.<br/>
+    // that will be output by <o>bach.pitch</o>'s individual outlets. <br />
     // Each outlet type is specified by a symbol,
     // and as many outlets as symbols provided through the <m>from</m> attribute are created.
-    // The available symbols and corresponding outlet types are:<br/>
-    // <b>pitch</b> (a whole pitch literal, such as <m>C#0+1/6t+C{1:-1}4+17/16r<m/><br/>
-    // <b>etwhitekey</b> (the "white key" of the equal-tempered part, expressed as an integer from 0 to 6: for instance, 0 is C and 4 is G)<br/>
-    // <b>etalter</b> (the alteration in whole tones or fractions thereof of the equal-tempered part, expressed as an integer or fraction: for instance, -1/2 is a descending chromatic semitone, that is, a flat)<br/>
-    // <b>octave</b> (the octave of the pitch, with middle C at octave 5)<br/>
-    // <b>jiwhitekey</b> (the "white key" of the just intonation part, expressed as above)<br/>
-    // <b>jisharps</b> (the Pythagorean alteration of the just intonation part, expressed as the number of sharps or, if negative, flats, with respect to the white key: for instance, 1 means one sharp above the white key; -2 means one double flat below the white key)<br/>
-    // <b>jiplof</b> (the "PLOF", or Pitch in the Line of Fifths, that is, an integer counting how many Pythagorean fifths the just intonation part is above C0: for example, 4 means E{}2; -1 means F{}-1 or, equivalently, -G{}0)<br/>
-    // <b>commas</b> (a list containing a vector of HEJI commas for the just intonation part)<br/>
-    // <b>jiratio</b> (a rational expressing the frequency ratio of the just intonation part with respect to C0: for example, 3/2 means one Pythagorean fifth above C0, that is, G{}0)<br/>
-    // <b>monzo</b> (the Monzo vector of the just intonation part, that is, the list of the prime-factor exponents that constitute the frequency ratio)<br/>
-    // So, for example, <m>from jiwhitekey commas octave</m> creates three outlets, one for each corresponding symbol.<br/>
+    // The available symbols and corresponding outlet types are: <br />
+    // <b>pitch</b> (a whole pitch literal, such as <m>C#0+1/6t+C{1:-1}4+17/16r</m> <br />
+    // <b>etwhitekey</b> (the "white key" of the equal-tempered part, expressed as an
+    // integer from 0 to 6: for instance, 0 is C and 4 is G) <br />
+    // <b>etalter</b> (the alteration in whole tones or fractions thereof of the equal-tempered part, expressed
+    // as an integer or fraction: for instance, -1/2 is a descending chromatic semitone, that is, a flat) <br />
+    // <b>octave</b> (the octave of the pitch, with middle C at octave 5) <br />
+    // <b>jiwhitekey</b> (the "white key" of the just intonation part, expressed as above) <br />
+    // <b>jisharps</b> (the Pythagorean alteration of the just intonation part, expressed as the number of sharps 
+    // or, if negative, flats, with respect to the white key: for instance, 1 means one sharp above the white
+    // key; -2 means one double flat below the white key) <br />
+    // <b>jiplof</b> (the "PLOF", or Pitch in the Line of Fifths, that is, an integer counting how many Pythagorean
+    // fifths the just intonation part is above C0: for example, 4 means E{}2; -1 means F{}-1 or,
+    // equivalently, -G{}0) <br />
+    // <b>commas</b> (a list containing a vector of HEJI commas for the just intonation part) <br />
+    // <b>jiratio</b> (a rational expressing the frequency ratio of the just intonation part with respect 
+    // to C0: for example, 3/2 means one Pythagorean fifth above C0, that is, G{}0) <br />
+    // <b>monzo</b> (the Monzo vector of the just intonation part, that is, the list of the prime-factor
+    // exponents that constitute the frequency ratio) <br />
+    // So, for example, <m>from jiwhitekey commas octave</m> creates three outlets, one for each
+    // corresponding symbol. <br />
     // If the attribute is not set, a single <b>pitch</b> outlet is created by default.
     // @copy BACH_DOC_STATIC_ATTR
 
