@@ -2,14 +2,15 @@
 	"patcher" : 	{
 		"fileversion" : 1,
 		"appversion" : 		{
-			"major" : 7,
-			"minor" : 3,
-			"revision" : 4,
+			"major" : 8,
+			"minor" : 6,
+			"revision" : 1,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 368.0, 79.0, 617.0, 539.0 ],
+		"classnamespace" : "box",
+		"rect" : [ 134.0, 172.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -36,6 +37,7 @@
 		"tags" : "",
 		"style" : "",
 		"subpatcher_template" : "",
+		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
 					"fontname" : "Arial",
@@ -46,9 +48,8 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 186.0, 602.0, 65.0 ],
-					"style" : "",
 					"text" : "The nested list has been chosen for both similarity with the Lisp language, in a way to ease communication with the major existing CAC environment, and the need to establish a data structure powerful enough to represent the complexity of a musical score, but flexible enough to be a generic data container lending itself to arbitrary manipulations through a relatively small set of primitives.",
-					"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
+					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
 			}
@@ -64,7 +65,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 358.0, 522.0, 21.0 ],
-					"style" : "",
 					"text" : "Tip: If you press Shift+B, an empty box containing the \"bach.\" word immediately appears!",
 					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
@@ -81,7 +81,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 328.0, 430.0, 266.0, 40.0 ],
-					"style" : "",
 					"text" : "it is possible to perform matrix calculus only on matrix-structured lllls"
 				}
 
@@ -101,7 +100,6 @@
 						"versionnumber" : 80001
 					}
 ,
-					"style" : "",
 					"text" : "bach.reg"
 				}
 
@@ -116,7 +114,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 451.0, 406.0, 51.0, 23.0 ],
-					"style" : "",
 					"text" : "bach.+"
 				}
 
@@ -131,7 +128,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 397.0, 406.0, 48.0, 23.0 ],
-					"style" : "",
 					"text" : "bach.*"
 				}
 
@@ -146,7 +142,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "int" ],
 					"patching_rect" : [ 255.5, 441.0, 69.0, 23.0 ],
-					"style" : "",
 					"text" : "bach.rank"
 				}
 
@@ -161,7 +156,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 92.5, 441.0, 61.0, 23.0 ],
-					"style" : "",
 					"text" : "bach.det"
 				}
 
@@ -180,7 +174,6 @@
 						"versionnumber" : 80001
 					}
 ,
-					"style" : "",
 					"text" : "bach.mtimes"
 				}
 
@@ -197,7 +190,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 396.5, 313.0, 40.0 ],
-					"style" : "",
 					"text" : "it is possible to perform mathematical operations over lllls solely composed by numbers"
 				}
 
@@ -216,7 +208,6 @@
 						"versionnumber" : 80001
 					}
 ,
-					"style" : "",
 					"text" : "bach.expr"
 				}
 
@@ -230,7 +221,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 375.0, 574.0, 21.0 ],
-					"style" : "",
 					"text" : "Some subsets of the library are applicable to lllls satisfying certain given conditions:",
 					"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
 				}
@@ -250,7 +240,6 @@
 						"versionnumber" : 80001
 					}
 ,
-					"style" : "",
 					"text" : "bach.join"
 				}
 
@@ -269,7 +258,6 @@
 						"versionnumber" : 80001
 					}
 ,
-					"style" : "",
 					"text" : "bach.slice"
 				}
 
@@ -288,7 +276,6 @@
 						"versionnumber" : 80001
 					}
 ,
-					"style" : "",
 					"text" : "bach.sort"
 				}
 
@@ -307,7 +294,6 @@
 						"versionnumber" : 80001
 					}
 ,
-					"style" : "",
 					"text" : "bach.rev"
 				}
 
@@ -326,7 +312,6 @@
 						"versionnumber" : 80001
 					}
 ,
-					"style" : "",
 					"text" : "bach.rev"
 				}
 
@@ -345,7 +330,6 @@
 						"versionnumber" : 80001
 					}
 ,
-					"style" : "",
 					"text" : "bach.iter"
 				}
 
@@ -364,7 +348,6 @@
 						"versionnumber" : 80001
 					}
 ,
-					"style" : "",
 					"text" : "bach.nth"
 				}
 
@@ -380,7 +363,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 355.0, 132.0, 81.0, 22.0 ],
-					"style" : "",
 					"text" : "loadmess set"
 				}
 
@@ -395,7 +377,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 306.0, 85.0, 81.0, 23.0 ],
-					"style" : "",
 					"text" : "[john [paul]]"
 				}
 
@@ -411,7 +392,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 143.0, 85.0, 46.0, 25.0 ],
-					"style" : "",
 					"text" : "lllls"
 				}
 
@@ -425,8 +405,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 222.0, 147.0, 91.0, 23.0 ],
-					"style" : ""
+					"patching_rect" : [ 222.0, 147.0, 91.0, 23.0 ]
 				}
 
 			}
@@ -444,7 +423,6 @@
 						"versionnumber" : 80001
 					}
 ,
-					"style" : "",
 					"text" : "bach.flat 1 @out t"
 				}
 
@@ -459,7 +437,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 195.0, 85.0, 99.0, 23.0 ],
-					"style" : "",
 					"text" : "[1 2 3] [[4 5] 6]"
 				}
 
@@ -476,7 +453,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 13.0, 271.0, 344.0, 69.0 ],
-					"style" : "",
 					"text" : "The large majority of the modules of the bach library are tools for working upon lllls, performing basic operations such as retrieval of individual elements, iteration, reversal, sorting, splicing, merging and so on. "
 				}
 
@@ -490,7 +466,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 518.0, 585.0, 19.0 ],
-					"style" : "",
 					"text" : "See Also: data+type, llll",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
@@ -506,7 +481,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 497.0, 585.0, 19.0 ],
-					"style" : "",
 					"text" : "Objects: all",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "objects"
@@ -523,7 +497,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 8.0, 282.0, 23.0 ],
-					"style" : "",
 					"text" : "Lisp-like linked lists",
 					"varname" : "title"
 				}
@@ -538,7 +511,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"style" : "",
 					"text" : "Tags: introduction, bach, data, type, llll, lisp, like, linked, list, modules",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
@@ -555,9 +527,8 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 32.0, 611.0, 36.0 ],
-					"style" : "",
 					"text" : "Importantly, bach provides max with a nested list structure called llll, an acronym for Lisp-like linked list. \n(To Lisp-like linked lists is dedicated an entire section of the bach Help Center.)",
-					"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
+					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
 			}
@@ -593,67 +564,29 @@
 			}
  ],
 		"dependency_cache" : [ 			{
-				"name" : "bach.det.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
-				"patcherrelativepath" : "../patchers",
-				"type" : "JSON",
-				"implicit" : 1
-			}
-, 			{
-				"name" : "bach.rank.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
-				"patcherrelativepath" : "../patchers",
-				"type" : "JSON",
-				"implicit" : 1
-			}
-, 			{
-				"name" : "bach.times.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
-				"patcherrelativepath" : "../patchers",
-				"type" : "JSON",
-				"implicit" : 1
-			}
-, 			{
 				"name" : "bach.+.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
-				"name" : "bach.flat.mxo",
+				"name" : "bach.args.mxo",
 				"type" : "iLaX"
 			}
 , 			{
-				"name" : "bach.nth.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.iter.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.rev.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.sort.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.slice.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.join.mxo",
-				"type" : "iLaX"
+				"name" : "bach.det.maxpat",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/patchers",
+				"patcherrelativepath" : "../patchers",
+				"type" : "JSON",
+				"implicit" : 1
 			}
 , 			{
 				"name" : "bach.expr.mxo",
 				"type" : "iLaX"
 			}
 , 			{
-				"name" : "bach.mtimes.mxo",
+				"name" : "bach.flat.mxo",
 				"type" : "iLaX"
 			}
 , 			{
@@ -661,16 +594,54 @@
 				"type" : "iLaX"
 			}
 , 			{
+				"name" : "bach.iter.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.join.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.mtimes.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.nth.mxo",
+				"type" : "iLaX"
+			}
+, 			{
 				"name" : "bach.portal.mxo",
 				"type" : "iLaX"
 			}
 , 			{
-				"name" : "bach.args.mxo",
-				"type" : "iLaX"
+				"name" : "bach.rank.maxpat",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/patchers",
+				"patcherrelativepath" : "../patchers",
+				"type" : "JSON",
+				"implicit" : 1
 			}
 , 			{
 				"name" : "bach.reg.mxo",
 				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.rev.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.slice.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.sort.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.times.maxpat",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/patchers",
+				"patcherrelativepath" : "../patchers",
+				"type" : "JSON",
+				"implicit" : 1
 			}
  ],
 		"autosave" : 0
