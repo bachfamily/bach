@@ -261,7 +261,7 @@
 				"filename" : [ "bach.help.bell.040_variables.100_richassignmentsyntax.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
 				"seealso" : [ "colon" ],
-				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "variable", "rich", "assignment", "substitution" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "variable", "rich", "assignment", "substitution", "nth", "dot", "key", "pick" ],
 				"title" : [ "Rich assignment syntax" ]
 			},
 			"Moreaboutrichassignmentsyntax" : {

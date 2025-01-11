@@ -395,22 +395,6 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
-		<attribute name="commas" get="1" set="1" type="llll" size="1">
-			<digest>
-				Allowed Commas
-			</digest>
-			<description>
-				Sets the commas used if <m>mode</m> is 1. Leave this to "auto" for automatic zooming
-				(and tailor the <m>density</m> attribute in this case).
-			</description>
-			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Allowed Commas" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text_large" />
-			</attributelist>
-		</attribute>
 		<attribute name="density" get="1" set="1" type="float" size="1">
 			<digest>
 				Density
@@ -523,17 +507,17 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
-		<attribute name="formaloctave" get="1" set="1" type="int" size="1">
+		<attribute name="formaloctave" get="1" set="1" type="llll" size="1">
 			<digest>
-				Formal Octave Harmonic
+				Formal Octave Ratio
 			</digest>
 			<description>
-				Sets the harmonic number corresponding to the formal octave (defaults to 2: actual octave)
+				Sets the harmonic ratio corresponding to the formal octave (defaults to 2: actual octave)
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
-				<attribute name="default" get="1" set="1" type="int" size="1" value="2" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Formal Octave Harmonic" />
+				<attribute name="default" get="1" set="1" type="llll" size="1" value="2" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Formal Octave Ratio" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
@@ -653,6 +637,59 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
+		<attribute name="jicommas" get="1" set="1" type="llll" size="1">
+			<digest>
+				Allowed Commas
+			</digest>
+			<description>
+				Sets the Just Intonation commas used if <m>mode</m> is 1. Leave this to "auto" for automatic zooming
+				(and tailor the <m>density</m> attribute in this case).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Allowed Commas" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text_large" />
+			</attributelist>
+		</attribute>
+		<attribute name="jilimit" get="1" set="1" type="int" size="1">
+			<digest>
+				JI Limit
+			</digest>
+			<description>
+				The <m>jilimit</m> attributes allows you to set a maximum just intonation limit
+				for an interval (as frequency ratio) showing up in the output. (0 means: any, which is the default.)
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="JI Limit" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="jiprimes" get="1" set="1" type="atom_array" size="0">
+			<digest>
+				Allowed Primes
+			</digest>
+			<description>
+				Sets the allowed primes for the displayed pitches. Leave "any" to unconstrain.
+				Use the less or equal sign as first symbol to select limits less or equal to a certain number.
+				Notice that this is slightly different than <m>limits</m>: when using <m>limits</m> one
+				is constraining the highest prime appearing in the ratio, while when using <m>primes</m>
+				one is constraining _all_ the primes appearing in the ratio.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
+				<attribute name="default" get="1" set="1" type="atom_array" size="0" value="any" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Allowed Primes" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
 		<attribute name="legendcolor" get="1" set="1" type="rgba" size="1">
 			<digest>
 				Legend Color
@@ -695,23 +732,6 @@
 				<attribute name="default" get="1" set="1" type="float" size="1" value="12" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Legend Font Size" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
-			</attributelist>
-		</attribute>
-		<attribute name="limits" get="1" set="1" type="atom_array" size="0">
-			<digest>
-				Allowed Limits
-			</digest>
-			<description>
-				Sets the allowed limits for the displayed pitches. Leave "any" to unconstrain.
-				Use the less or equal sign as first symbol to select limits less or equal to a certain number.
-			</description>
-			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
-				<attribute name="default" get="1" set="1" type="atom_array" size="0" value="any" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Allowed Limits" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -785,8 +805,8 @@
 				Mode
 			</digest>
 			<description>
-				Sets the representation mode: either up to a maximum term for numerator/denominator (0) or using prime limits,
-				by combining just intonation commas (1). In the first case, see <m>maxterm</m>. In the second, see <m>fifthext</m> and <m>commas</m>.
+				Sets the representation mode: either up to a maximum term for numerator/denominator (0) or by combining
+				just intonation commas (1). In the first case, see <m>maxterm</m>. In the second, see <m>fifthext</m> and <m>commas</m>.
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
@@ -854,26 +874,6 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="5" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Output Octave" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
-			</attributelist>
-		</attribute>
-		<attribute name="primes" get="1" set="1" type="atom_array" size="0">
-			<digest>
-				Allowed Primes
-			</digest>
-			<description>
-				Sets the allowed primes for the displayed pitches. Leave "any" to unconstrain.
-				Use the less or equal sign as first symbol to select limits less or equal to a certain number.
-				Notice that this is slightly different than <m>limits</m>: when using <m>limits</m> one
-				is constraining the highest prime appearing in the ratio, while when using <m>primes</m>
-				one is constraining _all_ the primes appearing in the ratio.
-			</description>
-			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
-				<attribute name="default" get="1" set="1" type="atom_array" size="0" value="any" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Allowed Primes" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />

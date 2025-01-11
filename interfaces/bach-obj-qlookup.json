@@ -2058,7 +2058,7 @@
     }
   },
   "bach.pitch": {
-    "digest": "Construction and query of pitches",
+    "digest": "Construction and query of pitches and their components",
     "module": "bach",
     "category": [
       "bach",
