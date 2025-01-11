@@ -419,6 +419,16 @@ void hatom_fn_makepitchsc(t_hatom *a1, t_hatom *a2, t_hatom *res)
     hatom_setpitch(res, t_pitch(smc));
 }
 
+void hatom_fn_makepitchji(t_hatom *h1, t_hatom *h2, t_hatom *h3, t_hatom *h4, t_hatom *res)
+{
+    const t_int8 whitekeyJI = (t_int8) hatom_getlong(h1);
+    const t_int8 sharps = (t_int8) hatom_getlong(h2);
+    const t_int8 octave = (t_int8) hatom_getlong(h3);
+    const t_shortRational ratio = (t_shortRational) hatom_getrational(h4);
+    hatom_setpitch(res,
+                   t_pitch(whitekeyJI, sharps, 0, std::vector<t_int8>(), std::vector<t_int8>(), ratio, octave));
+}
+
 void hatom_fn_cents(t_hatom *a1, t_hatom *res)
 {
     if (hatom_gettype(a1) == H_PITCH) {
@@ -748,7 +758,6 @@ void hatom_fn_fold(t_hatom *h1, t_hatom *h2, t_hatom *res)
         const t_rational r = r1.fold(r2);
         hatom_setrational(res, r);
     }
-        
 }
 
 void hatom_fn_approx(t_hatom *a1, t_hatom *a2, t_hatom *res)
@@ -775,6 +784,12 @@ void hatom_fn_enharm(t_hatom *a1, t_hatom *a2, t_hatom *res)
 {
     t_pitch p = hatom_getpitch(a1);
     hatom_setpitch(res, p.enharm(hatom_getlong(a2)));
+}
+
+void hatom_fn_pitchji(t_hatom *a1, t_hatom *res)
+{
+    t_rational r = hatom_getrational(a1);
+    hatom_setpitch(res, t_pitch(r));
 }
 
 void hatom_op_uminus(t_hatom *h1, t_hatom *res)

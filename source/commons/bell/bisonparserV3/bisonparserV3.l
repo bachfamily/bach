@@ -700,7 +700,7 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
     return BIF;
 }
 
-("cos"|"sin"|"tan"|"exp"|"log"|"acos"|"asin"|"atan"|"cosh"|"sinh"|"tanh"|"exp2"|"log2"|"sqrt"|"ceil"|"acosh"|"asinh"|"atanh"|"log10"|"floor"|"round"|"trunc"|"fmod"|"atan2"|"hypot"|"pow"|"int"|"rat"|"num"|"den"|"abs"|"sgn"|"float"|"pitch"|"degree"|"octave"|"alter"|"cents"|"pow"|"mod"|"min"|"max"|"random"|"bessel"|"approx"|"enharm"|"makepitch"|"makepitchsc"|"mc2f"|"f2mc"|"minimum"|"maximum"|"sum"|"prod")/{SEPARATOR} {
+("cos"|"sin"|"tan"|"exp"|"log"|"acos"|"asin"|"atan"|"cosh"|"sinh"|"tanh"|"exp2"|"log2"|"sqrt"|"ceil"|"acosh"|"asinh"|"atanh"|"log10"|"floor"|"round"|"trunc"|"fmod"|"atan2"|"hypot"|"pow"|"int"|"rat"|"num"|"den"|"abs"|"sgn"|"float"|"pitch"|"degree"|"octave"|"alter"|"cents"|"pow"|"mod"|"min"|"max"|"random"|"bessel"|"approx"|"enharm"|"makepitch"|"makepitchsc"|"makepitchji"|"mc2f"|"f2mc"|"minimum"|"maximum"|"sum"|"prod")/{SEPARATOR} {
     code_dev_post("lex: BIF %s", yytext);
     yylval->symValue = gensym(yytext);
     BEGIN lexparams->setState(NOUNARY_ARGS);

@@ -41,7 +41,7 @@ const t_shortRational t_pitch::flat = t_shortRational(-1, 2);
 const t_shortRational t_pitch::qrtrflat = t_shortRational(-1, 4);
 const t_shortRational t_pitch::eighthflat = t_shortRational(-1, 8);
 
-const t_shortRational t_pitch::illegal = t_shortRational(0, 0);
+const t_tinyRational t_pitch::illegal = t_tinyRational(0, 0);
 
 const t_pitch t_pitch::NaP = t_pitch(0, illegal, 0); // not a pitch
 const t_pitch t_pitch::middleC = t_pitch(0, natural, 5); // middle C

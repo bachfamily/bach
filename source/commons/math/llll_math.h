@@ -83,6 +83,8 @@ void hatom_fn_octave(t_hatom *a1, t_hatom *res);
 void hatom_fn_alter(t_hatom *a1, t_hatom *res);
 void hatom_fn_makepitch(t_hatom *a1, t_hatom *a2, t_hatom *a3, t_hatom *res);
 void hatom_fn_makepitchsc(t_hatom *a1, t_hatom *a2, t_hatom *res);
+void hatom_fn_pitchji(t_hatom *a1, t_hatom *res);
+void hatom_fn_makepitchji(t_hatom *h1, t_hatom *h2, t_hatom *h3, t_hatom *h4, t_hatom *res);
 void hatom_fn_approx(t_hatom *h1, t_hatom *h2, t_hatom *res);
 void hatom_fn_enharm(t_hatom *h1, t_hatom *h2, t_hatom *res);
 

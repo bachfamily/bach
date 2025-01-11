@@ -37,10 +37,10 @@
     bachproject
     
     @digest
-    Construction and query of pitches
+    Construction and query of pitches and their components
     
     @description
-    Performs conversions, queries and construction of pitches.
+    Performs construction of pitches, as well as queries of their components.
     
     @discussion
     bach.pitchobj accepts microtones following the ASCII convention used throughout bach. <br />
@@ -141,29 +141,41 @@ void C74_EXPORT ext_main(void *moduleRef)
     
     CLASS_NEW_CHECK_SIZE(c, "bach.pitch", (method)pitchobj_new, (method)pitchobj_free, (long) sizeof(t_pitchobj), 0L, A_GIMME, 0);
     
-    // @method llll @digest Convert pitches to midicents
-    // @description The function outputs an llll formatted as the incoming one, but containing the midicents values
-    // instead of each pitch.
+    // @method llll @digest Function depends on inlet type
+    // @description When the object receives an llll in its inlet,
+    // it will treat it according to the inlet types
+    // as declared through the static <m>from</m> attribute.
+    // The data received in all the inlets are summed together into a single pitch
+    // that is be output, in whole and/or as separate components,
+    // according to the outlet types as declared through the <m>to</m> attribute.
     class_addmethod(c, (method)pitchobj_anything,                    "anything",                A_GIMME,    0);
     class_addmethod(c, (method)pitchobj_int,                        "int",                    A_LONG,        0);
     class_addmethod(c, (method)pitchobj_float,                        "float",                A_FLOAT,    0);
     class_addmethod(c, (method)pitchobj_anything,                    "list",                    A_GIMME,    0);
 
-    // @method bang @digest Perform the conversion.
-    // @description Perform the conversion on the most recently received input data.
+    // @method bang @digest Produce the output
+    // @description A <m>bang</m> outputs the pitch resulting from the sum of all the inlet data
+    // and/or its components,
+    // according to the outlet types as declared through the <m>to</m> attribute.
     class_addmethod(c, (method)pitchobj_bang,                        "bang",        0);
     
     class_addmethod(c, (method)pitchobj_assist,        "assist",        A_CANT,        0);
     class_addmethod(c, (method)pitchobj_inletinfo,    "inletinfo",    A_CANT,        0);
 
+    
     CLASS_ATTR_SYM_VARSIZE(c, "from", 0, t_pitchobj, dummySym, dummyLong, LLLL_MAX_INLETS);
     CLASS_ATTR_ACCESSORS(c, "from", nullptr, pitchobj_setattr_from);
     CLASS_ATTR_INVISIBLE(c, "from", ATTR_GET_OPAQUE | ATTR_SET_OPAQUE_USER);
-
+    // @description The <m>from</m> attribute declares the types of information
+    // that will be received by <o>bach.pitch</o>'s individual inlets.<br/>
+    //
+    // @copy BACH_DOC_STATIC_ATTR
+    
     CLASS_ATTR_SYM_VARSIZE(c, "to", 0, t_pitchobj, dummySym, dummyLong, LLLL_MAX_INLETS);
     CLASS_ATTR_ACCESSORS(c, "to", nullptr, pitchobj_setattr_to);
     CLASS_ATTR_INVISIBLE(c, "to", ATTR_GET_OPAQUE | ATTR_SET_OPAQUE_USER);
-    
+    // @copy BACH_DOC_STATIC_ATTR
+
     llllobj_class_add_default_bach_attrs_and_methods(c, LLLL_OBJ_VANILLA);
 
     class_register(CLASS_BOX, c);
