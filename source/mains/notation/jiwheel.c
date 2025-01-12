@@ -2706,10 +2706,12 @@ void jiwheel_build_pitches(t_jiwheel *x, t_object *view)
     if (x->mouseover_ratio.r_num != 0)
         llll_appendrat(curr_pitches_ll, x->mouseover_ratio);
     
-    // formal octave must always be admitted:
-    long foj = num_to_prime_idx(x->formaloctave);
-    if (foj >= 0) {
-        prime_is_ok[foj] = true;
+    // formal octave must always be admitted, at least if integer:
+    if (x->formaloctave.r_den == 1) {
+        long foj = num_to_prime_idx(x->formaloctave.r_num);
+        if (foj >= 0) {
+            prime_is_ok[foj] = true;
+        }
     }
 
     if (x->always_display_whitekeys && x->formaloctave == 2 && (x->jilimit == 0 || x->jilimit >= 2) && prime_is_ok[0] && prime_is_ok[1]) {
