@@ -118,7 +118,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 154.5, 272.0, 282.0, 40.0 ],
-									"presentation_linecount" : 4,
 									"text" : "floating point numbers and rationals report by convention 0 as just intonation limit"
 								}
 
@@ -131,7 +130,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 96.5, 280.0, 55.0, 23.0 ],
-									"presentation_linecount" : 3,
 									"text" : "7.14 foo"
 								}
 
@@ -170,7 +168,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 77.5, 234.0, 213.0, 23.0 ],
-									"presentation_linecount" : 6,
 									"text" : "[ C0+9/7r 2/4 1/24 [ Eb5 ] C1 ] C7 0"
 								}
 
@@ -206,8 +203,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 20.0, 379.0, 214.0, 23.0 ],
-									"text" : "5"
+									"patching_rect" : [ 20.0, 379.0, 214.0, 23.0 ]
 								}
 
 							}
@@ -218,8 +214,8 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 20.0, 112.0, 41.0, 23.0 ],
-									"text" : "21/35"
+									"patching_rect" : [ 20.0, 112.0, 34.0, 23.0 ],
+									"text" : "14/5"
 								}
 
 							}

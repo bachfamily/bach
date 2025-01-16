@@ -51,7 +51,7 @@
  series, arithmetic, step, compute, calculate
 
  @seealso
- bach.primeser, bach.geomser, bach.recurser
+ bach.jiwheel, bach.fareyser
  
  @owner
  Andrea Agostini

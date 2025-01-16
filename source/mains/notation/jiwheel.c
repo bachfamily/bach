@@ -56,7 +56,7 @@
     bach, bach objects, bach just intonation, bach interface
 
     @seealso
-    bach.primeform, bach.pcsetinfo, bach.mod+, bach.mod-, bach.modtimes, bach.compl
+    bach.jilimit, bach.fareyser
     
     @owner
     Daniele Ghisi
@@ -330,9 +330,18 @@ void remove_octaves(t_rational formaloctave, t_rational *r)
     if (*r > 0) {
         while (*r >= formaloctave) {
             *r /= formaloctave;
+
+            if (r->r_num < 0 || r->r_den <= 0) {
+                return; // something is wrong! overflow/underflow?
+            }
         }
+        
         while (*r < 1) {
             *r *= formaloctave;
+
+            if (r->r_num < 0 || r->r_den <= 0) {
+                return; // something is wrong! overflow/underflow?
+            }
         }
     }
 }

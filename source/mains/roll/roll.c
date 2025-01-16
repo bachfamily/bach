@@ -17934,6 +17934,7 @@ long roll_key(t_roll *x, t_object *patcherview, long keycode, long modifiers, lo
             return 0;
             break;
 
+        case ')': // Cmd + )
         case '^': // Cmd + ^
             if (x->r_ob.num_selecteditems > 1) {
                 slur_add_for_selection((t_notation_obj *)x, NULL, 0, true);
