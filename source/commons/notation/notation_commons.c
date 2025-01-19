@@ -7160,21 +7160,21 @@ void fill_notation_typo_preferences_SMuFL(t_notation_obj *r_ob, double juce_mul 
     r_ob->notation_typo_preferences.base_pt = 24. * juce_mul;
     r_ob->notation_typo_preferences.base_pt_ts = 24. * juce_mul;
     r_ob->notation_typo_preferences.ts_uy_shift = -42; // TO DO
-    fill_unicodeChar_array(r_ob->notation_typo_preferences.numbers_unicode_characters, 10, 57472, 57473, 57474, 57475, 57476, 57477, 57478, 57479, 57480, 57481);
+    fill_unicodeChar_array(r_ob->notation_typo_preferences.numbers_unicode_characters, 10, 57472L, 57473L, 57474L, 57475L, 57476L, 57477L, 57478L, 57479L, 57480L, 57481L);
     r_ob->notation_typo_preferences.plus_unicode_character = 57484;
     r_ob->notation_typo_preferences.dot_unicode_character = 57852;
     r_ob->notation_typo_preferences.rest_ux_shift = 0.; // TO DO
     r_ob->notation_typo_preferences.rest_uy_shift = 0; // 18.3; // TO DO
-    fill_long_array(r_ob->notation_typo_preferences.nominal_staff_line_shift, 9, 0, 1, 0, 0, 0, 0, 0, 0, 0);
+    fill_long_array(r_ob->notation_typo_preferences.nominal_staff_line_shift, 9, 0L, 1L, 0L, 0L, 0L, 0L, 0L, 0L, 0L);
 
-    fill_unicodeChar_array(r_ob->notation_typo_preferences.rests_unicode_characters, 9, 58594, 58595, 58596, 58597, 58598, 58599, 58600, 58601, 58602);
-    fill_unicodeChar_array(r_ob->notation_typo_preferences.clefs_unicode_characters, 4, 57424, 57442, 57436, 57450);
+    fill_unicodeChar_array(r_ob->notation_typo_preferences.rests_unicode_characters, 9, 58594L, 58595L, 58596L, 58597L, 58598L, 58599L, 58600L, 58601L, 58602L);
+    fill_unicodeChar_array(r_ob->notation_typo_preferences.clefs_unicode_characters, 4, 57424L, 57442L, 57436L, 57450L);
     r_ob->notation_typo_preferences.clef_ux_shift = 0.; // TO DO
     r_ob->notation_typo_preferences.clef_uy_shift = 4.3; //r_ob->temp[0]; //was: 4.5
     // here we put the info about, in the following order: 1/8 flag up / down / 1/16 flag up / down / next flags up / down
     // the 1/16 flags are the COMPLETE 1/16 flags (which means, with two "tails"), the "next flag" is an added single flag used for 1/32, and then for all the smaller subdivisions
-    fill_char_array(r_ob->notation_typo_preferences.flag_noteheadaligned, 6, 0, 0, 0, 0, 0, 0); // TO DO
-    fill_unicodeChar_array(r_ob->notation_typo_preferences.flag_unicode_characters, 6, 57920, 57921, 57922, 57923, 57936, 57937);
+    fill_char_array(r_ob->notation_typo_preferences.flag_noteheadaligned, 6, 0L, 0L, 0L, 0L, 0L, 0L); // TO DO
+    fill_unicodeChar_array(r_ob->notation_typo_preferences.flag_unicode_characters, 6, 57920L, 57921L, 57922L, 57923L, 57936L, 57937L);
     fill_double_array(r_ob->notation_typo_preferences.flag_uwidths, 3, 4.5, 4.5, 4.5); // TO DO
     r_ob->notation_typo_preferences.flag_ux_shift = 0.;
     fill_double_array(r_ob->notation_typo_preferences.flag_uy_shifts, 6, -50.5, -23.9, -50.5, -23.9, -55.0, -19.0);
@@ -7231,7 +7231,7 @@ void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
     double juce_mul = 1;
 //    fill_double_array(r_ob->notation_typo_preferences.rest_uwidths, 9, 7.3, 7.3, 7.3, 7.1, 7.0, 7.1,  7.8,  8.7,   9.6);
     fill_double_array(r_ob->notation_typo_preferences.rest_uwidths, 9, 7.3, 7.7, 7.7, 7.1, 8.1, 8.6,  9.1,  9.4,   10.);
-    fill_long_array(r_ob->notation_typo_preferences.nominal_staff_line_shift, 9, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    fill_long_array(r_ob->notation_typo_preferences.nominal_staff_line_shift, 9, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L);
 
     r_ob->notation_typo_preferences.clef_num_base_pt = 9;
     r_ob->notation_typo_preferences.clef_G15ma_num_ushift = build_pt(0, 0);
@@ -7251,10 +7251,10 @@ void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         r_ob->notation_typo_preferences.base_pt = 24. * juce_mul;
         r_ob->notation_typo_preferences.base_pt_ts = 24. * juce_mul;
         r_ob->notation_typo_preferences.ts_uy_shift = -20.1;
-        fill_unicodeChar_array(r_ob->notation_typo_preferences.numbers_unicode_characters, 10, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57);
+        fill_unicodeChar_array(r_ob->notation_typo_preferences.numbers_unicode_characters, 10, 48L, 49L, 50L, 51L, 52L, 53L, 54L, 55L, 56L, 57L);
         r_ob->notation_typo_preferences.plus_unicode_character = 'z';
         r_ob->notation_typo_preferences.dot_unicode_character = 46;
-//        fill_unicodeChar_array(r_ob->notation_typo_preferences.noteheads_unicode_characters, 4, 'R', 'S', 'T', 'U'); // doublewhole, whole, half, quarter
+//        fill_unicodeChar_array(r_ob->notation_typo_preferences.noteheads_unicode_characters, 4, (long)'R', (long)'S', (long)'T', (long)'U'); // doublewhole, whole, half, quarter
 //        r_ob->notation_typo_preferences.notehead_ux_shift = 0.3;
 //        r_ob->notation_typo_preferences.notehead_uy_shift = -4.9 + add_y_shift; //-5.1;
 //        r_ob->notation_typo_preferences.small_notehead_ux_shift = 0.2;
@@ -7263,15 +7263,15 @@ void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         r_ob->notation_typo_preferences.rest_uy_shift = 0.; //7.75;
         //        fill_double_array(r_ob->notation_typo_preferences.notehead_uwidths, 4, 7.5, 7.5, 7.6, 7.6); // was THIS!
 //        fill_double_array(r_ob->notation_typo_preferences.notehead_uwidths, 4, 8., 8., 7.9, 7.9);
-        fill_unicodeChar_array(r_ob->notation_typo_preferences.rests_unicode_characters, 9, 'C','D', 'E', 'F', 'G', 'H', 'I', 'J', 'K');
-        fill_unicodeChar_array(r_ob->notation_typo_preferences.clefs_unicode_characters, 4, 'A', '?', 'B', '@');
+        fill_unicodeChar_array(r_ob->notation_typo_preferences.rests_unicode_characters, 9, (long)'C',(long)'D', (long)'E', (long)'F', (long)'G', (long)'H', (long)'I', (long)'J', (long)'K');
+        fill_unicodeChar_array(r_ob->notation_typo_preferences.clefs_unicode_characters, 4, (long)'A', (long)'?', (long)'B', (long)'@');
         r_ob->notation_typo_preferences.clef_ux_shift = 0.;
         r_ob->notation_typo_preferences.clef_uy_shift = -3.0; //-0.1;
         // here we put the info about, in the following order: 1/8 flag up / down / 1/16 flag up / down / next flags up / down
         // the 1/16 flags are the COMPLETE 1/16 flags (which means, with two "tails"), the "next flag" is an added single flag used for 1/32, and then for all the smaller subdivisions 
-        fill_char_array(r_ob->notation_typo_preferences.flag_noteheadaligned, 6, 0, 0, 0, 0, 0, 0); 
-        fill_unicodeChar_array(r_ob->notation_typo_preferences.flag_unicode_characters, 6, 'L', 'O', 'N', 'Q', 'M', 'P');
-        fill_double_array(r_ob->notation_typo_preferences.flag_uwidths, 3, 4.5, 4.5, 4.5); // 1/8, 1/16, next 
+        fill_char_array(r_ob->notation_typo_preferences.flag_noteheadaligned, 6, 0L, 0L, 0L, 0L, 0L, 0L);
+        fill_unicodeChar_array(r_ob->notation_typo_preferences.flag_unicode_characters, 6, (long)'L', (long)'O', (long)'N', (long)'Q', (long)'M', (long)'P');
+        fill_double_array(r_ob->notation_typo_preferences.flag_uwidths, 3, 4.5, 4.5, 4.5); // 1/8, 1/16, next
         r_ob->notation_typo_preferences.flag_ux_shift = 0.; // was: 0.
         fill_double_array(r_ob->notation_typo_preferences.flag_uy_shifts, 6, -29.4+6, -21.+12, -29.4+6, -21.+12, -32.9+6, -18.4+12);  // 1/8 flag up / down / 1/16 flag up / down / next flags up / down
         r_ob->notation_typo_preferences.further_flag_uy_step_stemup = -4.; //55;
@@ -7305,19 +7305,19 @@ void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
 /*        r_ob->notation_typo_preferences.base_pt = 24. * juce_mul;
         r_ob->notation_typo_preferences.base_pt_ts = 24. * juce_mul;
         r_ob->notation_typo_preferences.ts_uy_shift = -42; // TO DO
-        fill_unicodeChar_array(r_ob->notation_typo_preferences.numbers_unicode_characters, 10, 57472, 57473, 57474, 57475, 57476, 57477, 57478, 57479, 57480, 57481);
+        fill_unicodeChar_array(r_ob->notation_typo_preferences.numbers_unicode_characters, 10, 57472L, 57473L, 57474L, 57475L, 57476L, 57477L, 57478L, 57479L, 57480L, 57481L);
         r_ob->notation_typo_preferences.plus_unicode_character = 57484;
         r_ob->notation_typo_preferences.dot_unicode_character = 57852;
         r_ob->notation_typo_preferences.rest_ux_shift = 0.; // TO DO
         r_ob->notation_typo_preferences.rest_uy_shift = 18.3; // TO DO
-        fill_unicodeChar_array(r_ob->notation_typo_preferences.rests_unicode_characters, 9, 58594, 58595, 58596, 58597, 58598, 58599, 58600, 58601, 58602);
-        fill_unicodeChar_array(r_ob->notation_typo_preferences.clefs_unicode_characters, 4, 57424, 57442, 57436, 57450);
+        fill_unicodeChar_array(r_ob->notation_typo_preferences.rests_unicode_characters, 9, 58594L, 58595L, 58596L, 58597L, 58598L, 58599L, 58600L, 58601L, 58602L);
+        fill_unicodeChar_array(r_ob->notation_typo_preferences.clefs_unicode_characters, 4, 57424L, 57442L, 57436L, 57450L);
         r_ob->notation_typo_preferences.clef_ux_shift = 0.; // TO DO
         r_ob->notation_typo_preferences.clef_uy_shift = 4.4;
         // here we put the info about, in the following order: 1/8 flag up / down / 1/16 flag up / down / next flags up / down
         // the 1/16 flags are the COMPLETE 1/16 flags (which means, with two "tails"), the "next flag" is an added single flag used for 1/32, and then for all the smaller subdivisions
-        fill_char_array(r_ob->notation_typo_preferences.flag_noteheadaligned, 6, 0, 0, 0, 0, 0, 0); // TO DO
-        fill_unicodeChar_array(r_ob->notation_typo_preferences.flag_unicode_characters, 6, 57920, 57921, 57922, 57923, 57936, 57937);
+        fill_char_array(r_ob->notation_typo_preferences.flag_noteheadaligned, 6, 0L, 0L, 0L, 0L, 0L, 0L); // TO DO
+        fill_unicodeChar_array(r_ob->notation_typo_preferences.flag_unicode_characters, 6, 57920L, 57921L, 57922L, 57923L, 57936L, 57937L);
         fill_double_array(r_ob->notation_typo_preferences.flag_uwidths, 3, 4.5, 4.5, 4.5); // TO DO
         r_ob->notation_typo_preferences.flag_ux_shift = 0.; // TO DO
         fill_double_array(r_ob->notation_typo_preferences.flag_uy_shifts, 6, -29.4+6, -21.+12, -29.4+6, -21.+12, -32.9+6, -18.4+12);  // TO DO: 1/8 flag up / down / 1/16 flag up / down / next flags up / down
@@ -7331,10 +7331,10 @@ void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         r_ob->notation_typo_preferences.base_pt = 24. * juce_mul;
         r_ob->notation_typo_preferences.base_pt_ts = 24. * juce_mul;
         r_ob->notation_typo_preferences.ts_uy_shift = -28.55;
-        fill_unicodeChar_array(r_ob->notation_typo_preferences.numbers_unicode_characters, 10, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57);
+        fill_unicodeChar_array(r_ob->notation_typo_preferences.numbers_unicode_characters, 10, 48L, 49L, 50L, 51L, 52L, 53L, 54L, 55L, 56L, 57L);
         r_ob->notation_typo_preferences.plus_unicode_character = 710;
         r_ob->notation_typo_preferences.dot_unicode_character = 46;
-//        fill_unicodeChar_array(r_ob->notation_typo_preferences.noteheads_unicode_characters, 4, 87, 119, 729, 339); // doublewhole, whole, half, quarter
+//        fill_unicodeChar_array(r_ob->notation_typo_preferences.noteheads_unicode_characters, 4, 87L, 119L, 729L, 339L); // doublewhole, whole, half, quarter
 //        r_ob->notation_typo_preferences.notehead_ux_shift = 0.3;
 //        r_ob->notation_typo_preferences.notehead_uy_shift = -4.9; //-5.1;
 //        r_ob->notation_typo_preferences.small_notehead_ux_shift = 0.2;
@@ -7343,15 +7343,15 @@ void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         r_ob->notation_typo_preferences.rest_uy_shift = 0.; //-1.;
         //        fill_double_array(r_ob->notation_typo_preferences.notehead_uwidths, 4, 7.5, 7.5, 7.6, 7.6); // was THIS!
 //        fill_double_array(r_ob->notation_typo_preferences.notehead_uwidths, 4, 8., 8., 7.85, 7.85);
-        fill_unicodeChar_array(r_ob->notation_typo_preferences.rests_unicode_characters, 9, 8222, 8721, 211, 338, 8240, 8776, 174, 217, 194);
-        fill_unicodeChar_array(r_ob->notation_typo_preferences.clefs_unicode_characters, 4, 38, 63, 66, 247);
+        fill_unicodeChar_array(r_ob->notation_typo_preferences.rests_unicode_characters, 9, 8222L, 8721L, 211L, 338L, 8240L, 8776L, 174L, 217L, 194L);
+        fill_unicodeChar_array(r_ob->notation_typo_preferences.clefs_unicode_characters, 4, 38L, 63L, 66L, 247L);
         r_ob->notation_typo_preferences.clef_ux_shift = 0.;
         r_ob->notation_typo_preferences.clef_uy_shift = -0.2; //-0.1;
         // here we put the info about, in the following order: 1/8 flag up / down / 1/16 flag up / down / next flags up / down
         // the 1/16 flags are the COMPLETE 1/16 flags (which means, with two "tails"), the "next flag" is an added single flag used for 1/32, and then for all the smaller subdivisions 
-        fill_char_array(r_ob->notation_typo_preferences.flag_noteheadaligned, 6, 0, 0, 0, 0, 0, 0); 
-        fill_unicodeChar_array(r_ob->notation_typo_preferences.flag_unicode_characters, 6, 61546, 61680, 61554, 61522, 61515, 212);
-        fill_double_array(r_ob->notation_typo_preferences.flag_uwidths, 3, 4.5, 4.5, 4.5); // 1/8, 1/16, next 
+        fill_char_array(r_ob->notation_typo_preferences.flag_noteheadaligned, 6, 0L, 0L, 0L, 0L, 0L, 0L);
+        fill_unicodeChar_array(r_ob->notation_typo_preferences.flag_unicode_characters, 6, 61546L, 61680L, 61554L, 61522L, 61515L, 212L);
+        fill_double_array(r_ob->notation_typo_preferences.flag_uwidths, 3, 4.5, 4.5, 4.5); // 1/8, 1/16, next
         r_ob->notation_typo_preferences.flag_ux_shift = 0.;
         fill_double_array(r_ob->notation_typo_preferences.flag_uy_shifts, 6, -29.4, -21., -29.4, -21., -32.9, -18.4);  // 1/8 flag up / down / 1/16 flag up / down / next flags up / down
         r_ob->notation_typo_preferences.further_flag_uy_step_stemup = -4.55;
@@ -7363,10 +7363,10 @@ void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         r_ob->notation_typo_preferences.base_pt = 24.;
         r_ob->notation_typo_preferences.base_pt_ts = 24.;
         r_ob->notation_typo_preferences.ts_uy_shift = -23.5;
-        fill_unicodeChar_array(r_ob->notation_typo_preferences.numbers_unicode_characters, 10, 61488, 61489, 61490, 61491, 61492, 61493, 61494, 61495, 61496, 61497);
+        fill_unicodeChar_array(r_ob->notation_typo_preferences.numbers_unicode_characters, 10, 61488L, 61489L, 61490L, 61491L, 61492L, 61493L, 61494L, 61495L, 61496L, 61497L);
         r_ob->notation_typo_preferences.plus_unicode_character = 61483;
         r_ob->notation_typo_preferences.dot_unicode_character = 61486;
-//        fill_unicodeChar_array(r_ob->notation_typo_preferences.noteheads_unicode_characters, 4, 61527, 61559, 61690, 61647); // doublewhole, whole, half, quarter
+//        fill_unicodeChar_array(r_ob->notation_typo_preferences.noteheads_unicode_characters, 4, 61527L, 61559L, 61690L, 61647L); // doublewhole, whole, half, quarter
 //        r_ob->notation_typo_preferences.notehead_ux_shift = 0.2;
 //        r_ob->notation_typo_preferences.notehead_uy_shift = 0.15;
 //        r_ob->notation_typo_preferences.small_notehead_ux_shift = 0.6;
@@ -7374,15 +7374,15 @@ void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         r_ob->notation_typo_preferences.rest_ux_shift = 0.;
         r_ob->notation_typo_preferences.rest_uy_shift = 0.; //4.4;
 //        fill_double_array(r_ob->notation_typo_preferences.notehead_uwidths, 4, 9.4, 8.4, 6.8, 6.8);
-        fill_unicodeChar_array(r_ob->notation_typo_preferences.rests_unicode_characters, 9, 61666, 61623, 61678, 61646, 61668, 61637, 61608, 61684, 61669);
-        fill_unicodeChar_array(r_ob->notation_typo_preferences.clefs_unicode_characters, 4, 61478, 61503, 61506, 61654);
+        fill_unicodeChar_array(r_ob->notation_typo_preferences.rests_unicode_characters, 9, 61666L, 61623L, 61678L, 61646L, 61668L, 61637L, 61608L, 61684L, 61669L);
+        fill_unicodeChar_array(r_ob->notation_typo_preferences.clefs_unicode_characters, 4, 61478L, 61503L, 61506L, 61654L);
         r_ob->notation_typo_preferences.clef_ux_shift = 0.;
         r_ob->notation_typo_preferences.clef_uy_shift = -1.8;
         // here we put the info about, in the following order: 1/8 flag up / down / 1/16 flag up / down / next flags up / down
         // the 1/16 flags are the COMPLETE 1/16 flags (which means, with two "tails"), the "next flag" is an added single flag used for 1/32, and then for all the smaller subdivisions 
-        fill_char_array(r_ob->notation_typo_preferences.flag_noteheadaligned, 6, 0, 0, 0, 0, 0, 0); 
-        fill_unicodeChar_array(r_ob->notation_typo_preferences.flag_unicode_characters, 6, 61515, 61514, 61554, 61522, 61546, 61679);
-        fill_double_array(r_ob->notation_typo_preferences.flag_uwidths, 3, 4., 4., 4.); // 1/8, 1/16, next 
+        fill_char_array(r_ob->notation_typo_preferences.flag_noteheadaligned, 6, 0L, 0L, 0L, 0L, 0L, 0L);
+        fill_unicodeChar_array(r_ob->notation_typo_preferences.flag_unicode_characters, 6, 61515L, 61514L, 61554L, 61522L, 61546L, 61679L);
+        fill_double_array(r_ob->notation_typo_preferences.flag_uwidths, 3, 4., 4., 4.); // 1/8, 1/16, next
         r_ob->notation_typo_preferences.flag_ux_shift = 0.;
         fill_double_array(r_ob->notation_typo_preferences.flag_uy_shifts, 6, -24.4, -15.5, -24.4, -15.5, -29.9, -8.6);  // 1/8 flag up / down / 1/16 flag up / down / next flags up / down
         r_ob->notation_typo_preferences.further_flag_uy_step_stemup = -5.55;
@@ -7392,7 +7392,7 @@ void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         r_ob->notation_typo_preferences.base_pt = 48.;
         r_ob->notation_typo_preferences.base_pt_ts = 48.;
         r_ob->notation_typo_preferences.ts_uy_shift = -23.5;
-        fill_unicodeChar_array(r_ob->notation_typo_preferences.numbers_unicode_characters, 10, 61488, 61489, 61490, 61491, 61492, 61493, 61494, 61495, 61496, 61497);
+        fill_unicodeChar_array(r_ob->notation_typo_preferences.numbers_unicode_characters, 10, 61488L, 61489L, 61490L, 61491L, 61492L, 61493L, 61494L, 61495L, 61496L, 61497L);
         r_ob->notation_typo_preferences.plus_unicode_character = 61483;
         r_ob->notation_typo_preferences.dot_unicode_character = 61486;
 //        fill_unicodeChar_array(r_ob->notation_typo_preferences.noteheads_unicode_characters, 4, 61527, 61559, 61690, 61647); // doublewhole, whole, half, quarter
@@ -7403,8 +7403,8 @@ void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         r_ob->notation_typo_preferences.rest_ux_shift = 0.;
         r_ob->notation_typo_preferences.rest_uy_shift = 4.0;
 //        fill_double_array(r_ob->notation_typo_preferences.notehead_uwidths, 4, 8.0, 7.0, 6.8, 6.8);
-        fill_unicodeChar_array(r_ob->notation_typo_preferences.rests_unicode_characters, 9, 61666, 61623, 61678, 61646, 61668, 61637, 61608, 61684, 61669);
-        fill_unicodeChar_array(r_ob->notation_typo_preferences.clefs_unicode_characters, 4, 61478, 61503, 61506, 61654);
+        fill_unicodeChar_array(r_ob->notation_typo_preferences.rests_unicode_characters, 9, 61666L, 61623L, 61678L, 61646L, 61668L, 61637L, 61608L, 61684L, 61669L);
+        fill_unicodeChar_array(r_ob->notation_typo_preferences.clefs_unicode_characters, 4, 61478L, 61503L, 61506L, 61654L);
         r_ob->notation_typo_preferences.clef_ux_shift = 0.;
         r_ob->notation_typo_preferences.clef_uy_shift = -1.8;
         r_ob->notation_typo_preferences.stem_unicode_character = 61532; 
@@ -7414,9 +7414,9 @@ void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         r_ob->notation_typo_preferences.stem_uy_shift_stemdown = -11.0;
         // here we put the info about, in the following order: 1/8 flag up / down / 1/16 flag up / down / next flags up / down
         // the 1/16 flags are the COMPLETE 1/16 flags (which means, with two "tails"), the "next flag" is an added single flag used for 1/32, and then for all the smaller subdivisions 
-        fill_char_array(r_ob->notation_typo_preferences.flag_noteheadaligned, 6, 0, 0, 0, 0, 0, 0); 
-        fill_unicodeChar_array(r_ob->notation_typo_preferences.flag_unicode_characters, 6, 61515, 61514, 61554, 61522, 61546, 61679);
-        fill_double_array(r_ob->notation_typo_preferences.flag_uwidths, 3, 4., 4., 4.); // 1/8, 1/16, next 
+        fill_char_array(r_ob->notation_typo_preferences.flag_noteheadaligned, 6, 0L, 0L, 0L, 0L, 0L, 0L);
+        fill_unicodeChar_array(r_ob->notation_typo_preferences.flag_unicode_characters, 6, 61515L, 61514L, 61554L, 61522L, 61546L, 61679L);
+        fill_double_array(r_ob->notation_typo_preferences.flag_uwidths, 3, 4., 4., 4.); // 1/8, 1/16, next
         r_ob->notation_typo_preferences.flag_ux_shift = 0.;
         fill_double_array(r_ob->notation_typo_preferences.flag_uy_shifts, 6, -27.4, -15.5, -27.4, -15.5, -32.9, -8.6);  // 1/8 flag up / down / 1/16 flag up / down / next flags up / down
         r_ob->notation_typo_preferences.further_flag_uy_step_stemup = -5.55;
@@ -7426,10 +7426,10 @@ void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         r_ob->notation_typo_preferences.base_pt = 40.;
         r_ob->notation_typo_preferences.base_pt_ts = 38.2;
         r_ob->notation_typo_preferences.ts_uy_shift = -25.57;
-        fill_unicodeChar_array(r_ob->notation_typo_preferences.numbers_unicode_characters, 10, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57);
+        fill_unicodeChar_array(r_ob->notation_typo_preferences.numbers_unicode_characters, 10, 48L, 49L, 50L, 51L, 52L, 53L, 54L, 55L, 56L, 57L);
         r_ob->notation_typo_preferences.plus_unicode_character = 233;
         r_ob->notation_typo_preferences.dot_unicode_character = 46;
-//        fill_unicodeChar_array(r_ob->notation_typo_preferences.noteheads_unicode_characters, 4, 87, 87, 237, 339); // doublewhole, whole, half, quarter
+//        fill_unicodeChar_array(r_ob->notation_typo_preferences.noteheads_unicode_characters, 4, 87L, 87L, 237L, 339L); // doublewhole, whole, half, quarter
 //        r_ob->notation_typo_preferences.notehead_ux_shift = 0.2; //31;
 //        r_ob->notation_typo_preferences.notehead_uy_shift = -3.15;
 //        r_ob->notation_typo_preferences.small_notehead_ux_shift = 0.;
@@ -7437,13 +7437,13 @@ void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         r_ob->notation_typo_preferences.rest_ux_shift = 0.;
          r_ob->notation_typo_preferences.rest_uy_shift = 0.; //1.2;
 //        fill_double_array(r_ob->notation_typo_preferences.notehead_uwidths, 4, 8., 7.6, 7.0, 7.0);
-        fill_unicodeChar_array(r_ob->notation_typo_preferences.rests_unicode_characters, 9, 8222, 931, 211, 338, 8240, 8776, 174, 217, 194);
-        fill_unicodeChar_array(r_ob->notation_typo_preferences.clefs_unicode_characters, 4, 38, 63, 66, 247);
+        fill_unicodeChar_array(r_ob->notation_typo_preferences.rests_unicode_characters, 9, 8222L, 931L, 211L, 338L, 8240L, 8776L, 174L, 217L, 194L);
+        fill_unicodeChar_array(r_ob->notation_typo_preferences.clefs_unicode_characters, 4, 38L, 63L, 66L, 247L);
         r_ob->notation_typo_preferences.clef_ux_shift = 0.;
         r_ob->notation_typo_preferences.clef_uy_shift = -0.6;
-        fill_char_array(r_ob->notation_typo_preferences.flag_noteheadaligned, 6, 0, 0, 1, 0, 0, 0);
-        fill_unicodeChar_array(r_ob->notation_typo_preferences.flag_unicode_characters, 6, 106, 74, 105, 73, 106, 74);
-        fill_double_array(r_ob->notation_typo_preferences.flag_uwidths, 3, 4.2, 4.2, 4.2); // 1/8, 1/16, next 
+        fill_char_array(r_ob->notation_typo_preferences.flag_noteheadaligned, 6, 0L, 0L, 1L, 0L, 0L, 0L);
+        fill_unicodeChar_array(r_ob->notation_typo_preferences.flag_unicode_characters, 6, 106L, 74L, 105L, 73L, 106L, 74L);
+        fill_double_array(r_ob->notation_typo_preferences.flag_uwidths, 3, 4.2, 4.2, 4.2); // 1/8, 1/16, next
         r_ob->notation_typo_preferences.flag_ux_shift = 0.; 
         fill_double_array(r_ob->notation_typo_preferences.flag_uy_shifts, 6, -25.4, -30., -15.4, -31.5, -33.9, -21.1);  // 1/8 flag up / down / 1/16 flag up / down / next flags up / down
         r_ob->notation_typo_preferences.further_flag_uy_step_stemup = -5.5;
@@ -7452,10 +7452,10 @@ void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         r_ob->notation_typo_preferences.base_pt = 24.;
         r_ob->notation_typo_preferences.base_pt_ts = 24.;
         r_ob->notation_typo_preferences.ts_uy_shift = -26.;
-        fill_unicodeChar_array(r_ob->notation_typo_preferences.numbers_unicode_characters, 10, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57);
+        fill_unicodeChar_array(r_ob->notation_typo_preferences.numbers_unicode_characters, 10, 48L, 49L, 50L, 51L, 52L, 53L, 54L, 55L, 56L, 57L);
         r_ob->notation_typo_preferences.plus_unicode_character = 710;
         r_ob->notation_typo_preferences.dot_unicode_character = 46;
-//        fill_unicodeChar_array(r_ob->notation_typo_preferences.noteheads_unicode_characters, 4, 87, 119, 729, 339); // doublewhole, whole, half, quarter
+//        fill_unicodeChar_array(r_ob->notation_typo_preferences.noteheads_unicode_characters, 4, 87L, 119L, 729L, 339L); // doublewhole, whole, half, quarter
 //        r_ob->notation_typo_preferences.notehead_ux_shift = 0.25;
 //        r_ob->notation_typo_preferences.notehead_uy_shift = -2.1;
 //        r_ob->notation_typo_preferences.small_notehead_ux_shift = 0.;
@@ -7463,15 +7463,15 @@ void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         r_ob->notation_typo_preferences.rest_ux_shift = 0.;
         r_ob->notation_typo_preferences.rest_uy_shift = 0.; //2.1;
 //        fill_double_array(r_ob->notation_typo_preferences.notehead_uwidths, 4, 10.4, 9.4, 8.5, 8.5);
-        fill_unicodeChar_array(r_ob->notation_typo_preferences.rests_unicode_characters, 9, 8222, 8721, 211, 338, 8240, 8776, 174, 217, 194);
-        fill_unicodeChar_array(r_ob->notation_typo_preferences.clefs_unicode_characters, 4, 38, 63, 66, 247);
+        fill_unicodeChar_array(r_ob->notation_typo_preferences.rests_unicode_characters, 9, 8222L, 8721L, 211L, 338L, 8240L, 8776L, 174L, 217L, 194L);
+        fill_unicodeChar_array(r_ob->notation_typo_preferences.clefs_unicode_characters, 4, 38L, 63L, 66L, 247L);
         r_ob->notation_typo_preferences.clef_ux_shift = 0.;
         r_ob->notation_typo_preferences.clef_uy_shift = -1.1;
         // here we put the info about, in the following order: 1/8 flag up / down / 1/16 flag up / down / next flags up / down
         // the 1/16 flags are the COMPLETE 1/16 flags (which means, with two "tails"), the "next flag" is an added single flag used for 1/32, and then for all the smaller subdivisions 
-        fill_char_array(r_ob->notation_typo_preferences.flag_noteheadaligned, 6, 0, 0, 0, 0, 0, 0); 
-        fill_unicodeChar_array(r_ob->notation_typo_preferences.flag_unicode_characters, 6, 106, 74, 114, 82, 75, 212);
-        fill_double_array(r_ob->notation_typo_preferences.flag_uwidths, 3, 4.5, 4.5, 4.5); // 1/8, 1/16, next 
+        fill_char_array(r_ob->notation_typo_preferences.flag_noteheadaligned, 6, 0L, 0L, 0L, 0L, 0L, 0L);
+        fill_unicodeChar_array(r_ob->notation_typo_preferences.flag_unicode_characters, 6, 106L, 74L, 114L, 82L, 75L, 212L);
+        fill_double_array(r_ob->notation_typo_preferences.flag_uwidths, 3, 4.5, 4.5, 4.5); // 1/8, 1/16, next
         r_ob->notation_typo_preferences.flag_ux_shift = 0.;
         fill_double_array(r_ob->notation_typo_preferences.flag_uy_shifts, 6, -27.4, -15.5, -27.4, -15.5, -32.9, -9.6);  // 1/8 flag up / down / 1/16 flag up / down / next flags up / down
         r_ob->notation_typo_preferences.further_flag_uy_step_stemup = -4.85;
@@ -7480,10 +7480,10 @@ void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         r_ob->notation_typo_preferences.base_pt = 24.;
         r_ob->notation_typo_preferences.base_pt_ts = 23.6;
         r_ob->notation_typo_preferences.ts_uy_shift = -25.11;
-        fill_unicodeChar_array(r_ob->notation_typo_preferences.numbers_unicode_characters, 10, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57);
+        fill_unicodeChar_array(r_ob->notation_typo_preferences.numbers_unicode_characters, 10, 48L, 49L, 50L, 51L, 52L, 53L, 54L, 55L, 56L, 57L);
         r_ob->notation_typo_preferences.plus_unicode_character = 710;
         r_ob->notation_typo_preferences.dot_unicode_character = 46;
-//        fill_unicodeChar_array(r_ob->notation_typo_preferences.noteheads_unicode_characters, 4, 87, 119, 729, 339); // doublewhole, whole, half, quarter
+//        fill_unicodeChar_array(r_ob->notation_typo_preferences.noteheads_unicode_characters, 4, 87L, 119L, 729L, 339L); // doublewhole, whole, half, quarter
 //        r_ob->notation_typo_preferences.notehead_ux_shift = 0.2; // was 0.4
 //        r_ob->notation_typo_preferences.notehead_uy_shift = -1.74;
 //        r_ob->notation_typo_preferences.small_notehead_ux_shift = 0.;
@@ -7491,15 +7491,15 @@ void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         r_ob->notation_typo_preferences.rest_ux_shift = 0.;
         r_ob->notation_typo_preferences.rest_uy_shift = 0.; //2.4; 
 //        fill_double_array(r_ob->notation_typo_preferences.notehead_uwidths, 4, 8., 7.6, 7.1, 7.1);
-        fill_unicodeChar_array(r_ob->notation_typo_preferences.rests_unicode_characters, 9, 8222, 8721, 211, 338, 8240, 8776, 174, 217, 194);
-        fill_unicodeChar_array(r_ob->notation_typo_preferences.clefs_unicode_characters, 4, 38, 63, 66, 247);
+        fill_unicodeChar_array(r_ob->notation_typo_preferences.rests_unicode_characters, 9, 8222L, 8721L, 211L, 338L, 8240L, 8776L, 174L, 217L, 194L);
+        fill_unicodeChar_array(r_ob->notation_typo_preferences.clefs_unicode_characters, 4, 38L, 63L, 66L, 247L);
         r_ob->notation_typo_preferences.clef_ux_shift = 0.;
         r_ob->notation_typo_preferences.clef_uy_shift = -1.25; //-1.1;
         // here we put the info about, in the following order: 1/8 flag up / down / 1/16 flag up / down / next flags up / down
         // the 1/16 flags are the COMPLETE 1/16 flags (which means, with two "tails"), the "next flag" is an added single flag used for 1/32, and then for all the smaller subdivisions 
-        fill_char_array(r_ob->notation_typo_preferences.flag_noteheadaligned, 6, 0, 0, 0, 0, 0, 0); 
-        fill_unicodeChar_array(r_ob->notation_typo_preferences.flag_unicode_characters, 6, 106, 63743, 114, 82, 75, 212);
-        fill_double_array(r_ob->notation_typo_preferences.flag_uwidths, 3, 4.5, 4.5, 4.5); // 1/8, 1/16, next 
+        fill_char_array(r_ob->notation_typo_preferences.flag_noteheadaligned, 6, 0L, 0L, 0L, 0L, 0L, 0L);
+        fill_unicodeChar_array(r_ob->notation_typo_preferences.flag_unicode_characters, 6, 106L, 63743L, 114L, 82L, 75L, 212L);
+        fill_double_array(r_ob->notation_typo_preferences.flag_uwidths, 3, 4.5, 4.5, 4.5); // 1/8, 1/16, next
         r_ob->notation_typo_preferences.flag_ux_shift = 0.;
         fill_double_array(r_ob->notation_typo_preferences.flag_uy_shifts, 6, -27.4, -15.5, -27.4, -15.5, -32.9, -10.6);  // 1/8 flag up / down / 1/16 flag up / down / next flags up / down
         r_ob->notation_typo_preferences.further_flag_uy_step_stemup = -4.85;
@@ -9237,7 +9237,7 @@ void load_accidentals_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         r_ob->accidentals_typo_preferences.uy_shift = 24.0; // 23.2; //49.8;
         r_ob->accidentals_typo_preferences.et_dyadic_depth = 2;
         // binary unicode characters
-//        fill_unicodeChar_array(r_ob->accidentals_typo_preferences.unicode_binary_character, 17, 61626, 0, 0, 0, 61538, 0, 0, 0, 110, 0, 0, 0, 61475, 0, 0, 0, 61660);
+//        fill_unicodeChar_array(r_ob->accidentals_typo_preferences.unicode_binary_character, 17, 61626L, 0L, 0L, 0L, 61538L, 0L, 0L, 0L, 110L, 0L, 0L, 0L, 61475L, 0L, 0L, 0L, 61660L);
         legacy_fill_unicode_binary_character_array(r_ob, 61626, 0, 0, 0, 0x0062, 0, 0, 0, 110, 0, 0, 0, 61475, 0, 0, 0, 61660);
         legacy_fill_uascent(r_ob, 10.5, 0., 0., 0., 10.5, 0., 0., 0., 8.5, 0., 0., 0., 8.5, 0., 0., 0., 3.5);
         legacy_fill_udescent(r_ob, 3.5, 0., 0., 0., 3.5, 0., 0., 0., 8.5, 0., 0., 0., 8.5, 0., 0., 0., 3.5);

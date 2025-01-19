@@ -415,6 +415,7 @@ void fill_long_array(long *a, long count,...){
     va_end(ap);
 }
 
+// still work with longs!
 void fill_char_array(char *a, long count,...){
        long i; va_list ap; 
 	   va_start(ap, count);

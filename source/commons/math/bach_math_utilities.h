@@ -366,6 +366,7 @@ char is_number_in_double_array_with_modulo(double number, double num_elem, doubl
 
 
 /**	Fill an array of type char with a list of values.
+    Important: the input must be long (although they will be then converted to char): use 1L instead of 1, etc. Otherwise it can be problematic!
 	@ingroup		miscellanea
 	@param	a		The pointer to the first element of the array.
 	@param	count	The number of elements to fill
@@ -383,6 +384,7 @@ void fill_char_array(char *a, long count,...);
 
 
 /**	Fill an array of type long with a list of values (see fill_char_array() for an example).
+    Important: the values must actually be long: use 1L instead of 1, etc. Otherwise it can be problematic!
 	@ingroup		miscellanea
 	@param	a		The pointer to the first element of the array.
 	@param	count	The number of elements to fill

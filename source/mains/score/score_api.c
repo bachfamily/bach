@@ -9690,13 +9690,29 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                         pause_x = chord_alignment_point_x - rest_semiwidth + x->r_ob.notation_typo_preferences.rest_ux_shift * grace_ratio * x->r_ob.zoom_y;
                         
                         pause_real_y = rest_get_floating_yposition((t_notation_obj *) x, curr_ch, NULL, &rest_scaleposition);
+//                        dev_post("----");
+//                        dev_post("pause_real_y : %.2f", pause_real_y);
 //                        curr_ch->firstnote_y_real = curr_ch->lastnote_y_real = pause_real_y;
 //                        pause_y = pause_real_y + ((is_grace_chord ? -22.5 : -34.) + x->r_ob.notation_typo_preferences.rest_uy_shift) * x->r_ob.zoom_y;
+//                        dev_post("rest_uy_shift : %.2f, zoom: %.2f, rest_nominal_staffline_shift : %ld, step: %.2f", x->r_ob.notation_typo_preferences.rest_uy_shift, x->r_ob.zoom_y, rest_nominal_staffline_shift, x->r_ob.step_y);
+/*                        double a = rest_nominal_staffline_shift;
+                        double b = x->r_ob.step_y;
+                        dev_post("res : %.2f", a);
+                        dev_post("res : %.2f", b);
+                        dev_post("res : %.2f", a*b);
+                        dev_post("res : %.2f", (double)rest_nominal_staffline_shift);
+                        dev_post("res : %.2f", rest_nominal_staffline_shift);
+                        dev_post("res : %.2f", x->r_ob.step_y);
+                        dev_post("res : %.2f", rest_nominal_staffline_shift * x->r_ob.step_y);
+                        dev_post("res : %.2f", rest_nominal_staffline_shift * x->r_ob.step_y * 2);
+                        dev_post("res : %.2f", pause_real_y + (x->r_ob.notation_typo_preferences.rest_uy_shift) * x->r_ob.zoom_y);
+                        dev_post("res : %.2f", pause_real_y + (x->r_ob.notation_typo_preferences.rest_uy_shift) * x->r_ob.zoom_y - rest_nominal_staffline_shift * x->r_ob.step_y * 2); */
                         pause_y = pause_real_y + (x->r_ob.notation_typo_preferences.rest_uy_shift) * x->r_ob.zoom_y - rest_nominal_staffline_shift * x->r_ob.step_y * 2;
+//                        dev_post("pause_y : %.2f", pause_y);
                         last_note_y_real = staff_top; first_note_y_real = staff_top; // abuse, but for tuplets handling
                         curr_ch->topmost_y = curr_ch->topmost_y_noacc = pause_real_y - rest_get_top_extension_in_steps((t_notation_obj *) x, curr_ch->figure) * x->r_ob.step_y;
                         curr_ch->bottommost_y = curr_ch->bottommost_y_noacc = pause_real_y + rest_get_bottom_extension_in_steps((t_notation_obj *) x, curr_ch->figure) * x->r_ob.step_y;
-                        
+
 
                         
                         // background rest slots

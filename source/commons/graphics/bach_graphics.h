@@ -220,6 +220,7 @@ void get_middle_refinement_point_for_curve(double x1, double y1, double x2, doub
 
 
 /** Fill an array of #t_unicodeChar with some data.
+    Important: all the variable-number of input values must be long numbers: use 1L instead of 1 etc. Otherwise it can be sneakily problematic!
     @ingroup    math
     @param        a        Pointer to the first element of the array
     @param        count    Number of #t_unicodeChar arguments (to be placed after this <count> argument) with which the array will be filled
