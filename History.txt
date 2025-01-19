@@ -55,7 +55,8 @@ VERSION NOTES:
 *** VERSION CHANGES ***
 ***********************
 
-- bell: bach.sum, bach.prod now work
+- bell: new engne, with countless bug fixes, various new functions and some changes to the syntax
+    bach.sum, bach.prod now work
 
 - bach.fareyser, bach.jilimit, bach.continuedfraction: new objects
 

@@ -1125,13 +1125,14 @@ void codableobj_clear_included_filewatchers(t_codableobj* x)
     for (int i = 0; i < n; i++) {
         object_free(x->c_filewatchers[i]);
     }
+    x->c_nfilewatchers = 0;
     bach_atomic_unlock(&x->c_fw_lock);
 }
 
 void codableobj_add_included_filewatchers(t_codableobj* x, const fileidSet* files)
 {
     bach_atomic_lock(&x->c_fw_lock);
-    int i = x->c_nfilewatchers;
+    long i = x->c_nfilewatchers;
     auto j = files->begin();
     for ( ; j != files->end(); i++, j++) {
         x->c_filewatchers[i] = (t_object *) filewatcher_new((t_object *) x, j->path, j->name.c_str());
