@@ -278,7 +278,7 @@ void slur_nudge_ending_chord(t_notation_obj *r_ob, t_slur *slur, long delta_chor
     char direction = (delta_chords > 0 ? 1 : -1);
     delta_chords = abs(delta_chords);
     for (long count = 0; count < delta_chords; count++) {
-        t_chord *temp = direction > 0 ? chord_get_next(newchord) : chord_get_prev(newchord);
+        t_chord *temp = direction > 0 ? chord_get_next_nonrest(newchord) : chord_get_prev_nonrest(newchord);
         if (temp)
             newchord = temp;
     }
@@ -916,6 +916,10 @@ void slur_compute_control_points_methodB(t_notation_obj *r_ob, t_slur *slur)
     if (direction < 0) {
         start_nt = start->firstnote;
         end_nt = end->firstnote;
+    }
+    
+    if (!end_nt || !start_nt) {
+        return;
     }
     
     if (!end_nt->parent->is_grace_chord && start_nt->parent != end_nt->parent) {
