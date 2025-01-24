@@ -1149,6 +1149,73 @@ void score_sel_delete(t_score *x, t_symbol *s, long argc, t_atom *argv)
     
 }
 
+void score_sel_deletemeasurecontent(t_score *x, t_symbol *s, long argc, t_atom *argv)
+{
+    t_notation_item *curr_it = NULL;
+    t_notation_item *curr_it2;
+//    char changed = 0;
+    char need_check_scheduling = false;
+    
+    t_llll *transfer_slots = NULL;
+    t_atom_long even_if_empty = false, even_to_rests = false;
+    t_llll *ll = llllobj_parse_llll((t_object *)x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
+    llll_parseargs_and_attrs((t_object *) x, ll, "lii", gensym("transferslots"), &transfer_slots, gensym("empty"), &even_if_empty, gensym("torests"), &even_to_rests);
+    llll_free(ll);
+    
+    t_notation_item *lambda_it = x->r_ob.lambda_selected_item_ID > 0 ? notation_item_retrieve_from_ID((t_notation_obj *)x, x->r_ob.lambda_selected_item_ID) : NULL;
+    
+    lock_general_mutex((t_notation_obj *)x);
+
+    for (curr_it = x->r_ob.firstselecteditem; curr_it; curr_it = curr_it2) {
+        curr_it2 = curr_it->next_selected;
+        
+        if (lambda_it && (lambda_it == curr_it || // lambda item is exactly the item we're deleting..
+                          notation_item_is_ancestor_of((t_notation_obj *)x, lambda_it, curr_it) || // or one of its ancestors...
+                          notation_item_is_ancestor_of((t_notation_obj *)x, curr_it, lambda_it))) { // or one of its progeny...
+//            cpost("Trying to delete item %p (type %ld). Can't.", curr_it, curr_it->type);
+            object_error((t_object *)x, "Can't delete item, it's being output from the playout!");
+            curr_it->flags = k_FLAG_TO_BE_DELETED;
+            continue;
+        } else if (curr_it && curr_it->type == k_MEASURE) {
+            t_measure *meas = ((t_measure *)curr_it);
+            if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)meas)){
+                t_chord *ch = meas->firstchord;
+                undo_tick_create_for_selected_notation_item((t_notation_obj *) x, (t_notation_item *)meas, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+                while (ch){
+                    if (!ch->locked){
+                        t_note *nt = ch->firstnote; t_note *nt2;
+                        while (nt){
+                            nt2 = nt->next;
+                            if (!nt->locked) {
+                                note_delete((t_notation_obj *)x, nt, false);
+                            }
+                            nt = nt2;
+                        }
+                    }
+                    ch = ch->next;
+                }
+                recompute_all_for_measure((t_notation_obj *) x, meas, true);
+            }
+        }
+    }
+    
+    clear_selection((t_notation_obj *)x);
+    
+    if (transfer_slots)
+        llll_free(transfer_slots);
+
+    if (need_check_scheduling)
+        check_correct_scheduling((t_notation_obj *)x, false);
+        
+    perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DO);
+    close_slot_window((t_notation_obj *)x); // if we were in slot view...
+    unlock_general_mutex((t_notation_obj *)x);
+
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_DELETE_SELECTED_MEASURES_CONTENT);
+    
+}
+
+
 void score_sel_approxet(t_score *x, long tonedivision)
 {
     snap_pitch_to_et_tonedivision_for_selection((t_notation_obj *)x, tonedivision == 0 ? x->r_ob.tone_division : tonedivision);
@@ -5948,6 +6015,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // Use the additional "@empty" message argument in order to tell with a 0/1 integer whether empty slots should also be transfered (by default: 0 = false).
     // @mattr transferslots @type llll @default null @digest If non-null, when deleting notes from a chord, these slots will be transfered to another chord note whenever possible
     // @mattr empty @type int @default 0 @digest Also transfer empty slots
+    // @mattr torests @type int @default 0 @digest Also transfer slots to rests
     // @example delete @caption delete current selection
     // @example delete @transferslots 20 21 @caption delete current selection, and transfer content of slot 20 and 21 to another chord note, if possible
     // @example delete @transferslots all @caption delete current selection, and transfer all slots
@@ -5955,6 +6023,13 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example delete @transferslots all @empty 1 @caption delete current selection, and transfer all slots, even the empty ones
     // @seealso eraseslot, deletemeasures
     class_addmethod(c, (method) score_sel_delete, "delete", A_GIMME, 0);
+
+    // @method delete @digest Delete content of currently selected measures
+    // @description You can use <m>deletemeasurecontent</m> to delete all the notes in a measure while preserving the measure.
+    // @mattr transferslots @type llll @default null @digest If non-null, when deleting notes from a chord, these slots will be transfered to another chord note whenever possible
+    // @mattr empty @type int @default 0 @digest Also transfer empty slots
+    // @mattr torests @type int @default 0 @digest Also transfer slots to rests
+    class_addmethod(c, (method) score_sel_deletemeasurecontent, "deletemeasurecontent", A_GIMME, 0);
 
     
     // @method deletemeasures @digest Delete current selected measures

@@ -101,6 +101,8 @@ VERSION NOTES:
     á @bigtsvadj, @bigtsabovetempi: new attributes
     á fixed bug causing wrong positioning of dashes in lyrics
     á new @tupletfont and @tupletfontsize attributes
+    á new "deletemeasurecontent" message, operating on selection,
+        to clear the measures' chords without deleting the measures themselves
 
 - bach.roll: exportmidi: added "defaulttempo" message attribute
 

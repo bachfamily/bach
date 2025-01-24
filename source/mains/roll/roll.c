@@ -4996,7 +4996,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @seealso rippledelete, eraseslot
     class_addmethod(c, (method) roll_sel_delete, "delete", A_GIMME, 0);
 
-    
+
     // @method rippledelete @digest Ripple-delete current selected items
     // @description The message <m>rippledelete</m> deletes all the currently selected items, and shifts all the following one
     // backwards in order to fill the gap. <br />

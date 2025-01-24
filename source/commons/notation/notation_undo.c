@@ -602,6 +602,9 @@ void undo_op_to_string(long undo_op, char *buf)
         case k_UNDO_OP_DELETE_SELECTION:
             sprintf(buf, "Delete Selection");
             break;
+        case k_UNDO_OP_DELETE_SELECTED_MEASURES_CONTENT:
+            sprintf(buf, "Delete Selected Measures' Content");
+            break;
         case k_UNDO_OP_RIPPLE_DELETE_SELECTION:
             sprintf(buf, "Ripple Delete Selection");
             break;
