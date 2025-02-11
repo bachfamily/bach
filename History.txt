@@ -102,6 +102,7 @@ VERSION NOTES:
     á @bigtsvadj, @bigtsabovetempi: new attributes
     á fixed bug causing wrong positioning of dashes in lyrics
     á new @tupletfont and @tupletfontsize attributes
+    á XML export: added "voice" tag to ensure correct behaviour with Dorico
 
 - bach.roll: exportmidi: added "defaulttempo" message attribute
 
