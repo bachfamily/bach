@@ -55,7 +55,8 @@ VERSION NOTES:
 *** VERSION CHANGES ***
 ***********************
 
-- bell: bach.sum, bach.prod now work
+- bell: new engne, with countless bug fixes, various new functions and some changes to the syntax
+    bach.sum, bach.prod now work
 
 - bach.fareyser, bach.jilimit, bach.continuedfraction: new objects
 
@@ -103,6 +104,7 @@ VERSION NOTES:
     á new @tupletfont and @tupletfontsize attributes
     á new "deletemeasurecontent" message, operating on selection,
         to clear the measures' chords without deleting the measures themselves
+    á XML export: added "voice" tag to ensure correct behaviour with Dorico
 
 - bach.roll: exportmidi: added "defaulttempo" message attribute
 
