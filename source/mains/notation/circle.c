@@ -126,6 +126,7 @@ typedef struct _circle // [bach.circle] structure
     long                    vels[CONST_MAX_POINTS]; // must be static because it is a LONG_VARSIZE attribute
     long                    num_points;
     long                    modulo;
+    double                  phase; // 0-1 phase
     
     char                    velocity_handling;
     char                    show_modulo;
@@ -200,6 +201,7 @@ void complement_circle(t_circle *x);
 void invert_circle(t_circle *x);
 
 t_max_err circle_setattr_autoreduce(t_circle *x, t_object *attr, long ac, t_atom *av);
+t_max_err circle_setattr_phase(t_circle *x, t_object *attr, long ac, t_atom *av);
 
 void sort_points(t_circle *x);
 void reduce_points(t_circle *x);
@@ -514,6 +516,13 @@ void C74_EXPORT ext_main(void *moduleRef){
 
     CLASS_STICKY_ATTR(c,"category",0,"Settings");
 
+        CLASS_ATTR_DOUBLE(c, "phase", 0, t_circle, phase);
+        CLASS_ATTR_STYLE_LABEL(c,"phase",0,"text","Phase");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"phase",0,"0");
+        CLASS_ATTR_ACCESSORS(c, "phase", (method)NULL, (method)circle_setattr_phase);
+        // @description Phase shift (between 0 and 1).
+
+    
         CLASS_ATTR_CHAR(c, "autoreduce", 0, t_circle, auto_reduce);
         CLASS_ATTR_STYLE_LABEL(c,"autoreduce",0,"onoff","Automatically Delete Duplicates");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"autoreduce",0,"1");
@@ -631,6 +640,14 @@ void C74_EXPORT ext_main(void *moduleRef){
     
     dev_post("bach.circle compiled %s %s", __DATE__, __TIME__);
     return;
+}
+
+t_max_err circle_setattr_phase(t_circle *x, t_object *attr, long ac, t_atom *av){
+    if (ac) {
+        x->phase = atom_getfloat(av);
+        jbox_redraw((t_jbox *)x);
+    }
+    return MAX_ERR_NONE;
 }
 
 t_max_err circle_setattr_autoreduce(t_circle *x, t_object *attr, long ac, t_atom *av){
@@ -1056,8 +1073,10 @@ void circle_paint(t_circle *x, t_object *view)
     double width, height;
     double number_center_x, number_center_y;
     for (i = 0; i < x->modulo; i++) {
-        double sinus = sin(i * TWOPI / x->modulo);
-        double cosinus = cos(i * TWOPI / x->modulo);
+        double phase = x->phase;
+        double angle = (TWOPI * ((i + phase) * 1. / x->modulo));
+        double sinus = sin(angle);
+        double cosinus = cos(angle);
         double point_center_x = center_x + radius * sinus;
         double point_center_y = center_y - radius * cosinus;
 
@@ -1089,13 +1108,14 @@ void circle_paint(t_circle *x, t_object *view)
     if (x->num_points >= 2 && x->show_polygon) {
         double point_center_x, point_center_y;
         jgraphics_set_source_jrgba(g, &j_linecolor_r); jgraphics_set_line_width(g, x->line_width);
-        point_center_x = center_x + radius * sin(x->points[0] * TWOPI / x->modulo);
-        point_center_y = center_y - radius * cos(x->points[0] * TWOPI / x->modulo);
+        point_center_x = center_x + radius * sin((x->points[0] + x->phase) * TWOPI / x->modulo);
+        point_center_y = center_y - radius * cos((x->points[0] + x->phase) * TWOPI / x->modulo);
         jgraphics_move_to(g, point_center_x, point_center_y);
         for (i = 0; i < x->num_points; i++) {
             // line to the next one, if any
-            double next_center_x = center_x + radius * sin(x->points[i + 1 < x->num_points ? i+1 : 0] * TWOPI / x->modulo);
-            double next_center_y = center_y - radius * cos(x->points[i + 1 < x->num_points ? i+1 : 0] * TWOPI / x->modulo);
+            double angle = ((x->points[i + 1 < x->num_points ? i+1 : 0] + x->phase) * TWOPI / x->modulo);
+            double next_center_x = center_x + radius * sin(angle);
+            double next_center_y = center_y - radius * cos(angle);
             jgraphics_line_to(g, next_center_x, next_center_y);
         }
         jgraphics_close_path(g);
@@ -1116,8 +1136,9 @@ void circle_paint(t_circle *x, t_object *view)
     
     // circle for each point
     for (i = 0; i < x->num_points; i++) {
-        double sinus = sin(x->points[i] * TWOPI / x->modulo);
-        double cosinus = cos(x->points[i] * TWOPI / x->modulo);
+        double angle = ((x->points[i] + x->phase) * TWOPI / x->modulo);
+        double sinus = sin(angle);
+        double cosinus = cos(angle);
         double point_center_x = center_x + radius * sinus;
         double point_center_y = center_y - radius * cosinus;
         t_jrgba pointcolor = j_selectedpointinnercolor_r;

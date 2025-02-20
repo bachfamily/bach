@@ -94,6 +94,7 @@ VERSION NOTES:
     Now user-defined pitches are correctly preserved
 
 - bach.roll:  Improved intelligent ruler
+              exportmidi: added "defaulttempo" message attribute
 
 - bach.score:
     á Fixed bug causing crashes with wrong select syntax (e.g., unbalanced parentheses)
@@ -104,7 +105,7 @@ VERSION NOTES:
     á new "deletemeasurecontent" message, operating on selection,
         to clear the measures' chords without deleting the measures themselves
 
-- bach.roll: exportmidi: added "defaulttempo" message attribute
+- bach.circle: has a new @phase attribute
 
 - bell: bach.sum, bach.prod now work
         lists of . and : operations do not cause "out of memory" errors anymore
