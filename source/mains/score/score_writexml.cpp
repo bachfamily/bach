@@ -760,6 +760,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
     
     partidx = 1;
     long voiceidx;
+    int voiceelementidx;
     for (voice = x->firstvoice, voiceidx = 1;
          voice && voiceidx <= numvoices;
          voice = voice->next, voiceidx++) {
@@ -771,7 +772,6 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
             numparts_elem = numparts_elem->l_next;
 
             voices_left_in_voiceensemble = hatom_getlong(&numparts_elem->l_hatom);
-            
             mxml_node_t *partxml = mxmlNewElement(partlistxml, "score-part");
             
             t_atom *names = NULL;
@@ -857,6 +857,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
             
             numparts_elem = numparts_elem->l_next;
             voices_left_in_voiceensemble = hatom_getlong(&numparts_elem->l_hatom);
+            voiceelementidx = 1;
         }
         stafftxt = NULL;
         long staves = 1;
@@ -1224,6 +1225,9 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                             mxmlElementSetAttr(tie, "type", "start");
                         }
                     }
+                    
+                    mxml_node_t *voice = mxmlNewElement(notexml, "voice");
+                    mxmlNewInteger(voice, voiceelementidx);
                     
                     mxml_node_t *type = mxmlNewElement(notexml, "type");
                     mxmlNewText(type, 0, chordtype);
@@ -1668,6 +1672,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
         } else {
             --voices_left_in_voiceensemble;
             new_voice_ensemble = false;
+            ++voiceelementidx;
         }
         
         if (open_gliss)
