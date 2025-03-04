@@ -89,6 +89,7 @@ VERSION NOTES:
     á Fixed crashes with the goto system and tempi
     á @shiftunisons: new attribute to handle shifting of unisons in different parts
     á @markerwidth, @markerspan: two new attributes to control the appearance of markers
+    á @centsdifffont: new attribute
 
 - bach.roll, bach.score, bach.score2roll:
     Now user-defined pitches are correctly preserved
@@ -109,8 +110,10 @@ VERSION NOTES:
 
 - bell: bach.sum, bach.prod now work
         lists of . and : operations do not cause "out of memory" errors anymore
-=======
+
 - bach.urn: fixed behavior with @autoclear 1
+
+- bach.stream: fixed behavior with list with nonative mode active
 
 
 

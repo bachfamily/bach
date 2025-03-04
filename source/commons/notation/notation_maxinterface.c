@@ -3575,12 +3575,20 @@ void notation_class_add_font_attributes(t_class *c, char obj_type){
         // @exclude bach.slot
         // @description Sets the font size for textual annotations over the staff (handled via slot linkage).
 
+        CLASS_ATTR_SYM(c,"centsdifffont", 0, t_notation_obj, cents_differences_font);
+        CLASS_ATTR_STYLE_LABEL(c, "centsdifffont", 0, "font", "Cents Differences Font");
+        CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"centsdifffont", 0, "Arial");
+        CLASS_ATTR_ACCESSORS(c, "centsdifffont", (method)NULL, (method)notationobj_setattr_centsdiff_font);
+        // @exclude bach.slot
+        // @description Sets the font for cents difference display.
+
+        
         CLASS_ATTR_DOUBLE(c,"centsdifffontsize",0, t_notation_obj, cents_differences_font_size);
         CLASS_ATTR_STYLE_LABEL(c,"centsdifffontsize",0,"text","Cents Differences Font Size");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"centsdifffontsize",0,"8");
         CLASS_ATTR_FILTER_MIN(c, "rulerlabelsfontsize", 1.);
         // @exclude bach.slot
-        // @description Sets the font size of cents differences display
+        // @description Sets the font size of cents differences display.
 
 
     }
@@ -4205,6 +4213,15 @@ t_max_err notationobj_setattr_slot_labels_font(t_notation_obj *r_ob, t_object *a
     notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
     return MAX_ERR_NONE;
 }
+
+t_max_err notationobj_setattr_centsdiff_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+{
+    if (ac && atom_gettype(av) == A_SYM)
+        r_ob->cents_differences_font = atom_getsym(av);
+    notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+    return MAX_ERR_NONE;
+}
+
 
 t_max_err notationobj_setattr_slot_labels_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
 {

@@ -3,8 +3,8 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 1,
-			"revision" : 11,
+			"minor" : 6,
+			"revision" : 1,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -74,13 +74,11 @@
 				"box" : 				{
 					"dontreplace" : 1,
 					"id" : "obj-19",
-					"linecount" : 3,
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 320.0, 372.0, 155.0, 49.0 ],
-					"text" : "[ 2/4 6/8 4/4 ] [ 4/4 2/4 6/8 ] [ 4/4 6/8 2/4 ] [ 6/8 2/4 4/4 ] [ 6/8 4/4 2/4 ] [ 2/4 4/4 6/8 ]"
+					"patching_rect" : [ 320.0, 372.0, 155.0, 22.0 ]
 				}
 
 			}
@@ -205,13 +203,11 @@
 				"box" : 				{
 					"dontreplace" : 1,
 					"id" : "obj-23",
-					"linecount" : 3,
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 37.0, 358.0, 179.0, 49.0 ],
-					"text" : "[ `2/4 `6/8 `4/4 ] [ `4/4 `2/4 `6/8 ] [ `4/4 `6/8 `2/4 ] [ `6/8 `2/4 `4/4 ] [ `6/8 `4/4 `2/4 ] [ `2/4 `4/4 `6/8 ]"
+					"patching_rect" : [ 37.0, 358.0, 179.0, 22.0 ]
 				}
 
 			}
@@ -290,7 +286,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 42.0, 548.0, 167.0 ],
+					"patching_rect" : [ 6.0, 42.0, 551.0, 167.0 ],
 					"text" : "If the \"nonative\" message followed by 1 is sent to bach, all the native llll outlets of all the bach objects in the Max session will start behaving as if they were text outlets. The behavior of Max-format (@out m), disabled (@out x) and, of course, text-format (@out t) outlets is not changed.\n\nThis is especially useful for debugging, as it allows to take advantage of the Max debugger, the print watchpoints and the event probe, and to easily insert message boxes and other objects for monitoring the data flow.\nOn the other hand, care must be taken as, besides being significantly slower, too long lllls will be truncated by passing them in text format, resulting in data corruption and error messages.\n\nThe \"nonative\" message followed by 0 reinstates the normal behavior, in which outlets declared as native (as by default) output native-format lllls."
 				}
 
@@ -362,7 +358,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: llll, pronounce, pronounciation",
+					"text" : "Tags: llll, nonative, no, native, messages, to, bach",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
@@ -383,7 +379,7 @@
 					"order" : 1,
 					"source" : [ "obj-18", 0 ],
 					"watchpoint_flags" : 5,
-					"watchpoint_id" : 3
+					"watchpoint_id" : 1
 				}
 
 			}
@@ -407,7 +403,7 @@
 					"order" : 1,
 					"source" : [ "obj-27", 0 ],
 					"watchpoint_flags" : 5,
-					"watchpoint_id" : 4
+					"watchpoint_id" : 2
 				}
 
 			}
@@ -442,18 +438,7 @@
 			}
  ],
 		"dependency_cache" : [ 			{
-				"name" : "bach.repeat.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
-				"patcherrelativepath" : "../patchers",
-				"type" : "JSON",
-				"implicit" : 1
-			}
-, 			{
-				"name" : "bach.perm.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.reg.mxo",
+				"name" : "bach.args.mxo",
 				"type" : "iLaX"
 			}
 , 			{
@@ -461,12 +446,23 @@
 				"type" : "iLaX"
 			}
 , 			{
+				"name" : "bach.perm.mxo",
+				"type" : "iLaX"
+			}
+, 			{
 				"name" : "bach.portal.mxo",
 				"type" : "iLaX"
 			}
 , 			{
-				"name" : "bach.args.mxo",
+				"name" : "bach.reg.mxo",
 				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.repeat.maxpat",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/patchers",
+				"patcherrelativepath" : "../patchers",
+				"type" : "JSON",
+				"implicit" : 1
 			}
  ],
 		"autosave" : 0

@@ -4537,6 +4537,8 @@ typedef struct _notation_obj
     e_accidentals_preferences    accidentals_preferences;    ///< Preference for the accidental choice; must be one of the #e_accidentals_preferences
     char        show_cents_differences;           ///< One of the #e_show_cents_mode
     double      cents_differences_font_size;       ///< Font size for cents differences
+    t_symbol    *cents_differences_font;        ///< Font used to display cents differences
+
     t_symbol    *cents_symbol;                    ///< Symbol used to represent cents or MIDIcents
     double      accidentals_decay_threshold_ms;     ///< For [bach.roll] only, handles the decay threshold for accidental naturalization display.
     t_symbol    **full_acc_repr;                    ///< List of accidental representation symbols (one for each voice).
@@ -17762,6 +17764,7 @@ t_max_err notationobj_setattr_hidevoices(t_notation_obj *r_ob, t_object *attr, l
 t_max_err notationobj_setattr_markers_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_markers_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_slot_labels_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_centsdiff_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_slot_labels_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_rulermode(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_stafflines(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);

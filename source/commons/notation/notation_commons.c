@@ -2317,7 +2317,7 @@ void note_paint_accidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_ac
         }
         
         if (note_must_show_cents(r_ob, curr_nt)) {
-            t_jfont *jf_cents_difference = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(r_ob->cents_differences_font_size * r_ob->zoom_y) * accidentals_resize);
+            t_jfont *jf_cents_difference = jfont_create_debug(r_ob->cents_differences_font ? r_ob->cents_differences_font->s_name : "Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(r_ob->cents_differences_font_size * r_ob->zoom_y) * accidentals_resize);
             long diff_val = (long)round(curr_nt->midicents - curr_nt->pitch_displayed.toMCdouble());
             char diff_text[64];
             double dwidth = 0, dheight = 0;
