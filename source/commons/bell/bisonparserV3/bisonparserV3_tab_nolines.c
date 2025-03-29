@@ -79,7 +79,7 @@
      */
 
     #ifdef CONFIGURATION_Development
-    //#define code_dev_post post // UNCOMMENT THIS TO TURN ON VERBOSE PARSING
+    #define code_dev_post post // UNCOMMENT THIS TO TURN ON VERBOSE PARSING
     #endif
     
     #ifndef code_dev_post
@@ -97,6 +97,8 @@
     #include <stdio.h>
     #define code_dev_post printf
     #endif
+    
+    #define YYMAXDEPTH 1000000
     
     #include "bell/bach_codableobj.hpp"
     #include "bell/ast.hpp"
@@ -657,33 +659,33 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   206,   206,   211,   217,   223,   233,   236,   236,   246,
-     255,   255,   263,   271,   278,   288,   288,   305,   305,   324,
-     324,   344,   344,   370,   375,   383,   391,   394,   402,   403,
-     406,   414,   417,   422,   427,   435,   439,   447,   452,   462,
-     468,   477,   482,   487,   492,   497,   502,   507,   512,   517,
-     522,   531,   537,   546,   551,   556,   565,   573,   574,   579,
-     582,   585,   588,   591,   594,   597,   600,   603,   606,   613,
-     616,   619,   622,   629,   630,   640,   641,   642,   652,   653,
-     654,   661,   671,   675,   684,   685,   690,   691,   692,   697,
-     702,   707,   716,   726,   737,   738,   739,   740,   746,   747,
-     759,   762,   770,   771,   777,   785,   791,   796,   802,   807,
-     813,   823,   829,   834,   840,   845,   851,   856,   861,   862,
-     863,   864,   865,   870,   871,   872,   879,   891,   894,   897,
-     900,   903,   907,   911,   915,   919,   923,   927,   931,   935,
-     939,   943,   947,   951,   955,   959,   963,   967,   971,   975,
-     979,   983,   987,   991,   995,   999,  1003,  1007,  1011,  1018,
-    1022,  1026,  1030,  1034,  1038,  1042,  1046,  1050,  1054,  1058,
-    1062,  1066,  1070,  1074,  1078,  1082,  1086,  1090,  1094,  1098,
-    1102,  1106,  1110,  1114,  1118,  1122,  1130,  1136,  1142,  1148,
-    1157,  1162,  1170,  1174,  1178,  1182,  1186,  1187,  1191,  1195,
-    1200,  1206,  1212,  1218,  1224,  1230,  1236,  1245,  1249,  1252,
-    1256,  1262,  1267,  1272,  1283,  1288,  1294,  1300,  1306,  1312,
-    1318,  1324,  1330,  1336,  1342,  1348,  1354,  1360,  1366,  1372,
-    1378,  1384,  1390,  1396,  1402,  1408,  1415,  1418,  1421,  1424,
-    1427,  1430,  1433,  1436,  1439,  1442,  1445,  1448,  1451,  1454,
-    1457,  1460,  1463,  1466,  1469,  1472,  1476,  1488,  1496,  1510,
-    1525,  1529
+       0,   208,   208,   215,   223,   231,   243,   246,   246,   256,
+     265,   265,   273,   281,   288,   298,   298,   315,   315,   334,
+     334,   354,   354,   380,   385,   393,   401,   404,   412,   413,
+     416,   424,   427,   432,   437,   445,   449,   457,   462,   472,
+     478,   487,   492,   497,   502,   507,   512,   517,   522,   527,
+     532,   541,   547,   556,   561,   566,   575,   583,   584,   589,
+     592,   595,   598,   601,   604,   607,   610,   613,   616,   623,
+     626,   629,   632,   639,   640,   650,   651,   652,   662,   663,
+     664,   671,   681,   685,   694,   695,   700,   701,   702,   707,
+     712,   717,   726,   736,   747,   748,   749,   750,   756,   757,
+     769,   772,   780,   781,   787,   795,   801,   806,   812,   817,
+     823,   833,   839,   844,   850,   855,   861,   866,   871,   872,
+     873,   874,   875,   880,   881,   882,   889,   901,   904,   907,
+     910,   913,   917,   921,   925,   929,   933,   937,   941,   945,
+     949,   953,   957,   961,   965,   969,   973,   977,   981,   985,
+     989,   993,   997,  1001,  1005,  1009,  1013,  1017,  1021,  1028,
+    1032,  1036,  1040,  1044,  1048,  1052,  1056,  1060,  1064,  1068,
+    1072,  1076,  1080,  1084,  1088,  1092,  1096,  1100,  1104,  1108,
+    1112,  1116,  1120,  1124,  1128,  1132,  1140,  1146,  1152,  1158,
+    1167,  1172,  1180,  1184,  1188,  1192,  1196,  1197,  1201,  1205,
+    1210,  1216,  1222,  1228,  1234,  1240,  1246,  1255,  1259,  1262,
+    1266,  1272,  1277,  1282,  1293,  1298,  1304,  1310,  1316,  1322,
+    1328,  1334,  1340,  1346,  1352,  1358,  1364,  1370,  1376,  1382,
+    1388,  1394,  1400,  1406,  1412,  1418,  1425,  1428,  1431,  1434,
+    1437,  1440,  1443,  1446,  1449,  1452,  1455,  1458,  1461,  1464,
+    1467,  1470,  1473,  1476,  1479,  1482,  1486,  1498,  1506,  1520,
+    1535,  1539
 };
 #endif
 
@@ -4052,6 +4054,8 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
     params->ast = new astConst(llll_get(), params->owner);
     *params->codeac = -1;
     code_dev_post ("parse: empty program\n");
+    code_dev_post("yysize_maximum: %ld\n", YYSIZE_MAXIMUM);
+    code_dev_post("sizeof: %ld\n", sizeof (yyGLRStackItem));
 }
     break;
 
@@ -4060,6 +4064,8 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
     params->ast = new astConst(llll_get(), params->owner);
     *params->codeac = 0;
     code_dev_post ("parse: NAMEDPARAM: empty program\n");
+    code_dev_post("yysize_maximum: %ld\n", YYSIZE_MAXIMUM);
+    code_dev_post("sizeof: %ld\n", sizeof (yyGLRStackItem));
     YYACCEPT;
 }
     break;
@@ -4070,6 +4076,8 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
     *params->codeac = -1;
     code_dev_post("codeac: %ld", *params->codeac);
     code_dev_post ("parse: sequence: program\n");
+    code_dev_post("yysize_maximum: %ld\n", YYSIZE_MAXIMUM);
+    code_dev_post("sizeof: %ld\n", sizeof (yyGLRStackItem));
 }
     break;
 
@@ -4078,6 +4086,8 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
     params->ast = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.astNodeValue);
     code_dev_post("codeac: %ld", *params->codeac);
     code_dev_post ("parse: sequence NAMEDPARAM: program\n");
+    code_dev_post("yysize_maximum: %ld\n", YYSIZE_MAXIMUM);
+    code_dev_post("sizeof: %ld\n", sizeof (yyGLRStackItem));
     YYACCEPT;
 }
     break;
