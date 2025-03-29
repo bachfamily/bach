@@ -41,9 +41,9 @@ VERSION NOTES:
 *** THESE CHANGES MIGHT BREAK COMPATIBILITY WITH OLDER PATCHES ***
 
 - bell: syntax changes, hopefully marginal:
-        á function definitions with no arguments require a $ placeholder.
-          e.g., (-> 1) is not a valid function definition anymore, it has to be rewritten as ($ -> 1).
-        á #! is the functional form of the ! operator (it is no longer an alternative form for line comments)
+    á function definitions with no arguments require a $ placeholder.
+      e.g., (-> 1) is not a valid function definition anymore, it has to be rewritten as ($ -> 1).
+    á #! is the functional form of the ! operator (it is no longer an alternative form for line comments)
         
 
 - bach.roll: the subroll message doesn't output partial notes of duration 0 any longer
