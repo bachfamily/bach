@@ -27,7 +27,7 @@
 
 %{
     #ifdef CONFIGURATION_Development
-    //#define code_dev_post post // UNCOMMENT THIS TO TURN ON VERBOSE PARSING
+    #define code_dev_post post // UNCOMMENT THIS TO TURN ON VERBOSE PARSING
     #endif
     
     #ifndef code_dev_post
@@ -45,6 +45,8 @@
     #include <stdio.h>
     #define code_dev_post printf
     #endif
+    
+    #define YYMAXDEPTH 1000000
     
     #include "bell/bach_codableobj.hpp"
     #include "bell/ast.hpp"
@@ -207,11 +209,15 @@ program: %empty {
     params->ast = new astConst(llll_get(), params->owner);
     *params->codeac = -1;
     code_dev_post ("parse: empty program\n");
+    code_dev_post("yysize_maximum: %ld\n", YYSIZE_MAXIMUM);
+    code_dev_post("sizeof: %ld\n", sizeof (yyGLRStackItem));
 }
 | NAMEDPARAM {
     params->ast = new astConst(llll_get(), params->owner);
     *params->codeac = 0;
     code_dev_post ("parse: NAMEDPARAM: empty program\n");
+    code_dev_post("yysize_maximum: %ld\n", YYSIZE_MAXIMUM);
+    code_dev_post("sizeof: %ld\n", sizeof (yyGLRStackItem));
     YYACCEPT;
 }
 | sequence {
@@ -219,11 +225,15 @@ program: %empty {
     *params->codeac = -1;
     code_dev_post("codeac: %ld", *params->codeac);
     code_dev_post ("parse: sequence: program\n");
+    code_dev_post("yysize_maximum: %ld\n", YYSIZE_MAXIMUM);
+    code_dev_post("sizeof: %ld\n", sizeof (yyGLRStackItem));
 }
 | sequence NAMEDPARAM {
     params->ast = $1;
     code_dev_post("codeac: %ld", *params->codeac);
     code_dev_post ("parse: sequence NAMEDPARAM: program\n");
+    code_dev_post("yysize_maximum: %ld\n", YYSIZE_MAXIMUM);
+    code_dev_post("sizeof: %ld\n", sizeof (yyGLRStackItem));
     YYACCEPT;
 }
 ;

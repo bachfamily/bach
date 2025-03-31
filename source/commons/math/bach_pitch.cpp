@@ -402,7 +402,7 @@ t_bool t_pitch::operator>(const t_pitch &b) const
         return p_JIexpVector > b.p_JIexpVector; // compares the ratios (see operator> of expVector)
     if (isPureET()) {
         if (getOctave() != b.getOctave())
-            return getOctave() != b.getOctave();
+            return getOctave() > b.getOctave();
         else if (p_whiteKeyET != b.p_whiteKeyET)
             return p_whiteKeyET > b.p_whiteKeyET;
         else
