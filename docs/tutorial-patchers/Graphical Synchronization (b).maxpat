@@ -313,11 +313,11 @@
 					"id" : "obj-61",
 					"fontname" : "Arial",
 					"fontface" : 2,
-					"frgb" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"frgb" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"fontsize" : 12.0,
 					"patching_rect" : [ 578.0, 441.0, 138.0, 34.0 ],
 					"numinlets" : 1,
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"numoutlets" : 0
 				}
 

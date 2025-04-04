@@ -320,7 +320,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 495.0, 521.0, 131.0, 20.0 ],
 					"text" : "Matrix... what is it for?!",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

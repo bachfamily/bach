@@ -65,7 +65,7 @@
 					"patching_rect" : [ 349.0, 413.0, 148.0, 33.0 ],
 					"style" : "",
 					"text" : "You always give us such idiot examples...",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

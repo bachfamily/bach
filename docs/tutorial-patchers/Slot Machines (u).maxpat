@@ -259,7 +259,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 339.0, 399.0, 237.0, 33.0 ],
 					"text" : "You spoke also about a spatialization slot. Can we see it at work?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

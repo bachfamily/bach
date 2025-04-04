@@ -533,7 +533,7 @@
 					"patching_rect" : [ 276.0, 510.0, 339.0, 33.0 ],
 					"style" : "",
 					"text" : "Am I already doing constraint programming? That is so cool! I'll go buy the complete IT Crowd DVDs collection...",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

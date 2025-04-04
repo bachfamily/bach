@@ -453,7 +453,7 @@
 					"patching_rect" : [ 327.0, 524.0, 221.0, 33.0 ],
 					"style" : "",
 					"text" : "What if I just want to retrieve a single element from a list?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

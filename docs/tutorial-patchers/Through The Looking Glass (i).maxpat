@@ -357,13 +357,13 @@
 					"maxclass" : "comment",
 					"text" : "Uhm... I find a lot of tie and pitch issues. Plus, I'd expect that a tied note would be reversed in its overall duration, considering the tie. How do I do that?",
 					"linecount" : 3,
-					"frgb" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"frgb" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"fontface" : 2,
 					"fontsize" : 12.0,
 					"numinlets" : 1,
 					"patching_rect" : [ 324.0, 429.0, 325.0, 48.0 ],
 					"numoutlets" : 0,
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"id" : "obj-256",
 					"fontname" : "Arial"
 				}

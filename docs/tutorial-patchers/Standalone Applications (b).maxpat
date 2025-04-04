@@ -165,7 +165,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 404.0, 371.0, 193.0, 20.0 ],
 					"text" : "I've found it. I'm a pro. Now what?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

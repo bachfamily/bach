@@ -476,7 +476,7 @@
 					"patching_rect" : [ 427.0, 457.0, 185.0, 33.0 ],
 					"style" : "",
 					"text" : "Cool. What about Extras? I've been asking for it for a while...",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

@@ -723,7 +723,7 @@
 					"patching_rect" : [ 545.828552, 465.0, 234.0, 36.0 ],
 					"style" : "",
 					"text" : "Good to know. But then why the lllls in the previous section coincided?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

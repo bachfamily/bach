@@ -1822,7 +1822,7 @@
 					"patching_rect" : [ 307.0, 522.0, 402.0, 20.0 ],
 					"style" : "",
 					"text" : "Gosh... do I have to do this ALL the time I need to transcribe something?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

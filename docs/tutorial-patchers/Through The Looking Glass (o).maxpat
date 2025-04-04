@@ -441,7 +441,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 358.0, 419.0, 271.0, 33.0 ],
 					"text" : "All those chord-operations are fine. But what if I wanted to do MY personal chord operation?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

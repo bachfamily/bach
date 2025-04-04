@@ -532,7 +532,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 552.0, 473.0, 193.171448, 50.0 ],
 					"text" : "I don't get the parenthesis stuff. Does bach have parentheses? Where? I don't see them!",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

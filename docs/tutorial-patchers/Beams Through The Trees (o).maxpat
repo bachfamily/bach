@@ -981,7 +981,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 368.0, 526.0, 351.0, 33.0 ],
 					"text" : "Added, original... how many types of levels are there? What are those weird numbers, 1, 17, 18? Can I use them with bingo?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

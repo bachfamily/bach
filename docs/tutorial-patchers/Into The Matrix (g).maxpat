@@ -410,7 +410,7 @@
 					"patching_rect" : [ 352.0, 501.0, 196.0, 33.0 ],
 					"style" : "",
 					"text" : "And what about the 0 eigenvalue? We had a 0 eigenvalue...",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

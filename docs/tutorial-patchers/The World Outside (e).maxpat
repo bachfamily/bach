@@ -316,7 +316,7 @@
 					"maxclass" : "comment",
 					"text" : "MIDI sucks. What about compatibility with other CAC environments?",
 					"linecount" : 2,
-					"frgb" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"frgb" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"id" : "obj-61",
 					"fontname" : "Arial",
 					"fontface" : 2,
@@ -324,7 +324,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 355.0, 544.0, 220.0, 34.0 ],
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

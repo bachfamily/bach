@@ -355,13 +355,13 @@
 					"maxclass" : "comment",
 					"text" : "Now I know how to set the rhythmic tree from message or from interface. But how can I retrieve it?",
 					"linecount" : 2,
-					"frgb" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"frgb" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"numinlets" : 1,
 					"patching_rect" : [ 236.0, 541.0, 296.0, 34.0 ],
 					"id" : "obj-61",
 					"fontname" : "Arial",
 					"numoutlets" : 0,
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"fontface" : 2,
 					"fontsize" : 12.0
 				}

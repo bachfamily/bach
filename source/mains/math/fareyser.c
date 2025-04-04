@@ -238,6 +238,7 @@ t_fareyser *fareyser_new(t_symbol *s, short ac, t_atom *av)
         x->n_order = 1;
         x->n_jilimit = 0;
 		attr_args_process(x, ac, av);
+        x->n_ob.l_rebuild = 1;
 		if (true_ac) {
             x->n_order = MAX(1, atom_getlong(av));
 		}

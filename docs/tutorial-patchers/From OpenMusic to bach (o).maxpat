@@ -357,7 +357,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 577.5, 389.5, 208.0, 21.0 ],
 					"text" : "And what about voices and polys?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

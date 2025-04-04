@@ -1676,7 +1676,7 @@
 					"patching_rect" : [ 366.0, 514.0, 219.0, 33.0 ],
 					"style" : "",
 					"text" : "Good. But I'd like to set all parameters at once! And not just durations!",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

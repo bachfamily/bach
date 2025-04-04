@@ -410,7 +410,7 @@
 					"patching_rect" : [ 380.0, 385.0, 279.0, 47.0 ],
 					"style" : "",
 					"text" : "Ok, ignoring the first inlet (as you told me to do...), I still see a \"Measures\" inlet, a \"Ties\" inlet and a \"Extras\" inlet. What the hell are they?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

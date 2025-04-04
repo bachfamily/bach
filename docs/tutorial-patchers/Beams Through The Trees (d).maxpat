@@ -336,7 +336,7 @@
 					"patching_rect" : [ 348.0, 448.0, 321.0, 33.0 ],
 					"style" : "",
 					"text" : "What are the colours I see when I show the rhythmic tree? Have you just discovered RGB?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

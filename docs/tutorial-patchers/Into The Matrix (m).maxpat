@@ -538,7 +538,7 @@
 					"patching_rect" : [ 530.0, 396.0, 171.0, 33.0 ],
 					"style" : "",
 					"text" : "Whaaaat? What's the 5-dimensional euclistuff?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

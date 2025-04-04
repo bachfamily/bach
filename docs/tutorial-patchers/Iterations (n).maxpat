@@ -441,7 +441,7 @@
 					"patching_rect" : [ 320.0, 417.0, 214.0, 20.0 ],
 					"style" : "",
 					"text" : "What's the mindepth thing you added?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

@@ -122,7 +122,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 162.5, 308.5, 319.0, 33.0 ],
 					"text" : "... but my friend has an old 56k router, and I need to send him a patch within the next 2 minutes or the world will end!",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

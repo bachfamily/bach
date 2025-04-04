@@ -701,7 +701,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 535.0, 560.0, 197.0, 20.0 ],
 					"text" : "Wow... I'm astonished! (sarcasm...)",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

@@ -253,7 +253,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 270.0, 351.0, 214.0, 33.0 ],
 					"text" : "Now that I've found something, can I replace it with something else?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

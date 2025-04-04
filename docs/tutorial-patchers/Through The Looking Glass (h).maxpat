@@ -526,7 +526,7 @@
 					"maxclass" : "comment",
 					"text" : "Harder! What if I wanted to perform multiple stretches at the same time?",
 					"linecount" : 2,
-					"frgb" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"frgb" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"fontface" : 2,
 					"fontsize" : 12.0,
 					"numinlets" : 1,
@@ -534,7 +534,7 @@
 					"patching_rect" : [ 411.0, 520.0, 207.0, 34.0 ],
 					"id" : "obj-256",
 					"fontname" : "Arial",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

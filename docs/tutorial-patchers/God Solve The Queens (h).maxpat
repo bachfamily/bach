@@ -1152,7 +1152,7 @@
 					"patching_rect" : [ 376.0, 496.0, 371.0, 20.0 ],
 					"style" : "",
 					"text" : "Love the background music, I'll write a suite of background musics.",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

@@ -448,7 +448,7 @@
 					"patching_rect" : [ 319.0, 536.0, 423.0, 20.0 ],
 					"style" : "",
 					"text" : "Hey, that looks nice. Seems like I'm ready to develop software for the NASA...",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

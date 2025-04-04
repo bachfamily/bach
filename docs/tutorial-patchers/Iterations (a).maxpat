@@ -655,11 +655,11 @@
 					"text" : "This is stupid. I could have used [vexpr] or [bach.+] to do this.",
 					"linecount" : 2,
 					"fontsize" : 12.0,
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"numinlets" : 1,
 					"patching_rect" : [ 411.0, 511.0, 200.0, 34.0 ],
 					"numoutlets" : 0,
-					"frgb" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"frgb" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"id" : "obj-61",
 					"fontname" : "Arial",
 					"fontface" : 2

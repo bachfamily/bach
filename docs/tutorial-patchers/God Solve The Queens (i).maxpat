@@ -624,7 +624,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 468.0, 495.0, 256.0, 20.0 ],
 					"text" : "Too simple for me. I'd love a cup of complexity",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

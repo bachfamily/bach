@@ -185,7 +185,7 @@ double accidentals_get_uascent(t_notation_obj *r_ob, t_uint8 *accidentals)
         if (accidentals[i] == BACH_ACCIDENTAL_NONE)
             break;
         else if (accidentals[i] >= 0 && accidentals[i] < BACH_NUM_ACCIDENTALS)
-            w += r_ob->accidentals_typo_preferences.uascent[accidentals[i]];
+            w = MAX(w, r_ob->accidentals_typo_preferences.uascent[accidentals[i]]);
     }
     return w;
 }
@@ -231,7 +231,7 @@ double accidentals_get_udescent(t_notation_obj *r_ob, t_uint8 *accidentals)
         if (accidentals[i] == BACH_ACCIDENTAL_NONE)
             break;
         else if (accidentals[i] >= 0 && accidentals[i] < BACH_NUM_ACCIDENTALS)
-            w += r_ob->accidentals_typo_preferences.udescent[accidentals[i]];
+            w = MAX(w, r_ob->accidentals_typo_preferences.udescent[accidentals[i]]);
     }
     return w;
 }

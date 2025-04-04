@@ -102,7 +102,7 @@
 					"patching_rect" : [ 309.0, 510.0, 591.0, 33.0 ],
 					"style" : "",
 					"text" : "Did you try to set n=12? I had to force quit Max! I got stuck! – Did you wait long enough? – Yes I did – No you didn't – I told you I did. – Sure you didn't – So what? I'm impatient. Tell me at least how to abort a research.",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

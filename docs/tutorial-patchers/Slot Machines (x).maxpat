@@ -511,7 +511,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 346.0, 696.0, 296.0, 20.0 ],
 					"text" : "And the clean advice? I really need to maintain data...",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

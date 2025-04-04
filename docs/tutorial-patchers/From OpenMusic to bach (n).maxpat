@@ -400,7 +400,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 174.5, 453.5, 525.0, 21.0 ],
 					"text" : "Is there by any chance a [bach.shutupandautomaticallyconvertpatchfromopenmusic] box?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

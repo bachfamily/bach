@@ -157,7 +157,7 @@
 					"patching_rect" : [ 503.0, 561.0, 158.0, 33.0 ],
 					"style" : "",
 					"text" : "Sorry, I didn't really get this length and depth thing...",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

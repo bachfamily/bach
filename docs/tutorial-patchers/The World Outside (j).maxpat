@@ -173,13 +173,13 @@
 					"maxclass" : "comment",
 					"text" : "What if I lose my rhythmic tree through export?",
 					"linecount" : 2,
-					"frgb" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"frgb" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"numinlets" : 1,
 					"fontname" : "Arial",
 					"patching_rect" : [ 228.0, 459.0, 152.0, 34.0 ],
 					"numoutlets" : 0,
 					"id" : "obj-61",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"fontface" : 2,
 					"fontsize" : 12.0
 				}

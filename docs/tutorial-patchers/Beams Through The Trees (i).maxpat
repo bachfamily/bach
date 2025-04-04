@@ -426,7 +426,7 @@
 					"patching_rect" : [ 235.0, 541.0, 355.0, 33.0 ],
 					"style" : "",
 					"text" : "Well, if levels are allowed to share all the beams they can share, why there's no long beam running over all the three beats?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

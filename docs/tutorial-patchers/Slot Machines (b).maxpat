@@ -194,14 +194,14 @@
 					"maxclass" : "comment",
 					"text" : "I'm glad there are so many things to store, but how the hell do I store them?!?",
 					"linecount" : 2,
-					"frgb" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"frgb" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"id" : "obj-61",
 					"fontname" : "Arial",
 					"patching_rect" : [ 498.0, 294.0, 228.0, 34.0 ],
 					"numinlets" : 1,
 					"fontface" : 2,
 					"fontsize" : 12.0,
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"numoutlets" : 0
 				}
 

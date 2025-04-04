@@ -962,7 +962,7 @@
 					"maxclass" : "comment",
 					"text" : "Dude, there are A LOT of problems still... most of all, [bach.roll] doesn't scroll!!!!",
 					"linecount" : 2,
-					"frgb" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"frgb" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"fontface" : 2,
 					"fontsize" : 12.0,
 					"numinlets" : 1,
@@ -970,7 +970,7 @@
 					"patching_rect" : [ 428.0, 495.0, 249.0, 34.0 ],
 					"id" : "obj-61",
 					"fontname" : "Arial",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

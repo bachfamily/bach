@@ -303,7 +303,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 456.0, 446.0, 296.0, 20.0 ],
 					"text" : "A last example? An astonishing one?! (sarcasm...)",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

@@ -699,7 +699,7 @@
 					"patching_rect" : [ 433.0, 410.0, 220.0, 33.0 ],
 					"style" : "",
 					"text" : "Please... what's bach.llll? I've been begging an answer for a while...",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

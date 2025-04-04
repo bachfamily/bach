@@ -147,7 +147,7 @@
 					"patching_rect" : [ 269.0, 436.079315, 335.0, 47.0 ],
 					"style" : "",
 					"text" : "Wait a minute. There's something I don't understand. What's the \"cents = cents + $1\" thing? I didn't get it, yet it should be the core of our transposition...",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

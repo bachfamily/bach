@@ -227,9 +227,9 @@
 				"box" : 				{
 					"maxclass" : "comment",
 					"text" : "Here we go... How can I have all the possibilities?",
-					"frgb" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"frgb" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"numoutlets" : 0,
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"id" : "obj-61",
 					"fontname" : "Arial",
 					"patching_rect" : [ 209.0, 411.0, 291.0, 20.0 ],

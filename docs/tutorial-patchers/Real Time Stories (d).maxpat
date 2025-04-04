@@ -1425,7 +1425,7 @@
 					"patching_rect" : [ 701.0, 522.0, 175.0, 20.0 ],
 					"style" : "",
 					"text" : "Uhm... no I can't find it...",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

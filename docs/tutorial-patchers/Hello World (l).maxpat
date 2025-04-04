@@ -655,7 +655,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 292.0, 464.5, 346.0, 33.0 ],
 					"text" : "When I dump in textual form, there are a lot of spaces between parentheses and elements. Should I care about them?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

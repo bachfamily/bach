@@ -517,7 +517,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 511.0, 562.0, 204.0, 20.0 ],
 					"text" : "This is just fine for simple changes...",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

@@ -1793,7 +1793,7 @@
 					"patching_rect" : [ 574.0, 501.0, 203.0, 20.0 ],
 					"style" : "",
 					"text" : "What does it have to do with music?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

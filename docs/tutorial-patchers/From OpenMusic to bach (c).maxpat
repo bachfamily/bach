@@ -620,7 +620,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 356.5, 452.5, 323.0, 50.0 ],
 					"text" : "Yes, but bach has two more outlets than inlets. This is far from being elegant, and it is also rather annoying. What's the point in having them?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

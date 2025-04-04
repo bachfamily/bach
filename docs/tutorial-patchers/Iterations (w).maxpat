@@ -363,7 +363,7 @@
 					"maxclass" : "comment",
 					"text" : "You said that you would have come later on on [bach.filter]",
 					"linecount" : 2,
-					"frgb" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"frgb" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"numoutlets" : 0,
 					"id" : "obj-61",
 					"fontname" : "Arial",
@@ -372,7 +372,7 @@
 					"patching_rect" : [ 457.0, 530.0, 181.0, 34.0 ],
 					"numinlets" : 1,
 					"hidden" : 1,
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

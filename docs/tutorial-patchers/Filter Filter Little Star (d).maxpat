@@ -445,7 +445,7 @@
 					"patching_rect" : [ 323.0, 564.0, 408.0, 33.0 ],
 					"style" : "",
 					"text" : "Ok, how many times do you need to say \"exactly like [filtergraph~]\" before you realize I've already figured out that it's exactly like [filtergraph~]?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

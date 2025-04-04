@@ -354,7 +354,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 334.0, 523.0, 215.0, 20.0 ],
 					"text" : "Where's the musical need of all this?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

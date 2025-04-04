@@ -10,7 +10,6 @@
 		}
 ,
 		"rect" : [ 40.0, 79.0, 790.0, 560.0 ],
-		"bgcolor" : [ 0.968627, 0.968627, 0.968627, 1.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -144,7 +143,7 @@
 					"patching_rect" : [ 316.0, 516.0, 313.0, 33.0 ],
 					"style" : "",
 					"text" : "Is this so important? I want to make music: why should I care about the organization of \"bunches of stuff\"?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}
