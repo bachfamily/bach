@@ -75,7 +75,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 229.0, 185.0, 249.0, 23.0 ],
 					"text" : "This was the shortest tutorial ever!!! ",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}
@@ -191,7 +191,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 382.0, 356.0, 226.0, 33.0 ],
 					"text" : "I'm on an older Max or bach version. How can I still build standalones?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

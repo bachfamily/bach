@@ -941,7 +941,7 @@
 					"patching_rect" : [ 411.0, 512.0, 247.0, 33.0 ],
 					"style" : "",
 					"text" : "What does the addresses and nil and null have to do with all the music I want to write?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

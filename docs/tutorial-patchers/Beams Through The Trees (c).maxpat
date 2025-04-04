@@ -410,7 +410,7 @@
 					"patching_rect" : [ 279.0, 553.0, 433.0, 33.0 ],
 					"style" : "",
 					"text" : "Why on earth everything look the same when I use different treehandlings?\nThat's very complicated, man. I need mooooore moooore time to understand...",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

@@ -636,7 +636,7 @@
 					"patching_rect" : [ 229.0, 484.0, 360.0, 47.0 ],
 					"style" : "",
 					"text" : "Why on earth would I need to use rationals? Plus: you still didn't answer my question. What the hell is that bach.llll thing I see, and what does it have to do with all the stuff you're telling me?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

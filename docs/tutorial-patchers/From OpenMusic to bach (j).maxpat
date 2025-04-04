@@ -323,7 +323,7 @@
 					"patching_rect" : [ 548.828552, 495.0, 229.171448, 36.0 ],
 					"style" : "",
 					"text" : "... is due to WHAT??? \nWhat is the important caveat?!?!",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

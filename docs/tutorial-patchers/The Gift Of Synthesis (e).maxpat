@@ -509,7 +509,7 @@
 					"patching_rect" : [ 522.0, 500.0, 162.0, 33.0 ],
 					"style" : "",
 					"text" : "What if I need to have more than one synthesizer?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

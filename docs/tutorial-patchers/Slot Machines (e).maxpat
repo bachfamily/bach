@@ -442,7 +442,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 341.0, 542.0, 310.0, 33.0 ],
 					"text" : "I hate thispatcher to retrieve absolute path. I just want to give the file name, I don't care where the file is!",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

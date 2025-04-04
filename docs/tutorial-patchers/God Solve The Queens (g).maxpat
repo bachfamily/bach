@@ -1011,7 +1011,7 @@
 					"patching_rect" : [ 441.0, 480.0, 304.0, 33.0 ],
 					"style" : "",
 					"text" : "I don't know anything about threads and I'm proud of it. I just want to abort search! Can we do better than this?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

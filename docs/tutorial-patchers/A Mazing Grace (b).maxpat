@@ -339,7 +339,7 @@
 					"patching_rect" : [ 270.0, 519.0, 336.0, 20.0 ],
 					"style" : "",
 					"text" : "What if I hate Max messages? (Say, because of my religion?)",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

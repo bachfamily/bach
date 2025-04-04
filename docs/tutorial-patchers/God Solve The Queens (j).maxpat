@@ -1690,7 +1690,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 482.0, 489.0, 128.0, 20.0 ],
 					"text" : "Still too simple, man...",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

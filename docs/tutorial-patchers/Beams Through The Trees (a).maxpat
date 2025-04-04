@@ -432,14 +432,14 @@
 					"text" : "How the hell did you achieve that?!? How can the algorithm know if we care or if we do not care about beaming?!",
 					"linecount" : 2,
 					"numoutlets" : 0,
-					"frgb" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"frgb" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"fontface" : 2,
 					"fontsize" : 12.0,
 					"patching_rect" : [ 246.0, 569.0, 364.0, 34.0 ],
 					"id" : "obj-61",
 					"fontname" : "Arial",
 					"numinlets" : 1,
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

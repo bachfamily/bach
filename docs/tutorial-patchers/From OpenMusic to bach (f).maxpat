@@ -265,7 +265,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 295.0, 380.0, 326.0, 21.0 ],
 					"text" : "Cool. I'll try to connect the entrance of my house with a",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

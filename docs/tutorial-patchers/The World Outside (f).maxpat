@@ -323,7 +323,7 @@
 					"patching_rect" : [ 213.0, 556.0, 243.0, 20.0 ],
 					"style" : "",
 					"text" : "What if I wanted to go the other way round?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

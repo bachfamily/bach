@@ -224,11 +224,11 @@
 					"maxclass" : "comment",
 					"text" : "How do I import MIDI content?",
 					"patching_rect" : [ 205.0, 331.0, 173.0, 20.0 ],
-					"frgb" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"frgb" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"fontface" : 2,
 					"numinlets" : 1,
 					"fontsize" : 12.0,
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"numoutlets" : 0,
 					"id" : "obj-61",
 					"fontname" : "Arial"

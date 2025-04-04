@@ -379,7 +379,7 @@
 					"patching_rect" : [ 555.5, 454.0, 257.0, 36.0 ],
 					"style" : "",
 					"text" : "Ok, I get it. The structure for a bach.roll is: voices, chords, notes. Good.",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

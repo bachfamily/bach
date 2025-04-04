@@ -369,7 +369,7 @@
 					"patching_rect" : [ 297.0, 387.0, 201.0, 20.0 ],
 					"style" : "",
 					"text" : "Ok, how are we supposed to use it?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

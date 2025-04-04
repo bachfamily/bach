@@ -974,7 +974,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 453.0, 511.0, 339.0, 36.0 ],
 					"text" : "Ok: when random process are repeated more than once, a substantial rewriting is needed.",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

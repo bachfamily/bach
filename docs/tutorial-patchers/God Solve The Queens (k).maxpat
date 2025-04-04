@@ -715,7 +715,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 249.0, 506.0, 382.0, 33.0 ],
 					"text" : "Indeed. The problem is not solved at all. It would be solved for Rooks, not for Queens! How do we formalize the diagonal condition?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

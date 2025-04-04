@@ -461,7 +461,7 @@
 					"patching_rect" : [ 443.0, 476.0, 168.0, 33.0 ],
 					"style" : "",
 					"text" : "And how do I convert a list from one native to text?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

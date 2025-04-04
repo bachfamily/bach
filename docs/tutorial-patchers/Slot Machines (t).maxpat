@@ -270,7 +270,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 380.0, 411.0, 196.0, 33.0 ],
 					"text" : "Ok, I see. But what if I need to send gains through modules?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

@@ -1568,7 +1568,7 @@
 					"patching_rect" : [ 466.0, 565.0, 228.0, 33.0 ],
 					"style" : "",
 					"text" : "What was the weirdness with the [1 1] \n[2 2] matrix? I dont' get the point...",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

@@ -504,7 +504,7 @@
 				"box" : 				{
 					"maxclass" : "comment",
 					"text" : "Good tips, but why don't you develope a real time mode instead?!?",
-					"frgb" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"frgb" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"id" : "obj-61",
 					"fontname" : "Arial",
 					"fontface" : 2,
@@ -512,7 +512,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 346.0, 535.0, 369.0, 20.0 ],
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

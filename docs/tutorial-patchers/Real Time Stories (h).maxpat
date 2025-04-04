@@ -659,12 +659,12 @@
 					"text" : "Can we see the generated notes?",
 					"fontface" : 2,
 					"fontsize" : 12.0,
-					"frgb" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"frgb" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"patching_rect" : [ 374.0, 378.0, 191.0, 20.0 ],
 					"id" : "obj-61",
 					"numinlets" : 1,
 					"fontname" : "Arial",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"numoutlets" : 0
 				}
 

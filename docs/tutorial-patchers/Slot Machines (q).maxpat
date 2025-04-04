@@ -385,7 +385,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 349.0, 439.0, 296.0, 33.0 ],
 					"text" : "I want to precisely define an horizontal segment of function while dragging points. What can I do?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

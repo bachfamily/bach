@@ -176,7 +176,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 384.0, 412.0, 145.0, 20.0 ],
 					"text" : "Yes: what should I do???",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}
