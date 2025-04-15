@@ -9454,13 +9454,17 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                     double bpt_x = (temp->rel_x_pos < 1.) ? chord_alignment_point_x + (note_end_pos - chord_alignment_point_x) * temp->rel_x_pos : note_end_pos;
                                     double bpt_y;
                                     
-                                    if (temp->rel_x_pos >= 1. && (x->r_ob.breakpoints_have_noteheads == 1)) {
-                                        if (!temp->prev || temp->delta_mc != temp->prev->delta_mc)
-                                            bpt_y = mc_to_ypos((t_notation_obj *)x, curr_nt->midicents + round(temp->delta_mc), (t_voice *) voice);
-                                        else
-                                            bpt_y = mc_to_ypos((t_notation_obj *)x, note_get_display_midicents(curr_nt) + round(temp->delta_mc), (t_voice *) voice);
-                                    } else
-                                        bpt_y = mc_to_ypos((t_notation_obj *) x, mc_or_screen_mc + round(temp->delta_mc), (t_voice *) voice);
+                                    if (temp->delta_mc == 0)
+                                        bpt_y = note_y_real;
+                                    else {
+                                        if (temp->rel_x_pos >= 1. && (x->r_ob.breakpoints_have_noteheads == 1)) {
+                                            if (!temp->prev || temp->delta_mc != temp->prev->delta_mc)
+                                                bpt_y = mc_to_ypos((t_notation_obj *)x, curr_nt->midicents + round(temp->delta_mc), (t_voice *) voice);
+                                            else
+                                                bpt_y = mc_to_ypos((t_notation_obj *)x, note_get_display_midicents(curr_nt) + round(temp->delta_mc), (t_voice *) voice);
+                                        } else
+                                            bpt_y = mc_to_ypos((t_notation_obj *) x, mc_or_screen_mc + round(temp->delta_mc), (t_voice *) voice);
+                                    }
                                     
                                     if (x->r_ob.velocity_handling == k_VELOCITY_HANDLING_DURATIONLINEWIDTH && x->r_ob.breakpoints_have_velocity)  {
                                         double width1 = x->r_ob.durations_line_width * grace_ratio * x->r_ob.zoom_y * (((double) (temp->prev->prev ? temp->prev->velocity : curr_nt->velocity)) / CONST_MAX_VELOCITY + 0.1);
@@ -9493,7 +9497,12 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                     if (temp->rel_x_pos < 1.) {
                                         // draw line
                                         double bpt_x = chord_alignment_point_x + (note_end_pos - chord_alignment_point_x) * temp->rel_x_pos;
-                                        double bpt_y = mc_to_ypos((t_notation_obj *) x, mc_or_screen_mc + round(temp->delta_mc), (t_voice *) voice);
+                                        double bpt_y;
+                                        if (temp->delta_mc == 0)
+                                            bpt_y = note_y_real;
+                                        else {
+                                            bpt_y = mc_to_ypos((t_notation_obj *) x, mc_or_screen_mc + round(temp->delta_mc), (t_voice *) voice);
+                                        }
                                         char is_bpt_selected;
                                         t_jrgba bptcolor;
                                         prev_bpt_x = bpt_x; prev_bpt_y = bpt_y;
@@ -9512,7 +9521,11 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                             paint_default_small_notehead_with_accidentals((t_notation_obj *) x, view, g, tailcolor, temp->delta_mc + curr_nt->midicents, note_end_pos, curr_nt, 0, (x->r_ob.breakpoints_have_velocity && x->r_ob.velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE) ? velocity_to_notesize_factor((t_notation_obj *) x, temp->velocity) : CONST_GRACE_CHORD_SIZE);
                                         } else { 
                                             if (x->r_ob.show_tails) {
-                                                double bpt_y = mc_to_ypos((t_notation_obj *) x, note_get_display_midicents(curr_nt) + round(temp->delta_mc), (t_voice *) voice);
+                                                double bpt_y;
+                                                if (temp->delta_mc == 0)
+                                                    bpt_y = note_y_real;
+                                                else
+                                                    bpt_y = mc_to_ypos((t_notation_obj *) x, note_get_display_midicents(curr_nt) + round(temp->delta_mc), (t_voice *) voice);
                                                 paint_line(g, tailcolor, note_end_pos, bpt_y - x->r_ob.breakpoints_size * 0.666 * x->r_ob.zoom_y, note_end_pos, bpt_y + x->r_ob.breakpoints_size * 0.666 * x->r_ob.zoom_y * grace_ratio, x->r_ob.durations_line_width * x->r_ob.zoom_y * grace_ratio);
                                             }
                                         }

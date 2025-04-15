@@ -1960,6 +1960,14 @@ char are_pts_aligned(double x0, double y0, double x1, double y1, double x2, doub
 char is_pt_in_segment(double ptx, double pty, double x1, double y1, double x2, double y2) {
     double dot_prod, square_length_12;
 
+    if (fabs(x1 - x2) < CONST_EPSILON_ALIGNMENTS && fabs(y1 - y2) < CONST_EPSILON_ALIGNMENTS) {
+        // essentially same point
+        if (fabs(ptx - x1) < CONST_EPSILON_ALIGNMENTS && fabs(pty - y1) < CONST_EPSILON_ALIGNMENTS)
+            return true;
+        else
+            return false;
+    }
+    
     if (!are_pts_aligned(ptx, pty, x1, y1, x2, y2))
         return false;
     

@@ -10603,7 +10603,7 @@ void paint_notehead(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t_jfon
 void paint_duration_line(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t_jrgba notecolor, t_jrgba tailcolor, t_note *curr_nt, 
                             double end_pos, double system_shift, double system_jump, char note_unselected, char is_chord_selected, 
                             char is_note_selected, char is_durationline_selected, char is_note_played, char is_note_locked,
-                            char is_note_muted, char is_note_solo, t_bpt **selected_breakpoint);
+                            char is_note_muted, char is_note_solo, t_bpt **selected_breakpoint, double note_y_real);
     
 
 
