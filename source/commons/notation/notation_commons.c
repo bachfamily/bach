@@ -1601,8 +1601,9 @@ void paint_default_small_notehead_with_accidentals(t_notation_obj *r_ob, t_objec
         // if the breakpoint has exactly the same midicents as the beginning of the note, and the original
         // note had a custom enharmonicity, we keep it.
         foo->pitch_original = foo->pitch_displayed = note_attachment->pitch_displayed;
+        sysmem_copyptr(note_attachment->accidentals, foo->accidentals, (CONST_MAX_ACCIDENTALS + 1) * sizeof(t_uint8));
     }
-    chord_calculate_parameters(r_ob, ch, false);
+    chord_calculate_parameters(r_ob, ch, false, true);
     
     // ledger lines
     double ledger_lines_y[CONST_MAX_LEDGER_LINES]; 
@@ -25639,7 +25640,7 @@ void chord_calculate_staff_uy_stuff(t_notation_obj *r_ob, t_chord *chord)
     }
 }
 
-void chord_calculate_parameters(t_notation_obj *r_ob, t_chord *chord, char reset_graphical_position_values) 
+void chord_calculate_parameters(t_notation_obj *r_ob, t_chord *chord, char reset_graphical_position_values, char force_compute_show_accidentals)
 {
 // calculates all the parameters of a chord (such as notehead positions, accidental positions, width...) in order to simplify the drawing process
 // direction = 0: auto; 1: upwards, -1: downwards; 
@@ -25745,10 +25746,10 @@ void chord_calculate_parameters(t_notation_obj *r_ob, t_chord *chord, char reset
             reordered[i] = i; // default mapping
             
             // deciding whether to show the accidental
-            if (chord->is_score_chord) { // score: in bach.score this is done *after* measure_validate_accidentals()
+            if (chord->is_score_chord && (!force_compute_show_accidentals && chord->parent && chord->parent->voiceparent)) { // score: in bach.score this is done *after* measure_validate_accidentals(), unless we ask explicitly for it with force_compute_show_accidentals (used in breakpoints)
                 show_accidentals[i] = curr_nt->show_accidentals;
             } else { // roll (we calculate the show/hide here!)
-                t_voice *voice = (t_voice *)chord->voiceparent;
+                t_voice *voice = chord->is_score_chord ? (t_voice *)chord->parent->voiceparent : (t_voice *)chord->voiceparent;
                 if (voice->key == 0)
                     show_accidentals[i] = !(accidentals[i][0] == BACH_ACCIDENTAL_NONE || ((accidentals[i][0] == BACH_ACCIDENTAL_NATURAL || (!r_ob->ji_always_show_pythagorean_accidentals && r_ob->show_cents_differences != k_SHOW_CENTS_MODE_ACCIDENTAL && accidentals[i][0] == BACH_ACCIDENTAL_JI_NATURAL)) && accidentals[i][1] == BACH_ACCIDENTAL_NONE));
                 else {
