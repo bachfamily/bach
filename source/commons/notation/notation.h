@@ -2503,7 +2503,7 @@ typedef struct _slur
     struct _chord    *start_chord;                ///< Pointer to the chord where the starting of the slur is attached
     struct _chord    *end_chord;                  ///< Pointer to the chord where the ending of the slur is attached
 
-    char            direction;                    ///< Direction of the slur (1 = up, -1 = down)
+    char            direction;                    ///< Direction of the slur (1 = up, -1 = down, 0=automatic, chosen opposite to the direction of the first chord)
     char            end_is_before_start;          ///< Internal flag, telling if is the horizontal direction reversed
                                                   /// (because the end note is before the start one)
 
