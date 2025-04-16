@@ -7941,8 +7941,9 @@ int get_middle_scaleposition(int clef);
     @param    chord                            The chord
     @param    reset_graphical_position_values    Set this to 1 if you also want to reset the graphical position values. Namely this resets the <topmost_y>, <bottommost_y>, 
                                             <beam_y>, <topmost_y_noacc>, <bottommost_y_noacc> fields, and then call for reset_articulation_position_for_chord()
+    @param force_compute_show_accidentals   If set, it forces the filling of the show_accidentals field even for bach.score
  */
-void chord_calculate_parameters(t_notation_obj *r_ob, t_chord *chord, char reset_graphical_position_values);
+void chord_calculate_parameters(t_notation_obj *r_ob, t_chord *chord, char reset_graphical_position_values, char force_compute_show_accidentals = 0);
 
 
 /**    Fill the <notehead_resize> and <accidentals_resize> fields for a given note, depening if the note size is linked to some slot, or
@@ -10603,7 +10604,7 @@ void paint_notehead(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t_jfon
 void paint_duration_line(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t_jrgba notecolor, t_jrgba tailcolor, t_note *curr_nt, 
                             double end_pos, double system_shift, double system_jump, char note_unselected, char is_chord_selected, 
                             char is_note_selected, char is_durationline_selected, char is_note_played, char is_note_locked,
-                            char is_note_muted, char is_note_solo, t_bpt **selected_breakpoint);
+                            char is_note_muted, char is_note_solo, t_bpt **selected_breakpoint, double note_y_real);
     
 
 

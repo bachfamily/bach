@@ -5778,6 +5778,8 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @marg 1 @name start_path @optional 1 @type llll
     // @marg 2 @name end_path @optional 1 @type llll
     // @mattr name @type llll @default null @digest Name(s) of the slur
+    // @example addslur selection @caption add a slur over the selected chords
+    // @example addslur selection @name john @caption the same, with a name
     // @example addslur [1 1 1] [1 3 2] @caption add a slur from the first chord to the second chord of the 3rd measure
     // @example addslur [1 1 1] [1 3 2] @name john @caption the same, with a name
     // @seealso clearslur
@@ -11983,7 +11985,7 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
             //                            dev_post("note voice %ld; alignment_pt: %.2f, stem_x: %.2f, notehead_width: %.2f", voice->v_ob.number + 1,chord_alignment_x, stem_x, curr_nt->notehead_uwidth * x->r_ob.zoom_y);
             
             // duration line and breakpoints
-            paint_duration_line((t_notation_obj *) x, view, g, durationlinecolor, tailcolor, curr_nt, end_pos, system_shift, system_jump, note_unselected, is_chord_selected, is_note_selected, is_durationline_selected, is_note_played, is_note_locked, is_note_muted, is_note_solo, &selected_breakpoint);
+            paint_duration_line((t_notation_obj *) x, view, g, durationlinecolor, tailcolor, curr_nt, end_pos, system_shift, system_jump, note_unselected, is_chord_selected, is_note_selected, is_durationline_selected, is_note_played, is_note_locked, is_note_muted, is_note_solo, &selected_breakpoint, note_y_real);
             
             // draw the auxiliary stems, if needed
             if (x->r_ob.show_stems > 1 && curr_nt->need_auxiliary_stem) {
@@ -12606,7 +12608,22 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
                     }
                 }
                 
+                if (x->r_ob.slurs && x->r_ob.slurs->l_size > 0 && x->r_ob.show_slurs) {
+                    for (t_chord *curr_ch = voice->firstchord; curr_ch; curr_ch = curr_ch->next) { // cycle on the chords
+                        // we check if the chord is IN the screen: if so, we draw it!
+                        e_chord_position_in_screen position = chord_get_screen_position_for_painting(x, curr_ch);
+                        
+                        if (position == k_CHORDPOSITIONINSCREEN_STARTS_AFTER_DOMAIN) {
+                            break;
+                        } else {
+                            // TODO: only paint them if they overlap the visible range
+                            chord_paint_slurs_to((t_notation_obj *)x, g, curr_ch);
+                        }
+                    }
+                }
+                
             }
+            
             
             roll_paint_markers_twopass(x, g, rect, x->r_ob.firstmarker, &restart_from_this_marker, 1);
             

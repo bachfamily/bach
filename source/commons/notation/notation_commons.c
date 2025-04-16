@@ -1583,7 +1583,6 @@ void paint_default_small_notehead_with_accidentals(t_notation_obj *r_ob, t_objec
     double noteuwidth = 0;
     t_note *foo = build_default_note(r_ob);
     t_chord *ch = build_chord_from_notes(r_ob, foo, foo);
-    t_voice *v = NULL;
     if (note_attachment && r_ob) {
         if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) 
             ch->parent = note_attachment->parent->parent;
@@ -1597,12 +1596,28 @@ void paint_default_small_notehead_with_accidentals(t_notation_obj *r_ob, t_objec
     ch->imposed_direction = -1;
     foo->midicents = midicents;
     note_compute_approximation(r_ob, foo);
-    chord_calculate_parameters(r_ob, ch, false);
+
+    if (note_attachment && foo->midicents == note_attachment->midicents && note_attachment->pitch_displayed != t_pitch::NaP) {
+        // if the breakpoint has exactly the same midicents as the beginning of the note, and the original
+        // note had a custom enharmonicity, we keep it.
+        foo->pitch_original = foo->pitch_displayed = note_attachment->pitch_displayed;
+        sysmem_copyptr(note_attachment->accidentals, foo->accidentals, (CONST_MAX_ACCIDENTALS + 1) * sizeof(t_uint8));
+    }
+    chord_calculate_parameters(r_ob, ch, false, true);
     
     // ledger lines
     double ledger_lines_y[CONST_MAX_LEDGER_LINES]; 
     int num_ledger_lines = 0, i;
-    get_ledger_lines(r_ob, voice, midicents_to_diatsteps_from_middleC(r_ob, note_get_display_midicents(foo), notation_item_get_voice(r_ob, (t_notation_item *)ch)), &num_ledger_lines, ledger_lines_y); // let's obtain the list of ledger lines y
+    long scaleposition;
+    if (voice && voice->notation_style == k_VOICE_NOTATION_STYLE_LINEAR_PITCH) {
+        scaleposition = ((long)foo->midicents - 6000)/100;
+    } else if (foo->pitch_displayed != t_pitch::NaP){
+        scaleposition = foo->pitch_displayed.toStepsFromMiddleC();
+    } else {
+        scaleposition = mc_to_yposition_in_scale(r_ob, foo->midicents, voice);
+    }
+
+    get_ledger_lines(r_ob, voice, scaleposition, &num_ledger_lines, ledger_lines_y); // let's obtain the list of ledger lines y
     for (i = 0; i < num_ledger_lines; i++)
         paint_line(g, r_ob->j_mainstaves_rgba, notehead_center_x - CONST_LEDGER_LINES_HALF_UWIDTH * small_note_ratio * r_ob->zoom_y, ledger_lines_y[i], 
                    notehead_center_x + CONST_LEDGER_LINES_HALF_UWIDTH * small_note_ratio * r_ob->zoom_y, ledger_lines_y[i], 1.);
@@ -1611,9 +1626,10 @@ void paint_default_small_notehead_with_accidentals(t_notation_obj *r_ob, t_objec
     
     // notehead and accidentals
     foo->notehead_resize = 1.;
-    paint_notehead(r_ob, view, g, jf_smallnote, &color, foo, notehead_center_x, mc_to_yposition_in_scale_for_notes(r_ob, foo, voice, 0.7, false), system_shift, small_note_ratio);
-    note_paint_accidentals(r_ob, g, jf_smallacc, jf_text_fractions, jf_smallaccbogus, &color, foo,
-                          get_voice_clef(r_ob, voice), mc_to_yposition_in_scale(r_ob, note_get_display_midicents(foo), voice), notehead_left_x, false);
+    double note_y_real = system_shift + mc_to_yposition_in_scale(r_ob, note_get_display_midicents(foo), voice);
+    paint_notehead(r_ob, view, g, jf_smallnote, &color, foo, notehead_center_x, note_y_real, system_shift, small_note_ratio);
+    note_paint_accidentals(r_ob, g, jf_smallacc, jf_text_fractions, jf_smallaccbogus, &color, foo, get_voice_clef(r_ob, voice), note_y_real, notehead_left_x, false);
+
     free_chord(r_ob, ch);
     jfont_destroy_debug(jf_smallnote);
     jfont_destroy_debug(jf_smallacc);
@@ -1665,7 +1681,7 @@ double breakpoint_get_x(t_notation_obj *r_ob, t_bpt *bpt)
 }
 */
 
-void paint_duration_line(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t_jrgba notecolor, t_jrgba tailcolor, t_note *curr_nt, double end_pos, double system_shift, double system_jump, char note_unselected, char is_chord_selected, char is_note_selected, char is_durationline_selected, char is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, t_bpt **selected_breakpoint){
+void paint_duration_line(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t_jrgba notecolor, t_jrgba tailcolor, t_note *curr_nt, double end_pos, double system_shift, double system_jump, char note_unselected, char is_chord_selected, char is_note_selected, char is_durationline_selected, char is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, t_bpt **selected_breakpoint, double note_y_real){
     
     t_voice *voice = r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *)curr_nt->parent->voiceparent : (t_voice *)curr_nt->parent->parent->voiceparent;
     
@@ -1706,7 +1722,10 @@ void paint_duration_line(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t
                     double bpt_x = r_ob->width - r_ob->j_inset_x;
                     double bpt_y;
  
-                    bpt_y = system_shift + curr_rupture_point * system_jump + mc_to_ypos(r_ob, mc_or_screen_mc + notationobj_rescale_with_slope(r_ob, rupture_rel_x[curr_rupture_point], temp->prev->rel_x_pos, temp->rel_x_pos, temp->prev->delta_mc, temp->delta_mc, temp->slope), voice);
+                    if (temp->delta_mc == 0)
+                        bpt_y = note_y_real;
+                    else
+                        bpt_y = system_shift + curr_rupture_point * system_jump + mc_to_ypos(r_ob, mc_or_screen_mc + notationobj_rescale_with_slope(r_ob, rupture_rel_x[curr_rupture_point], temp->prev->rel_x_pos, temp->rel_x_pos, temp->prev->delta_mc, temp->delta_mc, temp->slope), voice);
                     
                     if (r_ob->velocity_handling == k_VELOCITY_HANDLING_DURATIONLINEWIDTH && r_ob->breakpoints_have_velocity) {
                         double width1 = r_ob->durations_line_width * r_ob->zoom_y * (((double) (temp->prev->prev ? temp->prev->velocity : curr_nt->velocity)) / CONST_MAX_VELOCITY + 0.1);
@@ -1726,13 +1745,17 @@ void paint_duration_line(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t
             
             // draw main line/curve
             bpt_x = onset_to_xposition_roll(r_ob, curr_nt->parent->onset+temp->rel_x_pos * curr_nt->duration, &curr_system);
-            if (temp->rel_x_pos >= 1. && (r_ob->breakpoints_have_noteheads == 1)) {
-                if (!temp->prev || temp->delta_mc != temp->prev->delta_mc)
-                    bpt_y = system_shift + curr_rupture_point * system_jump + mc_to_ypos(r_ob, curr_nt->midicents + round(temp->delta_mc), (t_voice *) voice);
-                else
+            if (temp->delta_mc == 0)
+                bpt_y = note_y_real;
+            else {
+                if (temp->rel_x_pos >= 1. && (r_ob->breakpoints_have_noteheads == 1)) {
+                    if (!temp->prev || temp->delta_mc != temp->prev->delta_mc)
+                        bpt_y = system_shift + curr_rupture_point * system_jump + mc_to_ypos(r_ob, curr_nt->midicents + round(temp->delta_mc), (t_voice *) voice);
+                    else
+                        bpt_y = system_shift + curr_rupture_point * system_jump + mc_to_ypos(r_ob, mc_or_screen_mc + round(temp->delta_mc), (t_voice *) voice);
+                } else
                     bpt_y = system_shift + curr_rupture_point * system_jump + mc_to_ypos(r_ob, mc_or_screen_mc + round(temp->delta_mc), (t_voice *) voice);
-            } else
-                bpt_y = system_shift + curr_rupture_point * system_jump + mc_to_ypos(r_ob, mc_or_screen_mc + round(temp->delta_mc), (t_voice *) voice);
+            }
     
             if (r_ob->velocity_handling == k_VELOCITY_HANDLING_DURATIONLINEWIDTH && r_ob->breakpoints_have_velocity)  {
                 double width1 = r_ob->durations_line_width * r_ob->zoom_y * (((double) (temp->prev->prev ? temp->prev->velocity : curr_nt->velocity)) / CONST_MAX_VELOCITY + 0.1);
@@ -25617,7 +25640,7 @@ void chord_calculate_staff_uy_stuff(t_notation_obj *r_ob, t_chord *chord)
     }
 }
 
-void chord_calculate_parameters(t_notation_obj *r_ob, t_chord *chord, char reset_graphical_position_values) 
+void chord_calculate_parameters(t_notation_obj *r_ob, t_chord *chord, char reset_graphical_position_values, char force_compute_show_accidentals)
 {
 // calculates all the parameters of a chord (such as notehead positions, accidental positions, width...) in order to simplify the drawing process
 // direction = 0: auto; 1: upwards, -1: downwards; 
@@ -25723,10 +25746,10 @@ void chord_calculate_parameters(t_notation_obj *r_ob, t_chord *chord, char reset
             reordered[i] = i; // default mapping
             
             // deciding whether to show the accidental
-            if (chord->is_score_chord) { // score: in bach.score this is done *after* measure_validate_accidentals()
+            if (chord->is_score_chord && (!force_compute_show_accidentals && chord->parent && chord->parent->voiceparent)) { // score: in bach.score this is done *after* measure_validate_accidentals(), unless we ask explicitly for it with force_compute_show_accidentals (used in breakpoints)
                 show_accidentals[i] = curr_nt->show_accidentals;
             } else { // roll (we calculate the show/hide here!)
-                t_voice *voice = (t_voice *)chord->voiceparent;
+                t_voice *voice = chord->is_score_chord ? (t_voice *)chord->parent->voiceparent : (t_voice *)chord->voiceparent;
                 if (voice->key == 0)
                     show_accidentals[i] = !(accidentals[i][0] == BACH_ACCIDENTAL_NONE || ((accidentals[i][0] == BACH_ACCIDENTAL_NATURAL || (!r_ob->ji_always_show_pythagorean_accidentals && r_ob->show_cents_differences != k_SHOW_CENTS_MODE_ACCIDENTAL && accidentals[i][0] == BACH_ACCIDENTAL_JI_NATURAL)) && accidentals[i][1] == BACH_ACCIDENTAL_NONE));
                 else {
