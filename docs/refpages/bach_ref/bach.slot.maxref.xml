@@ -1715,18 +1715,6 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
-		<attribute name="playheadfixedpos" get="1" set="1" type="float" size="1">
-			<digest>
-				Playhead Fixed Position
-			</digest>
-			<description>
-			</description>
-			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Play" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Playhead Fixed Position" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
-			</attributelist>
-		</attribute>
 		<attribute name="preventedit" get="1" set="1" type="atom_array" size="0">
 			<digest>
 				Prevent Editing For

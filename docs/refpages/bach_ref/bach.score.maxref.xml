@@ -9530,11 +9530,14 @@
 				Catch Playhead
 			</digest>
 			<description>
-				Fixed position of the playhead, only used if <m>catch_playhead</m> is set to 2 (FixedPlayhead).
+				Handles how the playhead moves during playback, and how its moving modifies the domain of the object. <br />
+				0 = Don't: playhead moves, but domain stays the same; <br />
+				1 = ChangePage: playhead moves, and domain changes once playhead gets to the end of the line; <br />
+				2 = FixedPlayhead: playhead remains fixed at a specific position, set by the attribute <m>playheadfixedpos</m>; <br />
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Play" />
-				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Catch Playhead" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
@@ -11168,25 +11171,6 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
-		<attribute name="minmeaswidthpersymunit" get="1" set="1" type="float" size="1">
-			<digest>
-				Minimum Measure Width Per Symbolic Unit
-			</digest>
-			<description>
-				Sets the minimum width corresponding to a whole note, in pixels (rescaled with respect to the current <m>vzoom</m>).
-				More precisely: each notation element lasting a fraction of the whole note will have to last at least for the corresponding fraction
-				of pixels. For instance, if our <m>minmeaswidthpersymunit</m> a quarter chord cannot graphically last less than 110/4 = 27,5 pixels
-				(rescaled then with respect to the current <m>vzoom</m>).
-			</description>
-			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
-				<attribute name="default" get="1" set="1" type="float" size="1" value="110" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Minimum Measure Width Per Symbolic Unit" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
-			</attributelist>
-		</attribute>
 		<attribute name="mousehover" get="1" set="1" type="int" size="1">
 			<digest>
 				Allow Mouse Hovering
@@ -11768,11 +11752,31 @@
 				Playhead Fixed Position
 			</digest>
 			<description>
+				Fixed position of the playhead, only used if <m>catch_playhead</m> is set to 2 (FixedPlayhead).
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Play" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="0" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Playhead Fixed Position" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="playheadnotify" get="1" set="1" type="int" size="1">
+			<digest>
+				Notify Playhead Position During Playback
+			</digest>
+			<description>
+				Constantly notify playhead position during playback.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Play" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Notify Playhead Position During Playback" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
 		<attribute name="playheadwidth" get="1" set="1" type="float" size="1">

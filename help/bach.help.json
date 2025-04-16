@@ -5046,6 +5046,13 @@
 				"tags" : [ "sequencer", "sequencing", "play", "playing", "catch", "play", "playhead", "head", "follow", "redraw", "screen", "optimize", "optimization", "improve", "time", "timing", "cpu", "usage", "encapsulate", "score", "domain", "fixed" ],
 				"title" : [ "Optimizing playback" ]
 			},
+			"E_notifyplayhead" : {
+				"filename" : [ "bach.help.notation.sequencing.05e_notifyplayhead.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "getcursor" ],
+				"tags" : [ "sequencer", "sequencing", "play", "playing", "notify", "head", "playhead", "position", "playback", "playheadnotify", "cursor", "getcursor" ],
+				"title" : [ "Get playhead position during playback" ]
+			},
 			"Playmode" : {
 				"filename" : [ "bach.help.notation.sequencing.06_playmode.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
