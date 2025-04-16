@@ -2940,8 +2940,8 @@ typedef struct _chord
     
 #ifdef BACH_SUPPORT_SLURS
     // slurs
-    long            num_slurs_to;                            ///< Number of slurs starting on the note
-    long            num_slurs_from;                            ///< Number of slurs ending on the note
+    long            num_slurs_to;                            ///< Number of slurs starting on the chord
+    long            num_slurs_from;                          ///< Number of slurs ending on the chord
     t_slur          *slur_to[CONST_MAX_SLURS_PER_CHORD];        ///< The array containing the pointer to the slurs starting on the chord (only num_slurs_to elements are meaningful)
     t_slur          *slur_from[CONST_MAX_SLURS_PER_CHORD];    ///< The array containing the pointer to the slurs ending on the chord (only num_slurs_from elements are meaningful)
 #endif
