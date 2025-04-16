@@ -151,7 +151,7 @@
 	<!--SEEALSO-->
 	<seealsolist>
 		<seealso name="bach.normalize" />
-		<seealso name="" module="bach" type="tutorial" />
+		<seealso name="16-Into The Matrix" module="bach" type="tutorial" />
 	</seealsolist>
 
 	<misc name = "Input">

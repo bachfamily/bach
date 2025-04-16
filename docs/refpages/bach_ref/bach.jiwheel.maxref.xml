@@ -1065,12 +1065,8 @@
 
 	<!--SEEALSO-->
 	<seealsolist>
-		<seealso name="bach.primeform" />
-		<seealso name="bach.pcsetinfo" />
-		<seealso name="bach.mod+" />
-		<seealso name="bach.mod-" />
-		<seealso name="bach.modtimes" />
-		<seealso name="bach.compl" />
+		<seealso name="bach.jilimit" />
+		<seealso name="bach.fareyser" />
 	</seealsolist>
 
 	<misc name = "Input">

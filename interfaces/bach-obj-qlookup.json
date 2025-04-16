@@ -1370,9 +1370,8 @@
       "calculate"
     ],
     "seealso": [
-      "bach.primeser",
-      "bach.geomser",
-      "bach.recurser"
+      "bach.jiwheel",
+      "bach.fareyser"
     ]
   },
   "bach.resample": {
@@ -2038,12 +2037,8 @@
       "rotate"
     ],
     "seealso": [
-      "bach.primeform",
-      "bach.pcsetinfo",
-      "bach.mod+",
-      "bach.mod-",
-      "bach.modtimes",
-      "bach.compl"
+      "bach.jilimit",
+      "bach.fareyser"
     ],
     "palette": {
       "category": [

@@ -83,7 +83,7 @@
 	<attributelist>
 		<attribute name="from" get="1" set="1" type="sym_array" size="0">
 			<digest>
-				
+				Incoming Pitch Information
 			</digest>
 			<description>
 				The <m>from</m> static attribute declares the types of information
@@ -119,6 +119,7 @@
 				<br /> <br />
 			</description>
 			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Incoming Pitch Information" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
@@ -155,7 +156,7 @@
 		</attribute>
 		<attribute name="to" get="1" set="1" type="sym_array" size="0">
 			<digest>
-				
+				Resulting Pitch Information
 			</digest>
 			<description>
 				The <m>from</m> static attribute declares the types of information
@@ -191,6 +192,7 @@
 				<br /> <br />
 			</description>
 			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Resulting Pitch Information" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>

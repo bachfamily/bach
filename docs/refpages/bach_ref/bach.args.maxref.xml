@@ -201,6 +201,7 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Null Mode" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
@@ -276,7 +277,7 @@
 	<seealsolist>
 		<seealso name="bach.portal" />
 		<seealso name="patcherargs" />
-		<seealso name="" module="bach" type="tutorial" />
+		<seealso name="12-Abstract Thinking" module="bach" type="tutorial" />
 	</seealsolist>
 
 	<misc name = "Input">
