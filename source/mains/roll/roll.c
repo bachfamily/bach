@@ -3981,8 +3981,10 @@ char force_inscreenpos_ms(t_roll *x, double position, double inscreen_ms, char a
         check_correct_scheduling((t_notation_obj *)x, true);
 
     x->r_ob.screen_ms_start = inscreen_ms - x->r_ob.domain * position;
-    if (x->r_ob.screen_ms_start < 0)
-        x->r_ob.screen_ms_start = 0;
+    if (false) {
+        if (x->r_ob.screen_ms_start < 0)
+            x->r_ob.screen_ms_start = 0;
+    }
     x->r_ob.screen_ux_start = onset_to_unscaled_xposition((t_notation_obj *)x, x->r_ob.screen_ms_start);
 
     update_hscrollbar((t_notation_obj *)x, 2);
@@ -4392,8 +4394,10 @@ void roll_do_play(t_roll *x, t_symbol *s, long argc, t_atom *argv)
         
         x->r_ob.play_head_ms = start_ms;
 
-        if (x->r_ob.catch_playhead && force_inscreen_ms_rolling(x, x->r_ob.play_head_ms, 0, true, false, false))
+        if ((x->r_ob.catch_playhead == k_PLAYHEAD_DOMAINCHANGE_PAGES && force_inscreen_ms_rolling(x, x->r_ob.play_head_ms, 0, true, false, false)) ||
+            (x->r_ob.catch_playhead == k_PLAYHEAD_DOMAINCHANGE_FIXPOS && force_inscreenpos_ms(x, x->r_ob.playhead_fixed_pos, x->r_ob.play_head_ms, true, false, false))) {
             notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
+        }
 
         x->r_ob.playing = true;
         llllobj_outlet_symbol_as_llll((t_object *)x, LLLL_OBJ_UI, 6, _llllobj_sym_play);
@@ -4496,8 +4500,10 @@ void roll_task(t_roll *x){
         // we haven't reached the next event: we just redraw the playline
         setclock_fdelay(x->r_ob.setclock->s_thing, x->r_ob.m_clock, x->r_ob.play_step_ms);
         if (x->r_ob.theoretical_play_step_ms > 0) {
-            if (x->r_ob.catch_playhead && force_inscreen_ms_rolling(x, x->r_ob.play_head_ms, 0, true, false, false))
+            if ((x->r_ob.catch_playhead == k_PLAYHEAD_DOMAINCHANGE_PAGES && force_inscreen_ms_rolling(x, x->r_ob.play_head_ms, 0, true, false, false)) ||
+                (x->r_ob.catch_playhead == k_PLAYHEAD_DOMAINCHANGE_FIXPOS && force_inscreenpos_ms(x, x->r_ob.playhead_fixed_pos, x->r_ob.play_head_ms, true, false, false))) {
                 notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
+            }
             notationobj_redraw((t_notation_obj *) x);
         }
         
@@ -4600,7 +4606,7 @@ void roll_task(t_roll *x){
                 x->r_ob.dont_schedule_loop_end = false;
 
             // we schedule the next event
-            x->r_ob.scheduled_ms = nextitemtoplay ? nextitemtoplay_onset : (x->r_ob.play_head_fixed_end_ms > 0 ? x->r_ob.play_head_fixed_end_ms : x->r_ob.length_ms);
+            x->r_ob.scheduled_ms = nextitemtoplay ? nextitemtoplay_onset : (x->r_ob.play_head_fixed_end_ms > 0 ? x->r_ob.play_head_fixed_end_ms : x->r_ob.length_ms_till_last_note);
             if (x->r_ob.theoretical_play_step_ms <= 0){
                 // just one step per scheduled event
                 x->r_ob.play_num_steps = 1;
@@ -4655,9 +4661,12 @@ void roll_task(t_roll *x){
             
             x->r_ob.play_head_ms = last_scheduled_ms;
 
-            if (x->r_ob.playing_scheduling_type == k_SCHEDULING_STANDARD)
-                if (x->r_ob.catch_playhead && force_inscreen_ms_rolling(x, x->r_ob.play_head_ms, 0, true, false, false))
+            if (x->r_ob.playing_scheduling_type == k_SCHEDULING_STANDARD) {
+                if ((x->r_ob.catch_playhead == k_PLAYHEAD_DOMAINCHANGE_PAGES && force_inscreen_ms_rolling(x, x->r_ob.play_head_ms, 0, true, false, false)) ||
+                    (x->r_ob.catch_playhead == k_PLAYHEAD_DOMAINCHANGE_FIXPOS && force_inscreenpos_ms(x, x->r_ob.playhead_fixed_pos, x->r_ob.play_head_ms, true, false, false))) {
                     notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
+                }
+            }
             
             // outputting chord values
             if (x->r_ob.playing_scheduling_type == k_SCHEDULING_PRESCHEDULE) {

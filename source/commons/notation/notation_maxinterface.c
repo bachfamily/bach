@@ -2631,12 +2631,22 @@ void notation_class_add_play_attributes(t_class *c, char obj_type){
 
 
         CLASS_ATTR_CHAR(c,"catchplay", 0, t_notation_obj, catch_playhead);
-        CLASS_ATTR_STYLE_LABEL(c,"catchplay",0,"onoff","Catch Play Head");
+        CLASS_ATTR_STYLE_LABEL(c,"catchplay",0,"enumindex","Catch Playhead");
+        CLASS_ATTR_ENUMINDEX(c,"catchplay", 0, "Don't ChangePage FixedPlayhead");
+        CLASS_ATTR_ACCESSORS(c, "catchplay", (method)NULL, (method)notationobj_setattr_catchplay);
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"catchplay", 0, "1");
         // @exclude bach.slot
-        // @description Toggles the ability to follow the playhead in the domain during playback.
+        // @description Handles how the playhead moves during playback, and how its moving modifies the domain of the object. <br />
+        // 0 = Don't: playhead moves, but domain stays the same; <br />
+        // 1 = ChangePage: playhead moves, and domain changes once playhead gets to the end of the line; <br />
+        // 2 = FixedPlayhead: playhead remains fixed at a specific position, set by the attribute <m>playheadfixedpos</m>; <br />
 
-
+        CLASS_ATTR_DOUBLE(c,"playheadfixedpos", 0, t_notation_obj, playhead_fixed_pos);
+        CLASS_ATTR_STYLE_LABEL(c,"playheadfixedpos",0,"text","Playhead Fixed Position");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"catchplay", 0, "0");
+        // @exclude bach.slot
+        // @description Fixed position of the playhead, only used if <m>catch_playhead</m> is set to 2 (FixedPlayhead).
+        
         CLASS_ATTR_CHAR(c,"playmode", 0, t_notation_obj, play_mode);
         CLASS_ATTR_STYLE_LABEL(c,"playmode",0,"enumindex","Playout Mode");
         CLASS_ATTR_ENUMINDEX(c,"playmode", 0, "Chordwise Notewise");
@@ -4029,6 +4039,16 @@ t_max_err notationobj_setattr_preventedit(t_notation_obj *r_ob, t_object *attr, 
 	return MAX_ERR_NONE;
 }
 
+
+t_max_err notationobj_setattr_catchplay(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+    if (ac && av) {
+        long mode = atom_getlong(av);
+        r_ob->catch_playhead = mode;
+        object_attr_setdisabled((t_object *)r_ob, gensym("playheadfixedpos"), mode != k_PLAYHEAD_DOMAINCHANGE_FIXPOS);
+    }
+    
+    return MAX_ERR_NONE;
+}
 
 t_max_err notationobj_setattr_rulermode(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
 	if (ac && av) {

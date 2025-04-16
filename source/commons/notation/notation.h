@@ -4119,6 +4119,17 @@ typedef t_chord* (*addchordfromllll_fn)(void *notation_obj, t_llll* chord, t_rol
 typedef void (*setmeasurefromllll_fn)(void *notation_obj, t_measure *measure, t_llll *measelemllll, char also_set_tempi, char when_no_ts_given_use_previous_measure_ts, char *need_update_solos);
 
 
+/** List of possible display styles for notes in a voice
+ @ingroup    dynamics
+ */
+typedef enum _playhead_domainchange_mode
+{
+    k_PLAYHEAD_DOMAINCHANGE_DONT = 0,          ///< Don't change domain while playing
+    k_PLAYHEAD_DOMAINCHANGE_PAGES = 1,          ///< Change domain like pages (default)
+    k_PLAYHEAD_DOMAINCHANGE_FIXPOS = 2,          ///< Keep playhead fixed at a specific position, while everything else moves.
+} e_playhead_domainchange_mode;
+
+
 
 /** A common structure for UI notation objects. 
     [bach.score], [bach.roll] and [bach.slot] will extend this structure, but most of the stuff is already inside here.
@@ -4567,7 +4578,6 @@ typedef struct _notation_obj
     double      focus_border_width;                  ///< Border size for object having focus
     double      border_width;                        ///< Border size for objects not having focus (or if @showfocus is off)
     
-    char        catch_playhead;                     ///< Catch the playhead while playing
     char        play_mode;                            ///< Play mode (see e_play_modes 0 = chord-wise, 1 = note-wise, by default it is 1, which should RARELY be changed!)
     char        play_rests;                            ///< Play rests (only work if play mode is chord-wise)
     char        play_tied_elements_separately;        ///< Flag telling if we want to send through playout tied chords just once, or if we want to have each tied chord separately output.
@@ -5006,6 +5016,10 @@ typedef struct _notation_obj
     double        theoretical_play_step_ms;    ///< Approximative step (in milliseconds) for playhead redraw. 0 means that the score is redrawn at each
                                             ///< scheduled event. The "approximative" adjective is due to the fact that we need an integer number of ticks 
                                             ///< between two scheduled events, so this might slightly vary in each scheduled interval
+
+    char        catch_playhead;             ///< Handles how the playhead changes the domain during playback: one of the e_playhead_changedomain_modes
+    double      playhead_fixed_pos;         ///< relative position of the playehad within the bar
+
     char        highlight_played_notes;        ///< Highlights the played notes with the playcolor. It's a bit more CPU-expensive, but more clear.
     char        play_markers;                ///< Send markers during play
     char        play_tempi;                 ///< Send tempi during play
@@ -17767,6 +17781,7 @@ t_max_err notationobj_setattr_markers_font_size(t_notation_obj *r_ob, t_object *
 t_max_err notationobj_setattr_slot_labels_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_centsdiff_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_slot_labels_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_catchplay(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_rulermode(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_stafflines(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_lyrics_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);

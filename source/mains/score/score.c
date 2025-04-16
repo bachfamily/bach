@@ -4382,8 +4382,10 @@ void score_do_play(t_score *x, t_symbol *s, long argc, t_atom *argv)
         x->r_ob.play_head_ms = start_ms;
         x->r_ob.play_head_ux = ms_to_unscaled_xposition((t_notation_obj *)x, x->r_ob.play_head_ms, 1);
 
-        if (x->r_ob.catch_playhead && force_inscreen_ux_rolling(x, x->r_ob.play_head_ux, 0, true, false))
+        if ((x->r_ob.catch_playhead == k_PLAYHEAD_DOMAINCHANGE_PAGES && force_inscreen_ux_rolling(x, x->r_ob.play_head_ux, 0, true, false)) ||
+            (x->r_ob.catch_playhead == k_PLAYHEAD_DOMAINCHANGE_FIXPOS && force_inscreenpos_ux (x, x->r_ob.playhead_fixed_pos, x->r_ob.play_head_ux, true, false))) {
             notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
+        }
 
         x->r_ob.playing = true;
         llllobj_outlet_symbol_as_llll((t_object *)x, LLLL_OBJ_UI, 7, _llllobj_sym_play);
@@ -4489,8 +4491,11 @@ void score_task(t_score *x)
         setclock_fdelay(x->r_ob.setclock->s_thing, x->r_ob.m_clock, x->r_ob.play_step_ms);
 
         if (x->r_ob.theoretical_play_step_ms > 0) {
-            if (x->r_ob.catch_playhead && force_inscreen_ux_rolling(x, x->r_ob.play_head_ux, 0, true, false))
+            if ((x->r_ob.catch_playhead == k_PLAYHEAD_DOMAINCHANGE_PAGES && force_inscreen_ux_rolling(x, x->r_ob.play_head_ux, 0, true, false)) ||
+                (x->r_ob.catch_playhead == k_PLAYHEAD_DOMAINCHANGE_FIXPOS && force_inscreenpos_ux (x, x->r_ob.playhead_fixed_pos, x->r_ob.play_head_ux, true, false))) {
                 notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
+            }
+
             notationobj_redraw((t_notation_obj *) x);
         }
     
@@ -4803,9 +4808,12 @@ void score_task(t_score *x)
             x->r_ob.play_head_ms = last_scheduled_ms;
             x->r_ob.play_head_ux = ms_to_unscaled_xposition((t_notation_obj *)x, x->r_ob.play_head_ms, 1);
             
-            if (x->r_ob.playing_scheduling_type == k_SCHEDULING_STANDARD)
-                if (x->r_ob.catch_playhead && force_inscreen_ux_rolling(x, x->r_ob.play_head_ux, 0, true, false))
+            if (x->r_ob.playing_scheduling_type == k_SCHEDULING_STANDARD) {
+                if ((x->r_ob.catch_playhead == k_PLAYHEAD_DOMAINCHANGE_PAGES && force_inscreen_ux_rolling(x, x->r_ob.play_head_ux, 0, true, false)) ||
+                    (x->r_ob.catch_playhead == k_PLAYHEAD_DOMAINCHANGE_FIXPOS && force_inscreenpos_ux (x, x->r_ob.playhead_fixed_pos, x->r_ob.play_head_ux, true, false))) {
                     notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
+                }
+            }
             
             // outputting chord values
             if (x->r_ob.playing_scheduling_type == k_SCHEDULING_PRESCHEDULE) {
