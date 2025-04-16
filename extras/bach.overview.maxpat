@@ -297,7 +297,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 250.0, 9.0, 208.0, 19.0 ],
-					"text" : "v0.8.9.0 beta (build 20250113183341)",
+					"text" : "v0.8.9.0 beta (build 20250416124001)",
 					"textcolor" : [ 0.10980399698019, 0.10980399698019, 0.10980399698019, 1.0 ],
 					"varname" : "autohelp_top_digest[3]"
 				}
@@ -564,7 +564,7 @@
 					"name" : "bach.overviewswitch.maxpat",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"offset" : [ 0.0, 0.0 ],
+					"offset" : [ 0.0, -5381.0 ],
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
@@ -607,6 +607,47 @@
 						"boxes" : [ 							{
 								"box" : 								{
 									"hidden" : 1,
+									"id" : "obj-386",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 920.0, 5770.0, 62.0, 22.0 ],
+									"text" : "PlayScroll"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"bubble" : 1,
+									"fontsize" : 12.0,
+									"id" : "obj-384",
+									"linecount" : 3,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 613.0, 5644.0, 169.0, 51.0 ],
+									"presentation_linecount" : 7,
+									"text" : "...and simple ways to handle different scrolling modes during playback"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontsize" : 22.0,
+									"id" : "obj-385",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 500.0, 5653.0, 109.0, 33.0 ],
+									"text" : "Play scroll"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"hidden" : 1,
 									"id" : "obj-382",
 									"maxclass" : "message",
 									"numinlets" : 2,
@@ -627,7 +668,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 368.0, 5651.0, 102.0, 37.0 ],
-									"text" : "...and marker regions"
+									"text" : "...and marker regions..."
 								}
 
 							}
@@ -766,8 +807,7 @@
 
 									}
 ,
-									"text" : "Here's also a few scrolldown primers for the new stuff introduced in bach 0.8.1.",
-									"textcolor" : [ 0.129412, 0.129412, 0.129412, 1.0 ]
+									"text" : "Here's also a few scrolldown primers for the new stuff introduced in bach 0.8.1."
 								}
 
 							}
@@ -822,8 +862,7 @@
 
 									}
 ,
-									"text" : "Our top-tier institutional supporters are, in alphabetical order:\n• Haute École de Musique de Genève - Centre de musique électroacoustique\n• IRCAM-Centre Pompidou (Paris).\n\n Click here for the full list:",
-									"textcolor" : [ 0.129412, 0.129412, 0.129412, 1.0 ]
+									"text" : "Our top-tier institutional supporters are, in alphabetical order:\n• Haute École de Musique de Genève - Centre de musique électroacoustique\n• IRCAM-Centre Pompidou (Paris).\n\n Click here for the full list:"
 								}
 
 							}
@@ -903,8 +942,7 @@
 
 									}
 ,
-									"text" : "On our Patreon channel we regularly publish video tutorials. A few are free, and cover some basic techniques. \nMore comprehensive tutorials are accessible to Patreon supporters from 4$/month, on top of many other benefits.",
-									"textcolor" : [ 0.129412, 0.129412, 0.129412, 1.0 ]
+									"text" : "On our Patreon channel we regularly publish video tutorials. A few are free, and cover some basic techniques. \nMore comprehensive tutorials are accessible to Patreon supporters from 4$/month, on top of many other benefits."
 								}
 
 							}
@@ -1052,8 +1090,7 @@
 
 									}
 ,
-									"text" : "We would like to thank all our Patreon supporters and all the bach donors.",
-									"textcolor" : [ 0.129412, 0.129412, 0.129412, 1.0 ]
+									"text" : "We would like to thank all our Patreon supporters and all the bach donors."
 								}
 
 							}
@@ -1074,8 +1111,7 @@
 
 									}
 ,
-									"text" : "Developing and maintaining bach is a lot of work. \n\nWe have decided to keep bach free and to embrace a business model based on Patreon: how much do you consider bach is valuable for you? If the answer is 0$, or if you cannot afford to pay any price, that's totally fine - we completely understand. \nBut if you can afford to pay us as little as a cup of coffee per month, that would really help. \n\nIn addition to keeping bach accessible for everybody, you'll also have exclusive access to prereleases, video tutorials, and more.",
-									"textcolor" : [ 0.129412, 0.129412, 0.129412, 1.0 ]
+									"text" : "Developing and maintaining bach is a lot of work. \n\nWe have decided to keep bach free and to embrace a business model based on Patreon: how much do you consider bach is valuable for you? If the answer is 0$, or if you cannot afford to pay any price, that's totally fine - we completely understand. \nBut if you can afford to pay us as little as a cup of coffee per month, that would really help. \n\nIn addition to keeping bach accessible for everybody, you'll also have exclusive access to prereleases, video tutorials, and more."
 								}
 
 							}
@@ -1258,8 +1294,7 @@
 
 									}
 ,
-									"text" : "New stuff introduced in bach 0.9",
-									"textcolor" : [ 0.129412, 0.129412, 0.129412, 1.0 ]
+									"text" : "New stuff introduced in bach 0.9"
 								}
 
 							}
@@ -1280,8 +1315,7 @@
 
 									}
 ,
-									"text" : "Here's a collection of things that you need to know if you used bach before its 0.9 version.\nClick on each message to open the corresponding scrolldown primer!\n(As usual, have a look at the History.txt file to know what else has changed.)",
-									"textcolor" : [ 0.129412, 0.129412, 0.129412, 1.0 ]
+									"text" : "Here's a collection of things that you need to know if you used bach before its 0.9 version.\nClick on each message to open the corresponding scrolldown primer!\n(As usual, have a look at the History.txt file to know what else has changed.)"
 								}
 
 							}
@@ -1573,7 +1607,6 @@
 									}
 ,
 									"text" : "Sections:",
-									"textcolor" : [ 0.129412, 0.129412, 0.129412, 1.0 ],
 									"textjustification" : 2
 								}
 
@@ -1699,7 +1732,6 @@
 									}
 ,
 									"text" : "Topics:",
-									"textcolor" : [ 0.129412, 0.129412, 0.129412, 1.0 ],
 									"textjustification" : 2
 								}
 
@@ -2154,7 +2186,6 @@
 									}
 ,
 									"text" : "Elements:",
-									"textcolor" : [ 0.129412, 0.129412, 0.129412, 1.0 ],
 									"textjustification" : 2
 								}
 
@@ -2669,8 +2700,7 @@
 
 									}
 ,
-									"text" : "First steps with the bach nested lists (lllls)",
-									"textcolor" : [ 0.129412, 0.129412, 0.129412, 1.0 ]
+									"text" : "First steps with the bach nested lists (lllls)"
 								}
 
 							}
@@ -7498,8 +7528,7 @@
 
 									}
 ,
-									"text" : "bach is an independent project by composers Andrea Agostini and Daniele Ghisi, supported by generous on Patreon. \nOur top-tier institutional supporters are, in alphabetical order:\n• Haute École de Musique de Genève - Centre de musique électroacoustique\n• IRCAM-Centre Pompidou (Paris).\n\nClick here to check out the full list of supporters: \n\nbach is distributed under the terms of the GNU General Public License version 3 (GPL-v3.0). \nSee the License file in the package to know more.\nThe source code of bach can be obtained at the following URL:  \n\nbach includes:\n- A modified version of Simon Tatham's listsort, released under the terms of the MIT License.\n- A modified version of The Mini-XML library version 2.7, released under the terms of the GNU Lesser General Public License version 2 (LGPL-v2.0)\n- The Kiss FFT library, released under the terms of the BSD License.\n- A modified version of the IRCAM SDIF library, released under the terms of the GNU Lesser General Public License version 2 (LGPL-v2.0)\n\nThe default font for bach is now Bravura, automatically loaded at bach startup, released under the terms of the SIL Open Font License version 1.1 (OFL-1.1): \nThe bach package also includes the formerly official bach font: \"November for bach\", created by Robert Piéchaud (                                          ), released under the terms of the SIL Open Font License version 1.1 (OFL-1.1). \"November for bach\" is the light version of the November font.",
-									"textcolor" : [ 0.129412, 0.129412, 0.129412, 1.0 ]
+									"text" : "bach is an independent project by composers Andrea Agostini and Daniele Ghisi, supported by generous on Patreon. \nOur top-tier institutional supporters are, in alphabetical order:\n• Haute École de Musique de Genève - Centre de musique électroacoustique\n• IRCAM-Centre Pompidou (Paris).\n\nClick here to check out the full list of supporters: \n\nbach is distributed under the terms of the GNU General Public License version 3 (GPL-v3.0). \nSee the License file in the package to know more.\nThe source code of bach can be obtained at the following URL:  \n\nbach includes:\n- A modified version of Simon Tatham's listsort, released under the terms of the MIT License.\n- A modified version of The Mini-XML library version 2.7, released under the terms of the GNU Lesser General Public License version 2 (LGPL-v2.0)\n- The Kiss FFT library, released under the terms of the BSD License.\n- A modified version of the IRCAM SDIF library, released under the terms of the GNU Lesser General Public License version 2 (LGPL-v2.0)\n\nThe default font for bach is now Bravura, automatically loaded at bach startup, released under the terms of the SIL Open Font License version 1.1 (OFL-1.1): \nThe bach package also includes the formerly official bach font: \"November for bach\", created by Robert Piéchaud (                                          ), released under the terms of the SIL Open Font License version 1.1 (OFL-1.1). \"November for bach\" is the light version of the November font."
 								}
 
 							}
@@ -7520,8 +7549,7 @@
 
 									}
 ,
-									"text" : "bach is an experimental project. It is very likely to contain minor and major bugs, and you are likely to find out that some basic feature is missing, or very uncomfortable to exploit.\n\nIf you use bach, you might find really useful to join the forum of our website                                   . In this community you can discuss topics concerning the bach environment and report bugs. This is the most appropriate context for all these things, since all users can benefit from everyone's experiences. Still, if you want to contact us privately, you can do it at                                             .\n\nThe ideal bug report should contain:\n- the sequence of operation after which the bug has happened - have you been able to reproduce the bug by repeating the same sequence?\n- the exact nature of the bug: what would have been the expected behaviour, and what you have obtained instead.\n- if there has been a crash, a copy of the contents of the crash report window - don't send it to Apple, it's our problem, not theirs.\n- if possible, a copy of the patch in which the bug has happened.\n- if possible, the exact input data that have caused the bug.\n\nPatreon supporters can submit feature requests: that this doesn't necessarily mean that all the features will be implemented. It can be technically impossible, it could require major changes to the overall architecture of the work, it could disrupt another functionality, it could be obtained by patching with some workaround, it could be to difficult for us to implement or we could simply not like it. But be assured that even the craziest feature request will be seriously considered and reflected upon!\n\nGeneral commentaries about the work are also welcome - especially if positive ;) - we need your advice to know in which direction the development should be pushed.\n\nThank you for your feedback!",
-									"textcolor" : [ 0.129412, 0.129412, 0.129412, 1.0 ]
+									"text" : "bach is an experimental project. It is very likely to contain minor and major bugs, and you are likely to find out that some basic feature is missing, or very uncomfortable to exploit.\n\nIf you use bach, you might find really useful to join the forum of our website                                   . In this community you can discuss topics concerning the bach environment and report bugs. This is the most appropriate context for all these things, since all users can benefit from everyone's experiences. Still, if you want to contact us privately, you can do it at                                             .\n\nThe ideal bug report should contain:\n- the sequence of operation after which the bug has happened - have you been able to reproduce the bug by repeating the same sequence?\n- the exact nature of the bug: what would have been the expected behaviour, and what you have obtained instead.\n- if there has been a crash, a copy of the contents of the crash report window - don't send it to Apple, it's our problem, not theirs.\n- if possible, a copy of the patch in which the bug has happened.\n- if possible, the exact input data that have caused the bug.\n\nPatreon supporters can submit feature requests: that this doesn't necessarily mean that all the features will be implemented. It can be technically impossible, it could require major changes to the overall architecture of the work, it could disrupt another functionality, it could be obtained by patching with some workaround, it could be to difficult for us to implement or we could simply not like it. But be assured that even the craziest feature request will be seriously considered and reflected upon!\n\nGeneral commentaries about the work are also welcome - especially if positive ;) - we need your advice to know in which direction the development should be pushed.\n\nThank you for your feedback!"
 								}
 
 							}
@@ -9161,6 +9189,22 @@
 									"destination" : [ "obj-374", 0 ],
 									"hidden" : 1,
 									"source" : [ "obj-383", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-386", 0 ],
+									"hidden" : 1,
+									"source" : [ "obj-385", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-378", 0 ],
+									"hidden" : 1,
+									"source" : [ "obj-386", 0 ]
 								}
 
 							}

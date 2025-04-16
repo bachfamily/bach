@@ -2643,9 +2643,16 @@ void notation_class_add_play_attributes(t_class *c, char obj_type){
 
         CLASS_ATTR_DOUBLE(c,"playheadfixedpos", 0, t_notation_obj, playhead_fixed_pos);
         CLASS_ATTR_STYLE_LABEL(c,"playheadfixedpos",0,"text","Playhead Fixed Position");
-        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"catchplay", 0, "0");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"playheadfixedpos", 0, "0");
+        CLASS_ATTR_FILTER_CLIP(c, "playheadfixedpos", 0., 1.);
         // @exclude bach.slot
         // @description Fixed position of the playhead, only used if <m>catch_playhead</m> is set to 2 (FixedPlayhead).
+
+        CLASS_ATTR_CHAR(c,"playheadnotify", 0, t_notation_obj, playhead_notify_during_playback);
+        CLASS_ATTR_STYLE_LABEL(c,"playheadnotify",0,"onoff","Notify Playhead Position During Playback");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"playheadnotify", 0, "0");
+        // @exclude bach.slot
+        // @description Constantly notify playhead position during playback.
         
         CLASS_ATTR_CHAR(c,"playmode", 0, t_notation_obj, play_mode);
         CLASS_ATTR_STYLE_LABEL(c,"playmode",0,"enumindex","Playout Mode");

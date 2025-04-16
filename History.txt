@@ -92,6 +92,7 @@ VERSION NOTES:
     á @markerwidth, @markerspan: two new attributes to control the appearance of markers
     á @centsdifffont: new attribute
     á Now @catchplay and @playheadfixedpos define different ways of scrolling the score during playback
+    á New @playheadnotify attribute to notify playhead position during playback
 
 - bach.roll, bach.score, bach.score2roll:
     Now user-defined pitches are correctly preserved

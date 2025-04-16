@@ -5019,6 +5019,7 @@ typedef struct _notation_obj
 
     char        catch_playhead;             ///< Handles how the playhead changes the domain during playback: one of the e_playhead_changedomain_modes
     double      playhead_fixed_pos;         ///< relative position of the playehad within the bar
+    char        playhead_notify_during_playback;    ///< Notify cursor position during playback
 
     char        highlight_played_notes;        ///< Highlights the played notes with the playcolor. It's a bit more CPU-expensive, but more clear.
     char        play_markers;                ///< Send markers during play

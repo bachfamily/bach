@@ -4480,6 +4480,10 @@ void score_task(t_score *x)
     if (x->r_ob.highlight_played_notes)
         check_unplayed_notes((t_notation_obj *) x, x->r_ob.play_head_ms);
 
+    if (x->r_ob.playhead_notify_during_playback) {
+        send_playhead_position((t_notation_obj *)x, 7);
+    }
+
     if (x->r_ob.play_step_count < x->r_ob.play_num_steps) {
 
         // we haven't reached the next event: we just redraw the playline

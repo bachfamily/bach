@@ -4398,7 +4398,7 @@ void roll_do_play(t_roll *x, t_symbol *s, long argc, t_atom *argv)
             (x->r_ob.catch_playhead == k_PLAYHEAD_DOMAINCHANGE_FIXPOS && force_inscreenpos_ms(x, x->r_ob.playhead_fixed_pos, x->r_ob.play_head_ms, true, false, false))) {
             notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
         }
-
+        
         x->r_ob.playing = true;
         llllobj_outlet_symbol_as_llll((t_object *)x, LLLL_OBJ_UI, 6, _llllobj_sym_play);
 
@@ -4495,6 +4495,10 @@ void roll_task(t_roll *x){
     if (x->r_ob.highlight_played_notes)
         check_unplayed_notes((t_notation_obj *) x, x->r_ob.play_head_ms);
     
+    if (x->r_ob.playhead_notify_during_playback) {
+        send_playhead_position((t_notation_obj *)x, 6);
+    }
+
     if (x->r_ob.play_step_count < x->r_ob.play_num_steps) {
     
         // we haven't reached the next event: we just redraw the playline
