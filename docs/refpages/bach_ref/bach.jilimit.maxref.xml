@@ -105,9 +105,8 @@
 
 	<!--SEEALSO-->
 	<seealsolist>
-		<seealso name="bach.primeser" />
-		<seealso name="bach.geomser" />
-		<seealso name="bach.recurser" />
+		<seealso name="bach.jiwheel" />
+		<seealso name="bach.fareyser" />
 	</seealsolist>
 
 	<misc name = "Input">

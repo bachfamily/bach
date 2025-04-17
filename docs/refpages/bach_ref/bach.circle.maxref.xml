@@ -470,6 +470,22 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
+		<attribute name="phase" get="1" set="1" type="float" size="1">
+			<digest>
+				Phase
+			</digest>
+			<description>
+				Phase shift (between 0 and 1).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Phase" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
 		<attribute name="pointbordercolor" get="1" set="1" type="rgba" size="1">
 			<digest>
 				Point Border Color

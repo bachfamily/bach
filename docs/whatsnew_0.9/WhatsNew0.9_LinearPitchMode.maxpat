@@ -163,35 +163,6 @@
 			}
 , 			{
 				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 12.0,
-					"hidden" : 1,
-					"id" : "obj-140",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 513.0, 105.0, 119.0, 22.0 ],
-					"text" : "bach.help.searchtag"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontface" : 0,
-					"fontname" : "Arial",
-					"fontsize" : 12.0,
-					"id" : "obj-142",
-					"maxclass" : "bach.hypercomment",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 507.0, 86.0, 200.0, 20.0 ],
-					"text" : "(Also see #pitch in the Help Center)"
-				}
-
-			}
-, 			{
-				"box" : 				{
 					"fontface" : 2,
 					"id" : "obj-90",
 					"maxclass" : "comment",
@@ -287,14 +258,6 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-140", 0 ],
-					"hidden" : 1,
-					"source" : [ "obj-142", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
 					"destination" : [ "obj-3", 0 ],
 					"source" : [ "obj-5", 0 ]
 				}
@@ -310,17 +273,6 @@
 			}
  ],
 		"dependency_cache" : [ 			{
-				"name" : "bach.help.searchtag.maxpat",
-				"bootpath" : "~/Documents/Max 8/Packages/bach/help",
-				"patcherrelativepath" : "../../help",
-				"type" : "JSON",
-				"implicit" : 1
-			}
-, 			{
-				"name" : "bach.hypercomment.mxo",
-				"type" : "iLaX"
-			}
-, 			{
 				"name" : "bach.roll.mxo",
 				"type" : "iLaX"
 			}

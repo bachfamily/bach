@@ -1240,7 +1240,7 @@
 			"filename" : [ "bach.help.messages to bach.04_nonative.maxpat" ],
 			"objects" : [ "all" ],
 			"seealso" : [ "llll+outlet+native", "llll+outlet+text", "llll+outlet+max" ],
-			"tags" : [ "llll", "pronounce", "pronounciation" ],
+			"tags" : [ "llll", "nonative", "no", "native", "messages", "to", "bach" ],
 			"title" : [ "Messages to bach: nonative" ]
 		},
 		"Messagesforglobalvariables" : {
@@ -3448,7 +3448,7 @@
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.02a_delete.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "sel", "select+all", "clearselection" ],
-					"tags" : [ "message", "operate", "on", "selection", "delete", "erase", "ripple", "rippledelete", "shift", "measure", "deletemeasures", "selected" ],
+					"tags" : [ "message", "operate", "on", "selection", "delete", "erase", "ripple", "rippledelete", "shift", "measure", "deletemeasures", "selected", "deletemeasurecontent" ],
 					"title" : [ "Delete selection" ]
 				},
 				"B_deletetransfer" : {
@@ -5025,19 +5025,33 @@
 				"tags" : [ "sequencer", "sequencing", "play", "playing", "interface", "selection", "pause", "start", "stop", "dump", "offline", "off-line", "evaluate", "validate" ],
 				"title" : [ "Playing interface" ]
 			},
-			"B_catchplay" : {
-				"filename" : [ "bach.help.notation.sequencing.05b_catchplay.maxpat" ],
-				"objects" : [ "bach.roll", "bach.score" ],
-				"seealso" : [ "show+focus" ],
-				"tags" : [ "sequencer", "sequencing", "play", "playing", "catch", "play", "playhead", "head", "follow", "redraw", "screen", "optimize", "optimization", "improve", "time", "timing", "cpu", "usage", "encapsulate", "score" ],
-				"title" : [ "Catch playhead and optimization" ]
-			},
 			"B_playinginterfacecmd" : {
 				"filename" : [ "bach.help.notation.sequencing.05b_playinginterfacecmd.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "play+offline" ],
 				"tags" : [ "sequencer", "sequencing", "play", "playing", "interface", "selection", "offline", "off-line", "off", "line", "play", "command", "keyboard", "shortcut", "right", "left", "double", "click", "leftclick", "rightclick", "doubleclick", "evaluate", "playofflinecmd", "dump", "play" ],
 				"title" : [ "Dump play command" ]
+			},
+			"C_catchplay" : {
+				"filename" : [ "bach.help.notation.sequencing.05c_catchplay.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "catchplay", "realtime", "optimize" ],
+				"tags" : [ "sequencer", "sequencing", "play", "playing", "catch", "play", "playhead", "head", "follow", "redraw", "screen", "optimize", "score", "domain", "fixed", "catchplay", "playheadfixedpos", "position", "pos" ],
+				"title" : [ "Playback scroll and domain interaction" ]
+			},
+			"D_optimizeplayback" : {
+				"filename" : [ "bach.help.notation.sequencing.05d_optimizeplayback.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "catchplay", "realtime" ],
+				"tags" : [ "sequencer", "sequencing", "play", "playing", "catch", "play", "playhead", "head", "follow", "redraw", "screen", "optimize", "optimization", "improve", "time", "timing", "cpu", "usage", "encapsulate", "score", "domain", "fixed" ],
+				"title" : [ "Optimizing playback" ]
+			},
+			"E_notifyplayhead" : {
+				"filename" : [ "bach.help.notation.sequencing.05e_notifyplayhead.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "getcursor" ],
+				"tags" : [ "sequencer", "sequencing", "play", "playing", "notify", "head", "playhead", "position", "playback", "playheadnotify", "cursor", "getcursor" ],
+				"title" : [ "Get playhead position during playback" ]
 			},
 			"Playmode" : {
 				"filename" : [ "bach.help.notation.sequencing.06_playmode.maxpat" ],
