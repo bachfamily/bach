@@ -512,13 +512,13 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
 
 "r"/{SEPARATOR} {
     code_dev_post("lex: r\n");
-    BEGIN lexparams->setState(UNARY_NOARGS);
+    BEGIN lexparams->setState(NOUNARY_NOARGS);
     return R;
 }
 
 "t"/{SEPARATOR} {
     code_dev_post("lex: t\n");
-    BEGIN lexparams->setState(UNARY_NOARGS);
+    BEGIN lexparams->setState(NOUNARY_NOARGS);
     return T;
 }
 

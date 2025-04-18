@@ -134,7 +134,7 @@ private:
                 return;
             
             if (what < 0)
-                what *= -1;
+                what = what.inv();
             what.reduce();
             while (what != 1 && i < BACH_PRIMES_JI_SIZE) {
                 const long this_prime = primes[i];
