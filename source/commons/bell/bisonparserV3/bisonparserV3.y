@@ -27,7 +27,7 @@
 
 %{
     #ifdef CONFIGURATION_Development
-    #define code_dev_post post // UNCOMMENT THIS TO TURN ON VERBOSE PARSING
+    //#define code_dev_post post // UNCOMMENT THIS TO TURN ON VERBOSE PARSING
     #endif
     
     #ifndef code_dev_post
@@ -128,10 +128,10 @@
 %left RANGE
 %left LSHIFT RSHIFT
 %left PLUS MINUS
-%left R T
-%left TIMES DIV DIVDIV REM
 %right UPLUS
 %right UMINUS
+%left R T
+%left TIMES DIV DIVDIV REM
 %right POWOP
 %left NTHOP PICKOP APPLY ACCESS_UNWRAP
 %nonassoc LVALUESTEPPARAMS

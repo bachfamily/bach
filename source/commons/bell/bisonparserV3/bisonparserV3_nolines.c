@@ -3110,7 +3110,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: r\n");
-    BEGIN lexparams->setState(UNARY_NOARGS);
+    BEGIN lexparams->setState(NOUNARY_NOARGS);
     return R;
 }
 	YY_BREAK
@@ -3123,7 +3123,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: t\n");
-    BEGIN lexparams->setState(UNARY_NOARGS);
+    BEGIN lexparams->setState(NOUNARY_NOARGS);
     return T;
 }
 	YY_BREAK

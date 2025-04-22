@@ -141,11 +141,11 @@ extern int bisonparserV3_debug;
     RANGE = 347,                   /* RANGE  */
     LSHIFT = 348,                  /* LSHIFT  */
     RSHIFT = 349,                  /* RSHIFT  */
-    R = 350,                       /* R  */
-    T = 351,                       /* T  */
-    REM = 352,                     /* REM  */
-    UPLUS = 353,                   /* UPLUS  */
-    UMINUS = 354,                  /* UMINUS  */
+    UPLUS = 350,                   /* UPLUS  */
+    UMINUS = 351,                  /* UMINUS  */
+    R = 352,                       /* R  */
+    T = 353,                       /* T  */
+    REM = 354,                     /* REM  */
     POWOP = 355,                   /* POWOP  */
     NTHOP = 356,                   /* NTHOP  */
     PICKOP = 357,                  /* PICKOP  */
