@@ -1001,6 +1001,9 @@ std::vector<t_rational> get_convergents_ext_and_continued_fraction(std::vector<l
     
     if (check_for_exact_den_equality && q0 == den_stop)
         return convs;
+    
+    if (num == a0)
+        return convs;
 
     double x = 1. / (num - a0);
     long a1 = (long)floor(x);
@@ -1039,6 +1042,9 @@ std::vector<t_rational> get_convergents_ext_and_continued_fraction(std::vector<l
     iter++;
 
     if (check_for_exact_den_equality && q1 == den_stop)
+        return convs;
+    
+    if (x == a1)
         return convs;
 
     x = 1. / (x - a1);

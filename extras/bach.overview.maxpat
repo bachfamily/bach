@@ -297,7 +297,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 250.0, 9.0, 208.0, 19.0 ],
-					"text" : "v0.8.9.0 beta (build 20250416124001)",
+					"text" : "v0.8.9.0 beta (build 20250416123951)",
 					"textcolor" : [ 0.10980399698019, 0.10980399698019, 0.10980399698019, 1.0 ],
 					"varname" : "autohelp_top_digest[3]"
 				}
@@ -627,7 +627,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 613.0, 5644.0, 169.0, 51.0 ],
-									"presentation_linecount" : 7,
 									"text" : "...and simple ways to handle different scrolling modes during playback"
 								}
 
@@ -807,7 +806,7 @@
 
 									}
 ,
-									"text" : "Here's also a few scrolldown primers for the new stuff introduced in bach 0.8.1."
+									"text" : "Here's also a few scrolldown primers for thestuff introduced in bach 0.8.1."
 								}
 
 							}

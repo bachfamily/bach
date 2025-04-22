@@ -59,7 +59,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 100.0, 126.0, 611.0, 450.0 ],
+						"rect" : [ 0.0, 26.0, 611.0, 450.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -99,7 +99,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 375.0, 232.0, 135.0, 54.0 ],
-									"presentation_linecount" : 3,
 									"text" : "Filter out zero convergents (and semiconvergents)"
 								}
 
@@ -456,7 +455,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 611.0, 450.0 ],
+						"rect" : [ 100.0, 126.0, 611.0, 450.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -742,7 +741,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 10.0, 10.0, 525.0, 100.0 ]
+									"patching_rect" : [ 10.0, 10.0, 525.0, 110.0 ]
 								}
 
 							}

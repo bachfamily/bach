@@ -7933,8 +7933,8 @@ void perform_analysis_and_change(t_score *x, t_jfont *jf_lyrics_nozoom, t_jfont 
                     chord_assign_dynamics((t_notation_obj *) x, tmp_chord, jf_dynamics_nozoom_ok, jf_dynamics_roman_nozoom_ok);
 
                     // we recalculate the chord parameters
-                    chord_calculate_parameters((t_notation_obj *) x, tmp_chord, true);
-                    tmp_chord->need_recompute_parameters = false;
+//                    chord_calculate_parameters((t_notation_obj *) x, tmp_chord, true);
+//                    tmp_chord->need_recompute_parameters = false;
                 }
             }
 
@@ -7946,6 +7946,14 @@ void perform_analysis_and_change(t_score *x, t_jfont *jf_lyrics_nozoom, t_jfont 
                 measure_validate_accidentals((t_notation_obj *) x, tmp_meas);
                 tmp_meas->need_check_ties = false;
             } 
+            
+            for (tmp_chord = tmp_meas->firstchord; tmp_chord; tmp_chord = tmp_chord->next) {
+                if (tmp_chord->need_recompute_parameters) {
+                    // we recalculate the chord parameters
+                    chord_calculate_parameters((t_notation_obj *) x, tmp_chord, true);
+                    tmp_chord->need_recompute_parameters = false;
+                }
+            }
         }
     
     verbose_post_rhythmic_tree((t_notation_obj *) x, x->firstvoice->firstmeasure, NULL, 0);
