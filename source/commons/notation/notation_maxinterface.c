@@ -1416,11 +1416,13 @@ void notationobj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_di
     long ac_backgroundslots, ac_mainstavescolor, ac_auxiliarystavescolor;
     t_atom *av_backgroundslots = NULL, *av_mainstavescolor = NULL, *av_auxiliarystavescolor = NULL;
     t_atom_long *av_long = NULL;
-    long has_backgroundslots = 0, has_slotsbgalpha = 0, has_backgroundslotfontsize = 0, has_velocityhandling = 0, has_notificationsformessages = 0, has_showtempointerpline = 0, has_continuousbang = 0, has_additionalstartpad = 0;
+    long has_backgroundslots = 0, has_slotsbgalpha = 0, has_backgroundslotfontsize = 0, has_velocityhandling = 0, has_notificationsformessages = 0, has_showtempointerpline = 0, has_continuousbang = 0, has_additionalstartpad = 0, has_annotationfontsize = 0, has_annotationalignment = 0;
     t_atom_long dblclicksendsvalues = 0;
     double slotbgalpha = 0, backgroundslotfontsize = 0, additionalstartpad = 0;
     t_atom_long velocityhandling = -1, notificationsformessages = -1, showtempointerpline = 0, continuousbang = -1;
     char brand_new_creation = 0;
+    double annotationfontsize = 0;
+    long annotationalignment = 0;
 
 
     long num_voices_from_argument = -1; // = no need to set num voices
@@ -1490,9 +1492,16 @@ void notationobj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_di
 
     if ((has_showtempointerpline = dictionary_hasentry(d, gensym("showtempointerpline"))))
         dictionary_getlong(d, gensym("showtempointerpline"), &showtempointerpline);
-    
+
+    if ((has_annotationfontsize = dictionary_hasentry(d, gensym("annotationfontsize"))))
+        dictionary_getfloat(d, gensym("annotationfontsize"), &annotationfontsize);
+
+    if ((has_annotationalignment = dictionary_hasentry(d, gensym("annotationalignment"))))
+        dictionary_getlong(d, gensym("annotationalignment"), &annotationalignment);
+
     if ((has_continuousbang = dictionary_hasentry(d, gensym("continuousbang"))))
         dictionary_getlong(d, gensym("continuousbang"), &continuousbang);
+    
     else if ((has_continuousbang = dictionary_hasentry(d, gensym("continuouslyoutputbangifchanged"))))
         dictionary_getlong(d, gensym("continuouslyoutputbangifchanged"), &continuousbang);
 
@@ -1556,6 +1565,12 @@ void notationobj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_di
 
     if (has_additionalstartpad)
         object_attr_setfloat(x, gensym("padafterclef"), additionalstartpad);
+
+    if (has_annotationfontsize)
+        object_attr_setfloat(x, gensym("annotationsfontsize"), annotationfontsize);
+
+    if (has_annotationalignment)
+        object_attr_setfloat(x, gensym("annotationsalign"), annotationalignment);
 
     if (dblclicksendsvalues) {
         r_ob->play_offline_bitfield[k_PLAYOFFLINE_KEY_DOUBLECLICK] = 1;
@@ -2527,6 +2542,14 @@ void notation_class_add_settings_attributes(t_class *c, char obj_type){
         // lyrics display. 0 will set the lyrics top line coinciding with the bottommost staff line.
         // The default is -16.
 
+        CLASS_ATTR_DOUBLE(c,"annotationsvadj",0, t_notation_obj, annotation_uy_shift);
+        CLASS_ATTR_STYLE_LABEL(c,"annotationsvadj",0,"text","Annotations Vertical Adjustment");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"annotationsvadj",0,"0");
+        // @exclude bach.slot
+        // @description Sets a vertical shift (in pixels, rescaled depending on the <m>vzoom</m>) of the
+        // annotations display.
+
+        
         CLASS_ATTR_DOUBLE(c,"dynamicsvadj",0, t_notation_obj, dynamics_uy_pos);
         CLASS_ATTR_STYLE_LABEL(c,"dynamicsvadj",0,"text","Dynamics Vertical Adjustment");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"dynamicsvadj",0,"-20");
@@ -2545,11 +2568,11 @@ void notation_class_add_settings_attributes(t_class *c, char obj_type){
         // Possibilities are: "Auto", "Left", "Center", "Right". Currently "Auto" completely coincides with "Center",
         // but it might be improved in a future version.
 
-        CLASS_ATTR_CHAR(c,"annotationalignment",0, t_notation_obj, annotation_alignment);
-        CLASS_ATTR_STYLE_LABEL(c,"annotationalignment",0,"enumindex","Annotation Alignment");
-        CLASS_ATTR_ENUMINDEX(c,"annotationalignment", 0, "Auto Left Center Right");
-        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"annotationalignment", 0, "0");
-        CLASS_ATTR_ACCESSORS(c, "annotationalignment", (method)NULL, (method)notationobj_setattr_annotation_alignment);
+        CLASS_ATTR_CHAR(c,"annotationsalign",0, t_notation_obj, annotation_alignment);
+        CLASS_ATTR_STYLE_LABEL(c,"annotationsalign",0,"enumindex","Annotation Alignment");
+        CLASS_ATTR_ENUMINDEX(c,"annotationsalign", 0, "Auto Left Center Right");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"annotationsalign", 0, "0");
+        CLASS_ATTR_ACCESSORS(c, "annotationsalign", (method)NULL, (method)notationobj_setattr_annotation_alignment);
         // @exclude bach.slot
         // @description Sets how the annotation must be aligned with respect to the note to which they refer.
         // Possibilities are: "Auto", "Left", "Center", "Right". Currently "Auto" completely coincides with "Left".
@@ -3585,10 +3608,10 @@ void notation_class_add_font_attributes(t_class *c, char obj_type){
         // @exclude bach.slot
         // @description Sets the font size of mouseover and selection legends (rescaled according to the <m>vzoom</m>).
 
-        CLASS_ATTR_DOUBLE(c,"annotationfontsize",0, t_notation_obj, annotation_font_size);
-        CLASS_ATTR_STYLE_LABEL(c,"annotationfontsize",0,"text","Annotation Font Size");
-        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"annotationfontsize", 0, "10");
-        CLASS_ATTR_ACCESSORS(c, "annotationfontsize", (method)NULL, (method)notationobj_setattr_annotation_font_size);
+        CLASS_ATTR_DOUBLE(c,"annotationsfontsize",0, t_notation_obj, annotation_font_size);
+        CLASS_ATTR_STYLE_LABEL(c,"annotationsfontsize",0,"text","Annotation Font Size");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"annotationsfontsize", 0, "10");
+        CLASS_ATTR_ACCESSORS(c, "annotationsfontsize", (method)NULL, (method)notationobj_setattr_annotation_font_size);
         // @exclude bach.slot
         // @description Sets the font size for textual annotations over the staff (handled via slot linkage).
 
@@ -5973,6 +5996,19 @@ long chord_get_position(t_notation_obj *r_ob, t_chord *chord){
     return 0;
 }
 
+// returns the 1-based (!!!)position of the chord in the parent: either rollvoice or measure (0 if chord is NOT in the voice)
+long chord_get_position_in_selection(t_notation_obj *r_ob, t_chord *chord){
+    t_chord *ch;
+    long i;
+    for (i = 1, ch = (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? chord->voiceparent->firstchord : chord->parent->firstchord); ch; ch = ch->next){
+        if (ch == chord)
+            return i;
+        if (notation_item_is_selected(r_ob, (t_notation_item *)ch))
+            i++;
+    }
+    return 0;
+}
+
 
 
 void append_voice_to_path(t_notation_obj *r_ob, t_voice *voice, t_llll *path, char attach_voicename_to_voice)
@@ -5997,6 +6033,23 @@ t_llll *chord_get_path_in_notationobj(t_notation_obj *r_ob, t_chord *chord, char
     } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE){
         long measure = chord->parent->measure_number + 1;
         long chord_position = chord_get_position(r_ob, chord);
+        append_voice_to_path(r_ob, (t_voice *)chord->parent->voiceparent, out, attach_voicename_to_voice);
+        llll_appendlong(out, measure, 0, WHITENULL_llll);
+        llll_appendlong(out, chord_position, 0, WHITENULL_llll);
+    }
+    return out;
+}
+
+t_llll *chord_get_path_in_notationobj_selectiononly(t_notation_obj *r_ob, t_chord *chord, char attach_voicename_to_voice)
+{
+    t_llll *out = llll_get();
+    if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL){
+        long chord_position = chord_get_position_in_selection(r_ob, chord);
+        append_voice_to_path(r_ob, (t_voice *)chord->voiceparent, out, attach_voicename_to_voice);
+        llll_appendlong(out, chord_position, 0, WHITENULL_llll);
+    } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE){
+        long measure = chord->parent->measure_number + 1;
+        long chord_position = chord_get_position_in_selection(r_ob, chord);
         append_voice_to_path(r_ob, (t_voice *)chord->parent->voiceparent, out, attach_voicename_to_voice);
         llll_appendlong(out, measure, 0, WHITENULL_llll);
         llll_appendlong(out, chord_position, 0, WHITENULL_llll);
@@ -6122,7 +6175,7 @@ t_llll *get_rests_sequence_path_in_notationobj(t_notation_obj *r_ob, t_chord *ch
 
 
 // if mode = 1 it's clipped between start_ms and end_ms
-t_llll *get_groups_for_dump_as_llll(t_notation_obj *r_ob, char mode, double start_ms, double end_ms){
+t_llll *get_groups_for_dump_as_llll(t_notation_obj *r_ob, char mode, double start_ms, double end_ms, bool selection_only){
     t_llll *outlist = llll_get();
     t_group *gr;
     llll_appendsym(outlist, _llllobj_sym_groups, 0, WHITENULL_llll);
@@ -6131,8 +6184,13 @@ t_llll *get_groups_for_dump_as_llll(t_notation_obj *r_ob, char mode, double star
         t_notation_item *el;
         for (el = gr->firstelem; el; el = el->next_group_item)
             if (el->type == k_CHORD)
-                if (mode != 1 || (((t_chord *)el)->onset >= start_ms && ((t_chord *)el)->onset <= end_ms))
-                    llll_appendllll(thisgroup, chord_get_path_in_notationobj(r_ob, (t_chord *)el, false), 0, WHITENULL_llll);
+                if (mode != 1 || (((t_chord *)el)->onset >= start_ms && ((t_chord *)el)->onset <= end_ms)) {
+                    if (selection_only) {
+                        llll_appendllll(thisgroup, chord_get_path_in_notationobj_selectiononly(r_ob, (t_chord *)el, false));
+                    } else {
+                        llll_appendllll(thisgroup, chord_get_path_in_notationobj(r_ob, (t_chord *)el, false));
+                    }
+                }
         if (thisgroup->l_size <= 1)    // doesn't form a group
             llll_free(thisgroup);
         else

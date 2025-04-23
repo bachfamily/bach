@@ -2835,13 +2835,15 @@ void paint_annotation_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *c
             }
         }
         
+        double ann_vshift = r_ob->annotation_uy_shift * r_ob->zoom_y;
+        
         if (buf && must_show) {
             double ann_width, ann_height;
             double y_pos = 0;
             jfont_text_measure(jf_ann, buf, &ann_width, &ann_height);
             if (chord->topmost_y_noacc > staff_top_y)
                 chord->topmost_y_noacc = staff_top_y;
-            y_pos = chord->topmost_y_noacc - pad - ann_height;
+            y_pos = chord->topmost_y_noacc - pad - ann_height - ann_vshift;
             x_pos = al == -1 ? x_pos : (al == 0 ? x_pos - ann_width/2. : x_pos - ann_width); // handling alignment
             write_text_standard_account_for_vinset_singleline(r_ob, g, jf_ann, *color, buf, x_pos, y_pos);
             chord->topmost_y_noacc = chord->topmost_y_noacc - ann_height - 2 * pad;
@@ -2856,10 +2858,13 @@ void paint_annotation_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *c
             jfont_text_measure(jf_ann, buf, &ann_width, &ann_height);
             if (chord->topmost_y_noacc > staff_top_y)
                 chord->topmost_y_noacc = staff_top_y;
+            double y_pos = chord->topmost_y_noacc - pad - ann_height - ann_vshift;
             x_pos = al == -1 ? x_pos : (al == 0 ? x_pos - ann_width/2. : x_pos - ann_width); // handling alignment
-            write_text_standard_account_for_vinset_singleline(r_ob, g, jf_ann, *color, buf_clearing_sym, x_pos, chord->topmost_y_noacc - pad - ann_height);
+            write_text_standard_account_for_vinset_singleline(r_ob, g, jf_ann, *color, buf_clearing_sym, x_pos, y_pos);
             chord->topmost_y_noacc = chord->topmost_y_noacc - ann_height - 2 * pad;
         }
+        
+        
         
         if (buf && must_free)
             bach_freeptr(buf);
@@ -42116,7 +42121,7 @@ t_llll *notationobj_get_header_as_llll(t_notation_obj *r_ob, long dump_what, cha
 
         if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
             if (dump_what & k_HEADER_GROUPS) 
-                llll_appendllll(out_llll, get_groups_for_dump_as_llll(r_ob, 0, 0, 0));
+                llll_appendllll(out_llll, get_groups_for_dump_as_llll(r_ob, 0, 0, 0, selection_only));
         }
 
         if (dump_what & k_HEADER_MARKERS)

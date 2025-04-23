@@ -4457,6 +4457,7 @@ typedef struct _notation_obj
                                                     ///< 3 = They also affect measure width, always
 
     char        annotation_alignment;                    ///< Alignment type for the annotations, must be one of the #e_alignments
+    double      annotation_uy_shift;                  ///< Unscaled y shift (in pixels) for the text annotations
 
     char        show_end_marker_for_regions;            ///< Display end marker for regions
     double      markers_line_width;                      ///< Marker line width
@@ -12709,9 +12710,10 @@ t_llll *get_rests_sequence(t_notation_obj *r_ob, t_chord *chord);
     @param    mode        If this is 1, only groups appearing #start_ms and #end_ms are considered.
     @param    start_ms    If mode == 1, the beginning of the portion of the score to be considered
     @param    end_ms        If mode == 1, the end of the portion of the score to be considered
+    @param selection_only   Only consider selected items
     @return                The group information as an llll, in the form explained above.
  */
-t_llll *get_groups_for_dump_as_llll(t_notation_obj *r_ob, char mode, double start_ms, double end_ms);
+t_llll *get_groups_for_dump_as_llll(t_notation_obj *r_ob, char mode, double start_ms, double end_ms, bool selection_only);
 
 
 /**    Get the first tempo in a given scorevoice
