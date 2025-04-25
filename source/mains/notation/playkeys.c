@@ -97,6 +97,7 @@ enum playkeys_properties
     k_PLAYKEYS_BREAKPOINTS,
     k_PLAYKEYS_MEASUREINFO,
     k_PLAYKEYS_NAME,
+    k_PLAYKEYS_SLURS,
     k_PLAYKEYS_FLAGS,
     k_PLAYKEYS_TEMPO,
     k_PLAYKEYS_QUARTERTEMPO,
@@ -403,6 +404,8 @@ long symbol_to_property(t_symbol *s)
         return k_PLAYKEYS_MEASUREINFO;
     if (s == _llllobj_sym_name)
         return k_PLAYKEYS_NAME;
+    if (s == _llllobj_sym_slurs)
+        return k_PLAYKEYS_SLURS;
     if (s == _llllobj_sym_flags)
         return k_PLAYKEYS_FLAGS;
     if (s == _llllobj_sym_path)
@@ -472,6 +475,7 @@ t_symbol *property_to_symbol(long property)
         case k_PLAYKEYS_BREAKPOINTS: return _llllobj_sym_breakpoints;
         case k_PLAYKEYS_MEASUREINFO: return _llllobj_sym_measureinfo;
         case k_PLAYKEYS_NAME: return _llllobj_sym_name;
+        case k_PLAYKEYS_SLURS: return _llllobj_sym_slurs;
         case k_PLAYKEYS_FLAGS: return _llllobj_sym_flags;
         case k_PLAYKEYS_ROLE: return _llllobj_sym_role;
         case k_PLAYKEYS_TEMPO: return _llllobj_sym_tempo;
@@ -719,6 +723,7 @@ t_bool can_llll_be_a_note(t_llll *ll)
     if (hatom_gettype(&ll->l_head->l_hatom) == H_SYM) {
         t_symbol *router = hatom_getsym(&ll->l_head->l_hatom);
         if (router == _llllobj_sym_name ||
+            router == _llllobj_sym_slurs ||
             router == _llllobj_sym_articulations ||
             router == _llllobj_sym_slots ||
             router == _llllobj_sym_breakpoints ||
@@ -2565,7 +2570,50 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                     }
                         break;
 
+                        
+                    case k_PLAYKEYS_SLURS:
+                    {
+                        switch (incoming) {
+                            case k_PLAYKEYS_INCOMING_ROLLNOTE:
+                            case k_PLAYKEYS_INCOMING_SCORENOTE:
+                            case k_PLAYKEYS_INCOMING_ROLLNOTE_COMMAND:
+                            case k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND:
+                                found = llll_get();
+                                for (t_llllelem *startnoteel = getindex_2levels(in_ll, 4, incoming_is_from_roll(incoming) ? 2 : 5); startnoteel; startnoteel = startnoteel->l_next) {
+                                    if (hatom_gettype(&startnoteel->l_hatom) != H_LLLL)
+                                        break;
+                                    t_llll *notell = hatom_getllll(&startnoteel->l_hatom);
+                                    if (!can_llll_be_a_note(notell))
+                                        break;
 
+                                    if ((target_el = root_find_el_with_sym_router(notell, _llllobj_sym_slurs)))
+                                        llll_chain(found, llll_behead(llll_clone(hatom_getllll(&target_el->l_hatom))));
+                                }
+                                break;
+
+
+                            case k_PLAYKEYS_INCOMING_ROLLCHORD:
+                            case k_PLAYKEYS_INCOMING_SCORECHORD:
+                            case k_PLAYKEYS_INCOMING_SCOREREST:
+                            case k_PLAYKEYS_INCOMING_ROLLCHORD_COMMAND:
+                            case k_PLAYKEYS_INCOMING_SCORECHORD_COMMAND:
+                            case k_PLAYKEYS_INCOMING_SCOREREST_COMMAND:
+
+                                found = llll_get();
+                                target_el = llll_getindex(in_ll, 4, I_STANDARD);
+                                if (!target_el || hatom_gettype(&target_el->l_hatom) != H_LLLL)
+                                    break;
+                                if ((target_el = root_find_el_with_sym_router(hatom_getllll(&target_el->l_hatom), _llllobj_sym_slurs)))
+                                    llll_chain(found, llll_behead(llll_clone(hatom_getllll(&target_el->l_hatom))));
+                                break;
+
+                            default:
+                                break;
+                        }
+                        playkeys_handle_flattening_and_nullmode(x, &found, incoming, this_key->property, outlet);
+                    }
+                        break;
+                        
 
 
                     case k_PLAYKEYS_ALLSLOTS:
@@ -2942,7 +2990,7 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
         // if <m>playoutfullpath</m> is active for the notation object), "measurenumber"
         // (only meaningful for notes and chords if <m>playoutfullpath</m> is active for the notation object), "breakpoints",
         // "measureinfo", "name", "tempo", "quartertempo", "slot", "playoffset" (for partial played notes with
-        // <m>playpartialnotes</m> set to 2), "role" (for markers only), "slots" (all slots)
+        // <m>playpartialnotes</m> set to 2), "role" (for markers only), "slots" (all slots), "slurs".
         // In addition to these,
         // also "play", "stop", "pause", "end" keys are allowed; the "router" key will output the incoming router message;
         // they will report the corresponding actions with a bang.

@@ -68,7 +68,7 @@ void slur_nudge_ending_chord_for_selection(t_notation_obj *r_ob, long delta_chor
 void notationobj_reset_all_slurs_position(t_notation_obj *r_ob);
 void chord_reset_slur_positions(t_chord *ch);
 long slur_get_length_in_chords(t_slur *slur);
-t_llll *chord_get_slurs_as_llll(t_chord *ch, char prepend_slur_symbol);
+t_llll *chord_get_slurs_as_llll(t_chord *ch, char prepend_slurs_symbol);
 
 char slur_get_actual_direction(t_slur *slur); // return actual direction, even if slur->direction is set to 0 (automatic)
 

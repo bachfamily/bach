@@ -542,10 +542,10 @@ long slur_get_length_in_chords(t_slur *slur)
 }
 
 
-t_llll *chord_get_slurs_as_llll(t_chord *ch, char prepend_slur_symbol)
+t_llll *chord_get_slurs_as_llll(t_chord *ch, char prepend_slurs_symbol)
 {
     t_llll *out = llll_get();
-    if (prepend_slur_symbol)
+    if (prepend_slurs_symbol)
         llll_appendsym(out, _llllobj_sym_slurs);
     if (ch) {
         for (long i = 0; i < ch->num_slurs_to; i++) {

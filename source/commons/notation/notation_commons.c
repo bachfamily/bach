@@ -30526,17 +30526,16 @@ t_llll* get_rollnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_c
         llll_appendllll(out_llll, note_get_articulation_values_as_llll(r_ob, note), 0, WHITENULL_llll);    
 #endif
     
-    if (r_ob->play_slurs) {
-        if (note->parent->num_slurs_to > 0 && (mode == k_CONSIDER_FOR_PLAYING || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_PLAYING_AND_ALLOW_PARTIAL_LOOPED_NOTES)) {
-            for (long i = 0; i < note->parent->num_slurs_to; i++) {
-                
-            }
-        }
-    }
-    
     if (mode == k_CONSIDER_FOR_UNDO || (note->r_it.names->l_size > 0 && mode != k_CONSIDER_FOR_EXPORT_OM && mode != k_CONSIDER_FOR_EXPORT_PWGL))
         llll_appendllll(out_llll, get_names_as_llll((t_notation_item *)note, true));
 
+    if (note->parent && note->parent->num_slurs_to > 0 && (mode == k_CONSIDER_FOR_EVALUATION || mode == k_CONSIDER_FOR_PLAYING || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_PLAYING_AND_ALLOW_PARTIAL_LOOPED_NOTES) && r_ob->play_slurs >= 2) {
+        if ((r_ob->play_slurs == 2 && !note->next) ||
+            (r_ob->play_slurs == 3 && !note->prev) ||
+            (r_ob->play_slurs == 4))
+            llll_appendllll(out_llll, chord_get_slurs_as_llll(note->parent, true));
+    }
+    
     if (mode == k_CONSIDER_FOR_SAMPLING)
         llll_append_notationitem_global_flag(r_ob, out_llll, (t_notation_item *)note);
     else
@@ -30782,7 +30781,9 @@ t_llll* get_rollchord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_dat
     if (mode == k_CONSIDER_FOR_UNDO || (chord->r_it.names->l_size > 0 && mode != k_CONSIDER_FOR_EXPORT_OM && mode != k_CONSIDER_FOR_EXPORT_PWGL)) 
         llll_appendllll(out_llll, get_names_as_llll((t_notation_item *)chord, true));
 
-    if (mode == k_CONSIDER_FOR_UNDO || (chord->num_slurs_to > 0 && mode != k_CONSIDER_FOR_EXPORT_OM && mode != k_CONSIDER_FOR_EXPORT_PWGL))
+    if (mode == k_CONSIDER_FOR_UNDO || 
+        (chord->num_slurs_to > 0 && mode != k_CONSIDER_FOR_EXPORT_OM && mode != k_CONSIDER_FOR_EXPORT_PWGL &&
+          ((mode != k_CONSIDER_FOR_EVALUATION && mode != k_CONSIDER_FOR_PLAYING && mode != k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE && mode != k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE && mode != k_CONSIDER_FOR_PLAYING_AND_ALLOW_PARTIAL_LOOPED_NOTES) || r_ob->play_slurs >= 1)))
         llll_appendllll(out_llll, chord_get_slurs_as_llll(chord, true));
 
     llll_append_notationitem_flag(r_ob, out_llll, (t_notation_item *)chord);
@@ -30862,6 +30863,13 @@ t_llll* get_scorenote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_
     if (mode == k_CONSIDER_FOR_UNDO || (note->r_it.names->l_size >0 && mode != k_CONSIDER_FOR_EXPORT_OM && mode != k_CONSIDER_FOR_EXPORT_PWGL))
         llll_appendllll(out_llll, get_names_as_llll((t_notation_item *)note, true), 0, WHITENULL_llll);
 
+    if (note->parent && note->parent->num_slurs_to > 0 && (mode == k_CONSIDER_FOR_EVALUATION || mode == k_CONSIDER_FOR_PLAYING || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_PLAYING_AND_ALLOW_PARTIAL_LOOPED_NOTES) && r_ob->play_slurs >= 2) {
+        if ((r_ob->play_slurs == 2 && !note->next) ||
+            (r_ob->play_slurs == 3 && !note->prev) ||
+            (r_ob->play_slurs == 4))
+            llll_appendllll(out_llll, chord_get_slurs_as_llll(note->parent, true));
+    }
+    
     llll_append_notationitem_flag(r_ob, out_llll, (t_notation_item *)note);
 
 #ifdef BACH_NOTES_HAVE_ID
@@ -31693,8 +31701,10 @@ t_llll* get_scorechord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_da
     
     if (mode == k_CONSIDER_FOR_UNDO || (chord->r_it.names->l_size > 0 && mode != k_CONSIDER_FOR_EXPORT_OM && mode != k_CONSIDER_FOR_EXPORT_PWGL))
         llll_appendllll(out_llll, get_names_as_llll((t_notation_item *)chord, true), 0, WHITENULL_llll);
-
-    if (mode == k_CONSIDER_FOR_UNDO || (chord->num_slurs_to > 0 && mode != k_CONSIDER_FOR_EXPORT_OM && mode != k_CONSIDER_FOR_EXPORT_PWGL))
+       
+    if (mode == k_CONSIDER_FOR_UNDO ||
+        (chord->num_slurs_to > 0 && mode != k_CONSIDER_FOR_EXPORT_OM && mode != k_CONSIDER_FOR_EXPORT_PWGL &&
+         ((mode != k_CONSIDER_FOR_PLAYING && mode != k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE && mode != k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE && mode != k_CONSIDER_FOR_PLAYING_AND_ALLOW_PARTIAL_LOOPED_NOTES) || r_ob->play_slurs >= 1)))
         llll_appendllll(out_llll, chord_get_slurs_as_llll(chord, true));
     
     llll_append_notationitem_flag(r_ob, out_llll, (t_notation_item *)chord);

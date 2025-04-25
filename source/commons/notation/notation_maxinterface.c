@@ -2726,10 +2726,17 @@ void notation_class_add_play_attributes(t_class *c, char obj_type){
 
         CLASS_ATTR_CHAR(c,"playslurs",0, t_notation_obj, play_slurs);
         CLASS_ATTR_STYLE_LABEL(c,"playslurs",0,"onoff","Play Slurs");
+        CLASS_ATTR_ENUMINDEX(c,"playslurs", 0, "Don't Chordwise Only Also Notewise (Highest) Also Notewise (Lowest) Also Notewise (Any))");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"playslurs", 0, "1");
         // @exclude bach.slot
         // @description Toggle the ability to also send the slur information through the playout during the playback.
-        // By default this is off (0).
+        // There are several options: <br />
+        // 0 (Don't): don't send out slurs information; <br />
+        // 1 (Chordwise Only, default): send out slur information only with chordwise <m>playmode</m>; <br />
+        // 2 (Also Notewise [Highest]): also send out slur information with notewise <m>playmode</m>, and
+        // assign the slur to the highest note of a chord; <br />
+        // 3 (Also Notewise [Lowest]): the same, with the lowest note of a chord; <br />
+        // 4 (Also Notewise [Any]): the same, with the any note of a chord. <br />
 
         CLASS_ATTR_CHAR(c,"useloop",0, t_notation_obj, use_loop_region);
         CLASS_ATTR_STYLE_LABEL(c,"useloop",0,"onoff","Activate Loop Region (When Shown)");
