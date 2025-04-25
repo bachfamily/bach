@@ -9751,7 +9751,7 @@ void set_groups_from_llll(t_roll *x, t_llll *groups_as_llll){
                                     t_rollvoice *voice = rollvoice_get_nth(x, num_voice - 1);
                                     if (voice && num_chord >= 1 && num_chord <= voice->num_chords) {
                                         t_chord *chord = chord_get_nth_in_rollvoice(voice, num_chord-1);
-                                        if (chord && newgroup)
+                                        if (chord && newgroup && ((t_notation_item *)chord)->group != newgroup)
                                             append_element_in_group((t_notation_obj *) x, newgroup, (t_notation_item *)chord);
                                     }
                                 }
@@ -11538,6 +11538,7 @@ void check_all_chords_order_and_correct_scheduling_fn(t_bach_inspector_manager *
         update_hscrollbar((t_notation_obj *)x, 0);
     }
 }
+
 
 void check_all_chords_order(t_roll *x){
     t_rollvoice *voice = x->firstvoice;
@@ -16213,6 +16214,8 @@ void roll_mouseup(t_roll *x, t_object *patcherview, t_pt pt, long modifiers) {
         x->r_ob.need_snap_some_nonselected_items = false;
     }
     
+    notationobj_check_slur_extremes_for_selection((t_notation_obj *)x);
+    
     if (x->r_ob.j_dragging_operation == k_UNDO_OP_UNKNOWN)
         x->r_ob.j_dragging_operation = k_UNDO_OP_MOUSEDRAG_CHANGE;
     
@@ -18978,8 +18981,10 @@ void roll_undo_redo(t_roll *x, char what)
     } else {
         
         // why don't we need this?
-        if (flags & k_UNDO_PERFORM_FLAG_CHECK_ORDER_FOR_CHORDS)
+        if (flags & k_UNDO_PERFORM_FLAG_CHECK_ORDER_FOR_CHORDS) {
             check_all_chords_order(x);
+            notationobj_check_all_slur_extremes((t_notation_obj *)x);
+        }
         
         if (x->r_ob.notation_cursor.voice)
             roll_linear_edit_snap_to_chord(x); // just to resnap to chord
@@ -18998,8 +19003,10 @@ void roll_generic_change(t_roll *x, t_symbol *msg, long ac, t_atom *av)
     
     flags = notationobj_generic_change((t_notation_obj *)x, msg, ac, av);
 
-    if (flags & k_UNDO_PERFORM_FLAG_CHECK_ORDER_FOR_CHORDS)
+    if (flags & k_UNDO_PERFORM_FLAG_CHECK_ORDER_FOR_CHORDS) {
         check_all_chords_order(x);
+        notationobj_check_all_slur_extremes((t_notation_obj *)x);
+    }
     
     if (x->r_ob.notation_cursor.voice)
         roll_linear_edit_snap_to_chord(x); // just to resnap to chord
@@ -19020,8 +19027,10 @@ void roll_generic_transaction(t_roll *x, t_symbol *msg, long ac, t_atom *av)
     
     flags = notationobj_generic_transaction((t_notation_obj *)x, msg, ac, av);
     
-    if (flags & k_UNDO_PERFORM_FLAG_CHECK_ORDER_FOR_CHORDS)
+    if (flags & k_UNDO_PERFORM_FLAG_CHECK_ORDER_FOR_CHORDS) {
         check_all_chords_order(x);
+        notationobj_check_all_slur_extremes((t_notation_obj *)x);
+    }
     
     if (x->r_ob.notation_cursor.voice)
         roll_linear_edit_snap_to_chord(x); // just to resnap to chord

@@ -1258,7 +1258,8 @@ void bach_default_set_bach_attr(t_notation_obj *r_ob, void *obj, t_bach_attribut
 		} else
 			return;
 	}
-		
+	
+    //TODO: change if/else to switch
 	if (attr->owner_type == k_SLOTINFO) {
 		long slotnum = ((t_slotinfo *)obj)->slot_num;
 		if ((attr->name == _llllobj_sym_slope || attr->name == _llllobj_sym_domainslope)) {
@@ -1565,6 +1566,11 @@ void bach_default_set_bach_attr(t_notation_obj *r_ob, void *obj, t_bach_attribut
             return;
         } else if (attr->name == _llllobj_sym_symduration && atom_getsym(av) == _llllobj_sym_tillnext) {
             *((t_rational *)field) = genrat(-1, 1);
+            return;
+        }
+    } else if (attr->owner_type == k_SLUR) {
+        if (attr->name == _llllobj_sym_direction && ac >= 1) {
+            *((char *)field) = CLAMP(atom_getlong(av), -1, 1);
             return;
         }
     }

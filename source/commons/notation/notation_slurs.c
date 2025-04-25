@@ -77,12 +77,72 @@ void slur_check_extremes(t_notation_obj *r_ob, t_slur *slur)
             slur->start_chord = end_ch;
             slur->end_chord = start_ch;
             slur_set_recompute_position_flag(slur);
+            
+            if (start_ch->r_it.type != k_CHORD || end_ch->r_it.type != k_CHORD) {
+                object_error((t_object *)r_ob, "SLUR ERROR!");
+            }
 
         }
     }
 }
 
+void notationobj_check_slur_extremes_for_selection(t_notation_obj *r_ob)
+{
+    t_notation_item *curr_it = r_ob->firstselecteditem;
+    lock_general_mutex(r_ob);
+    while (curr_it) { // cycle on the selected items
+        
+        switch (curr_it->type) {
+            case k_SLUR:
+                slur_check_extremes(r_ob, (t_slur *)curr_it);
+                break;
+                
+            case k_CHORD:
+            {
+                t_chord *ch = (t_chord *)curr_it;
+                for (long i = 0; i < ch->num_slurs_to; i++) {
+                    slur_check_extremes(r_ob, (t_slur *)ch->slur_to[i]);
+                }
+                for (long i = 0; i < ch->num_slurs_from; i++) {
+                    slur_check_extremes(r_ob, (t_slur *)ch->slur_from[i]);
+                }
+                break;
+            }
+                
+            case k_NOTE:
+            {
+                t_chord *ch = ((t_note *)curr_it)->parent;
+                if (ch) {
+                    for (long i = 0; i < ch->num_slurs_to; i++) {
+                        slur_check_extremes(r_ob, (t_slur *)ch->slur_to[i]);
+                    }
+                    for (long i = 0; i < ch->num_slurs_from; i++) {
+                        slur_check_extremes(r_ob, (t_slur *)ch->slur_from[i]);
+                    }
+                }
+                break;
+            }
+                
+            default:
+                break;
+        }
+        curr_it = curr_it->next_selected;
+    }
+    unlock_general_mutex(r_ob);
+}
 
+
+void notationobj_check_all_slur_extremes(t_notation_obj *r_ob)
+{
+    for (t_llllelem *el = r_ob->slurs->l_head; el; el = el->l_next) {
+        t_slur *sl = (t_slur *)hatom_getobj(&el->l_hatom);
+        if (sl)
+            slur_check_extremes(r_ob, sl);
+    }
+}
+
+    
+    
 t_slur *slur_add(t_notation_obj *r_ob, t_chord *start_ch, t_chord *end_ch, t_llll *names, char direction)
 {
     if (start_ch->num_slurs_to < CONST_MAX_SLURS_PER_CHORD && end_ch->num_slurs_from < CONST_MAX_SLURS_PER_CHORD) {
@@ -125,6 +185,10 @@ t_slur *slur_add_temporary(t_notation_obj *r_ob, t_chord *start_ch, char directi
     this_slur->end_chord = NULL;
     slur_set_recompute_position_flag(this_slur);
 
+    if (start_ch->r_it.type != k_CHORD) {
+        object_error((t_object *)r_ob, "SLUR ERROR!");
+    }
+
     llll_appendobj(r_ob->slurs_to_be_processed, this_slur);
     return this_slur;
 }
@@ -151,6 +215,16 @@ void notationobj_make_temporary_slurs_permanent(t_notation_obj *r_ob)
 
 t_slur *slur_add_for_selection(t_notation_obj *r_ob, t_llll *names, char direction, char add_undo_ticks)
 {
+#ifdef BACH_ALLOW_SLURS_ON_RESTS
+    t_chord *left = get_leftmost_selected_chord_even_partially(r_ob);
+    t_chord *right = get_rightmost_selected_chord_even_partially(r_ob);
+    if (left && right && left != right) {
+        if (add_undo_ticks)
+            undo_tick_create_for_notation_item(r_ob, (t_notation_item *)left, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+        t_slur *slur = slur_add(r_ob, left, right, names, direction);
+        return slur;
+    }
+#else
     t_note *left = get_leftmost_selected_note(r_ob);
     t_note *right = get_rightmost_selected_note(r_ob);
     if (left && right && left->parent != right->parent) {
@@ -159,6 +233,7 @@ t_slur *slur_add_for_selection(t_notation_obj *r_ob, t_llll *names, char directi
         t_slur *slur = slur_add(r_ob, left->parent, right->parent, names, direction);
         return slur;
     }
+#endif
     return NULL;
 }
 
@@ -313,6 +388,10 @@ void slur_delete(t_notation_obj *r_ob, t_slur *slur, bool also_delete_llllelem)
         t_chord *start = slur->start_chord;
         t_chord *end = slur->end_chord;
         
+        if (start->r_it.type != k_CHORD || end->r_it.type != k_CHORD) {
+            object_error((t_object *)r_ob, "SLUR ERROR!");
+        }
+        
         if (start) {
             i = 0;
             while (i < start->num_slurs_to) {
@@ -409,7 +488,7 @@ void slur_flip(t_slur *slur)
     if (!slur->start_chord)
         return;
     
-    char direction = (slur->direction) ? slur->direction : -slur->start_chord->direction;
+    char direction = slur_get_actual_direction(slur);
     slur->direction = -direction;
     slur_set_recompute_position_flag(slur);
 }
@@ -467,7 +546,7 @@ t_llll *chord_get_slurs_as_llll(t_chord *ch, char prepend_slur_symbol)
 {
     t_llll *out = llll_get();
     if (prepend_slur_symbol)
-        llll_appendsym(out, _llllobj_sym_slur);
+        llll_appendsym(out, _llllobj_sym_slurs);
     if (ch) {
         for (long i = 0; i < ch->num_slurs_to; i++) {
             bool need_llll = ((ch->slur_to[i]->r_it.names && ch->slur_to[i]->r_it.names->l_size > 0) ||
@@ -601,7 +680,7 @@ void slur_find_and_set_direction(t_notation_obj *r_ob, t_slur *slur, t_llll *ll)
 void slur_compute_control_points_methodA(t_notation_obj *r_ob, t_slur *slur)
 {
     t_chord *start = slur->start_chord, *end = slur->end_chord;
-    char direction = (slur->direction) ? slur->direction : -start->direction;
+    char direction = slur_get_actual_direction(slur); // (slur->direction) ? slur->direction : -start->direction;
     double alpha;
     double long_base, delta_ux, a, b, h;
     char reversed = false;
@@ -902,10 +981,27 @@ double bezier_chord_dist(t_notation_obj *r_ob, t_slur *slur, double cp1_ux, doub
     return pt_y - bezy;
 }
 
+char slur_get_actual_direction(t_slur *slur)
+{
+    if (slur->direction != 0)
+        return slur->direction;
+    
+    // if direction is automatic, we choose the opposite direction of the starting chord
+    if (slur->start_chord && slur->start_chord->firstnote)
+        return -slur->start_chord->direction;
+    
+    // if the starting chord was a rest, we choose the opposite direction of the ending chord
+    if (slur->end_chord && slur->end_chord->firstnote)
+        return -slur->end_chord->direction;
+    
+    // if both chords were rests, we chose up!
+    return 1;
+}
+
 void slur_compute_control_points_methodB(t_notation_obj *r_ob, t_slur *slur)
 {
     t_chord *start = slur->start_chord, *end = slur->end_chord;
-    char direction = (slur->direction) ? slur->direction : -start->direction;
+    char direction = slur_get_actual_direction(slur); //(slur->direction) ? slur->direction : -start->direction;
     double alpha;
     t_chord *chord;
     double raise1_y = 0, raise2_y = 0, raisestart_y = 0, raiseend_y = 0;
@@ -917,14 +1013,16 @@ void slur_compute_control_points_methodB(t_notation_obj *r_ob, t_slur *slur)
         start_nt = start->firstnote;
         end_nt = end->firstnote;
     }
-    
+
+#ifndef BACH_ALLOW_SLURS_ON_RESTS
     if (!end_nt || !start_nt) {
         return;
     }
+#endif
     
-    if (!end_nt->parent->is_grace_chord && start_nt->parent != end_nt->parent) {
+    if (!end->is_grace_chord && start != end) {
         for_graces = true;
-        for (t_chord *ch = start_nt->parent; ch && ch != end_nt->parent; ch = ch->next) {
+        for (t_chord *ch = start; ch && ch != end; ch = ch->next) {
             if (!ch->is_grace_chord) {
                 for_graces = false;
                 break;

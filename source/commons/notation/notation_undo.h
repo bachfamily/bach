@@ -217,12 +217,13 @@ void clear_undo_redo_llll(t_notation_obj *r_ob, char what);
                         We stress the fact that this operation is NOT the operation performed by the user, but rather the inverse operation. For instance, if the user
                         adds a chord, the modification type stored here will be #k_UNDO_MODIFICATION_TYPE_REMOVE.
     @param    param     The parameter subject to change
+    @param    automatically_add_undo_ticks_for_slurs_from       Automatically adds undo ticks for slurs terminating on the chord/measure (if item is chord/measure)
     @return             The undo/redo information for the tick. Such information has already been appended to the undo/redo lists and must NOT be freed
     @remark                This function has to be called BEFORE the item is modified (so that it can retrieve the correct content for undo), except if the
                         notation item has just been created, in which case it should be called afterwards, with #modif_type = #k_UNDO_MODIFICATION_TYPE_REMOVE.
     @see                undo_redo_tick_create()
  */
-t_undo_redo_information *undo_tick_create_for_notation_item(t_notation_obj *r_ob, t_notation_item *item, e_undo_modification_types modif_type, t_symbol *param);
+t_undo_redo_information *undo_tick_create_for_notation_item(t_notation_obj *r_ob, t_notation_item *item, e_undo_modification_types modif_type, t_symbol *param, bool automatically_add_undo_ticks_for_slurs_from = true);
 
 
 /**    Create undo ticks for a sequence of notation items.
@@ -234,12 +235,13 @@ t_undo_redo_information *undo_tick_create_for_notation_item(t_notation_obj *r_ob
                         This must be common to all notation items in the array, otherwise single undo_tick_create_for_notation_item() functions must be called for.
     @param    param        Parameter subject to change
     @param    undo_op      Pointer filled with undo operation
+    @param    automatically_add_undo_ticks_for_slurs_from       Automatically adds undo ticks for slurs terminating on the chord/measure (if item is chord/measure)
     @remark                This function has to be called BEFORE the items are modified (so that it can retrieve the correct content for undo), except if the
                         notation items have just been created, in which case it should be called afterwards, with #modif_type = #k_UNDO_MODIFICATION_TYPE_REMOVE.
     @see                undo_tick_create_for_notation_item()
     @see                undo_redo_tick_create()
  */
-void undo_ticks_create_for_multiple_notation_items(t_notation_obj *r_ob, long num_items, t_notation_item **item, e_undo_modification_types modif_type, t_symbol *param, long *undo_op);
+void undo_ticks_create_for_multiple_notation_items(t_notation_obj *r_ob, long num_items, t_notation_item **item, e_undo_modification_types modif_type, t_symbol *param, long *undo_op, bool automatically_add_undo_ticks_for_slurs_from = true);
 
 
 /**    Works just like undo_tick_create_for_notation_item(), but when the item is selected. This also accepts a #smallest_undoable_element specification,
@@ -248,8 +250,8 @@ void undo_ticks_create_for_multiple_notation_items(t_notation_obj *r_ob, long nu
     the flags #k_FLAG_MODIF_FLAG_UNDO, #k_FLAG_MODIF_UNDO, #k_FLAG_MODIF_CHECK_ORDER_UNDO and #k_FLAG_MODIF_NAME_UNDO if needed. Those flags are assigned, respectively, when the flag information
     of the item is already stored as an undo tick, when the whole information of the item is already stored as an undo tick, and when the whole information of the item
     is stored as an undo tick and also this undo operation will require a new checking of the chords order. Those flags are set for selected item in order to avoid
-    repeatedly storing undo ticks on the same thing. For instance, once we've stored an undo tick for a chord, because one of its notes has changed while dragging, we don't need to add
-    a new tick if another note has changed.
+    repeatedly storing undo ticks on the same thing. For instance, once we've stored an undo tick for a chord, because one of its notes has changed while dragging, we don't need to add a new tick if another note has changed.
+
     @ingroup            undo
     @param    r_ob        The notation object
     @param    item        The notation item being modified
@@ -259,11 +261,12 @@ void undo_ticks_create_for_multiple_notation_items(t_notation_obj *r_ob, long nu
                         We stress the fact that this operation is NOT the operation performed by the user, but rather the inverse operation. For instance, if the user
                         adds a chord, the modification type stored here will be #k_UNDO_MODIFICATION_TYPE_REMOVE.
     @param   param          The parameter subject to change
+    @param    automatically_add_undo_ticks_for_slurs_from       Automatically adds undo ticks for slurs terminating on the chord/measure (if item is chord/measure)
     @remark                This function has to be called BEFORE the item is modified (so that it can retrieve the correct content for undo), except if the
                         notation item has just been created, in which case it should be called afterwards, with #modif_type = #k_UNDO_MODIFICATION_TYPE_REMOVE.
     @see                undo_tick_create_for_notation_item()
  */
-void undo_tick_create_for_selected_notation_item(t_notation_obj *r_ob, t_notation_item *item, e_element_types smallest_undoable_element, e_undo_modification_types modif_type, t_symbol *param);
+void undo_tick_create_for_selected_notation_item(t_notation_obj *r_ob, t_notation_item *item, e_element_types smallest_undoable_element, e_undo_modification_types modif_type, t_symbol *param, bool automatically_add_undo_ticks_for_slurs_from = true);
 
 /**    (DEPRECATED) Create undo ticks for all selected items.
     @ingroup            undo
@@ -365,6 +368,7 @@ t_llllelem *notation_item_to_undo_tick(t_notation_obj *r_ob, t_notation_item *it
  */
 long notationobj_undo_redo(t_notation_obj *r_ob, char what);
 
+bool check_slurs(t_notation_obj *r_ob); // only for debug
 
 long undo_redo_information_apply(t_notation_obj *r_ob, t_undo_redo_information *this_information, t_llll *measure_whose_flag_needs_to_be_cleared, long *flags);
 

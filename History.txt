@@ -47,6 +47,8 @@ VERSION NOTES:
       e.g., (-> 1) is not a valid function definition anymore, it has to be rewritten as ($ -> 1).
     á #! is the functional form of the ! operator (it is no longer an alternative form for line comments)
         
+- bach.roll, bach.score:
+    á With respect to former 0.9 development prerelease, the llll syntax for slurs in roll/score contains the router "slurs" and not "slur".
 
 - bach.roll: the subroll message doesn't output partial notes of duration 0 any longer
 
@@ -96,6 +98,7 @@ VERSION NOTES:
     á Now @catchplay and @playheadfixedpos define different ways of scrolling the score during playback
     á New @playheadnotify attribute to notify playhead position during playback
     á New @annotationsvadj attribute to adjust vertical position of annotations globally
+    á With respect to development prerelease, fixed bug with slurs causing potential crashes when more than 2 slurs started on a chord
 
 - bach.roll, bach.score, bach.score2roll:
     Now user-defined pitches are correctly preserved

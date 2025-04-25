@@ -23034,10 +23034,10 @@ char chord_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_chord *
 
 #ifdef BACH_SUPPORT_SLURS
     // deleting slurs, if any
-    for (long i = 0; i < chord->num_slurs_to; i++)
-        slur_delete(r_ob, chord->slur_to[i]);
-    for (long i = 0; i < chord->num_slurs_from; i++)
-        slur_delete(r_ob, chord->slur_from[i]);
+    while (chord->num_slurs_to > 0)
+        slur_delete(r_ob, chord->slur_to[0]);
+    while (chord->num_slurs_from > 0)
+        slur_delete(r_ob, chord->slur_from[0]);
 #endif
     
     if (r_ob->playing){
@@ -30494,20 +30494,20 @@ t_llll* get_rollnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_c
     note_appendpitch_to_llll_for_gathered_syntax_or_playout(r_ob, out_llll, note, mode);
     
     if (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE)
-        llll_appenddouble(out_llll, (note->parent->onset + note->duration) - r_ob->play_head_start_ms, 0, WHITENULL_llll); // duration
+        llll_appenddouble(out_llll, (note->parent->onset + note->duration) - r_ob->play_head_start_ms); // duration
     else if (mode == k_CONSIDER_FOR_SAMPLING) 
-        llll_appenddouble(out_llll, (note->parent->onset + note->duration) - r_ob->curr_sampling_ms, 0, WHITENULL_llll); // duration
+        llll_appenddouble(out_llll, (note->parent->onset + note->duration) - r_ob->curr_sampling_ms); // duration
     else 
-        llll_appenddouble(out_llll, note->duration, 0, WHITENULL_llll); // duration
+        llll_appenddouble(out_llll, note->duration); // duration
     
-    llll_appendlong(out_llll, note->velocity, 0, WHITENULL_llll); // velocity
+    llll_appendlong(out_llll, note->velocity); // velocity
 
     if (should_output_note_graphics(r_ob, note, mode))
-        llll_appendllll(out_llll, note_get_graphic_values_as_llll(r_ob, note), 0, WHITENULL_llll);
+        llll_appendllll(out_llll, note_get_graphic_values_as_llll(r_ob, note));
     
     // see if we need breakpoint extras
     if (note_breakpoints_are_nontrivial(r_ob, note)) {
-        llll_appendllll(out_llll, note_get_breakpoint_values_as_llll(r_ob, note, mode, &new_mc, &new_vel), 0, WHITENULL_llll);
+        llll_appendllll(out_llll, note_get_breakpoint_values_as_llll(r_ob, note, mode, &new_mc, &new_vel));
         if (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_SAMPLING) {
             hatom_setdouble(&out_llll->l_head->l_hatom, new_mc);
             hatom_setlong(&out_llll->l_head->l_next->l_next->l_hatom, round(new_vel));
@@ -30518,7 +30518,7 @@ t_llll* get_rollnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_c
         
     // see if we need slots extras (if there's AT LEAST 1 slot, we put them all, so it's practical: slot n is at place n in the list
     if (notation_item_has_slot_content(r_ob, (t_notation_item *)note))
-        llll_appendllll(out_llll, note_get_slots_values_as_llll(r_ob, note, mode, false), 0, WHITENULL_llll);    
+        llll_appendllll(out_llll, note_get_slots_values_as_llll(r_ob, note, mode, false));
 
 #ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
     // see if we need articulations
@@ -30526,8 +30526,16 @@ t_llll* get_rollnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_c
         llll_appendllll(out_llll, note_get_articulation_values_as_llll(r_ob, note), 0, WHITENULL_llll);    
 #endif
     
+    if (r_ob->play_slurs) {
+        if (note->parent->num_slurs_to > 0 && (mode == k_CONSIDER_FOR_PLAYING || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_PLAYING_AND_ALLOW_PARTIAL_LOOPED_NOTES)) {
+            for (long i = 0; i < note->parent->num_slurs_to; i++) {
+                
+            }
+        }
+    }
+    
     if (mode == k_CONSIDER_FOR_UNDO || (note->r_it.names->l_size > 0 && mode != k_CONSIDER_FOR_EXPORT_OM && mode != k_CONSIDER_FOR_EXPORT_PWGL))
-        llll_appendllll(out_llll, get_names_as_llll((t_notation_item *)note, true), 0, WHITENULL_llll);
+        llll_appendllll(out_llll, get_names_as_llll((t_notation_item *)note, true));
 
     if (mode == k_CONSIDER_FOR_SAMPLING)
         llll_append_notationitem_global_flag(r_ob, out_llll, (t_notation_item *)note);
@@ -30536,7 +30544,7 @@ t_llll* get_rollnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_c
 
 #ifdef BACH_NOTES_HAVE_ID
     if (mode == k_CONSIDER_FOR_UNDO) 
-        llll_appendllll(out_llll, get_ID_as_llll((t_notation_item *)note), 0, WHITENULL_llll);
+        llll_appendllll(out_llll, get_ID_as_llll((t_notation_item *)note));
 #endif
     
     if (mode == k_CONSIDER_FOR_SAMPLING) 
@@ -31035,6 +31043,28 @@ t_notation_item *notation_item_get_at_bottom(t_notation_obj *r_ob, t_notation_it
 }
 
 
+t_chord *get_leftmost_selected_chord_even_partially(t_notation_obj *r_ob)
+{
+    t_notation_item *it, *best = NULL;
+    double best_onset = 0, this_onset = 0;
+    for (it = r_ob->firstselecteditem; it; it = it->next_selected) {
+        t_notation_item *nit = NULL;
+        if (it->type == k_NOTE)
+            nit = (t_notation_item *)(((t_note *)it)->parent);
+        else if (it->type == k_CHORD)
+            nit = it;
+        
+        if (nit){
+            this_onset = notation_item_get_onset_ms(r_ob, nit);
+            if ((!best) || (this_onset < best_onset)) {
+                best_onset = this_onset;
+                best = nit;
+            }
+        }
+    }
+    return (t_chord *)best;
+}
+
 t_note *get_leftmost_selected_note(t_notation_obj *r_ob)
 {
     t_notation_item *it, *best = NULL;
@@ -31092,6 +31122,28 @@ t_note *get_rightmost_selected_note(t_notation_obj *r_ob)
         }
     }
     return (t_note *)best;
+}
+
+t_chord *get_rightmost_selected_chord_even_partially(t_notation_obj *r_ob)
+{
+    t_notation_item *it, *best = NULL;
+    double best_onset = 0, this_onset = 0;
+    for (it = r_ob->firstselecteditem; it; it = it->next_selected) {
+        t_notation_item *nit = NULL;
+        if (it->type == k_NOTE)
+            nit = (t_notation_item *)(((t_note *)it)->parent);
+        else if (it->type == k_CHORD)
+            nit = it;
+        
+        if (nit){
+            this_onset = notation_item_get_onset_ms(r_ob, nit);
+            if ((!best) || (this_onset > best_onset)) {
+                best_onset = this_onset;
+                best = nit;
+            }
+        }
+    }
+    return (t_chord *)best;
 }
 
 t_notation_item *get_rightmost_selected_notation_item(t_notation_obj *r_ob)
@@ -32749,7 +32801,8 @@ char is_symbol_attribute(t_symbol *sym)
 {
     if (sym == _llllobj_sym_ID ||
         sym == _llllobj_sym_name ||
-        sym == _llllobj_sym_slur ||
+        sym == _llllobj_sym_slur || // ...only for bw compatibility...
+        sym == _llllobj_sym_slurs ||
         sym == _llllobj_sym_articulations ||
         sym == _llllobj_sym_graphic ||
         sym == _llllobj_sym_breakpoints ||
@@ -38831,7 +38884,8 @@ void chord_find_and_set_temporary_slurs(t_notation_obj *r_ob, t_chord *ch, t_lll
     while (elem) {
         t_llllelem *next = elem->l_prev;
         if (hatom_gettype(&elem->l_hatom) == H_LLLL && (ll = hatom_getllll(&elem->l_hatom))->l_head &&
-            hatom_gettype(&ll->l_head->l_hatom) == H_SYM && hatom_getsym(&ll->l_head->l_hatom) == _llllobj_sym_slur){
+            hatom_gettype(&ll->l_head->l_hatom) == H_SYM && 
+            (hatom_getsym(&ll->l_head->l_hatom) == _llllobj_sym_slurs || hatom_getsym(&ll->l_head->l_hatom) == _llllobj_sym_slur)){
             if (ll->l_head->l_next) {
                 chord_set_temporary_slurs_from_llll(r_ob, ch, ll);
 //            } else {

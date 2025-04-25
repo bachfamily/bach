@@ -482,6 +482,15 @@
 	//  @copy BACH_DOC_MEASUREINFO_SYNTAX
 	//  @copy BACH_DOC_CHORD_GATHERED_SYNTAX_SCORE
 
+#define BACH_DOC_SLURS_GATHERED_SYNTAX
+    //  A slur beginning on a given chord is identified by appending a list of the type
+    //  <b>[slurs <m>SLUR1</m> <m>optional:SLUR2</m> <m>optional:SLUR3</m>]</b>.
+    //  Up to three slurs can be defined. Every <m>SLUR</m> can be represented by an integer number, simply
+    //  counting the number of chords spanned by the slur.
+    //  Alternatively, every <m>SLUR</m> can be a complex list of the kind:
+    //  <b>[ <m>number_of_spanned_chords</m> [ name <m>name_or_llll_of_names</m> ] [ direction <m>direction_as_int</m> ] ]</b>
+    //  where <m>direction_as_int</m> sets the slur direction: 0 for auto, 1 for up and -1 for down.
+    //  <br /> <br />
 
 #define BACH_DOC_CHORD_GATHERED_SYNTAX_ROLL
 	// 	For <o>bach.roll</o>, the gathered syntax for any chord, in its simplest form <b>[<m>onset_ms</m> <m>NOTE1</m> <m>NOTE2</m>... <m>chord_flag</m>]</b>
@@ -491,8 +500,10 @@
 	//  In its most general form, each chord can have a specification defining its name(s). This specification must be in the form
 	//  <b>[name <m>NAME_OR_LLLL_OF_NAMES</m>]</b>, and must be put after the last note llll,
 	//  before the <m>chord_flag</m>. For instance, a chord definition might 
-	//  have the form <b>[500 [7000. 500 127] [7200. 1200 100] [name paul] 0]</b>
+	//  have the form <b>[500 [7000. 500 127] [7200. 1200 100] [name paul] 0]</b>. <br />
+    //  Chords can also bear an additional slur specification, accounting for slurs that start on the chord.
 	//  <br /> <br />
+    //  @copy BACH_DOC_SLURS_GATHERED_SYNTAX
 	//  @copy BACH_DOC_NOTE_GATHERED_SYNTAX_ROLL
 
 
@@ -506,6 +517,9 @@
 	//  and before the <m>chord_flag</m>. The order in which the specifications are listed is, on the other hand, irrelevant. For instance, a chord definition might 
 	//  have the form <b>[1/4 [7000. 127 1] [7200. 100 0] [name john] [slots [10 fermata]] 0]</b>.
 	//  <br /> <br />
+    //  Chords can also bear an additional slur specification, accounting for slurs that start on the chord.
+    //  <br /> <br />
+    //  @copy BACH_DOC_SLURS_GATHERED_SYNTAX
 	//  @copy BACH_DOC_NOTE_GATHERED_SYNTAX_SCORE
 
 

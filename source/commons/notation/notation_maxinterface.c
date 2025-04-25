@@ -441,14 +441,14 @@ t_llll *chord_get_as_llll_for_sending(t_notation_obj *r_ob, t_chord *chord, e_da
 
 		if (!chord->firstnote) { // rest
 			t_llll* out_llll = llll_get();
-            llll_appendsym(out_llll, ((command_number < 0) || (command_number >= CONST_MAX_COMMANDS)) ? handle_router(_llllobj_sym_rest, forced_routers) : r_ob->commands[command_number].command_rest, 0, WHITENULL_llll);
+            llll_appendsym(out_llll, ((command_number < 0) || (command_number >= CONST_MAX_COMMANDS)) ? handle_router(_llllobj_sym_rest, forced_routers) : r_ob->commands[command_number].command_rest);
 			append_voice_or_full_path_to_playout_syntax(r_ob, out_llll, (t_notation_item *)chord, mode);
-			llll_appendlong(out_llll, chord->parent->voiceparent->v_ob.midichannel, 0, WHITENULL_llll);
+			llll_appendlong(out_llll, chord->parent->voiceparent->v_ob.midichannel);
 			llll_appendllll(out_llll, get_scorechord_values_as_llll(r_ob, chord, mode, true));
-			llll_appendobj(all_notes_llll, out_llll, 0, WHITENULL_llll);
+			llll_appendobj(all_notes_llll, out_llll);
 
 			if (references)
-				llll_appendobj(*references, chord, 0, WHITENULL_llll);
+				llll_appendobj(*references, chord);
 		} else {
 
 			t_note *note;
@@ -460,14 +460,14 @@ t_llll *chord_get_as_llll_for_sending(t_notation_obj *r_ob, t_chord *chord, e_da
                     } else {
                         t_llll* out_llll = llll_get();
 
-                        llll_appendsym(out_llll, ((command_number < 0) || (command_number >= CONST_MAX_COMMANDS)) ? handle_router(_llllobj_sym_note, forced_routers) : r_ob->commands[command_number].command_note, 0, WHITENULL_llll);
+                        llll_appendsym(out_llll, ((command_number < 0) || (command_number >= CONST_MAX_COMMANDS)) ? handle_router(_llllobj_sym_note, forced_routers) : r_ob->commands[command_number].command_note);
                         append_voice_or_full_path_to_playout_syntax(r_ob, out_llll, (t_notation_item *)note, mode);
-                        llll_appendlong(out_llll, chord->parent->voiceparent->v_ob.midichannel, 0, WHITENULL_llll);
-                        llll_appendllll(out_llll, get_single_scorenote_values_as_llll(r_ob, note, mode), 0, WHITENULL_llll);
-                        llll_appendobj(all_notes_llll, out_llll, 0, WHITENULL_llll);
+                        llll_appendlong(out_llll, chord->parent->voiceparent->v_ob.midichannel);
+                        llll_appendllll(out_llll, get_single_scorenote_values_as_llll(r_ob, note, mode));
+                        llll_appendobj(all_notes_llll, out_llll);
 
                         if (references)
-                            llll_appendobj(*references, note, 0, WHITENULL_llll);
+                            llll_appendobj(*references, note);
                     }
                 }
             }
@@ -489,15 +489,15 @@ t_llll *chord_get_as_llll_for_sending(t_notation_obj *r_ob, t_chord *chord, e_da
                     continue;
 
 				t_llll* out_llll = llll_get();
-				llll_appendsym(out_llll, ((command_number < 0) || (command_number >= CONST_MAX_COMMANDS)) ? handle_router(_llllobj_sym_note, forced_routers) : r_ob->commands[command_number].command_note, 0, WHITENULL_llll);
+				llll_appendsym(out_llll, ((command_number < 0) || (command_number >= CONST_MAX_COMMANDS)) ? handle_router(_llllobj_sym_note, forced_routers) : r_ob->commands[command_number].command_note);
 				append_voice_or_full_path_to_playout_syntax(r_ob, out_llll, (t_notation_item *)note, mode);
-				llll_appendlong(out_llll, chord->voiceparent->v_ob.midichannel, 0, WHITENULL_llll);
-				llll_appendllll(out_llll, get_single_rollnote_values_as_llll(r_ob, note, mode), 0, WHITENULL_llll);
+				llll_appendlong(out_llll, chord->voiceparent->v_ob.midichannel);
+				llll_appendllll(out_llll, get_single_rollnote_values_as_llll(r_ob, note, mode));
 
-				llll_appendobj(all_notes_llll, out_llll, 0, WHITENULL_llll);
+				llll_appendobj(all_notes_llll, out_llll);
 
 				if (references)
-					llll_appendobj(*references, note, 0, WHITENULL_llll);
+					llll_appendobj(*references, note);
 			}
 		}
 
@@ -2722,7 +2722,14 @@ void notation_class_add_play_attributes(t_class *c, char obj_type){
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"playmarkers", 0, "1");
         // @exclude bach.slot
         // @description Toggle the ability to also send the marker information through the playout during the playback.
-        // By default this is 1.
+        // By default this is on (1).
+
+        CLASS_ATTR_CHAR(c,"playslurs",0, t_notation_obj, play_slurs);
+        CLASS_ATTR_STYLE_LABEL(c,"playslurs",0,"onoff","Play Slurs");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"playslurs", 0, "1");
+        // @exclude bach.slot
+        // @description Toggle the ability to also send the slur information through the playout during the playback.
+        // By default this is off (0).
 
         CLASS_ATTR_CHAR(c,"useloop",0, t_notation_obj, use_loop_region);
         CLASS_ATTR_STYLE_LABEL(c,"useloop",0,"onoff","Activate Loop Region (When Shown)");
@@ -6186,7 +6193,8 @@ t_llll *get_groups_for_dump_as_llll(t_notation_obj *r_ob, char mode, double star
             if (el->type == k_CHORD)
                 if (mode != 1 || (((t_chord *)el)->onset >= start_ms && ((t_chord *)el)->onset <= end_ms)) {
                     if (selection_only) {
-                        llll_appendllll(thisgroup, chord_get_path_in_notationobj_selectiononly(r_ob, (t_chord *)el, false));
+                        if (notation_item_is_selected(r_ob, el))
+                            llll_appendllll(thisgroup, chord_get_path_in_notationobj_selectiononly(r_ob, (t_chord *)el, false));
                     } else {
                         llll_appendllll(thisgroup, chord_get_path_in_notationobj(r_ob, (t_chord *)el, false));
                     }

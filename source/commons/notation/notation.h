@@ -84,6 +84,7 @@
     #define BACH_NEW_LLLLSLOT_SYNTAX            ///< This one might or might not be advisable. Removes the outer ( ) in the llll and matrix slot syntax 
 
     #define BACH_SUPPORT_SLURS
+    #define BACH_ALLOW_SLURS_ON_RESTS
 //    #define BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX ///< Disabled from bach 0.9; re-enable it for old syntax support
 
 //    #define BACH_GROUPS_ARE_DOUBLY_LINKED     ///< Commenting this line saves 8 bytes in the t_notation_item structure
@@ -98,7 +99,7 @@
         //#define BACH_QUANTIZE_DEBUG                    ///< Debug the quantize task
         //#define BACH_SPACING_DEBUG                    ///< Debug the spacing task (and display alignment points)
         //#define BACH_PAINT_IDS                        ///< Paint the IDs for all elements having one
-        //#define BACH_UNDO_DEBUG                        ///< Debug the undo task
+        #define BACH_UNDO_DEBUG                        ///< Debug the undo task
         //#define BACH_ARTICULATION_POSITION_DEBUG      ///< Debug for articulation position
         //#define BACH_CHECK_NOTATION_ITEMS               ///< Debug for notation items
 
@@ -5026,7 +5027,8 @@ typedef struct _notation_obj
     char        play_markers;                ///< Send markers during play
     char        play_tempi;                 ///< Send tempi during play
     char        play_measures;              ///< Send measure start barlines during play
-    
+    char        play_slurs;                 ///< Send slur information during playback
+
     void        *m_clock;                            ///< The clock for the play and task routine
     t_symbol    *setclock;                            ///< The setclock, to handle the change of clock speed
     long        play_num_steps;                        ///< Internal, number of steps to schedule between the output of a chord and the output of the next one.
@@ -13195,6 +13197,10 @@ t_notation_item *get_rightmost_selected_notation_item(t_notation_obj *r_ob);
 // SAME FOR NOTES
 t_note *get_leftmost_selected_note(t_notation_obj *r_ob);
 t_note *get_rightmost_selected_note(t_notation_obj *r_ob);
+
+// SAME FOR CHORDS, of which even just one of their notes may be selected
+t_chord *get_leftmost_selected_chord_even_partially(t_notation_obj *r_ob);
+t_chord *get_rightmost_selected_chord_even_partially(t_notation_obj *r_ob);
 
 
 /** Obtain the unscaled horizontal pixel corresponding to the chord's alignment point (the point which is geometrically aligned
