@@ -297,7 +297,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 250.0, 9.0, 208.0, 19.0 ],
-					"text" : "v0.8.9.0 beta (build 20250416123951)",
+					"text" : "v0.8.9.0 beta (build 20250423165310)",
 					"textcolor" : [ 0.10980399698019, 0.10980399698019, 0.10980399698019, 1.0 ],
 					"varname" : "autohelp_top_digest[3]"
 				}
@@ -605,6 +605,47 @@
 						"subpatcher_template" : "",
 						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
+								"box" : 								{
+									"hidden" : 1,
+									"id" : "obj-389",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 646.0, 5812.0, 90.0, 22.0 ],
+									"text" : "Accollature"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"bubble" : 1,
+									"fontsize" : 12.0,
+									"id" : "obj-388",
+									"linecount" : 2,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 138.0, 5703.0, 172.0, 37.0 ],
+									"presentation_linecount" : 4,
+									"text" : "Real brackets, braces, etc., more tidily organized"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontsize" : 22.0,
+									"id" : "obj-387",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 16.0, 5705.0, 117.0, 33.0 ],
+									"text" : "Accollature"
+								}
+
+							}
+, 							{
 								"box" : 								{
 									"hidden" : 1,
 									"id" : "obj-386",
@@ -9204,6 +9245,22 @@
 									"destination" : [ "obj-378", 0 ],
 									"hidden" : 1,
 									"source" : [ "obj-386", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-389", 0 ],
+									"hidden" : 1,
+									"source" : [ "obj-387", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-378", 0 ],
+									"hidden" : 1,
+									"source" : [ "obj-389", 0 ]
 								}
 
 							}

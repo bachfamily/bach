@@ -29,6 +29,9 @@ DEFINE_LLLL_ATTR_DEFAULT_SETTER(t_notation_obj, constraint_pitches_when_editing,
 DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_notation_obj, default_noteslots, notationobj_getattr_defaultnoteslots)
 DEFINE_LLLL_ATTR_DEFAULT_SETTER(t_notation_obj, default_noteslots, notationobj_setattr_defaultnoteslots);
 
+DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_notation_obj, voicegroups_as_llll, notationobj_getattr_voicegroups);
+DEFINE_LLLL_ATTR_DEFAULT_SETTER(t_notation_obj, voicegroups_as_llll, notationobj_setattr_voicegroups);
+
 DEFINE_PITCH_ATTR_DEFAULT_GETTER(t_notation_obj, ji_base_for_ratios, notationobj_getattr_jibase);
 
 DEFINE_NOTATIONOBJ_LONGPTR_GETTER(midichannels_as_longlist, num_voices)
@@ -1416,13 +1419,13 @@ void notationobj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_di
     long ac_backgroundslots, ac_mainstavescolor, ac_auxiliarystavescolor;
     t_atom *av_backgroundslots = NULL, *av_mainstavescolor = NULL, *av_auxiliarystavescolor = NULL;
     t_atom_long *av_long = NULL;
-    long has_backgroundslots = 0, has_slotsbgalpha = 0, has_backgroundslotfontsize = 0, has_velocityhandling = 0, has_notificationsformessages = 0, has_showtempointerpline = 0, has_continuousbang = 0, has_additionalstartpad = 0, has_annotationfontsize = 0, has_annotationalignment = 0;
+    long has_backgroundslots = 0, has_slotsbgalpha = 0, has_backgroundslotfontsize = 0, has_velocityhandling = 0, has_notificationsformessages = 0, has_showtempointerpline = 0, has_continuousbang = 0, has_additionalstartpad = 0, has_annotationfontsize = 0, has_annotationalignment = 0, has_showpartbrackets = 0;
     t_atom_long dblclicksendsvalues = 0;
     double slotbgalpha = 0, backgroundslotfontsize = 0, additionalstartpad = 0;
     t_atom_long velocityhandling = -1, notificationsformessages = -1, showtempointerpline = 0, continuousbang = -1;
     char brand_new_creation = 0;
     double annotationfontsize = 0;
-    long annotationalignment = 0;
+    long annotationalignment = 0, showpartbrackets = 0;
 
 
     long num_voices_from_argument = -1; // = no need to set num voices
@@ -1499,6 +1502,9 @@ void notationobj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_di
     if ((has_annotationalignment = dictionary_hasentry(d, gensym("annotationalignment"))))
         dictionary_getlong(d, gensym("annotationalignment"), &annotationalignment);
 
+    if ((has_showpartbrackets = dictionary_hasentry(d, gensym("showpartbrackets"))))
+        dictionary_getlong(d, gensym("showpartbrackets"), &showpartbrackets);
+
     if ((has_continuousbang = dictionary_hasentry(d, gensym("continuousbang"))))
         dictionary_getlong(d, gensym("continuousbang"), &continuousbang);
     
@@ -1570,7 +1576,14 @@ void notationobj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_di
         object_attr_setfloat(x, gensym("annotationsfontsize"), annotationfontsize);
 
     if (has_annotationalignment)
-        object_attr_setfloat(x, gensym("annotationsalign"), annotationalignment);
+        object_attr_setlong(x, gensym("annotationsalign"), annotationalignment);
+
+    if (has_showpartbrackets) {
+        if (showpartbrackets == 0)
+            object_attr_setsym(x, gensym("partsaccollatura"), _llllobj_sym_none);
+        else
+            object_attr_setsym(x, gensym("partsaccollatura"), gensym("bracket"));
+    }
 
     if (dblclicksendsvalues) {
         r_ob->play_offline_bitfield[k_PLAYOFFLINE_KEY_DOUBLECLICK] = 1;
@@ -2341,7 +2354,7 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type){
         CLASS_ATTR_CHAR(c,"breakpointshavenoteheads",0, t_notation_obj, breakpoints_have_noteheads);
         CLASS_ATTR_STYLE_LABEL(c,"breakpointshavenoteheads",0,"enumindex","Breakpoints Have Noteheads");
         CLASS_ATTR_ENUMINDEX(c,"breakpointshavenoteheads", 0, "None All Internal Only");
-         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"breakpointshavenoteheads",0,"0");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"breakpointshavenoteheads",0,"0");
         // @exclude bach.slot
         // @description Toggles the ability to display pitch breakpoints as real notes (possibly with accidentals).
         // The options are: no noteheads (0, default); all noteheads, tails included (1); noteheads only
@@ -2380,6 +2393,22 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type){
             // @exclude bach.slot, bach.roll
             // @description Toggles the ability to end staff lines with the last measure barline.
         }
+        
+        CLASS_ATTR_SYM(c,"partsaccollatura",0, t_notation_obj, parts_accollatura);
+        CLASS_ATTR_STYLE_LABEL(c,"partsaccollatura",0,"enum","Accollatura Type for Parts");
+        CLASS_ATTR_ENUM(c,"partsaccollatura", 0, "none rule thinbracket bracket brace");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"partsaccollatura",0,"bracket");
+        // @exclude bach.slot
+        // @description Chooses the type of accollatura display for voice ensembles.
+
+        CLASS_ATTR_SYM(c,"multistaffaccollatura",0, t_notation_obj, multistaff_accollatura);
+        CLASS_ATTR_STYLE_LABEL(c,"multistaffaccollatura",0,"enum","Accollatura Type for Multi-Staff Voices");
+        CLASS_ATTR_ENUM(c,"multistaffaccollatura", 0, "none rule thinbracket bracket brace");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"multistaffaccollatura",0,"rule");
+        // @exclude bach.slot
+        // @description Chooses the type of accollatura display for voice displayed with more than one staff.
+
+        
     }
 
     CLASS_STICKY_ATTR_CLEAR(c, "category");
@@ -2519,7 +2548,12 @@ void notation_class_add_settings_attributes(t_class *c, char obj_type){
         // Helmholtz-Ellis Just Intonation system, version 2.0), "linpitch" (continuous linear pitch),
         // "linfreq" (continuous linear frequency).
 
-        
+        CLASS_ATTR_LLLL(c, "voicegroups", 0, t_notation_obj, voicegroups_as_llll, notationobj_getattr_voicegroups, notationobj_setattr_voicegroups);
+        CLASS_ATTR_STYLE_LABEL(c,"voicegroups",0,"text_large","Voice Groups");
+        CLASS_ATTR_SAVE(c, "voicegroups", 0);
+        CLASS_ATTR_PAINT(c, "voicegroups", 0);
+        // @description @copy BACH_DOC_VOICEGROUPS
+
         CLASS_ATTR_DOUBLE(c,"gridperiodms",0, t_notation_obj, grid_step_ms);
         CLASS_ATTR_STYLE_LABEL(c,"gridperiodms",0,"text","Ruler/Grid Period (ms)");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"gridperiodms",0,"1000");
@@ -3480,11 +3514,11 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type)
         // @exclude bach.slot
         // @description Toggles the display of different voice parts (see the <m>parts</m> attribute) with different colors.
 
-        CLASS_ATTR_CHAR(c,"showpartbrackets",0, t_notation_obj, show_accollatura);
-        CLASS_ATTR_STYLE_LABEL(c,"showpartbrackets",0,"onoff","Show Part Brackets");
-        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showpartbrackets",0,"1");
+        CLASS_ATTR_CHAR(c,"showaccollature",0, t_notation_obj, show_accollature);
+        CLASS_ATTR_STYLE_LABEL(c,"showaccollature",0,"onoff","Show Accollature");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showaccollature",0,"1");
         // @exclude bach.slot
-        // @description Toggles the display of brackets in voice ensembles.
+        // @description Toggles the display of accollature for voice groups and voice ensembles.
 
         CLASS_ATTR_CHAR(c,"showinitialrule",0, t_notation_obj, show_initial_rule);
         CLASS_ATTR_STYLE_LABEL(c,"showinitialrule",0,"enumindex","Show Initial Rule");
@@ -6978,11 +7012,11 @@ t_max_err notationobj_handle_attr_modified_notify(t_notation_obj *r_ob, t_symbol
         }
         
         
-        if (attrname == gensym("temp")) {
+/*        if (attrname == gensym("temp")) {
 //            load_noteheads_typo_preferences(r_ob, r_ob->noteheads_font);
             load_notation_typo_preferences(r_ob, r_ob->noteheads_font);
 //            load_articulations_typo_preferences(r_ob, &r_ob->articulations_typo_preferences, r_ob->articulations_font);
-        }
+        }*/
          
 
         notationobj_invalidate_notation_static_layer_and_redraw(r_ob);

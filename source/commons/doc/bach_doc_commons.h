@@ -1052,6 +1052,14 @@
 	// (as a single symbol) as name for the fourth voice. 
 	// <br /> <br />
 
+#define BACH_DOC_VOICEGROUPS
+    // Sets the voice groups, i.e. the runs of voices that may be shown as gathered with a bracket, slur, .
+    // The syntax is a list of <b><m>GROUP1</m> <m>GROUP2</m> <m>GROUP3</m>...</b>, where each <m>GROUP</m>
+    // is <b>[<m>numvoice_start</m> <m>numvoice_end</m> <m>display_type</m>]</b>, where in turn <m>display_type</m>
+    // is one of the following symbols: "none" (no display), "rule" (display with a straight line),
+    // "bracket" (display with a bracket), "brace" (display with a brace).
+    // <br /> <br />
+
 #define BACH_DOC_STAFFLINES
 	// Sets the staff lines. An llll containing as many elements as the number of voices is expected, 
 	// if less elements are input, the last one is padded.

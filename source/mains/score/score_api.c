@@ -10724,6 +10724,10 @@ void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
             }
         }
         
+        if (x->r_ob.show_initial_rule == 2 || (x->r_ob.show_initial_rule == 1 && voice_get_first_visible((t_notation_obj *)x) != voice_get_last_visible((t_notation_obj *)x))){
+            paint_initial_rule((t_notation_obj *)x, g, x->r_ob.j_mainstaves_rgba);
+        }
+
         lock_general_mutex((t_notation_obj *)x);
         for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next){
             double k; 
@@ -10758,11 +10762,8 @@ void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
                     paint_clef((t_notation_obj *)x, g, jf, voice->v_ob.middleC_y + k * system_jump, clef, clefcolor, auxclefcolor);
             }
             
-            if (x->r_ob.show_initial_rule == 2 || (x->r_ob.show_initial_rule == 1 && voice_get_first_visible((t_notation_obj *)x) != voice_get_last_visible((t_notation_obj *)x)))
-                paint_initial_rule((t_notation_obj *)x, g, clefcolor);
-            else
-                if (is_clef_multistaff((t_notation_obj *)x, clef)) // paint the vertical staff line
-                    paint_left_vertical_staffline((t_notation_obj *)x, g, (t_voice *)voice, mainstaffcolor);
+            if (is_clef_multistaff((t_notation_obj *)x, clef)) // paint the multistaff accollatura
+                paint_multistaff_accollatura((t_notation_obj *)x, g, (t_voice *)voice, mainstaffcolor);
 
             // paint key signature
             for (k=x->r_ob.first_shown_system; k <= x->r_ob.last_shown_system; k++) {
@@ -10771,12 +10772,8 @@ void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
                 }
             }
             
-            // paint the accollatura
-            if (x->r_ob.show_accollatura && voiceensemble_get_numparts((t_notation_obj *)x, (t_voice *)voice) > 1)
-                for (k=x->r_ob.first_shown_system; k <= x->r_ob.last_shown_system; k++)
-                    paint_accollatura((t_notation_obj *)x, g, staff_top_y, staff_bottom_y, mainstaffcolor);
+            paint_voiceensemble_accollatura((t_notation_obj *)x, g, (t_voice *)voice, mainstaffcolor);
             
-
             // paint voice names
             if (x->r_ob.there_are_voice_names && x->r_ob.show_voice_names && (x->r_ob.is_editing_type != k_VOICENAME || x->r_ob.is_editing_voice_name != voice->v_ob.number)) { 
                 char buf[1000];
@@ -10817,6 +10814,8 @@ void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
                 }
             }
         }
+
+        paint_voicegroups_accollature((t_notation_obj *)x, g);
 
         unlock_general_mutex((t_notation_obj *)x);
 

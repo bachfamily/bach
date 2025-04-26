@@ -733,6 +733,13 @@ typedef enum _voiceensemble_interface_policy {
     k_VOICEENSEMBLE_INTERFACE_ANY = 4
 } e_voiceensemble_interface_policy;
 
+typedef enum _accollatura_type {
+    k_ACCOLLATURA_NONE = 0,
+    k_ACCOLLATURA_RULE = 1,
+    k_ACCOLLATURA_THINBRACKET = 2,
+    k_ACCOLLATURA_BRACKET = 3,
+    k_ACCOLLATURA_BRACE = 4,
+} e_accollatura_type;
 
 typedef enum _chord_position_in_screen {
     k_CHORDPOSITIONINSCREEN_ENDS_BEFORE_DOMAIN = -3,
@@ -4199,6 +4206,7 @@ typedef struct _notation_obj
                                                     ///< It is an array with #CONST_MAX_VOICES elements allocated in notationobj_init() and freed by notationobj_free()
     t_symbol        **notationstyles_as_symlist;     ///< List of notation styles (one for each voice) as symbols
                                                     ///< It is an array with #CONST_MAX_VOICES elements allocated in notationobj_init() and freed by notationobj_free()
+    t_llll          *voicegroups_as_llll;          ///< Voice groups (brackets, braces,...) as llll
 
     // tuttipoints, for bach.score
     t_tuttipoint    *firsttuttipoint;               ///< First tuttipoint
@@ -4943,8 +4951,9 @@ typedef struct _notation_obj
     
     // initial rule
     char        show_initial_rule;              ///< Flag telling whether to show initial rule
-    char        show_accollatura;               ///< Flag telling if we show the brackets for staff ensemble
-    ///
+    t_symbol    *parts_accollatura;               ///< Type of accollatura displayed for parts
+    t_symbol    *multistaff_accollatura;         ///< Type of accollatura for voices with more than one staff
+    char        show_accollature;               ///< Flag toggling the display of any accollatura
     
     // slurs (SOME OF THESE ARE YET UNSUPPORTED)
     char        show_slurs;                 ///< Flag telling if we want to show the slurs
@@ -10479,10 +10488,11 @@ void paint_keyboard_clef(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf, doub
     @param    staffbottom_y    The y of the bottommost staff point
     @param    color        The color of the accollatura
  */ 
-void paint_accollatura(t_notation_obj *r_ob, t_jgraphics* g, double stafftop_y, double staffbottom, t_jrgba color);
+void paint_accollatura(t_notation_obj *r_ob, t_jgraphics* g, double stafftop_y, double staffbottom, t_jrgba color, e_accollatura_type type);
 
 
 // TBD
+e_accollatura_type accollatura_symbol_to_type(t_notation_obj *r_ob, t_symbol *acc);
 void paint_playhead(t_notation_obj *r_ob, t_jgraphics* g, t_rect rect);
 char is_clef_multistaff(t_notation_obj *r_ob, long clef);
 
@@ -10723,8 +10733,11 @@ void paint_staff_lines(t_notation_obj *r_ob, t_jgraphics* g, double x1, double x
 void paint_staff_lines_pianoroll(t_notation_obj *r_ob, t_jgraphics *g, double x1, double x2, double width, double middleC_y, long clef, t_jrgba color);
 
 // TBD
-void paint_left_vertical_staffline(t_notation_obj *r_ob, t_jgraphics* g, t_voice *voice, t_jrgba color);
+void paint_left_vertical_staffline(t_notation_obj *r_ob, t_jgraphics* g, t_voice *voice, t_jrgba color); // no longer used
 void paint_initial_rule(t_notation_obj *r_ob, t_jgraphics *g, t_jrgba color);
+void paint_multistaff_accollatura(t_notation_obj *r_ob, t_jgraphics *g, t_voice *voice, t_jrgba mainstaffcolor);
+void paint_voiceensemble_accollatura(t_notation_obj *r_ob, t_jgraphics *g, t_voice *voice, t_jrgba mainstaffcolor);
+void paint_voicegroups_accollature(t_notation_obj *r_ob, t_jgraphics *g);
 
 
 
@@ -12801,8 +12814,11 @@ t_voice *voice_get_first_visible(t_notation_obj *r_ob);
  */
 t_voice *voice_get_last_visible(t_notation_obj *r_ob);
 
+t_voice *voice_get_first_visible_before_voice(t_notation_obj *r_ob, t_voice *v);
+t_voice *voice_get_first_visible_after_voice(t_notation_obj *r_ob, t_voice *v);
 
-/**    Obtain an llll containing as symbols all the voice names  
+
+/**    Obtain an llll containing as symbols all the voice names
     @ingroup            notation_data
     @param    r_ob        The notation object
     @param    prepend_router    If this is non-zero a "voicenames" symbol at the beginning is prepended

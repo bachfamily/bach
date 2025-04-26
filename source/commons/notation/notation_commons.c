@@ -541,6 +541,72 @@ void paint_left_vertical_staffline(t_notation_obj *r_ob, t_jgraphics* g, t_voice
         paint_line(g, color, x_pos, top_y, x_pos, bottom_y+1, LINEWIDTH);
 }
 
+void paint_multistaff_accollatura(t_notation_obj *r_ob, t_jgraphics *g, t_voice *voice, t_jrgba mainstaffcolor)
+{
+    if (r_ob->show_accollature) {
+        double staff_top_y = voice_get_staff_top_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
+        double staff_bottom_y = voice_get_staff_bottom_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
+
+        paint_accollatura(r_ob, g, staff_top_y, staff_bottom_y, mainstaffcolor, accollatura_symbol_to_type(r_ob, r_ob->multistaff_accollatura));
+    }
+}
+
+void paint_voiceensemble_accollatura(t_notation_obj *r_ob, t_jgraphics *g, t_voice *voice, t_jrgba mainstaffcolor)
+{
+    if (r_ob->show_accollature && voiceensemble_get_numparts(r_ob, (t_voice *)voice) > 1) {
+        double staff_top_y = voice_get_staff_top_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
+        double staff_bottom_y = voice_get_staff_bottom_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
+        for (long k = r_ob->first_shown_system; k <= r_ob->last_shown_system; k++) {
+            paint_accollatura(r_ob, g, staff_top_y, staff_bottom_y, mainstaffcolor, accollatura_symbol_to_type(r_ob, r_ob->parts_accollatura));
+        }
+    }
+}
+
+void paint_voicegroups_accollature(t_notation_obj *r_ob, t_jgraphics *g)
+{
+    if (r_ob->show_accollature && r_ob->voicegroups_as_llll) {
+        for (t_llllelem *el = r_ob->voicegroups_as_llll->l_head; el; el = el->l_next) {
+            if (hatom_gettype(&el->l_hatom) != H_LLLL)
+                continue;
+            
+            t_llll *ll = hatom_getllll(&el->l_hatom);
+            
+            if (ll->l_size < 3 || hatom_gettype(&ll->l_head->l_hatom) != H_LONG || hatom_gettype(&ll->l_head->l_next->l_hatom) != H_LONG || hatom_gettype(&ll->l_head->l_next->l_next->l_hatom) != H_SYM)
+                continue;
+            
+            long from = hatom_getlong(&ll->l_head->l_hatom);
+            long to = hatom_getlong(&ll->l_head->l_next->l_hatom);
+            t_symbol *type = hatom_getsym(&ll->l_head->l_next->l_next->l_hatom);
+            
+            if (from < 0)
+                from += r_ob->num_voices + 1;
+            if (to < 0)
+                to += r_ob->num_voices + 1;
+            if (from > to) {
+                long temp = from;
+                from = to; 
+                to = temp;
+            }
+            from = CLAMP(from, 1, r_ob->num_voices);
+            to = CLAMP(to, 1, r_ob->num_voices);
+            
+            // convert to 0-based
+            from -= 1;
+            to -= 1;
+
+            t_voice *v_from = voice_get_first_visible_after_voice(r_ob, voice_get_nth_safe(r_ob, from));
+            t_voice *v_to = voice_get_first_visible_before_voice(r_ob, voice_get_nth_safe(r_ob, to));
+
+            if (v_from && v_to && v_from->number <= v_to->number) {
+                double staff_top_y = voice_get_staff_top_y(r_ob, v_from, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
+                double staff_bottom_y = voice_get_staff_bottom_y(r_ob, v_to, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
+                
+                paint_accollatura(r_ob, g, staff_top_y, staff_bottom_y, r_ob->j_mainstaves_rgba, accollatura_symbol_to_type(r_ob, type));
+            }
+        }
+    }
+}
+
 void paint_staff_lines_pianoroll(t_notation_obj *r_ob, t_jgraphics *g, double x1, double x2, double width, double middleC_y, long clef, t_jrgba color)
 {
     long minmc, maxmc;
@@ -1471,20 +1537,131 @@ char is_clef_multistaff(t_notation_obj *r_ob, long clef)
     }
 }
 
-void paint_accollatura(t_notation_obj *r_ob, t_jgraphics* g, double stafftop_y, double staffbottom_y, t_jrgba color)
+e_accollatura_type accollatura_symbol_to_type(t_notation_obj *r_ob, t_symbol *acc)
 {
-    double xx = r_ob->j_inset_x + r_ob->voice_names_uwidth * r_ob->zoom_y - 3;
-    const double delta = 0.7 * r_ob->step_y;
-    const double width = 2.; // * r_ob->zoom_y;
+    if (acc == gensym("rule") || acc == gensym("line"))
+        return k_ACCOLLATURA_RULE;
+    if (acc == gensym("thinbracket") || acc == gensym("smallbracket"))
+        return k_ACCOLLATURA_THINBRACKET;
+    if (acc == gensym("bracket"))
+        return k_ACCOLLATURA_BRACKET;
+    if (acc == gensym("brace"))
+        return k_ACCOLLATURA_BRACE;
+
+    char buf[1024];
+    snprintf_zero(buf, 1024, "Unknown accollatura type: \"%s\". Defaulting to \"none\"", acc ? acc->s_name : "");
+    object_warn((t_object *)r_ob, buf);
+    return k_ACCOLLATURA_NONE;
+}
+
+void paint_accollatura(t_notation_obj *r_ob, t_jgraphics* g, double stafftop_y, double staffbottom_y, t_jrgba color, e_accollatura_type type)
+{
     double y1 = stafftop_y, y2 = staffbottom_y;
-    
-    jgraphics_move_to(g, xx + delta, y2 + delta);
-    jgraphics_line_to(g, xx, y2);
-    jgraphics_line_to(g, xx, y1);
-    jgraphics_line_to(g, xx + delta, y1 - delta);
-    jgraphics_set_line_width(g,width);
-    jgraphics_set_source_jrgba(g, &color);
-    jgraphics_stroke(g);
+    const double LINE_WIDTH = 1. * r_ob->zoom_y;
+    double xstart = r_ob->j_inset_x + r_ob->voice_names_uwidth * r_ob->zoom_y;
+
+    switch (type) {
+        case k_ACCOLLATURA_RULE:
+        {
+            paint_line(g, color, xstart, y1-0.5, xstart, y2+0.5, LINE_WIDTH);
+        }
+            break;
+
+        case k_ACCOLLATURA_THINBRACKET:
+        {
+            double sep = 1.5 * r_ob->step_y;
+            double deltay = 0.5 * r_ob->step_y;
+
+            paint_line(g, color, xstart, y1-0.5, xstart, y2+0.5, LINE_WIDTH);
+            
+            jgraphics_move_to(g, xstart, y1 - deltay);
+            jgraphics_line_to(g, xstart - sep, y1 - deltay);
+            jgraphics_line_to(g, xstart - sep, y2 + deltay);
+            jgraphics_line_to(g, xstart, y2 + deltay);
+            jgraphics_set_source_jrgba(g, &color);
+            jgraphics_set_line_width(g, LINE_WIDTH*1.5);
+            jgraphics_stroke(g);
+        }
+            break;
+
+        case k_ACCOLLATURA_BRACKET:
+        {
+            paint_line(g, color, xstart, y1-0.5, xstart, y2+0.5, LINE_WIDTH);
+
+            double w = CONST_BEAMING_UWIDTH * r_ob->zoom_y;
+            double sep = 1. * r_ob->step_y;
+            double tipdeltax = 1. * r_ob->step_y;
+            double tipdeltay = 2.5 * r_ob->step_y;
+
+            jgraphics_move_to(g, xstart - sep - w, y2 + sep);
+            jgraphics_line_to(g, xstart - sep - w, y1 - sep);
+            
+            jgraphics_curve_to(g, xstart, y1 - sep, xstart + 1.*tipdeltax, y1 - sep, xstart + tipdeltax, y1 - sep - tipdeltay);
+            jgraphics_curve_to(g, xstart + tipdeltax, y1 - sep, xstart + tipdeltax, y1 - 0.5*sep, xstart - sep, y1 - 0.5 * sep);
+            
+            jgraphics_line_to(g, xstart - sep, y2 + 0.5 * sep);
+//            jgraphics_line_to(g, xstart + tipdeltax, y2 + sep + tipdeltay);
+//            jgraphics_line_to(g, xstart - sep, y2 + sep);
+            jgraphics_curve_to(g, xstart + tipdeltax, y2 + 0.5*sep, xstart + tipdeltax, y2 + sep, xstart + tipdeltax, y2 + sep + tipdeltay);
+            jgraphics_curve_to(g, xstart + 1.*tipdeltax, y2 + sep, xstart, y2 + sep, xstart - sep, y2 + sep);
+
+            jgraphics_line_to(g, xstart - sep - w, y2 + sep);
+
+            jgraphics_close_path(g);
+            jgraphics_set_source_jrgba(g, &color);
+            jgraphics_fill(g);
+            
+//            paint_circle_filled(g, build_jrgba(1, 0, 0, 1), xstart + tipdeltax, y1 - sep - tipdeltay, 2);
+//            paint_circle_filled(g, build_jrgba(0, 1, 0, 1), xstart + tipdeltax, y2 + sep + tipdeltay, 2);
+        }
+            break;
+            
+        case k_ACCOLLATURA_BRACE:
+        {
+            double sep = 1. * r_ob->step_y;
+            double w = 4. * r_ob->zoom_y;
+            double x = xstart - sep;
+            double h = (y2 - y1);
+            double spear = 4. * r_ob->zoom_y;
+
+            paint_line(g, color, xstart, y1-0.5, xstart, y2+0.5, LINE_WIDTH);
+
+            // Start left side
+            jgraphics_move_to(g, x, y1);
+
+            /*
+            jgraphics_curve_to(g, x - spear, y1 + spear, x-w, y1 + 0.15*h, x-w, y1 + 0.2*h);
+            jgraphics_curve_to(g, x-w, y1 + 0.3*h, x-w + 1*spear, y1 + 0.5*h - 1.1*spear, x-w, y1 + 0.5*h);
+            jgraphics_curve_to(g, x-w + 0.4*spear, y1 + 0.5*h - 0.4*spear, x, y1 + 0.41*h, x, y1 + 0.35*h);
+            jgraphics_curve_to(g, x, y1 + 0.3*h, x - 0.85*spear, y1 + spear, x, y1);
+             */
+            
+            jgraphics_curve_to(g, x - spear, y1 + spear, x-w, y1 + 0.15*h, x-w, y1 + 0.2*h);
+            jgraphics_curve_to(g, x-w, y1 + 0.3*h, x-w + 1*spear, y1 + 0.5*h - 1.1*spear, x-w, y1 + 0.5*h);
+
+            jgraphics_curve_to(g, x-w + 1*spear, y1 + 0.5*h + 1.1*spear, x-w, y1 + 0.7*h, x-w, y1 + 0.8*h);
+            jgraphics_curve_to(g, x-w, y1 + 0.85*h, x - spear, y2 - spear, x, y2);
+
+            jgraphics_curve_to(g, x - 0.85*spear, y2 - spear, x, y1 + 0.7*h, x, y1 + 0.65*h);
+            jgraphics_curve_to(g, x, y1 + 0.59*h, x-w + 0.4*spear, y1 + 0.5*h + 0.4*spear, x-0.7*w, y1 + 0.5*h);
+
+            jgraphics_curve_to(g, x-w + 0.4*spear, y1 + 0.5*h - 0.4*spear, x, y1 + 0.41*h, x, y1 + 0.35*h);
+            jgraphics_curve_to(g, x, y1 + 0.3*h, x - 0.85*spear, y1 + spear, x, y1);
+
+            
+            // Close and fill the path
+//            jgraphics_close_path(g);
+            jgraphics_set_source_jrgba(g, &color);
+            jgraphics_set_line_width(g, 0.5);
+//            jgraphics_stroke(g);
+            jgraphics_fill(g);
+        }
+
+            break;
+
+        default:
+            break;
+    }
 }
 
 void paint_playhead(t_notation_obj *r_ob, t_jgraphics* g, t_rect rect)
@@ -10604,7 +10781,8 @@ double voice_get_staff_top_y(t_notation_obj *r_ob, t_voice *voice, e_nonstandard
             staff_top -= (voice->max_staff_line - 5) * r_ob->step_y * 2;
         }
     }
-    return staff_top;
+    
+    return staff_top + r_ob->j_inset_y;
 }
 
 //nonstandard_stafflines=0: ignore them
@@ -10659,7 +10837,7 @@ double voice_get_staff_bottom_y(t_notation_obj *r_ob, t_voice *voice, e_nonstand
             staff_bottom += (1 - voice->min_staff_line) * r_ob->step_y * 2;
         }
     }
-    return staff_bottom;
+    return staff_bottom + r_ob->j_inset_y;
 }
 
 //nonstandard_stafflines=0: ignore them
@@ -40011,6 +40189,7 @@ t_max_err notationobj_set_voicespacing(t_notation_obj *r_ob, long ac, double *va
     return MAX_ERR_NONE;
 }
 
+
 t_max_err notationobj_setattr_voicenames(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     t_llll *args = llllobj_parse_llll((t_object *) r_ob, LLLL_OBJ_UI, NULL, ac, av, LLLL_PARSE_RETAIN);
     set_voicenames_from_llll(r_ob, args, true);
@@ -45070,6 +45249,28 @@ t_voice *voice_get_last_visible(t_notation_obj *r_ob)
 {
     t_voice *voice;
     for (voice = voice_get_nth_safe(r_ob, r_ob->num_voices - 1); voice && voice->number >= 0; voice = voice_get_prev(r_ob, voice))
+        if (!voice->hidden && voice->part_index == 0)
+            return voice;
+    return NULL;
+}
+
+t_voice *voice_get_first_visible_after_voice(t_notation_obj *r_ob, t_voice *v)
+{
+    t_voice *voice;
+    if (!v)
+        return NULL;
+    for (voice = v; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice))
+        if (!voice->hidden && voice->part_index == 0)
+            return voice;
+    return NULL;
+}
+
+t_voice *voice_get_first_visible_before_voice(t_notation_obj *r_ob, t_voice *v)
+{
+    t_voice *voice;
+    if (!v)
+        return NULL;
+    for (voice = v; voice && voice->number >= 0; voice = voice_get_prev(r_ob, voice))
         if (!voice->hidden && voice->part_index == 0)
             return voice;
     return NULL;
