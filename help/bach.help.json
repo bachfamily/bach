@@ -1479,6 +1479,13 @@
 				"tags" : [ "appearance", "dynamics", "attribute", "show", "showdynamics", "hairpin", "showhairpins", "adjust", "baseline", "position", "base", "line dynamicsvadj", "dynamicsfontsize", "font", "size", "affect", "spacing", "dynamicsaffectspacing", "dynamicsfontsize" ],
 				"title" : [ "Dynamics display" ]
 			},
+			"B_annotationsattributes" : {
+				"filename" : [ "bach.help.notation.appearance.19b_annotationsattributes.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "annotation" ],
+				"tags" : [ "appearance", "annotation", "show", "showannotations", "annotationsvadj", "annotationsfontsize", "annotationsalign", "align", "font", "size", "adjust", "adj", "vertical", "shift" ],
+				"title" : [ "Annotations display" ]
+			},
 			"Changefonts" : {
 				"filename" : [ "bach.help.notation.appearance.20_changefonts.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
@@ -1785,6 +1792,13 @@
 				"seealso" : [ "measure+number" ],
 				"tags" : [ "appearance", "barline", "across", "staff", "staves", "show", "hide", "showbarlines", "drawbarlinesacrossstaves" ],
 				"title" : [ "Barlines" ]
+			},
+			"B_accollature" : {
+				"filename" : [ "bach.help.notation.appearance.60b_accollature.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "part" ],
+				"tags" : [ "appearance", "accollatura", "accollature", "bracket", "brace", "thinbracket", "rule", "ruler", "line", "none", "pad", "before", "clef", "padbeforeclef", "group", "voicegroups", "voice", "showaccollature", "show", "showaccollatura", "initial", "rule", "showinitialrule" ],
+				"title" : [ "Accollature (brackets and braces)" ]
 			},
 			"Measurenumbers" : {
 				"filename" : [ "bach.help.notation.appearance.61_measurenumbers.maxpat" ],
@@ -3787,6 +3801,13 @@
 					"tags" : [ "message", "operate", "on", "selection", "poly", "polyphony", "assign", "assignment", "mono", "monophony", "voicing", "voice", "number", "max", "maxnum", "used" ],
 					"title" : [ "Obtaining the number of used voices" ]
 				},
+				"Pitchapprox" : {
+					"filename" : [ "bach.help.notation.messages.30_operate on selection.78_pitchapprox.maxpat" ],
+					"objects" : [ "bach.roll" ],
+					"seealso" : [ "jilimit", "tonedivision" ],
+					"tags" : [ "message", "operate", "on", "selection", "approximate", "snap", "pitch", "ji", "et", "just", "intonation", "jiapprox", "approx", "etapprox", "limit", "tonedivision" ],
+					"title" : [ "Approximate pitches" ]
+				},
 				"Othermessages" : {
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.80_othermessages.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
@@ -4205,7 +4226,7 @@
 			"Intro" : {
 				"filename" : [ "bach.help.notation.parts.01_intro.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
-				"seealso" : [ "clef", "numparts" ],
+				"seealso" : [ "clef", "numparts", "accollature" ],
 				"tags" : [ "part", "voice", "ensemble", "voiceensemble", "staff", "bracket", "show", "hide", "showpartbrackets" ],
 				"title" : [ "Voices, voice ensembles and parts" ]
 			},

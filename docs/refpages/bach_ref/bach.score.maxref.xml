@@ -1419,6 +1419,16 @@
 				and before the <m>chord_flag</m>. The order in which the specifications are listed is, on the other hand, irrelevant. For instance, a chord definition might
 				have the form <b>[1/4 [7000. 127 1] [7200. 100 0] [name john] [slots [10 fermata]] 0]</b>.
 				<br /> <br />
+				Chords can also bear an additional slur specification, accounting for slurs that start on the chord.
+				<br /> <br />
+				A slur beginning on a given chord is identified by appending a list of the type
+				<b>[slurs <m>SLUR1</m> <m>optional:SLUR2</m> <m>optional:SLUR3</m>]</b>.
+				Up to three slurs can be defined. Every <m>SLUR</m> can be represented by an integer number, simply
+				counting the number of chords spanned by the slur.
+				Alternatively, every <m>SLUR</m> can be a complex list of the kind:
+				<b>[ <m>number_of_spanned_chords</m> [ name <m>name_or_llll_of_names</m> ] [ direction <m>direction_as_int</m> ] ]</b>
+				where <m>direction_as_int</m> sets the slur direction: 0 for auto, 1 for up and -1 for down.
+				<br /> <br />
 				For <o>bach.score</o>, the gathered syntax for any note is, in its simplest form <b>[<m>pitch_cents</m> <m>velocity</m> <m>tie?</m> <m>note_flag</m>]</b>
 				where <m>pitch_cents</m> is the pitch of the note in MIDI cents, the <m>velocity</m>
 				is a value from 1 to 127 corresponding to the note dynamic, the <m>tie?</m> value is 1 only if the note starts a tie and 0 otherwise, and
@@ -1667,6 +1677,16 @@
 				Each of these specifications is done in the form <b>[<m>specification_name</m> <m>SPECIFICATION CONTENT</m>]</b>, and must be put after the last note llll,
 				and before the <m>chord_flag</m>. The order in which the specifications are listed is, on the other hand, irrelevant. For instance, a chord definition might
 				have the form <b>[1/4 [7000. 127 1] [7200. 100 0] [name john] [slots [10 fermata]] 0]</b>.
+				<br /> <br />
+				Chords can also bear an additional slur specification, accounting for slurs that start on the chord.
+				<br /> <br />
+				A slur beginning on a given chord is identified by appending a list of the type
+				<b>[slurs <m>SLUR1</m> <m>optional:SLUR2</m> <m>optional:SLUR3</m>]</b>.
+				Up to three slurs can be defined. Every <m>SLUR</m> can be represented by an integer number, simply
+				counting the number of chords spanned by the slur.
+				Alternatively, every <m>SLUR</m> can be a complex list of the kind:
+				<b>[ <m>number_of_spanned_chords</m> [ name <m>name_or_llll_of_names</m> ] [ direction <m>direction_as_int</m> ] ]</b>
+				where <m>direction_as_int</m> sets the slur direction: 0 for auto, 1 for up and -1 for down.
 				<br /> <br />
 				For <o>bach.score</o>, the gathered syntax for any note is, in its simplest form <b>[<m>pitch_cents</m> <m>velocity</m> <m>tie?</m> <m>note_flag</m>]</b>
 				where <m>pitch_cents</m> is the pitch of the note in MIDI cents, the <m>velocity</m>
@@ -2921,6 +2941,16 @@
 				Each of these specifications is done in the form <b>[<m>specification_name</m> <m>SPECIFICATION CONTENT</m>]</b>, and must be put after the last note llll,
 				and before the <m>chord_flag</m>. The order in which the specifications are listed is, on the other hand, irrelevant. For instance, a chord definition might
 				have the form <b>[1/4 [7000. 127 1] [7200. 100 0] [name john] [slots [10 fermata]] 0]</b>.
+				<br /> <br />
+				Chords can also bear an additional slur specification, accounting for slurs that start on the chord.
+				<br /> <br />
+				A slur beginning on a given chord is identified by appending a list of the type
+				<b>[slurs <m>SLUR1</m> <m>optional:SLUR2</m> <m>optional:SLUR3</m>]</b>.
+				Up to three slurs can be defined. Every <m>SLUR</m> can be represented by an integer number, simply
+				counting the number of chords spanned by the slur.
+				Alternatively, every <m>SLUR</m> can be a complex list of the kind:
+				<b>[ <m>number_of_spanned_chords</m> [ name <m>name_or_llll_of_names</m> ] [ direction <m>direction_as_int</m> ] ]</b>
+				where <m>direction_as_int</m> sets the slur direction: 0 for auto, 1 for up and -1 for down.
 				<br /> <br />
 				For <o>bach.score</o>, the gathered syntax for any note is, in its simplest form <b>[<m>pitch_cents</m> <m>velocity</m> <m>tie?</m> <m>note_flag</m>]</b>
 				where <m>pitch_cents</m> is the pitch of the note in MIDI cents, the <m>velocity</m>
@@ -4606,6 +4636,16 @@
 				and before the <m>chord_flag</m>. The order in which the specifications are listed is, on the other hand, irrelevant. For instance, a chord definition might
 				have the form <b>[1/4 [7000. 127 1] [7200. 100 0] [name john] [slots [10 fermata]] 0]</b>.
 				<br /> <br />
+				Chords can also bear an additional slur specification, accounting for slurs that start on the chord.
+				<br /> <br />
+				A slur beginning on a given chord is identified by appending a list of the type
+				<b>[slurs <m>SLUR1</m> <m>optional:SLUR2</m> <m>optional:SLUR3</m>]</b>.
+				Up to three slurs can be defined. Every <m>SLUR</m> can be represented by an integer number, simply
+				counting the number of chords spanned by the slur.
+				Alternatively, every <m>SLUR</m> can be a complex list of the kind:
+				<b>[ <m>number_of_spanned_chords</m> [ name <m>name_or_llll_of_names</m> ] [ direction <m>direction_as_int</m> ] ]</b>
+				where <m>direction_as_int</m> sets the slur direction: 0 for auto, 1 for up and -1 for down.
+				<br /> <br />
 				For <o>bach.score</o>, the gathered syntax for any note is, in its simplest form <b>[<m>pitch_cents</m> <m>velocity</m> <m>tie?</m> <m>note_flag</m>]</b>
 				where <m>pitch_cents</m> is the pitch of the note in MIDI cents, the <m>velocity</m>
 				is a value from 1 to 127 corresponding to the note dynamic, the <m>tie?</m> value is 1 only if the note starts a tie and 0 otherwise, and
@@ -4851,6 +4891,16 @@
 				Each of these specifications is done in the form <b>[<m>specification_name</m> <m>SPECIFICATION CONTENT</m>]</b>, and must be put after the last note llll,
 				and before the <m>chord_flag</m>. The order in which the specifications are listed is, on the other hand, irrelevant. For instance, a chord definition might
 				have the form <b>[1/4 [7000. 127 1] [7200. 100 0] [name john] [slots [10 fermata]] 0]</b>.
+				<br /> <br />
+				Chords can also bear an additional slur specification, accounting for slurs that start on the chord.
+				<br /> <br />
+				A slur beginning on a given chord is identified by appending a list of the type
+				<b>[slurs <m>SLUR1</m> <m>optional:SLUR2</m> <m>optional:SLUR3</m>]</b>.
+				Up to three slurs can be defined. Every <m>SLUR</m> can be represented by an integer number, simply
+				counting the number of chords spanned by the slur.
+				Alternatively, every <m>SLUR</m> can be a complex list of the kind:
+				<b>[ <m>number_of_spanned_chords</m> [ name <m>name_or_llll_of_names</m> ] [ direction <m>direction_as_int</m> ] ]</b>
+				where <m>direction_as_int</m> sets the slur direction: 0 for auto, 1 for up and -1 for down.
 				<br /> <br />
 				For <o>bach.score</o>, the gathered syntax for any note is, in its simplest form <b>[<m>pitch_cents</m> <m>velocity</m> <m>tie?</m> <m>note_flag</m>]</b>
 				where <m>pitch_cents</m> is the pitch of the note in MIDI cents, the <m>velocity</m>
@@ -5103,6 +5153,16 @@
 				Each of these specifications is done in the form <b>[<m>specification_name</m> <m>SPECIFICATION CONTENT</m>]</b>, and must be put after the last note llll,
 				and before the <m>chord_flag</m>. The order in which the specifications are listed is, on the other hand, irrelevant. For instance, a chord definition might
 				have the form <b>[1/4 [7000. 127 1] [7200. 100 0] [name john] [slots [10 fermata]] 0]</b>.
+				<br /> <br />
+				Chords can also bear an additional slur specification, accounting for slurs that start on the chord.
+				<br /> <br />
+				A slur beginning on a given chord is identified by appending a list of the type
+				<b>[slurs <m>SLUR1</m> <m>optional:SLUR2</m> <m>optional:SLUR3</m>]</b>.
+				Up to three slurs can be defined. Every <m>SLUR</m> can be represented by an integer number, simply
+				counting the number of chords spanned by the slur.
+				Alternatively, every <m>SLUR</m> can be a complex list of the kind:
+				<b>[ <m>number_of_spanned_chords</m> [ name <m>name_or_llll_of_names</m> ] [ direction <m>direction_as_int</m> ] ]</b>
+				where <m>direction_as_int</m> sets the slur direction: 0 for auto, 1 for up and -1 for down.
 				<br /> <br />
 				For <o>bach.score</o>, the gathered syntax for any note is, in its simplest form <b>[<m>pitch_cents</m> <m>velocity</m> <m>tie?</m> <m>note_flag</m>]</b>
 				where <m>pitch_cents</m> is the pitch of the note in MIDI cents, the <m>velocity</m>
@@ -5782,6 +5842,16 @@
 				Each of these specifications is done in the form <b>[<m>specification_name</m> <m>SPECIFICATION CONTENT</m>]</b>, and must be put after the last note llll,
 				and before the <m>chord_flag</m>. The order in which the specifications are listed is, on the other hand, irrelevant. For instance, a chord definition might
 				have the form <b>[1/4 [7000. 127 1] [7200. 100 0] [name john] [slots [10 fermata]] 0]</b>.
+				<br /> <br />
+				Chords can also bear an additional slur specification, accounting for slurs that start on the chord.
+				<br /> <br />
+				A slur beginning on a given chord is identified by appending a list of the type
+				<b>[slurs <m>SLUR1</m> <m>optional:SLUR2</m> <m>optional:SLUR3</m>]</b>.
+				Up to three slurs can be defined. Every <m>SLUR</m> can be represented by an integer number, simply
+				counting the number of chords spanned by the slur.
+				Alternatively, every <m>SLUR</m> can be a complex list of the kind:
+				<b>[ <m>number_of_spanned_chords</m> [ name <m>name_or_llll_of_names</m> ] [ direction <m>direction_as_int</m> ] ]</b>
+				where <m>direction_as_int</m> sets the slur direction: 0 for auto, 1 for up and -1 for down.
 				<br /> <br />
 				For <o>bach.score</o>, the gathered syntax for any note is, in its simplest form <b>[<m>pitch_cents</m> <m>velocity</m> <m>tie?</m> <m>note_flag</m>]</b>
 				where <m>pitch_cents</m> is the pitch of the note in MIDI cents, the <m>velocity</m>
@@ -9014,7 +9084,21 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
-		<attribute name="annotationalignment" get="1" set="1" type="int" size="1">
+		<attribute name="annotationcolor" get="1" set="1" type="rgba" size="1">
+			<digest>
+				Annotation Color
+			</digest>
+			<description>
+				Sets the color of text annotations, in RGBA format.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
+				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Annotation Color" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
+			</attributelist>
+		</attribute>
+		<attribute name="annotationsalign" get="1" set="1" type="int" size="1">
 			<digest>
 				Annotation Alignment
 			</digest>
@@ -9031,21 +9115,21 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
-		<attribute name="annotationcolor" get="1" set="1" type="rgba" size="1">
+		<attribute name="annotationsfont" get="1" set="1" type="symbol" size="1">
 			<digest>
-				Annotation Color
+				Annotations Font
 			</digest>
 			<description>
-				Sets the color of text annotations, in RGBA format.
+				@description Sets the font used to display annotations (default is Arial).
 			</description>
 			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
-				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Annotation Color" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
+				<attribute name="default" get="1" set="1" type="symbol" size="1" value="Arial" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Annotations Font" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
-		<attribute name="annotationfontsize" get="1" set="1" type="float" size="1">
+		<attribute name="annotationsfontsize" get="1" set="1" type="float" size="1">
 			<digest>
 				Annotation Font Size
 			</digest>
@@ -9061,18 +9145,21 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
-		<attribute name="annotationsfont" get="1" set="1" type="symbol" size="1">
+		<attribute name="annotationsvadj" get="1" set="1" type="float" size="1">
 			<digest>
-				Annotations Font
+				Annotations Vertical Adjustment
 			</digest>
 			<description>
-				@description Sets the font used to display annotations (default is Arial).
+				Sets a vertical shift (in pixels, rescaled depending on the <m>vzoom</m>) of the
+				annotations display.
 			</description>
 			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
-				<attribute name="default" get="1" set="1" type="symbol" size="1" value="Arial" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Annotations Font" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Annotations Vertical Adjustment" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
 		<attribute name="applyslope" get="1" set="1" type="int" size="1">
@@ -11155,22 +11242,6 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
-		<attribute name="minmeaswidth" get="1" set="1" type="float" size="1">
-			<digest>
-				Minimum Measure Width
-			</digest>
-			<description>
-				Sets the minimum width that any measure must have, in pixels (rescaled with respect to the current <m>vzoom</m>).
-			</description>
-			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
-				<attribute name="default" get="1" set="1" type="float" size="1" value="60" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Minimum Measure Width" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
-			</attributelist>
-		</attribute>
 		<attribute name="mousehover" get="1" set="1" type="int" size="1">
 			<digest>
 				Allow Mouse Hovering
@@ -11185,6 +11256,22 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="multistaffaccollatura" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Accollatura Type for Multi-Staff Voices
+			</digest>
+			<description>
+				Chooses the type of accollatura display for voice displayed with more than one staff.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="symbol" size="1" value="rule" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Accollatura Type for Multi-Staff Voices" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enum" />
 			</attributelist>
 		</attribute>
 		<attribute name="mutecolor" get="1" set="1" type="rgba" size="1">
@@ -11632,6 +11719,22 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
+		<attribute name="partsaccollatura" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Accollatura Type for Parts
+			</digest>
+			<description>
+				Chooses the type of accollatura display for voice ensembles.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="symbol" size="1" value="bracket" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Accollatura Type for Parts" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enum" />
+			</attributelist>
+		</attribute>
 		<attribute name="pianorolldarkcolor" get="1" set="1" type="rgba" size="1">
 			<digest>
 				Piano Roll Dark Color
@@ -11801,7 +11904,7 @@
 			</digest>
 			<description>
 				Toggle the ability to also send the marker information through the playout during the playback.
-				By default this is 1.
+				By default this is on (1).
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Play" />
@@ -12420,6 +12523,29 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
+		<attribute name="playslurs" get="1" set="1" type="int" size="1">
+			<digest>
+				Play Slurs
+			</digest>
+			<description>
+				Toggle the ability to also send the slur information through the playout during the playback.
+				There are several options: <br />
+				0 (Don't): don't send out slurs information; <br />
+				1 (Chordwise Only, default): send out slur information only with chordwise <m>playmode</m>; <br />
+				2 (Also Notewise [Highest]): also send out slur information with notewise <m>playmode</m>, and
+				assign the slur to the highest note of a chord; <br />
+				3 (Also Notewise [Lowest]): the same, with the lowest note of a chord; <br />
+				4 (Also Notewise [Any]): the same, with the any note of a chord. <br />
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Play" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Play Slurs" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
+			</attributelist>
+		</attribute>
 		<attribute name="playstep" get="1" set="1" type="float" size="1">
 			<digest>
 				Play Bar Average Step (ms)
@@ -12891,6 +13017,22 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
+		<attribute name="showaccollature" get="1" set="1" type="int" size="1">
+			<digest>
+				Show Accollature
+			</digest>
+			<description>
+				Toggles the display of accollature for voice groups and voice ensembles.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Show" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Accollature" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
 		<attribute name="showannotations" get="1" set="1" type="int" size="1">
 			<digest>
 				Show Text Annotations
@@ -13358,22 +13500,6 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Show" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Note Names In Selection Legend" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
-			</attributelist>
-		</attribute>
-		<attribute name="showpartbrackets" get="1" set="1" type="int" size="1">
-			<digest>
-				Show Part Brackets
-			</digest>
-			<description>
-				Toggles the display of brackets in voice ensembles.
-			</description>
-			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Show" />
-				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Part Brackets" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
@@ -14116,24 +14242,6 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
-		<attribute name="spacingproportionality" get="1" set="1" type="float" size="1">
-			<digest>
-				Spacing Proportionality
-			</digest>
-			<description>
-				If the <m>spacingtype</m> is Note/Time Signature, this is represents the linear interpolation between the pure Note and
-				the pure Time Signature algorithms (the first one corresponding to 0, the last one corresponding to 1). Any value between 0 and 1 is accepted.
-				See <m>spacingtype</m> for more information.
-			</description>
-			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
-				<attribute name="default" get="1" set="1" type="float" size="1" value="0.5" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Spacing Proportionality" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
-			</attributelist>
-		</attribute>
 		<attribute name="spacingtype" get="1" set="1" type="int" size="1">
 			<digest>
 				Spacing Type
@@ -14159,23 +14267,6 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
-			</attributelist>
-		</attribute>
-		<attribute name="spacingwidth" get="1" set="1" type="float" size="1">
-			<digest>
-				Spacing Width
-			</digest>
-			<description>
-				Sets a factor for globally tightening or loosening the spacing of the score. Small values will correspond to
-				notation elements being closer; high values will separate them.
-			</description>
-			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
-				<attribute name="default" get="1" set="1" type="float" size="1" value="2." />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Spacing Width" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
 		<attribute name="staffcolor" get="1" set="1" type="rgba" size="1">
@@ -14607,6 +14698,25 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
+		<attribute name="voicegroups" get="1" set="1" type="llll" size="1">
+			<digest>
+				Voice Groups
+			</digest>
+			<description>
+				Sets the voice groups, i.e. the runs of voices that may be shown as gathered with a bracket, slur, .
+				The syntax is a list of <b><m>GROUP1</m> <m>GROUP2</m> <m>GROUP3</m>...</b>, where each <m>GROUP</m>
+				is <b>[<m>numvoice_start</m> <m>numvoice_end</m> <m>display_type</m>]</b>, where in turn <m>display_type</m>
+				is one of the following symbols: "none" (no display), "rule" (display with a straight line),
+				"bracket" (display with a bracket), "brace" (display with a brace).
+				<br /> <br />
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Voice Groups" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text_large" />
+			</attributelist>
+		</attribute>
 		<attribute name="voicenames" get="1" set="1" type="llll" size="1">
 			<digest>
 				Voice Names
@@ -14625,7 +14735,6 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Voice Names" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text_large" />
 			</attributelist>

@@ -69,6 +69,8 @@
 #include "ext_globalsymbol.h"
 #include "ext_strings.h"
 
+//#define BACH_STEP_SUPPORTS_PROGRESS
+
 typedef struct _step
 {
 	t_llllobj_object 	n_ob;
@@ -96,6 +98,10 @@ typedef struct _step
 	t_systhread_mutex	n_bangmutex; // prevents two bangs to overlap (it's never locked, it's always trylocked)
 	t_systhread_mutex	n_storemutex; // prevents the store to be overwritten while being copied
 	
+#ifdef BACH_STEP_SUPPORTS_PROGRESS
+    long                n_showprogress;
+    t_atom_float        n_progress;
+#endif
 } t_step;
 
 
@@ -263,6 +269,15 @@ void C74_EXPORT ext_main(void *moduleRef)
 	// and a return value is expected to tell whether the sublists (or the whole input llll) should be entered or not. 
 	// Please refer to the description of the <m>anything</m> message for more details.
 	
+#ifdef BACH_STEP_SUPPORTS_PROGRESS
+    CLASS_ATTR_LONG(c, "showprogress",    0,    t_step, n_showprogress);
+    CLASS_ATTR_FILTER_CLIP(c, "showprogress", 0, 1);
+    CLASS_ATTR_STYLE(c, "showprogress", 0, "onoff");
+    CLASS_ATTR_LABEL(c, "showprogress", 0, "Show Progress");
+    // @description Toggles the ability to show the iteration progress with a progress bar over the object box.
+    // The project only displays the advancement with respect to the root level of the lllls to be iterated.
+#endif
+    
 	class_register(CLASS_BOX, c);
 	step_class = c;
 	
@@ -270,6 +285,85 @@ void C74_EXPORT ext_main(void *moduleRef)
 	
 	return;
 }
+
+#ifdef BACH_STEP_SUPPORTS_PROGRESS
+t_atom_float step_get_progress(t_step *x)
+{
+    t_llll_itercache *cache = x->n_cache;
+    long n_lists = x->n_lists;
+    if (n_lists >= 1 && cache->i_address && cache->i_address[0]) {
+        t_llll *addr = cache->i_address[0];
+        long len = cache->i_len[0];
+        if (addr) {
+            long count = 0;
+            t_atom_float progress = 0, this_level_step = 1;
+            for (t_llllelem *addr_el = addr->l_head; addr_el; addr_el = addr_el->l_next, count++) {
+                if (hatom_gettype(&addr->l_head->l_hatom) == H_LONG) {
+                    long pos = hatom_getlong(&addr->l_head->l_hatom);
+                    // TODO: @AA check this function
+                    double len = ; // length of list at this level!
+                    pos -= 1; // the cache is set to the next, but we need the current progress
+                    this_level_step = this_level_step / len;
+                    progress += pos * this_level_step;
+                }
+            }
+            return progress;
+        }
+    }
+    return 0;
+}
+
+
+void step_stopprogress_do(t_step *x, t_symbol *sym, short argc, t_atom *argv)
+{
+    t_object *b = NULL;
+    x->n_progress = 0;
+    auto err = object_obex_lookup((t_object *)x, _sym_pound_B, &b);
+    if (err == MAX_ERR_NONE) {
+        object_method(b, gensym("stopprogress"));
+    }
+}
+
+void step_startprogress_do(t_step *x, t_symbol *sym, short argc, t_atom *argv)
+{
+    t_object *b = NULL;
+    x->n_progress = 0;
+    auto err = object_obex_lookup((t_object *)x, _sym_pound_B, &b);
+    if (err == MAX_ERR_NONE) {
+        object_method(b, gensym("startprogress"), &x->n_progress);
+    }
+}
+
+void step_updateprogress_do(t_step *x, t_symbol *sym, short argc, t_atom *argv)
+{
+    x->n_progress = atom_getfloat(argv);
+}
+
+void step_startprogress(t_step *x)
+{
+    defer(x, (method)step_startprogress_do, NULL, 0, NULL);
+}
+
+void step_stopprogress(t_step *x)
+{
+    defer(x, (method)step_stopprogress_do, NULL, 0, NULL);
+}
+
+void step_updateprogress(t_step *x)
+{
+    t_atom av;
+    t_atom_float progress = step_get_progress(x);
+    atom_setfloat(&av, progress);
+    defer(x, (method)step_updateprogress_do, NULL, 1, &av);
+}
+
+void step_hangprogress(t_step *x)
+{
+    t_atom av;
+    atom_setfloat(&av, 1.);
+    defer(x, (method)step_updateprogress_do, NULL, 1, &av);
+}
+#endif
 
 void step_bang(t_step *x)
 {
@@ -310,6 +404,12 @@ void step_bang(t_step *x)
 			for (i = 0, this_inlist = x->n_inlist; i < x->n_lists; i++, this_inlist++)
 				*this_inlist = llllobj_get_store_contents((t_object *) x, LLLL_OBJ_VANILLA, i, 0);
 		}
+        
+#ifdef BACH_STEP_SUPPORTS_PROGRESS
+        if (x->n_showprogress)
+            step_startprogress(x);
+#endif
+        
 		x->n_changed = 0;
 		more = 1;
 	}
@@ -321,12 +421,24 @@ void step_bang(t_step *x)
 						  (iter_datafn) step_shoot_llll, x, (iter_datafn) step_shoot_llll, x, (iter_cmdfn) step_shoot_cmd, x, 
 						  (iter_rootfn) step_shoot_root, x, x->n_lambda ? (iter_lambdafn) step_lambda : NULL, x);
     
-	systhread_mutex_unlock(x->n_bangmutex);
+#ifdef BACH_STEP_SUPPORTS_PROGRESS
+    if (x->n_showprogress)
+        step_updateprogress(x);
+#endif
     
+	systhread_mutex_unlock(x->n_bangmutex);
+
     if (more == -1) {
         llllobj_outlet_bang((t_object *) x, LLLL_OBJ_VANILLA, x->n_ob.l_numouts - 1);
         more = 0;
     }
+
+#ifdef BACH_STEP_SUPPORTS_PROGRESS
+    if (more == 0) {
+        if (x->n_showprogress)
+            step_hangprogress(x);
+    }
+#endif
     
     x->n_more = more;
 }
@@ -362,6 +474,10 @@ void step_anything(t_step *x, t_symbol *msg, long ac, t_atom *av)
 		}
 		x->n_changed = 1;
 		systhread_mutex_unlock(x->n_storemutex);
+#ifdef BACH_STEP_SUPPORTS_PROGRESS
+        if (x->n_showprogress)
+            step_stopprogress(x);
+#endif
 	} else if (msg == _sym_reset) {
 		step_reset(x);
 		return;
@@ -382,6 +498,10 @@ void step_reset(t_step *x)
 	systhread_mutex_lock(x->n_storemutex);
 	if (!x->n_changed)
 		x->n_changed = -1;
+#ifdef BACH_STEP_SUPPORTS_PROGRESS
+    if (x->n_showprogress)
+        step_stopprogress(x);
+#endif
 	systhread_mutex_unlock(x->n_storemutex);
 }
 
