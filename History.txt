@@ -132,6 +132,7 @@ VERSION NOTES:
 
 - bach.stream: fixed behavior with list with nonative mode active
 
+- bach.step: now can show progress via a progress bar with @showprogress set to 1
 
 
 v0.8.3

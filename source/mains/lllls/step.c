@@ -69,7 +69,7 @@
 #include "ext_globalsymbol.h"
 #include "ext_strings.h"
 
-//#define BACH_STEP_SUPPORTS_PROGRESS
+#define BACH_STEP_SUPPORTS_PROGRESS
 
 typedef struct _step
 {
@@ -291,17 +291,60 @@ t_atom_float step_get_progress(t_step *x)
 {
     t_llll_itercache *cache = x->n_cache;
     long n_lists = x->n_lists;
-    if (n_lists >= 1 && cache->i_address && cache->i_address[0]) {
-        t_llll *addr = cache->i_address[0];
-        long len = cache->i_len[0];
+    
+    // first: finding pivot llll upon which to compute the current progress
+    long best_depth = -1, best_length = x->n_iterationmode == 0 ? LONG_MAX : -1;
+    long pivot = 0, scalarmode_can_apply;
+    for (long i = 0; i < n_lists; i++) {
+        long this_depth = cache->i_address[i]->l_size;
+        if (this_depth > best_depth) {
+            // with recursion mode active, we choose the one with the "longest" address, i.e. the deepest iteration
+            pivot = i;
+            best_depth = this_depth;
+            
+            if (this_depth > 0 && this_depth <= cache->i_inlist_stack->s_items) {
+                t_llll *ll = ((t_llll **)cache->i_inlist_stack->s_stack[this_depth-1])[i];
+                long this_length = ll->l_size;
+                best_length = this_length;
+                if (this_length == 1 && x->n_scalarmode && x->n_iterationmode == 0)
+                    best_length = LONG_MAX;
+            }
+        } else if (this_depth == best_depth && this_depth > 0 && this_depth <= cache->i_inlist_stack->s_items) {
+            t_llll *ll = ((t_llll **)cache->i_inlist_stack->s_stack[this_depth-1])[i];
+            long this_length = ll->l_size;
+            // we choose depending on the iteration mode – longest, shortest...
+            if (x->n_iterationmode == 0) {
+                // now it depends on the scalarmode
+                if ((!x->n_scalarmode && this_length < best_length) ||
+                    (x->n_scalarmode && this_length > 1 && this_length < best_length)) {
+                    pivot = i;
+                    best_length = this_length;
+                }
+            } else {
+                if (this_length > best_length) {
+                    pivot = i;
+                    best_length = this_length;
+                }
+            }
+        }
+    }
+    
+    // second: finding progress
+    if (n_lists >= 1 && cache->i_address && cache->i_address[pivot]) {
+        t_llll *addr = cache->i_address[pivot];
         if (addr) {
+            long depth = addr->l_size;
             long count = 0;
             t_atom_float progress = 0, this_level_step = 1;
             for (t_llllelem *addr_el = addr->l_head; addr_el; addr_el = addr_el->l_next, count++) {
-                if (hatom_gettype(&addr->l_head->l_hatom) == H_LONG) {
-                    long pos = hatom_getlong(&addr->l_head->l_hatom);
-                    // TODO: @AA check this function
-                    double len = ; // length of list at this level!
+                if (hatom_gettype(&addr_el->l_hatom) == H_LONG) {
+                    long pos = hatom_getlong(&addr_el->l_hatom);
+                    double len = 1;
+                    if (count < cache->i_inlist_stack->s_size) { // should always be the case
+                        t_llll **llp = (t_llll **)cache->i_inlist_stack->s_stack[count]; // length of list at this level!
+                        if (llp && llp[pivot])
+                            len = llp[pivot]->l_size;
+                    }
                     pos -= 1; // the cache is set to the next, but we need the current progress
                     this_level_step = this_level_step / len;
                     progress += pos * this_level_step;
@@ -349,12 +392,16 @@ void step_stopprogress(t_step *x)
     defer(x, (method)step_stopprogress_do, NULL, 0, NULL);
 }
 
-void step_updateprogress(t_step *x)
+void step_setprogress(t_step *x, t_atom_float progress)
 {
     t_atom av;
-    t_atom_float progress = step_get_progress(x);
     atom_setfloat(&av, progress);
     defer(x, (method)step_updateprogress_do, NULL, 1, &av);
+}
+
+void step_updateprogress(t_step *x)
+{
+    step_setprogress(x, step_get_progress(x));
 }
 
 void step_hangprogress(t_step *x)
@@ -435,8 +482,12 @@ void step_bang(t_step *x)
 
 #ifdef BACH_STEP_SUPPORTS_PROGRESS
     if (more == 0) {
-        if (x->n_showprogress)
-            step_hangprogress(x);
+        if (x->n_showprogress) {
+            if (x->n_circular)
+                step_setprogress(x, 0.9999); // can't be 1, otherwise it'll trigger the Max horizontal barberpole
+            else
+                step_hangprogress(x);   // Max horizontal barberpole to signal that the iteration has ended
+        }
     }
 #endif
     
