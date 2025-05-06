@@ -106,6 +106,7 @@ VERSION NOTES:
     á New @annotationsvadj attribute to adjust vertical position of annotations globally
     á With respect to development prerelease, fixed bug with slurs causing potential crashes when more than 2 slurs started on a chord
     á New @playslurs attribute, defining the way slurs are output during evaluation/playback
+    á Fixed bug potentially causing crashes when changing background color often
 
 - bach.roll, bach.score, bach.score2roll:
     Now user-defined pitches are correctly preserved

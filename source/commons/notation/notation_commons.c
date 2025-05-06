@@ -2022,11 +2022,13 @@ void initialize_or_resize_surface(t_jsurface **surface, long width, long height)
     *surface = jgraphics_image_surface_create(JGRAPHICS_FORMAT_ARGB32, width, height);
 }
 
-void notationobj_build_clef_gradient_surface(t_notation_obj *r_ob){
+void notationobj_build_clef_gradient_surface(t_notation_obj *r_ob)
+{
+    lock_general_mutex(r_ob);
     const double SURFACE_HEIGHT = 10;
-
+    
     initialize_or_resize_surface(&r_ob->clef_gradient_surface, CONST_X_LEFT_START_FADE_NUM_STEPS, SURFACE_HEIGHT);
-    t_jrgba fadecol = r_ob->j_background_rgba; //build_jrgba(1, 0, 0, 1); // r_ob->j_background_rgba; 
+    t_jrgba fadecol = r_ob->j_background_rgba; //build_jrgba(1, 0, 0, 1); // r_ob->j_background_rgba;
     double originary_alpha = fadecol.alpha;
     long i, j;
     
@@ -2035,6 +2037,7 @@ void notationobj_build_clef_gradient_surface(t_notation_obj *r_ob){
         for (j = 0; j < SURFACE_HEIGHT; j++)
             jgraphics_image_surface_set_pixel(r_ob->clef_gradient_surface, i, j, fadecol);
     }
+    unlock_general_mutex(r_ob);
 }
 
 
