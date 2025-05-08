@@ -53,10 +53,7 @@ public:
 class t_pitch
 {
 public:
-    static int constexpr primes[BACH_PRIMES_JI_SIZE] = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47};
-    //  TODO: @Andrea, I don't think you need primes_inv at all (there was a bug in getRatio())
-    //    static const t_rational primes_inv[BACH_PRIMES_JI_SIZE];
-    //    static double constexpr primes_inv_double[BACH_PRIMES_JI_SIZE] = {1./2., 1./3., 1./5., 1./7., 1./11., 1./13., 1./17., 1./19., 1./23., 1./29, 1./31., 1./37., 1./41., 1./43., 1./47.};
+//    static int constexpr primes[BACH_PRIMES_JI_SIZE] = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47};
     
     // a map from number to the greatest prime <= number
     static int constexpr primes_locate[51] = {-1, -1, 0, 1, 1, 2, 2, 3, 3, 3, 3, 4, 4, 5, 5, 5, 5, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 9, 9, 10, 10, 10, 10, 10, 10, 11, 11, 11, 11, 12, 12, 13, 13, 13, 13, 14, 14, 14, 14};
@@ -156,7 +153,7 @@ private:
                 i++;
             }
         }
-        
+
         void addFromRatio(const t_shortRational r) {
             if (r.num() == 0 || r.den() == 0)
                 return;
@@ -1008,14 +1005,148 @@ public:
         return notename >= 'c' ? notename - 'c' : notename - 'a' + 5;
     }
     
-    static t_rational makeRationalJIRepresentable(const t_rational r, int limit, double MCthreshold) {
+    
+    static std::vector<int8_t> rationalToMonzo(const t_shortRational r){
+        std::vector<int8_t> outvec;
+        if (r.num() == 0 || r.den() == 0)
+            return outvec;
+        t_shortRational what = r;
+        int8_t exponent;
+        int i = 0;
         
+        if (what < 0)
+            what *= -1;
+        what.reduce();
+        while (what != 1 && i < BACH_PRIMES_TABLE_SIZE) {
+            long this_prime = primes[i];
+            if (what.r_num % this_prime == 0) {
+                exponent = 0;
+                do {
+                    exponent++;
+                    what.r_num /= this_prime;
+                } while (what.r_num != 0 && what.r_num % this_prime == 0);
+                outvec.push_back(exponent);
+            } else if (what.r_den % this_prime == 0) {
+                exponent = 0;
+                do {
+                    exponent++;
+                    what.r_den /= this_prime;
+                } while (what.r_den != 0 && what.r_den % this_prime == 0);
+                outvec.push_back(-exponent);
+            } else {
+                outvec.push_back(0);
+            }
+            i++;
+        }
+        
+        return outvec;
     }
     
-    static std::vector<int8_t>& makeMonzoJIRepresentable(const std::vector<int8_t> &monzo, int limit, double MCthreshold) {
+    static t_shortRational monzoToRational(std::vector<int8_t> monzo)
+    {
+        t_shortRational r = long2rat(1);
+        for (long i = 0; i < monzo.size(); i++) {
+            for (long j = 0; j < monzo[i]; j++) {
+                r *= primes[i];
+            }
+        }
         
+        return r;
     }
     
+    
+    static t_shortRational makeRationalJIRepresentable(const t_shortRational r, int jilimit, double mc_thresh)
+    {
+        std::vector<int8_t> monzo = rationalToMonzo(r);
+        std::vector<int8_t> monzo_rep = makeMonzoJIRepresentable(monzo, jilimit, mc_thresh);
+        return monzoToRational(monzo_rep);
+    }
+
+    static bool isMonzoJIRepresentable(const std::vector<int8_t> &monzo, int jilimit)
+    {
+        bool ok = true;
+        long primeidx = primes_locate[jilimit];
+        if (monzo.size() > BACH_PRIMES_JI_SIZE || monzo.size() > primeidx + 1) {
+            ok = false;
+        } else {
+            for (int i = 0; i < 8; i++) {
+                if (monzo[i] < -128 || monzo[i] > 127) {
+                    ok = false;
+                    break;
+                }
+            }
+            if (ok) {
+                for (int i = 9; i < 15; i++) {
+                    if (monzo[i] < -8 || monzo[i] > 7) {
+                        ok = false;
+                        break;
+                    }
+                }
+            }
+        }
+        return ok;
+    }
+    
+    
+    static std::vector<int8_t> makeMonzoJIRepresentable(const std::vector<int8_t> &monzo, int jilimit, double mc_thresh)
+    {
+        if (isMonzoJIRepresentable(monzo, jilimit)) {
+            // monzo is already representable!
+            std::vector<int8_t> res = monzo;
+            return res;
+        }
+        
+        // otherwise, here's the complex case; we need to approximate the monzo so that only a lower primes are used
+        
+        t_rational r = monzoToRational(monzo);
+        
+        std::vector<int> allowed_primes;
+        for (long i = 0; i < BACH_PRIMES_JI_SIZE; i++) {
+            if (primes[i] <= jilimit)
+                allowed_primes.push_back(primes[i]);
+            else
+                break;
+        }
+        
+        double num = (double)r;
+        
+        while (mc_thresh < 1200) {
+            std::vector<t_rational> convergents = get_convergents(num, 20, true, mc_thresh, true, true, allowed_primes, 1000, 0);
+            tenney_sort(convergents, num);
+
+            for (long i = 0; i < convergents.size(); i++) {
+                t_rational candidate = convergents[i];
+                std::vector<int8_t> monzo_candidate = rationalToMonzo(candidate);
+                if (isMonzoJIRepresentable(monzo_candidate, jilimit)) {
+                    return monzo_candidate; // found it!
+                }
+            }
+            
+            // if not found... that's a bit of a problem!
+            // let's loosen the mc_thresh
+            mc_thresh *= 1.5;
+        }
+        
+        // if still not found... well... let's just trim the monzo
+        // I tried to apply LLL algorithm but it failed even in pretty simple situations... it didn't seem to be of much help
+        std::vector<int8_t> res = monzo;
+        if (res.size() > 15)
+            res.resize(15);
+        for (long i = 0; i < 8; i++) {
+            if (res[i] < -128)
+                res[i] = -128;
+            if (res[i] > 127)
+                res[i] = 127;
+        }
+        for (long i = 9; i < 15; i++) {
+            if (res[i] < -8)
+                res[i] = -8;
+            if (res[i] > 7)
+                res[i] = 7;
+        }
+        return res;
+        
+    }
 };
 
 

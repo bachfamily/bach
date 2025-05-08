@@ -50,7 +50,7 @@ HINSTANCE hinst;
 #include "bell/ast.hpp"
 #include "bell/pvManager.hpp"
 
-long *bach_gen_primes(void);
+// long *bach_gen_primes(void);
 
 t_class *bach_class = NULL;
 t_class *initpargs_class = NULL;
@@ -679,7 +679,7 @@ t_bach *bach_new(t_symbol *s, long ac, t_atom *av)
     }
 */
 
-    x->b_primes = bach_gen_primes();
+//    x->b_primes = bach_gen_primes();
     x->b_helppatches = hashtab_new(0);
     x->b_portalpatchers = hashtab_new(0);
     hashtab_flags(x->b_helppatches, OBJ_FLAG_REF);
@@ -825,6 +825,7 @@ void bach_init_print(t_bach *x, t_symbol *s, long ac, t_atom *av)
     object_free(printobj);
 }
 
+/*
 long *bach_gen_primes(void)
 {
     static long primes[] = {
@@ -1140,6 +1141,7 @@ long *bach_gen_primes(void)
     };
     return primes;
 }
+*/
 
 void initpargs_add(t_initpargs *x, t_symbol *msg, long ac, t_atom *av)
 {

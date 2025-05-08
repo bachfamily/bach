@@ -21,8 +21,6 @@
 #define _LLLL_COMMONS_H_
 
 // very private! don't ever change these!!!
-#define LLLL_PRIMES_TABLE_MAX 46337        // the greatest prime <= sqrt(MAXLONG) (it's the last of our prime table)
-#define LLLL_PRIMES_TABLE_SIZE 4792        // how many primes do we have in our table?
 #define LLLL_STACK_SIZESTEP 64            // the dynamic allocation step used by llll_stack
 #define LLLL_BUF_SIZE_STEP 16384        // the dynamic allocation step for text buffers
 #define LLLL_IDX2PTR_SLOTS    1048576        // the number of slots for the llll_phonebook p_idx2ptr hash table (the hash function is just a modulo, so a power of 2 is fine)
@@ -342,7 +340,7 @@ typedef struct _bach {
     t_object            *b_initpargs; // the initpargs singleton object, which can call the "dopargs" method of all the registered bach.portal objects
     t_hashtab           *b_portalpatchers; // a table of all the patchers containing bach.portal objects, associated to lllls of the objects themselves
     
-    long                *b_primes;
+//    long                *b_primes;
     t_hashtab            *b_memmap;
     t_hashtab            *b_poolmap;
     t_systhread_mutex    b_memmap_lock;

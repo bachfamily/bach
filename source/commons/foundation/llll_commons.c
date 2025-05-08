@@ -83,7 +83,7 @@ t_class *llll_class;
 t_class *llllelem_class;
 
 t_bach *bach;
-long *primes;
+//long *primes;
 t_hashtab *memmap;
 t_hashtab *poolmap;
 t_systhread_mutex memmap_lock;
@@ -114,7 +114,7 @@ long llll_sort_addresses_for_insert_b(void *dummy, t_llllelem *a, t_llllelem *b)
 void bach_setup(t_bach *x)
 {
     bach = x;
-    primes = bach->b_primes;
+//    primes = bach->b_primes;
     memmap = bach->b_memmap;
     poolmap = bach->b_poolmap;
     memmap_lock = bach->b_memmap_lock;
@@ -6429,7 +6429,7 @@ t_llll *llll_symdiff(t_llll *ll1, t_llll *ll2, sets_fn cmpfn, void *data)
 long llll_prime(long what)
 {
     long *center_elem, scope;
-    long *table_last = primes + LLLL_PRIMES_TABLE_SIZE - 1;
+    long *table_last = primes + BACH_PRIMES_TABLE_SIZE - 1;
     long *this_table;
     if (what < 0)
         what *= -1;
@@ -6439,8 +6439,8 @@ long llll_prime(long what)
         return 1;
     if (what % 6 != 1 && what % 6 != 5)
         return 0;
-    if (what <= LLLL_PRIMES_TABLE_MAX) {
-        scope = LLLL_PRIMES_TABLE_SIZE / 2;
+    if (what <= BACH_PRIMES_TABLE_MAX) {
+        scope = BACH_PRIMES_TABLE_SIZE / 2;
         center_elem = primes + scope;
         while (1) {
             if (*center_elem == what)
@@ -6474,7 +6474,7 @@ t_llll *llll_factorize(long what)
     t_llll *factors = llll_get();
     t_llll *this_factor;
     t_atom_long exponent;
-    long *table_last = primes + LLLL_PRIMES_TABLE_SIZE - 1;
+    long *table_last = primes + BACH_PRIMES_TABLE_SIZE - 1;
     long *this_table = primes;
     long this_prime;
     
@@ -6518,7 +6518,7 @@ t_llll *llll_factorize_rational(t_rational what)
     t_llll *factors = llll_get();
     t_llll *this_factor;
     t_atom_long exponent;
-    long *table_last = primes + LLLL_PRIMES_TABLE_SIZE - 1;
+    long *table_last = primes + BACH_PRIMES_TABLE_SIZE - 1;
     long *this_table = primes;
     long this_prime;
     
@@ -6576,7 +6576,7 @@ t_llll *llll_factorize_rational(t_rational what)
 
 t_llll *llll_primeser(long min, long max, long maxcount)
 {
-    long *table_last = primes + LLLL_PRIMES_TABLE_SIZE - 1;
+    long *table_last = primes + BACH_PRIMES_TABLE_SIZE - 1;
     long *center_elem = NULL, scope;
     t_llll *ser = llll_get();
 
@@ -6590,8 +6590,8 @@ t_llll *llll_primeser(long min, long max, long maxcount)
     if (min > max)
         return ser;
 
-    if (min > 2 && min <= LLLL_PRIMES_TABLE_MAX) {
-        scope = LLLL_PRIMES_TABLE_SIZE / 2;
+    if (min > 2 && min <= BACH_PRIMES_TABLE_MAX) {
+        scope = BACH_PRIMES_TABLE_SIZE / 2;
         center_elem = primes + scope;
         while (1) {
             if (*(center_elem - 1) < min && *center_elem >= min) {
@@ -6609,7 +6609,7 @@ t_llll *llll_primeser(long min, long max, long maxcount)
                     center_elem = primes;
             }
         }
-    } else if (min > LLLL_PRIMES_TABLE_MAX) {
+    } else if (min > BACH_PRIMES_TABLE_MAX) {
         switch (min % 6) {
             case 1:
             case 5:
@@ -6630,7 +6630,7 @@ t_llll *llll_primeser(long min, long max, long maxcount)
         llll_appendlong(ser, min, 0, WHITENULL_llll);
         if (--maxcount == 0)
             break;
-        if (min < LLLL_PRIMES_TABLE_MAX)
+        if (min < BACH_PRIMES_TABLE_MAX)
             min = *(++center_elem);
         else
             do { 

@@ -1286,7 +1286,7 @@ t_jrgba jiwheel_long_to_color(t_jiwheel *x, long value)
 long num_to_prime_idx(long num)
 {
     // slow... to be optimized with a table
-    for (long i = 0; i < LLLL_PRIMES_TABLE_SIZE; i++)
+    for (long i = 0; i < BACH_PRIMES_TABLE_SIZE; i++)
         if (bach->b_primes[i] == num)
             return i;
     return -1;
@@ -2661,7 +2661,7 @@ void jiwheel_build_pitches(t_jiwheel *x, t_object *view)
     t_llll *curr_pitches_ll = llll_get();
     
     // building mask for limits
-    bool *prime_is_ok = (bool *)bach_newptrclear(LLLL_PRIMES_TABLE_SIZE * sizeof(bool));
+    bool *prime_is_ok = (bool *)bach_newptrclear(BACH_PRIMES_TABLE_SIZE * sizeof(bool));
     long only_limits_up_to_this_number_are_ok = -1, only_primes_up_to_this_number_are_ok = -1;
 
     if (x->allowed_primes_count == 1) {
@@ -2670,9 +2670,9 @@ void jiwheel_build_pitches(t_jiwheel *x, t_object *view)
             if (i >= 0)
                 prime_is_ok[i] = 1;
         } else {
-            for (long i = 0; i < LLLL_PRIMES_TABLE_SIZE; i++)
+            for (long i = 0; i < BACH_PRIMES_TABLE_SIZE; i++)
                 prime_is_ok[i] = 1;
-            only_primes_up_to_this_number_are_ok = LLLL_PRIMES_TABLE_MAX;
+            only_primes_up_to_this_number_are_ok = BACH_PRIMES_TABLE_MAX;
         }
     } else if (x->allowed_primes_count >= 2) {
         if (atom_gettype(x->allowed_primes) == A_SYM && atom_getsym(x->allowed_primes) == gensym("<=")) {
@@ -2702,9 +2702,9 @@ void jiwheel_build_pitches(t_jiwheel *x, t_object *view)
         }
     } else {
         object_warn((t_object *)x, "No primes defined. Defaulting to 'any'.");
-        for (long i = 0; i < LLLL_PRIMES_TABLE_SIZE; i++)
+        for (long i = 0; i < BACH_PRIMES_TABLE_SIZE; i++)
             prime_is_ok[i] = 1;
-        only_primes_up_to_this_number_are_ok = LLLL_PRIMES_TABLE_MAX;
+        only_primes_up_to_this_number_are_ok = BACH_PRIMES_TABLE_MAX;
     }
     
     // always display selected ratios
@@ -2756,12 +2756,12 @@ void jiwheel_build_pitches(t_jiwheel *x, t_object *view)
             for (long m = n; m <= ji_maxterm; m++) {
                 t_rational r = genrat(m, n);
                 if (rat_rat_cmp(r, x->formaloctave) < 0) {
-                    if (only_limits_up_to_this_number_are_ok == LLLL_PRIMES_TABLE_MAX && only_primes_up_to_this_number_are_ok == LLLL_PRIMES_TABLE_MAX) {
+                    if (only_limits_up_to_this_number_are_ok == BACH_PRIMES_TABLE_MAX && only_primes_up_to_this_number_are_ok == BACH_PRIMES_TABLE_MAX) {
                         llll_appendrat(curr_pitches_ll, r);
                     } else {
                         long limit = rational_get_jilimit(r);
-                        if ((only_limits_up_to_this_number_are_ok == LLLL_PRIMES_TABLE_MAX || (only_limits_up_to_this_number_are_ok > 0 && limit <= only_limits_up_to_this_number_are_ok)) &&
-                            (only_primes_up_to_this_number_are_ok == LLLL_PRIMES_TABLE_MAX || (only_primes_up_to_this_number_are_ok > 0 && limit <= only_primes_up_to_this_number_are_ok))) {
+                        if ((only_limits_up_to_this_number_are_ok == BACH_PRIMES_TABLE_MAX || (only_limits_up_to_this_number_are_ok > 0 && limit <= only_limits_up_to_this_number_are_ok)) &&
+                            (only_primes_up_to_this_number_are_ok == BACH_PRIMES_TABLE_MAX || (only_primes_up_to_this_number_are_ok > 0 && limit <= only_primes_up_to_this_number_are_ok))) {
                             llll_appendrat(curr_pitches_ll, r);
                         } else {
                             bool must_append = true;
@@ -2854,7 +2854,7 @@ void jiwheel_build_pitches(t_jiwheel *x, t_object *view)
                         for (t_llllelem *c_el = hatom_getllll(&el->l_hatom)->l_head; c_el && c < numcommas; c_el = c_el->l_next, c++) {
                             long e = hatom_getlong(&c_el->l_hatom);
                             if (e != 0) {
-                                if ((x->jilimit > 0 && c+2 < BACH_PRIMES_JI_SIZE && t_pitch::primes[c+2] > x->jilimit) || prime_is_ok[c+2] == false) {
+                                if ((x->jilimit > 0 && c+2 < BACH_PRIMES_JI_SIZE && primes[c+2] > x->jilimit) || prime_is_ok[c+2] == false) {
                                     accept = false;
                                     break;
                                 }

@@ -716,6 +716,7 @@ double rational_get_tenney_height(t_rational r);
 long rational_get_jilimit(t_rational r);
 t_rational get_best_jilimited_approximation(double num, long jilimit, double mc_thresh);
 t_rational get_best_jilimited_approximation(t_rational r, long jilimit, double mc_thresh);
+void tenney_sort(std::vector<t_rational> candidate_approx, double target);
 
 /**	Approximate a rational with another one having a specific denominator.
 	@param	rat		The rational number to approximate.
