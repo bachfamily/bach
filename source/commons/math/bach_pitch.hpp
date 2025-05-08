@@ -1046,8 +1046,14 @@ public:
     {
         t_shortRational r = long2rat(1);
         for (long i = 0; i < monzo.size(); i++) {
-            for (long j = 0; j < monzo[i]; j++) {
-                r *= primes[i];
+            if (monzo[i] > 0) {
+                for (long j = 0; j < monzo[i]; j++) {
+                    r *= primes[i];
+                }
+            } else if (monzo[i] < 0) {
+                for (long j = 0; j > monzo[i]; j--) {
+                    r /= primes[i];
+                }
             }
         }
         
@@ -1069,14 +1075,14 @@ public:
         if (monzo.size() > BACH_PRIMES_JI_SIZE || monzo.size() > primeidx + 1) {
             ok = false;
         } else {
-            for (int i = 0; i < 8; i++) {
+            for (int i = 0; i < monzo.size() && i < 8; i++) {
                 if (monzo[i] < -128 || monzo[i] > 127) {
                     ok = false;
                     break;
                 }
             }
             if (ok) {
-                for (int i = 9; i < 15; i++) {
+                for (int i = 9; i < monzo.size() && i < 15; i++) {
                     if (monzo[i] < -8 || monzo[i] > 7) {
                         ok = false;
                         break;
