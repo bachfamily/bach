@@ -584,6 +584,36 @@ bool xml_close_hairpin(mxml_node_t* directionxml)
     return false;
 }
 
+class slurManager {
+private:
+    const t_slur* slurs[17];
+public:
+    slurManager() {
+        for (int i = 0; i < 17; i++)
+            slurs[i] = nullptr;
+    }
+    
+    int startSlur(const t_slur* s) {
+        for (int i = 1; i < 17; i++) {
+            if (!slurs[i]) {
+                slurs[i] = s;
+                return i;
+            }
+        }
+        return 0;
+    }
+    
+    int endSlur(const t_slur* s) {
+        for (int i = 1; i < 17; i++) {
+            if (slurs[i] == s) {
+                slurs[i] = nullptr;
+                return i;
+            }
+        }
+        return 0;
+    }
+};
+
 t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
 {
     long err = MAX_ERR_NONE;
@@ -847,6 +877,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
         long clef;
         mxml_node_t *partxml;
         t_llll *open_gliss = export_glissandi ? llll_get() : NULL;
+        slurManager theSlurManager;
         
         if (new_voice_ensemble) {
             char part_id[16];
@@ -1366,6 +1397,30 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                     }
                     
                     mxml_node_t *notations = mxmlNewElement(notexml, "notations");
+                    
+                    if (isfirstnote) {
+                        for (int i = 0; i < chord->num_slurs_from; i++) {
+                            const t_slur *s = chord->slur_from[i];
+                            const int idx = theSlurManager.endSlur(s);
+                            mxml_node_t *slurXML = mxmlNewElement(notations, "slur");
+                            mxmlElementSetAttr(slurXML, "type", "stop");
+                            char idxTxt[3];
+                            snprintf_zero(idxTxt, 3, "%d", idx);
+                            mxmlElementSetAttr(slurXML, "number", idxTxt);
+                        }
+                        for (int i = 0; i < chord->num_slurs_to; i++) {
+                            const t_slur *s = chord->slur_to[i];
+                            const int idx = theSlurManager.startSlur(s);
+                            mxml_node_t *slurXML = mxmlNewElement(notations, "slur");
+                            mxmlElementSetAttr(slurXML, "type", "start");
+                            char idxTxt[3];
+                            snprintf_zero(idxTxt, 3, "%d", idx);
+                            mxmlElementSetAttr(slurXML, "number", idxTxt);
+                            const int dir = s->direction;
+                            if (dir)
+                                mxmlElementSetAttr(slurXML, "placement", dir > 0 ? "above" : "below");
+                        }
+                    }
                     
                     if (note) {
                         if (note->tie_from) { // stop the tie and delete this item
