@@ -440,12 +440,12 @@ public:
         return whiteKey2Plof_safe(whiteKeyJI) + sharps * 7;
     }
     
-    t_pitch(t_int8 whiteKeyJI, t_int8 sharps, t_int8 plof, const std::vector<t_int8> &HEJIcommas, const std::vector<t_int8> &exponents, const t_shortRational &r, const t_int8 octave = 0): p_whiteKeyET(0), p_alterET({0, 1}) {
+    t_pitch(t_int8 whiteKeyJI, t_int8 sharps, t_int8 plof, const std::vector<t_int8> &HEJIcommas, const std::vector<t_int8> &exponents, const t_shortRational &r, const t_int8 octave = 0, const t_int8 limit = 47, const double MCapprox = 67.): p_whiteKeyET(0), p_alterET({0, 1}) {
         plof += whiteKeyAndSharps2Plof(whiteKeyJI, sharps);
         setJI(plof, HEJIcommas, octave - sharps * 4 / 7);
-        p_JIexpVector += exponents;
+        p_JIexpVector += makeMonzoJIRepresentable(exponents, limit, MCapprox);
         if (r.den())
-            p_JIexpVector.addFromRatio(r);
+            p_JIexpVector.addFromRatio(makeRationalJIRepresentable(r, limit, MCapprox));
         else {
             p_alterET = illegal;
             p_JIexpVector.clear();
@@ -1007,6 +1007,15 @@ public:
         char notename = tolower(name);
         return notename >= 'c' ? notename - 'c' : notename - 'a' + 5;
     }
+    
+    static t_rational makeRationalJIRepresentable(const t_rational r, int limit, double MCthreshold) {
+        
+    }
+    
+    static std::vector<int8_t>& makeMonzoJIRepresentable(const std::vector<int8_t> &monzo, int limit, double MCthreshold) {
+        
+    }
+    
 };
 
 

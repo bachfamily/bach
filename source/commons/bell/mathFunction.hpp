@@ -123,10 +123,10 @@ public:
     }
 };
 
-class t_fnMakepitch : public t_mathFunction<9>
+class t_fnMakepitch : public t_mathFunction<11>
 {
 public:
-    t_fnMakepitch() : t_mathFunction<9>((method) hatom_fn_makepitch_ext, "makepitch") {
+    t_fnMakepitch() : t_mathFunction<11>((method) hatom_fn_makepitch_ext, "makepitch") {
         setArgument("etwhitekey", 0L);
         setArgument("etalter", 0L);
         setArgument("octave", 0L);
@@ -136,10 +136,13 @@ public:
         setArgument("commas");
         setArgument("jiratio", new astConst(t_rational(0, 1)));
         setArgument("monzo");
+        setArgument("jilimit", 47L);
+        setArgument("jiapproxthresh", 67.);
+
     }
 
     t_llll* call(const t_execEnv &context) {
-        t_llll *lists[9];
+        t_llll *lists[11];
         lists[0] = context.argv[1]; // etwhitekey
         lists[1] = context.argv[2]; // etalter
         lists[2] = context.argv[3]; // octave
@@ -147,7 +150,8 @@ public:
         lists[4] = context.argv[5]; // jisharps
         lists[5] = context.argv[6]; // jiplof
         lists[7] = context.argv[8]; // jiratio
-        
+        lists[9] = context.argv[10]; // jilimit
+        lists[10] = context.argv[11]; // jiapproxthresh
         t_llll *trash = llll_get();
 
         {
@@ -192,7 +196,7 @@ public:
             lists[8] = y;
         }
         
-        t_llll *res = llllIterator<9>::run(lists);
+        t_llll *res = llllIterator<11>::run(lists);
         llll_free(trash);
         llll_free(lists[6]);
         llll_free(lists[8]);
