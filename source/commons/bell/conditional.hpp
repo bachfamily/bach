@@ -386,6 +386,7 @@ private:
         t_symbol *pseudovarName = me->dataPseudovariables[idx];
         t_variable *pseudovar = data->context->scope.find(pseudovarName)->second;
         pseudovar->set(ll);
+        data->evaluate = true;
         return 0;
     }
     
@@ -394,9 +395,10 @@ private:
         astForLoop *me = data->me;
         t_symbol *pseudovarName = me->addressPseudovariables[idx];
         if (!pseudovarName)
-        return 0;
+            return 0;
         t_variable *pseudovar = data->context->scope.find(pseudovarName)->second;
         pseudovar->set(ll);
+        data->evaluate = true;
         return 0;
     }
     
@@ -427,7 +429,7 @@ private:
                 bell_release_llll(append);
             }
         }
-        data->evaluate = true;
+        data->evaluate = false;
         return 0;
     }
     
