@@ -8963,6 +8963,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
     t_jrgba prev_hairpin_color = x->r_ob.j_dynamics_rgba;
     char prev_hairpin_dontpaint = false;
 
+    t_llll *slurs_to_paint = llll_get();
     
     // Boundary line between voices: needed for debug
     // paint_line((t_notation_obj *) x, g, x->r_ob.j_selection_rgba, 0, voice->v_ob.offset_y + CONST_VOICE_THRESHOLD * x->r_ob.zoom_y, rect.width, voice->v_ob.offset_y + CONST_VOICE_THRESHOLD * x->r_ob.zoom_y, 1.);
@@ -9213,6 +9214,21 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                  */
                 
                 double label_family_chord_shape_radius = CONST_LABEL_FAMILY_NOTE_STARTING_URADIUS * x->r_ob.zoom_y;
+                
+                // we check if there are slurs to be painted
+                if (x->r_ob.show_slurs) {
+                    bool recompute_slur_position = curr_ch->topmost_y == DBL_SMALLEST; //  if we haven't painted this chord yet...
+                    for (long i = 0; i < curr_ch->num_slurs_to; i++) {
+                        llll_appendobj(slurs_to_paint, curr_ch->slur_to[i]);
+                        if (recompute_slur_position)
+                            curr_ch->slur_to[i]->need_recompute_position = true;
+                    }
+                    for (long i = 0; i < curr_ch->num_slurs_from; i++) {
+                        llll_appendobj(slurs_to_paint, curr_ch->slur_from[i]);
+                        if (recompute_slur_position)
+                            curr_ch->slur_from[i]->need_recompute_position = true;
+                    }
+                }
                 
                 if (curr_ch->r_sym_duration.r_num >= 0 && curr_ch->firstnote) { // non-rest
                     // chord values useful later:
@@ -9675,7 +9691,6 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                         }
                         
                     }
-                    
                     
                 } else if (x->r_ob.show_rests > 0) { // it is a rest (sorry... "pause" is used sometimes instead of rest... italian-to-english poorly made translation...)
                     
@@ -10430,9 +10445,16 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
     }
     
     // paint slurs
-    if (x->r_ob.show_slurs && x->r_ob.slurs && x->r_ob.slurs->l_size > 0) {
+    if (x->r_ob.show_slurs && slurs_to_paint->l_size > 0) {
+        slurs_to_paint = llll_thin_simple(slurs_to_paint, true);
+        for (t_llllelem *el = slurs_to_paint->l_head; el; el = el->l_next) {
+            t_slur *slur = (t_slur *)hatom_getobj(&el->l_hatom);
+            bool selected = notation_item_is_selected((t_notation_obj *)x, (t_notation_item *)slur);
+            paint_slur((t_notation_obj *)x, g, selected ? x->r_ob.j_selection_rgba : x->r_ob.j_note_rgba, slur, selected, selected ? build_jrgba(1,0,0,1) : build_jrgba(0,0,1,1), selected ? build_jrgba(1,0,0,1) : build_jrgba(1,0,1,1), 2., 0.5, selected ? 2 : 1);
+        }
+    }
 
-        curr_tuttipt = x->r_ob.firsttuttipoint;
+/*        curr_tuttipt = x->r_ob.firsttuttipoint;
         tuttipoint_ux = (curr_tuttipt) ? curr_tuttipt->offset_ux : 0;
 
         for (curr_meas = voice->firstmeasure; curr_meas && curr_tuttipt; curr_meas = curr_meas->next) {
@@ -10449,10 +10471,13 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                 continue;
             
             for (t_chord *curr_ch = curr_meas->firstchord; curr_ch; curr_ch = curr_ch->next) {
-                chord_paint_slurs_to((t_notation_obj *)x, g, curr_ch);
+                if (chord_get_placement_in_screen((t_notation_obj *) x, curr_ch) == 0) {
+                    chord_paint_slurs_to((t_notation_obj *)x, g, curr_ch);
+                }
             }
         }
     }
+ */
     
     // if tempo_interp != 0: paint the ........... line!
     if (last_cur_tempo && tempo_interp != 0) {
@@ -10518,6 +10543,8 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
         }
         lyrics_dashed_going_on = false;
     }
+    
+    llll_free(slurs_to_paint);
 }
 
 

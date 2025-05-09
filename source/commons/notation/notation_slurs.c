@@ -1062,16 +1062,19 @@ void slur_compute_control_points_methodB(t_notation_obj *r_ob, t_slur *slur)
     if (slur->start_ux == slur->end_ux) 
         slur->end_ux += 5 * r_ob->zoom_y;
 
+    bool end_chord_not_yet_painted = false;
     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
+        end_chord_not_yet_painted = (end->topmost_y == DBL_SMALLEST);
         const double stem_slur_separation_in_steps = 1.;
+        
         if (direction * end->direction == 1 && rat_long_cmp(end->figure, 1) < 0) {
             // if the slur ends on a stem rather than a notehead
             slur->end_ux = xposition_to_unscaled_xposition(r_ob, end->stem_x) - CONST_SLUR_USEPARATION_FROM_STEM;
             double candidate_end_y = 0;
             if (direction == 1)
-                candidate_end_y = chord_get_topmost_y_notuplets(r_ob, end) - stem_slur_separation_in_steps * r_ob->step_y;
+                candidate_end_y = end_chord_not_yet_painted ? staff_top_y : chord_get_topmost_y_notuplets(r_ob, end) - stem_slur_separation_in_steps * r_ob->step_y;
             else
-                candidate_end_y = chord_get_bottommost_y_notuplets(r_ob, end) + stem_slur_separation_in_steps * r_ob->step_y;
+                candidate_end_y = end_chord_not_yet_painted ? staff_bottom_y :chord_get_bottommost_y_notuplets(r_ob, end) + stem_slur_separation_in_steps * r_ob->step_y;
             if (for_graces) { // nudging for slurs including grace notes
                 if ((direction == 1 && candidate_end_y < slur->end_y) ||
                     (direction == -1 && candidate_end_y < slur->end_y)) {
@@ -1086,25 +1089,25 @@ void slur_compute_control_points_methodB(t_notation_obj *r_ob, t_slur *slur)
             // if the slur starts on a stem rather than a notehead
             slur->start_ux = xposition_to_unscaled_xposition(r_ob, start->stem_x) + CONST_SLUR_USEPARATION_FROM_STEM;
             if (direction == 1)
-                slur->start_y = chord_get_topmost_y_notuplets(r_ob, start) - stem_slur_separation_in_steps * r_ob->step_y;
+                slur->start_y = end_chord_not_yet_painted ? staff_top_y : chord_get_topmost_y_notuplets(r_ob, start) - stem_slur_separation_in_steps * r_ob->step_y;
             else
-                slur->start_y = chord_get_bottommost_y_notuplets(r_ob, start) + stem_slur_separation_in_steps * r_ob->step_y;
+                slur->start_y = end_chord_not_yet_painted ? staff_bottom_y : chord_get_bottommost_y_notuplets(r_ob, start) + stem_slur_separation_in_steps * r_ob->step_y;
         }
     }
     
     // nudging end point if the chord has an accidental
-    fill_topmost_bottommost_fields(r_ob, end, staff_top_y);
+//    fill_topmost_bottommost_fields(r_ob, end, staff_top_y);
     if (r_ob->slurs_avoid_accidentals) {
         if (direction > 0) {
-            double chord_topmost_noacc = chord_get_topmost_y_noacc(r_ob, end);
-            double chord_topmost_notuplets = chord_get_topmost_y_notuplets(r_ob, end);
-            if (chord_get_topmost_y_noacc(r_ob, end) - CONST_EPSILON5 > chord_get_topmost_y_notuplets(r_ob, end)) {
+            double chord_topmost_noacc = end_chord_not_yet_painted ? staff_top_y : chord_get_topmost_y_noacc(r_ob, end);
+            double chord_topmost_notuplets = end_chord_not_yet_painted ? staff_top_y : chord_get_topmost_y_notuplets(r_ob, end);
+            if (!end_chord_not_yet_painted && chord_get_topmost_y_noacc(r_ob, end) - CONST_EPSILON5 > chord_get_topmost_y_notuplets(r_ob, end)) {
                 slur->end_y -= (chord_topmost_noacc - chord_topmost_notuplets);
             }
         } else {
-            double chord_bottommost_noacc = chord_get_bottommost_y_noacc(r_ob, end);
-            double chord_bottommost_notuplets = chord_get_bottommost_y_notuplets(r_ob, end);
-            if (chord_bottommost_noacc + CONST_EPSILON5 < chord_bottommost_notuplets) {
+            double chord_bottommost_noacc = end_chord_not_yet_painted ? staff_bottom_y : chord_get_bottommost_y_noacc(r_ob, end);
+            double chord_bottommost_notuplets = end_chord_not_yet_painted ? staff_bottom_y :chord_get_bottommost_y_notuplets(r_ob, end);
+            if (!end_chord_not_yet_painted &&chord_bottommost_noacc + CONST_EPSILON5 < chord_bottommost_notuplets) {
                 slur->end_y += (chord_bottommost_notuplets - chord_bottommost_noacc);
             }
         }
