@@ -464,7 +464,7 @@ public:
         
         if (r.den()) {
             std::vector<int8_t> combined_monzo = sumMonzos(exponents, rationalToMonzo(r));
-            if (jilimit > 0 && mc_approx_thresh > 0.)
+            if (mc_approx_thresh > 0.)
                 p_JIexpVector += makeMonzoJIRepresentable(combined_monzo, jilimit, mc_approx_thresh);
             else
                 p_JIexpVector += combined_monzo; // accepting the possible overflow
