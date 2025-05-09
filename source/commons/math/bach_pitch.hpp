@@ -437,16 +437,52 @@ public:
         return whiteKey2Plof_safe(whiteKeyJI) + sharps * 7;
     }
     
-    t_pitch(t_int8 whiteKeyJI, t_int8 sharps, t_int8 plof, const std::vector<t_int8> &HEJIcommas, const std::vector<t_int8> &exponents, const t_shortRational &r, const t_int8 octave = 0, const t_int8 limit = 47, const double MCapprox = 67.): p_whiteKeyET(0), p_alterET({0, 1}) {
+    inline static std::vector<t_int8> sumMonzos(const std::vector<t_int8> &monzo1, const std::vector<t_int8> &monzo2)
+    {
+        long l1 = monzo1.size();
+        long l2 = monzo2.size();
+        
+        if (l1 == 0 && l2 == 0) {
+            std::vector<t_int8> outvec;
+            return outvec;
+        }
+        
+        long l = MAX(l1, l2);
+        std::vector<t_int8> outvec(l, 0.);
+        for (long i = 0; i < l; i++) {
+            if (i < l1)
+                outvec[i] += monzo1[i];
+            if (i < l2)
+                outvec[i] += monzo2[i];
+        }
+        return outvec;
+    }
+    
+    t_pitch(t_int8 whiteKeyJI, t_int8 sharps, t_int8 plof, const std::vector<t_int8> &HEJIcommas, const std::vector<t_int8> &exponents, const t_shortRational &r, const t_int8 octave = 0, const t_int8 jilimit = 47, const double mc_approx_thresh = 67.): p_whiteKeyET(0), p_alterET({0, 1}) {
         plof += whiteKeyAndSharps2Plof(whiteKeyJI, sharps);
         setJI(plof, HEJIcommas, octave - sharps * 4 / 7);
-        p_JIexpVector += makeMonzoJIRepresentable(exponents, limit, MCapprox);
-        if (r.den())
-            p_JIexpVector.addFromRatio(makeRationalJIRepresentable(r, limit, MCapprox));
-        else {
+        
+        if (r.den()) {
+            std::vector<int8_t> combined_monzo = sumMonzos(exponents, rationalToMonzo(r));
+            if (jilimit > 0 && mc_approx_thresh > 0.)
+                p_JIexpVector += makeMonzoJIRepresentable(combined_monzo, jilimit, mc_approx_thresh);
+            else
+                p_JIexpVector += combined_monzo; // accepting the possible overflow
+        } else {
             p_alterET = illegal;
             p_JIexpVector.clear();
         }
+
+        // OLD CODE
+        /*
+        p_JIexpVector += makeMonzoJIRepresentable(exponents, limit, mc_approx_thresh);
+        if (r.den()) {
+            p_JIexpVector += makeMonzoJIRepresentable(r_monzo, jilimit, mc_approx_thresh);
+        } else {
+            p_alterET = illegal;
+            p_JIexpVector.clear();
+        }
+         */
     }
     
     void setJI(const t_shortRational r) {
