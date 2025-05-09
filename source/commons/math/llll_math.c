@@ -471,6 +471,8 @@ void hatom_fn_makepitch_ext(t_hatom *whitekeyET,    // normally integer
                     t_hatom *commas,        // normally flat llll of integers passed as a H_OBJ
                     t_hatom *ratio,         // normally rational
                     t_hatom *monzo,         // normally flat llll of integers passed as a H_OBJ
+                    t_hatom *jilimit,       // normally integer
+                    t_hatom *mcthresh,      // normally double
                     t_hatom *res
                     )
 {
@@ -481,11 +483,13 @@ void hatom_fn_makepitch_ext(t_hatom *whitekeyET,    // normally integer
     t_atom_short sJI = (t_atom_short) hatom_getlong(sharpsJI);
     t_atom_short pJI = (t_atom_short) hatom_getlong(plofJI);
     t_rational r = hatom_getrational(ratio);
+    t_atom_long l = hatom_getlong(jilimit);
+    double t = hatom_getdouble(mcthresh);
     auto c = llll_to_int8Vector<BACH_PRIMES_JI_SIZE - 2>(static_cast<t_llll*>(hatom_getobj(commas)));
     auto m = llll_to_int8Vector<BACH_PRIMES_JI_SIZE>(static_cast<t_llll*>(hatom_getobj(monzo)));
     
     const t_pitch p(wkET, aET, o);
-    const t_pitch q(wkJI, sJI, pJI, c, m, r);
+    const t_pitch q(wkJI, sJI, pJI, c, m, r, 0, l, t);
     hatom_setpitch(res, p + q);
 }
 

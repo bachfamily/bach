@@ -108,6 +108,8 @@ void hatom_fn_makepitch_ext(t_hatom *whitekeyET,    // normally integer
                     t_hatom *commas,        // normally flat llll of integers passed as a H_OBJ
                     t_hatom *ratio,         // normally rational
                     t_hatom *monzo,         // normally flat llll of integers passed as a H_OBJ
+                    t_hatom *jilimit,       // normally integer
+                    t_hatom *mcthresh,      // normally double
                     t_hatom *res
                             );
 
