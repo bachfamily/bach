@@ -3440,6 +3440,8 @@ void set_score_from_llll(t_score *x, t_llll* inputlist, char also_lock_general_m
         
         voice = x->firstvoice;
         while (voiceelem && voice){
+//            post("---- Voice %d", voice->v_ob.number+1);
+
             // is it a suitable llll for a voice?
             if (hatom_gettype(&voiceelem->l_hatom) == H_LLLL) {
                 t_llll *voiceelemllll = hatom_getllll(&voiceelem->l_hatom);
@@ -3480,6 +3482,7 @@ void set_score_from_llll(t_score *x, t_llll* inputlist, char also_lock_general_m
                                     t_measure *measure = build_measure((t_notation_obj *) x, NULL);
                                     insert_measure((t_notation_obj *)x, voice, measure, voice->lastmeasure, forced_meas_ID);
                                     
+//                                    llll_print(measelemllll);
                                     set_measure_from_llll(x, measure, measelemllll, true, true, NULL);
                                  } 
                             }
