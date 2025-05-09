@@ -123,6 +123,7 @@ VERSION NOTES:
     á new "deletemeasurecontent" message, operating on selection,
         to clear the measures' chords without deleting the measures themselves
     á XML export: added "voice" tag to ensure correct behaviour with Dorico
+                  fixed crash happening when importing files without "attributes" tag
 
 - bach.circle: has a new @phase attribute
 

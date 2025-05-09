@@ -1136,7 +1136,7 @@ private:
         }
         
         void setClef(const char *clef) { setClef(gensym(clef)); }
-        void setKey(const char *key) { setClef(gensym(key)); }
+        void setKey(const char *key) { setKey(gensym(key)); }
         
         
         void insertDirectionFromXML(mxml_node_t *directionXML, long divisions, long* velocity) {
@@ -2485,7 +2485,7 @@ t_llll *score_readxmlbuffer(t_score *x,
                 xml_get_divisions(x, attributesXML, &divisions);
  
             } else if (isfirstmeasure) {
-                object_warn((t_object *) x, "Tag <divisions> missing or corrupted");
+                object_warn((t_object *) x, "Tag <attributes> missing or corrupted");
                 divisions = 4;
                 theScore.setClef(_llllobj_sym_G);
                 theScore.setKey("CM");
