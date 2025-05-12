@@ -4236,7 +4236,7 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
   case 17: /* $@4: %empty  */
 #line 315 "bisonparserV3.y"
                          {
-    ++(params->localVariablesStackV);
+    *++(params->localVariablesStackV) = new std::vector<t_localVar>;
     *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
     *++(params->liftedVariablesStack) = new std::unordered_set<t_symbol *>;
     params->fnDepth++;
