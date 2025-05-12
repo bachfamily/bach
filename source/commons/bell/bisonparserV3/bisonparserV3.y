@@ -313,7 +313,7 @@ fundef : funargList FUNDEF {
     code_dev_post ("parse: user defined function funargList FUNDEF");
 }
 | EMPTYFUNARGLIST FUNDEF {
-    ++(params->localVariablesStackV);
+    *++(params->localVariablesStackV) = new std::vector<t_localVar>;
     *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
     *++(params->liftedVariablesStack) = new std::unordered_set<t_symbol *>;
     params->fnDepth++;
