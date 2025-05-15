@@ -4200,7 +4200,7 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
 
   case 17: /* $@4: %empty  */
                          {
-    ++(params->localVariablesStackV);
+    *++(params->localVariablesStackV) = new std::vector<t_localVar>;
     *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
     *++(params->liftedVariablesStack) = new std::unordered_set<t_symbol *>;
     params->fnDepth++;

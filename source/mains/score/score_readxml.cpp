@@ -528,10 +528,13 @@ private:
     class level : public levelChild {
     public:
         std::vector<levelChild *> children;
-        using levelChild::levelChild;
+        bool grace;
         
-        level* addChildLevel() {
-            level* l = new level(this);
+        level(): levelChild(), grace(false) { }
+        level(level* parent, bool grace = false) : levelChild(parent), grace(grace) { }
+        
+        level* addChildLevel(bool grace = false) {
+            level* l = new level(this, grace);
             children.push_back(l);
             return l;
         }
@@ -542,6 +545,8 @@ private:
         
         t_llll* getllll() {
             t_llll* ll = llll_get();
+            if (grace)
+                llll_appendsym(ll, _llllobj_sym_g);
             for (auto c : children) {
                 llll_appendllll(ll, c->getllll());
             }
@@ -849,8 +854,8 @@ private:
             return r;
         }
         
-        level* pushLevel() {
-            currentLevel = currentLevel->addChildLevel();
+        level* pushLevel(bool grace = false) {
+            currentLevel = currentLevel->addChildLevel(grace);
             return currentLevel;
         }
         
@@ -1007,11 +1012,12 @@ private:
                 theSlurSet.end(idx);
         }
         
-        void setChordDuration(t_rational dur) {
+        bool setChordDuration(t_rational dur) {
+            currentChord->duration = dur;
             if (!currentChord->grace) {
-                currentChord->duration = dur;
                 currentMeasure->usedDuration += dur;
             }
+            return !currentChord->grace;
         }
         
         void adjustTies() {
@@ -1022,7 +1028,7 @@ private:
             for (note* prevNote : prevChord->notes) {
                 if (prevNote->tied) {
                     for ( ;
-                         currentNoteIterator != currentChord->notes.end() && (*currentNoteIterator)->pitch < prevNote->pitch ;
+                         currentNoteIterator != currentChord->notes.end() && (*currentNoteIterator)->pitch != prevNote->pitch ;
                          currentNoteIterator++)
                         ;
                     
@@ -1054,8 +1060,8 @@ private:
         }
         
         
-        level* pushLevel() {
-            return currentMeasure->pushLevel();
+        level* pushLevel(bool grace = false) {
+            return currentMeasure->pushLevel(grace);
         }
         
         t_llll* getllll() {
@@ -1121,8 +1127,8 @@ private:
             return n;
         }
         
-        level* pushLevel() {
-            return currentVoice->pushLevel();
+        level* pushLevel(bool grace = false) {
+            return currentVoice->pushLevel(grace);
         }
         
         void setClef(t_symbol *clef) {
@@ -1239,9 +1245,10 @@ private:
         }
         
         void setChordDuration(t_rational dur) {
-            currentVoice->setChordDuration(dur);
-            globalPosition += dur;
-            positionInMeasure += dur;
+            if (currentVoice->setChordDuration(dur)) {
+                globalPosition += dur;
+                positionInMeasure += dur;
+            }
         }
         
         void setChordSlot(t_llll* slotll) {
@@ -1442,7 +1449,7 @@ private:
         t_llll *getClefsllll() {
             t_llll *ll = llll_get();
             for (auto v : voices) {
-                llll_appendsym(ll, v->clef);
+                llll_appendsym(ll, v->clef ? v->clef : _llllobj_sym_G);
             }
             return ll;
         }
@@ -1450,7 +1457,7 @@ private:
         t_llll *getKeysllll() {
             t_llll *ll = llll_get();
             for (auto v : voices) {
-                llll_appendsym(ll, v->key);
+                llll_appendsym(ll, v->key ? v->key : gensym("CM"));
             }
             return ll;
         }
@@ -1526,7 +1533,7 @@ public:
     
     int addVoice() { return currentPart->addVoice(); }
 
-    void pushLevel() { currentPart->pushLevel(); }
+    void pushLevel(bool grace = false) { currentPart->pushLevel(grace); }
     
     void setClef(t_symbol *clef) { currentPart->setClef(clef); }
     
@@ -2633,7 +2640,7 @@ t_llll *score_readxmlbuffer(t_score *x,
                     grace = mxmlFindElement(itemXML, itemXML, "grace", NULL, NULL, MXML_DESCEND_FIRST) != 0;
                     if (grace && !grace_group) { // that is, we're starting a new grace group
                         
-                        theScore.pushLevel();
+                        theScore.pushLevel(true);
                         grace_group = true;
                         
                     } else if (!grace && grace_group) { // that is, this is the first note outside a grace group
@@ -3042,6 +3049,7 @@ t_llll *score_readxmlbuffer(t_score *x,
     object_attr_setlong(x, gensym("measurenumberoffset"), startfromzero ? -1 : 0);
     
     t_llll *scorell = theScore.getllll();
+    llll_print(scorell);
     
 #ifdef SCORE_READXML_POSTLL
     dev_llll_print(scorell, (t_object *) x);
