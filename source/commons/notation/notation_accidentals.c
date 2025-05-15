@@ -381,21 +381,21 @@ e_bach_accidental rational_to_accidental_ET(t_notation_obj *r_ob, t_rational acc
             if (div.r_den == 1) {
                 switch (div.r_num) {
                     case -8: return BACH_ACCIDENTAL_DOUBLEFLAT;
-                    case -7: return BACH_ACCIDENTAL_THREEQUARTERFLAT_ARROW_DOWN;
+                    case -7: return r_ob->accidentals_eighthtones_display_type == k_ACC_EIGHTHTONE_ARROW_ONLY_ON_SEMITONES ? BACH_ACCIDENTAL_DOUBLEFLAT_ARROW_UP : BACH_ACCIDENTAL_THREEQUARTERFLAT_ARROW_DOWN;
                     case -6: return BACH_ACCIDENTAL_THREEQUARTERFLAT;
                     case -5: return BACH_ACCIDENTAL_FLAT_ARROW_DOWN;
                     case -4: return BACH_ACCIDENTAL_FLAT;
-                    case -3: return BACH_ACCIDENTAL_QUARTERFLAT_ARROW_DOWN;
+                    case -3: return r_ob->accidentals_eighthtones_display_type == k_ACC_EIGHTHTONE_ARROW_ONLY_ON_SEMITONES ? BACH_ACCIDENTAL_FLAT_ARROW_UP : BACH_ACCIDENTAL_QUARTERFLAT_ARROW_DOWN;
                     case -2: return BACH_ACCIDENTAL_QUARTERFLAT;
                     case -1: return BACH_ACCIDENTAL_NATURAL_ARROW_DOWN;
                     case 0: return BACH_ACCIDENTAL_NATURAL;
                     case 1: return BACH_ACCIDENTAL_NATURAL_ARROW_UP;
                     case 2: return BACH_ACCIDENTAL_QUARTERSHARP;
-                    case 3: return BACH_ACCIDENTAL_QUARTERSHARP_ARROW_UP;
+                    case 3: return r_ob->accidentals_eighthtones_display_type == k_ACC_EIGHTHTONE_ARROW_ONLY_ON_SEMITONES ? BACH_ACCIDENTAL_SHARP_ARROW_DOWN : BACH_ACCIDENTAL_QUARTERSHARP_ARROW_UP;
                     case 4: return BACH_ACCIDENTAL_SHARP;
                     case 5: return BACH_ACCIDENTAL_SHARP_ARROW_UP;
                     case 6: return BACH_ACCIDENTAL_THREEQUARTERSHARP;
-                    case 7: return BACH_ACCIDENTAL_THREEQUARTERSHARP_ARROW_UP;
+                    case 7: return r_ob->accidentals_eighthtones_display_type == k_ACC_EIGHTHTONE_ARROW_ONLY_ON_SEMITONES ? BACH_ACCIDENTAL_DOUBLESHARP_ARROW_DOWN : BACH_ACCIDENTAL_THREEQUARTERSHARP_ARROW_UP;
                     case 8: return BACH_ACCIDENTAL_DOUBLESHARP;
                     default: return BACH_ACCIDENTAL_BOGUS;
                 }

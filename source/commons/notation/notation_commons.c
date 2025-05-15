@@ -9399,7 +9399,7 @@ void load_accidentals_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         legacy_fill_uascent(r_ob, 10.5, 10.5, 10.5, 10.5, 10.5, 10.5, 10.5, 10.5, 8.5, 14.5, 8.3, 14.5, 8.5, 14.5, 9.3, 14.5, 3.5);
         legacy_fill_udescent(r_ob, 3.5, 12.5, 3.5, 12.5, 3.5, 12.5, 3.5, 14.5, 8.5, 8.5, 8.3, 8.3, 8.5, 8.5, 9.5, 9.5, 3.5);
 //        fill_double_array(r_ob->accidentals_typo_preferences.binary_uascent, 17, 10.5, 10.5, 10.5, 10.5, 10.5, 10.5, 10.5, 10.5,
-//                                                                                        8.9, 
+//                                                                                        8.9,
 //                                                                                        10, 8.5, 10, 8.9, 10, 9.5, 11, 3.5);
 //        fill_double_array(r_ob->accidentals_typo_preferences.binary_udescent, 17,    3.5, 6.5, 3.5, 6.5, 3.5, 6.5, 3.5, 9,
 //                                                                                            8.9, 
@@ -9450,6 +9450,7 @@ void load_accidentals_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         legacy_fill_uascent(r_ob, 10.5, 0., 0., 0., 10.5, 0., 0., 0., 8.5, 0., 0., 0., 8.5, 0., 0., 0., 3.5);
         legacy_fill_udescent(r_ob, 3.5, 0., 0., 0., 3.5, 0., 0., 0., 8.5, 0., 0., 0., 8.5, 0., 0., 0., 3.5);
         legacy_fill_uwidth(r_ob, 11.4, 0., 0., 0., 6., 0., 0., 0., 6., 0., 0., 0., 7., 0., 0., 0., 7.);
+
     } else if (fontnameeq(font->s_name, "Accidentals")) {
 #ifdef BACH_MAX
         r_ob->accidentals_typo_preferences.base_pt = 24.;

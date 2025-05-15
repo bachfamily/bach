@@ -116,7 +116,16 @@
 	//  choose a representation such that the displayed diatonic pitch is above the actual note). <br /> 
 	//  - Custom: use a custom enharmonic table, defined via the <m>enharmonictable</m> attribute.
 	//  <br /> <br />		
-	
+
+#define BACH_DOC_EIGHTHTONEARROW
+    //  Decides how to use eighth-tone arrows: <br />
+    //  - According To Direction: upward accidentals always get upward arrows, downward accidentals always get downward arrows.
+    //  This means, for instance, that <b>Fq^5</b> is displayed instead of <b>F#v5</b>. <br />
+    //  - On Semitonal Accidentals Only: arrows are only placed on semitonal accidentals.
+    //  This means, for instance, that <b>F#v5</b> is displayed instead of <b>Fq^5</b>.
+    //  This feature is only supported for the (default) Bravura font.
+    //  <br /> <br />
+
 #define BACH_DOC_ACCIDENTALSGRAPHIC
 	// 	Sets the way of displaying accidentals: <br />
 	//  - None: no accidental is displayed. <br />

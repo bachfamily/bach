@@ -7001,6 +7001,10 @@ void C74_EXPORT ext_main(void *moduleRef){
     CLASS_ATTR_BASIC(c,"tonedivision",0);
     // @description @copy BACH_DOC_TONEDIVISION
     
+    CLASS_STICKY_ATTR_CLEAR(c, "category");
+
+    CLASS_STICKY_ATTR(c,"category",0,"Notation");
+
     CLASS_ATTR_CHAR(c, "accidentalsgraphic", 0, t_notation_obj, accidentals_display_type); 
     CLASS_ATTR_STYLE_LABEL(c,"accidentalsgraphic",0,"enumindex","Accidental Graphic");
     CLASS_ATTR_ENUMINDEX(c,"accidentalsgraphic", 0, "None Classical Fraction Unreduced Fraction Cents");
@@ -7020,11 +7024,22 @@ void C74_EXPORT ext_main(void *moduleRef){
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"accidentalspreferences",0,"0");
     CLASS_ATTR_ACCESSORS(c, "accidentalspreferences", (method)NULL, (method)roll_setattr_accidentalspreferences);
     // @description @copy BACH_DOC_ACCIDENTALSPREFERENCES
+
+    CLASS_ATTR_CHAR_UNSAFE(c, "eighthtonearrow", 0, t_notation_obj, accidentals_eighthtones_display_type);
+    CLASS_ATTR_STYLE_LABEL(c,"eighthtonearrow",0,"enumindex","Eighth-Tone Arrow Display");
+    CLASS_ATTR_ENUMINDEX(c,"eighthtonearrow", 0, "According To Direction On Semitonal Accidentals Only");
+    CLASS_ATTR_ACCESSORS(c, "eighthtonearrow", (method)NULL, (method)notationobj_setattr_eighthtonearrow);
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"eighthtonearrow",0,"0");
+    // @description @copy BACH_DOC_EIGHTHTONEARROW
     
     CLASS_ATTR_NOTATIONOBJ_SYMPTR(c, "enharmonictable", 0, full_acc_repr, CONST_MAX_VOICES, roll_setattr_enharmonictable);
     CLASS_ATTR_STYLE_LABEL(c,"enharmonictable",0,"text_large","Custom Enharmonic Table");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"enharmonictable",0,"default");
     // @description @copy BACH_DOC_ENHARMONICTABLE
+
+    CLASS_STICKY_ATTR_CLEAR(c, "category");
+
+    CLASS_STICKY_ATTR(c,"category",0,"Settings");
 
     CLASS_ATTR_DOUBLE(c, "minlength", 0, t_notation_obj, minimum_length);
     CLASS_ATTR_STYLE_LABEL(c,"minlength",0,"text","Minimum Length In Milliseconds");
@@ -7440,6 +7455,7 @@ t_max_err roll_setattr_noteheads_font(t_roll *x, t_object *attr, long ac, t_atom
 
         if (size && text) {
             x->r_ob.noteheads_font = gensym(text);
+            object_attr_setdisabled((t_object *)x, gensym("eighthtonearrow"), !fontnameeq(text, "Bravura"));
             load_notation_typo_preferences((t_notation_obj *) x, x->r_ob.noteheads_font);
             load_noteheads_typo_preferences((t_notation_obj *) x, x->r_ob.noteheads_font);
             notationobj_reparse_all_dynamics((t_notation_obj *) x);
