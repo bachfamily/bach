@@ -15768,23 +15768,31 @@ void check_measure_ties(t_notation_obj *r_ob, t_measure *measure, long ties_assi
         force_direction = (measure->voiceparent->v_ob.part_index % 2 == 0 ? 1 : -1);
     
     for (chord = measure->firstchord; chord; chord = chord->next) {
-        long num_tied_notes = 0, count_tied_notes = 0;
+        long num_tied_notes = 0, count_tied_notes = 0, count_notes = 0;
         for (note = chord->firstnote; note; note = note->next)
             if (note->tie_to) num_tied_notes++;
-        for (note = chord->firstnote; note; note = note->next)
+        for (note = chord->firstnote; note; note = note->next) {
             if (note->tie_to) {
                 count_tied_notes++;
                 if (force_direction)
                     note->tie_direction = force_direction;
-                else if (num_tied_notes == 1)
-                    note->tie_direction = -chord->direction;
-                else {
+                else if (num_tied_notes == 1) {
+                    if (chord->num_notes > 1 &&
+                        ((chord->direction > 0 && count_notes == chord->num_notes-1) ||
+                        (chord->direction < 0 && count_notes == 0))) {
+                        note->tie_direction = chord->direction;
+                    } else {
+                        note->tie_direction = -chord->direction;
+                    }
+                } else {
                     if (count_tied_notes <= num_tied_notes/2.)
                         note->tie_direction = -1;
                     else
                         note->tie_direction = 1;
                 }
             }
+            count_notes++;
+        }
     }
 }
 
