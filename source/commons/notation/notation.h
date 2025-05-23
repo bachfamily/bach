@@ -938,6 +938,15 @@ typedef enum _show_accidentals_tie_preferences {
 } e_show_accidentals_tie_preferences;
 
 
+/** Accidental and eighth-tones display preferences.
+    @ingroup    notation
+ */
+typedef enum _accidentals_eighthtones_preferences {
+    k_ACC_EIGHTHTONE_ARROW_ACCORDING_TO_DIRECTION = 0,  ///< Arrows go in the same direction as the accidental (if accidental is upwards, arrows are upward
+    k_ACC_EIGHTHTONE_ARROW_ONLY_ON_SEMITONES = 1,       ///< Arrows only placed on semitones
+} e_accidentals_eighthtones_preferences;
+
+
 /** Rests display preferences.
     @ingroup    notation
  */
@@ -4222,7 +4231,6 @@ typedef struct _notation_obj
                                                  ///  the object is automatically cleared first, and only THEN rebuilt.
 
     // just intonation references
-    // TODO: expose this field as attribute
     long            ji_limit;                    ///< JI limit for editing and display
     t_pitch         ji_base_for_ratios;          ///< Base pitch used as reference for JI ratios (e.g. C5 or C{}5, or D{}5...)
     double          ji_limit_approx_mcthresh;    ///< Cents threshold for error while approximating cents to JI
@@ -4556,6 +4564,7 @@ typedef struct _notation_obj
     char        accidentals_display_type;    ///< Type of display for the accidentals; must be one of the #e_accidentals_display_type
     char        accidentals_location;        ///< Currently undocumented and working for bach.roll only (0 = ordinary, 1=above note)
     e_accidentals_preferences    accidentals_preferences;    ///< Preference for the accidental choice; must be one of the #e_accidentals_preferences
+    e_accidentals_eighthtones_preferences        accidentals_eighthtones_display_type; ///< Preference for the eighthtonal arrow. One of the e_accidentals_eighthtones_preferences
     char        show_cents_differences;           ///< One of the #e_show_cents_mode
     double      cents_differences_font_size;       ///< Font size for cents differences
     t_symbol    *cents_differences_font;        ///< Font used to display cents differences
@@ -17861,6 +17870,7 @@ t_max_err notationobj_set_numparts_from_llll(t_notation_obj *r_ob, t_llll *ll);
 t_max_err notationobj_set_parts_from_llll(t_notation_obj *r_ob, t_llll *ll);
 t_max_err notationobj_set_parts(t_notation_obj *r_ob, long *part);
 t_max_err notationobj_setattr_dumpplaycmd(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_eighthtonearrow(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 
 // GETTERS
 

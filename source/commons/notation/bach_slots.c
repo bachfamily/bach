@@ -10154,6 +10154,17 @@ t_max_err notationobj_setattr_lyrics_font(t_notation_obj *r_ob, t_object *attr, 
     return MAX_ERR_NONE;
 }
 
+t_max_err notationobj_setattr_eighthtonearrow(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+{
+    if (ac) {
+        r_ob->accidentals_eighthtones_display_type = (e_accidentals_eighthtones_preferences)CLAMP(atom_getlong(av), 0, 1);
+        implicitely_recalculate_all(r_ob, false);
+        notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+    }
+
+    return MAX_ERR_NONE;
+}
+
 t_max_err notationobj_setattr_annotations_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
 {
     if (ac && av) {

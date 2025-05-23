@@ -9399,7 +9399,7 @@ void load_accidentals_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         legacy_fill_uascent(r_ob, 10.5, 10.5, 10.5, 10.5, 10.5, 10.5, 10.5, 10.5, 8.5, 14.5, 8.3, 14.5, 8.5, 14.5, 9.3, 14.5, 3.5);
         legacy_fill_udescent(r_ob, 3.5, 12.5, 3.5, 12.5, 3.5, 12.5, 3.5, 14.5, 8.5, 8.5, 8.3, 8.3, 8.5, 8.5, 9.5, 9.5, 3.5);
 //        fill_double_array(r_ob->accidentals_typo_preferences.binary_uascent, 17, 10.5, 10.5, 10.5, 10.5, 10.5, 10.5, 10.5, 10.5,
-//                                                                                        8.9, 
+//                                                                                        8.9,
 //                                                                                        10, 8.5, 10, 8.9, 10, 9.5, 11, 3.5);
 //        fill_double_array(r_ob->accidentals_typo_preferences.binary_udescent, 17,    3.5, 6.5, 3.5, 6.5, 3.5, 6.5, 3.5, 9,
 //                                                                                            8.9, 
@@ -9450,6 +9450,7 @@ void load_accidentals_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         legacy_fill_uascent(r_ob, 10.5, 0., 0., 0., 10.5, 0., 0., 0., 8.5, 0., 0., 0., 8.5, 0., 0., 0., 3.5);
         legacy_fill_udescent(r_ob, 3.5, 0., 0., 0., 3.5, 0., 0., 0., 8.5, 0., 0., 0., 8.5, 0., 0., 0., 3.5);
         legacy_fill_uwidth(r_ob, 11.4, 0., 0., 0., 6., 0., 0., 0., 6., 0., 0., 0., 7., 0., 0., 0., 7.);
+
     } else if (fontnameeq(font->s_name, "Accidentals")) {
 #ifdef BACH_MAX
         r_ob->accidentals_typo_preferences.base_pt = 24.;
@@ -15767,23 +15768,31 @@ void check_measure_ties(t_notation_obj *r_ob, t_measure *measure, long ties_assi
         force_direction = (measure->voiceparent->v_ob.part_index % 2 == 0 ? 1 : -1);
     
     for (chord = measure->firstchord; chord; chord = chord->next) {
-        long num_tied_notes = 0, count_tied_notes = 0;
+        long num_tied_notes = 0, count_tied_notes = 0, count_notes = 0;
         for (note = chord->firstnote; note; note = note->next)
             if (note->tie_to) num_tied_notes++;
-        for (note = chord->firstnote; note; note = note->next)
+        for (note = chord->firstnote; note; note = note->next) {
             if (note->tie_to) {
                 count_tied_notes++;
                 if (force_direction)
                     note->tie_direction = force_direction;
-                else if (num_tied_notes == 1)
-                    note->tie_direction = -chord->direction;
-                else {
+                else if (num_tied_notes == 1) {
+                    if (chord->num_notes > 1 &&
+                        ((chord->direction > 0 && count_notes == chord->num_notes-1) ||
+                        (chord->direction < 0 && count_notes == 0))) {
+                        note->tie_direction = chord->direction;
+                    } else {
+                        note->tie_direction = -chord->direction;
+                    }
+                } else {
                     if (count_tied_notes <= num_tied_notes/2.)
                         note->tie_direction = -1;
                     else
                         note->tie_direction = 1;
                 }
             }
+            count_notes++;
+        }
     }
 }
 
