@@ -1004,8 +1004,9 @@ void codableclass_add_standard_methods_and_attrs(t_class *c)
     CLASS_ATTR_STYLE(c, "watch", 0, "onoff");
     
     CLASS_ATTR_SYM(c, "file", 0, t_codableobj, c_file);
-    CLASS_ATTR_LABEL(c, "file", 0, "Code File To Be Read At Initialization");
+    //CLASS_ATTR_LABEL(c, "file", 0, "Code File To Be Read At Initialization");
     CLASS_ATTR_ACCESSORS(c, "file", nullptr, codableobj_file_set);
+    CLASS_ATTR_INVISIBLE(c, "file", 0);
     
     CLASS_ATTR_ATOM_LONG(c, "bellversion",    0,    t_codableobj, c_bellversion);
     CLASS_ATTR_LABEL(c, "bellversion", 0, "Bell Language Version");

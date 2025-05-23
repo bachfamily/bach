@@ -1024,11 +1024,36 @@ private:
             if (!prevChord || prevChord->ties == 0)
                 return;
             
+            // a simpler, slightly less efficient version
+            for (note* prev: prevChord->notes) {
+                if (prev->tied) {
+                    bool found = false;
+                    for (note* current: currentChord->notes) {
+                        if (prev->pitch == current->pitch && !current->tiedFrom) {
+                            found = true;
+                            prev->tiedTo = current;
+                            current->tiedFrom = prev;
+                            current->tieStart = prev->tieStart;
+                            for (note* n = prev->tieStart;
+                                 n != current;
+                                 n = n->tiedTo)
+                                n->tieEnd = current;
+                            
+                            if (!prevChord->grace)
+                                current->prevDuration += prevChord->duration;
+                        }
+                    }
+                    if (!found)
+                        object_error((t_object *) owner->owner->obj, "Tie mismatch");
+                }
+            }
+            
+            /*
             std::vector<note*>::iterator currentNoteIterator = currentChord->notes.begin();
             for (note* prevNote : prevChord->notes) {
                 if (prevNote->tied) {
                     for ( ;
-                         currentNoteIterator != currentChord->notes.end() && (*currentNoteIterator)->pitch != prevNote->pitch ;
+                         currentNoteIterator != currentChord->notes.end() && (*currentNoteIterator)->pitch < prevNote->pitch ;
                          currentNoteIterator++)
                         ;
                     
@@ -1056,7 +1081,7 @@ private:
                         prevChord->ties--;
                     }
                 }
-            }
+            }*/
         }
         
         
