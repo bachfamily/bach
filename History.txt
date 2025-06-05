@@ -107,6 +107,7 @@ VERSION NOTES:
     á With respect to development prerelease, fixed bug with slurs causing potential crashes when more than 2 slurs started on a chord
     á New @playslurs attribute, defining the way slurs are output during evaluation/playback
     á Fixed bug potentially causing crashes when changing background color often
+    á Fixed bug causing wrong refresh with dynamics2velocities when velocity was mapped on notehead size
 
 - bach.roll, bach.score, bach.score2roll:
     Now user-defined pitches are correctly preserved
