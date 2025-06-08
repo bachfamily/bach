@@ -50,7 +50,7 @@
     bach, bach objects, bach notation, bach pitches
 
     @keywords
-    convert, pitch, note, name, commas, ji, exponents, monzo, ratio
+    convert, pitch, note, name, jicommas, ji, exponents, jiexps, ratio
 
     @seealso
     bach.mc2p, bach.f2mc, bach.mc2f, bach.makepitch
@@ -122,9 +122,9 @@ void pitchobj_setkeys() {
     keys[gensym("jiwhitekey")] = p_JIWHITEKEY;
     keys[gensym("jisharps")] = p_JISHARPS;
     keys[gensym("jiplof")] = p_JIPLOF;
-    keys[gensym("commas")] = p_COMMAS;
+    keys[gensym("jicommas")] = p_COMMAS;
     keys[gensym("jiratio")] = p_JIRATIO;
-    keys[gensym("monzo")] = p_MONZO;
+    keys[gensym("jiexps")] = p_MONZO;
 }
 
 void C74_EXPORT ext_main(void *moduleRef)
@@ -188,13 +188,13 @@ void C74_EXPORT ext_main(void *moduleRef)
     // <b>jiplof</b> (the "PLOF", or Pitch in the Line of Fifths, that is,
     // an integer counting how many Pythagorean fifths above C0 the just intonation part is:
     // for example, 4 means E{}2; -1 means F{}-1 or, equivalently, -G{}0) <br />
-    // <b>commas</b> (a list containing a vector of HEJI commas for the just intonation part) <br />
+    // <b>jicommas</b> (a list containing a vector of HEJI jicommas for the just intonation part) <br />
     // <b>jiratio</b> (a rational expressing the frequency ratio of the just intonation part 
     // with respect to C0:
     // for example, 3/2 means one Pythagorean fifth above C0, that is, G{}0) <br />
-    // <b>monzo</b> (the Monzo vector of the just intonation part, that is,
+    // <b>jiexps</b> (the Jiexps vector of the just intonation part, that is,
     // the list of the prime-factor exponents that constitute the frequency ratio) <br />
-    // So, for example, <m>from jiwhitekey commas octave</m> creates three inlets,
+    // So, for example, <m>from jiwhitekey jicommas octave</m> creates three inlets,
     // one for each corresponding symbol. <br />
     // If the attribute is not set, a single <b>pitch</b> inlet is created by default.
     // @copy BACH_DOC_STATIC_ATTR
@@ -223,13 +223,13 @@ void C74_EXPORT ext_main(void *moduleRef)
     // <b>jiplof</b> (the "PLOF", or Pitch in the Line of Fifths, that is,
     // an integer counting how many Pythagorean fifths above C0 the just intonation part is:
     // for example, 4 means E{}2; -1 means F{}-1 or, equivalently, -G{}0) <br />
-    // <b>commas</b> (a list containing a vector of HEJI commas for the just intonation part) <br />
+    // <b>jicommas</b> (a list containing a vector of HEJI jicommas for the just intonation part) <br />
     // <b>jiratio</b> (a rational expressing the frequency ratio of the just intonation part
     // with respect to C0:
     // for example, 3/2 means one Pythagorean fifth above C0, that is, G{}0) <br />
-    // <b>monzo</b> (the Monzo vector of the just intonation part, that is,
+    // <b>jiexps</b> (the Jiexps vector of the just intonation part, that is,
     // the list of the prime-factor exponents that constitute the frequency ratio) <br />
-    // So, for example, <m>from jiwhitekey commas octave</m> creates three inlets,
+    // So, for example, <m>from jiwhitekey jicommas octave</m> creates three inlets,
     // one for each corresponding symbol. <br />
     // If the attribute is not set, a single <b>pitch</b> inlet is created by default.
     // @copy BACH_DOC_STATIC_ATTR
@@ -353,12 +353,12 @@ void pitchobj_bang(t_pitchobj *x)
                     case p_MONZO: {
                         int i;
                         t_llllelem *el;
-                        std::vector<int8_t> monzo;
+                        std::vector<int8_t> jiexps;
                         for (el = ll->l_head, i = 0; el && i < BACH_PRIMES_JI_SIZE; el = el->l_next) {
                             const int8_t e = (int8_t) hatom_getlong(&el->l_hatom);
-                            monzo.push_back(e);
+                            jiexps.push_back(e);
                         }
-                        p += t_pitch(monzo);
+                        p += t_pitch(jiexps);
                         break;
                     }
                     default:
@@ -416,7 +416,7 @@ void pitchobj_bang(t_pitchobj *x)
                     break;
                 }
                 case p_MONZO: {
-                    ll = getMonzo(p);
+                    ll = getJiexps(p);
                     break;
                 }
                 default: {

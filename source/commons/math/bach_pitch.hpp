@@ -437,10 +437,10 @@ public:
         return whiteKey2Plof_safe(whiteKeyJI) + sharps * 7;
     }
     
-    inline static std::vector<t_int8> sumMonzos(const std::vector<t_int8> &monzo1, const std::vector<t_int8> &monzo2)
+    inline static std::vector<t_int8> sumJiexpss(const std::vector<t_int8> &jiexps1, const std::vector<t_int8> &jiexps2)
     {
-        long l1 = monzo1.size();
-        long l2 = monzo2.size();
+        long l1 = jiexps1.size();
+        long l2 = jiexps2.size();
         
         if (l1 == 0 && l2 == 0) {
             std::vector<t_int8> outvec;
@@ -451,9 +451,9 @@ public:
         std::vector<t_int8> outvec(l, 0.);
         for (long i = 0; i < l; i++) {
             if (i < l1)
-                outvec[i] += monzo1[i];
+                outvec[i] += jiexps1[i];
             if (i < l2)
-                outvec[i] += monzo2[i];
+                outvec[i] += jiexps2[i];
         }
         return outvec;
     }
@@ -463,11 +463,11 @@ public:
         setJI(plof, HEJIcommas, octave - sharps * 4 / 7);
         
         if (r.den()) {
-            std::vector<int8_t> combined_monzo = sumMonzos(exponents, rationalToMonzo(r));
+            std::vector<int8_t> combined_jiexps = sumJiexpss(exponents, rationalToJiexps(r));
             if (mc_approx_thresh > 0.)
-                p_JIexpVector += makeMonzoJIRepresentable(combined_monzo, jilimit, mc_approx_thresh);
+                p_JIexpVector += makeJiexpsJIRepresentable(combined_jiexps, jilimit, mc_approx_thresh);
             else
-                p_JIexpVector += combined_monzo; // accepting the possible overflow
+                p_JIexpVector += combined_jiexps; // accepting the possible overflow
         } else {
             p_alterET = illegal;
             p_JIexpVector.clear();
@@ -475,9 +475,9 @@ public:
 
         // OLD CODE
         /*
-        p_JIexpVector += makeMonzoJIRepresentable(exponents, limit, mc_approx_thresh);
+        p_JIexpVector += makeJiexpsJIRepresentable(exponents, limit, mc_approx_thresh);
         if (r.den()) {
-            p_JIexpVector += makeMonzoJIRepresentable(r_monzo, jilimit, mc_approx_thresh);
+            p_JIexpVector += makeJiexpsJIRepresentable(r_jiexps, jilimit, mc_approx_thresh);
         } else {
             p_alterET = illegal;
             p_JIexpVector.clear();
@@ -1042,7 +1042,7 @@ public:
     }
     
     
-    static std::vector<int8_t> rationalToMonzo(const t_shortRational r){
+    static std::vector<int8_t> rationalToJiexps(const t_shortRational r){
         std::vector<int8_t> outvec;
         if (r.num() == 0 || r.den() == 0)
             return outvec;
@@ -1078,16 +1078,16 @@ public:
         return outvec;
     }
     
-    static t_shortRational monzoToRational(std::vector<int8_t> monzo)
+    static t_shortRational jiexpsToRational(std::vector<int8_t> jiexps)
     {
         t_shortRational r = long2rat(1);
-        for (long i = 0; i < monzo.size(); i++) {
-            if (monzo[i] > 0) {
-                for (long j = 0; j < monzo[i]; j++) {
+        for (long i = 0; i < jiexps.size(); i++) {
+            if (jiexps[i] > 0) {
+                for (long j = 0; j < jiexps[i]; j++) {
                     r *= primes[i];
                 }
-            } else if (monzo[i] < 0) {
-                for (long j = 0; j > monzo[i]; j--) {
+            } else if (jiexps[i] < 0) {
+                for (long j = 0; j > jiexps[i]; j--) {
                     r /= primes[i];
                 }
             }
@@ -1099,27 +1099,27 @@ public:
     
     static t_shortRational makeRationalJIRepresentable(const t_shortRational r, int jilimit, double mc_thresh)
     {
-        std::vector<int8_t> monzo = rationalToMonzo(r);
-        std::vector<int8_t> monzo_rep = makeMonzoJIRepresentable(monzo, jilimit, mc_thresh);
-        return monzoToRational(monzo_rep);
+        std::vector<int8_t> jiexps = rationalToJiexps(r);
+        std::vector<int8_t> jiexps_rep = makeJiexpsJIRepresentable(jiexps, jilimit, mc_thresh);
+        return jiexpsToRational(jiexps_rep);
     }
 
-    static bool isMonzoJIRepresentable(const std::vector<int8_t> &monzo, int jilimit)
+    static bool isJiexpsJIRepresentable(const std::vector<int8_t> &jiexps, int jilimit)
     {
         bool ok = true;
         long primeidx = primes_locate[jilimit];
-        if (monzo.size() > BACH_PRIMES_JI_SIZE || monzo.size() > primeidx + 1) {
+        if (jiexps.size() > BACH_PRIMES_JI_SIZE || jiexps.size() > primeidx + 1) {
             ok = false;
         } else {
-            for (int i = 0; i < monzo.size() && i < 8; i++) {
-                if (monzo[i] < -128 || monzo[i] > 127) {
+            for (int i = 0; i < jiexps.size() && i < 8; i++) {
+                if (jiexps[i] < -128 || jiexps[i] > 127) {
                     ok = false;
                     break;
                 }
             }
             if (ok) {
-                for (int i = 9; i < monzo.size() && i < 15; i++) {
-                    if (monzo[i] < -8 || monzo[i] > 7) {
+                for (int i = 9; i < jiexps.size() && i < 15; i++) {
+                    if (jiexps[i] < -8 || jiexps[i] > 7) {
                         ok = false;
                         break;
                     }
@@ -1130,17 +1130,17 @@ public:
     }
     
     
-    static std::vector<int8_t> makeMonzoJIRepresentable(const std::vector<int8_t> &monzo, int jilimit, double mc_thresh)
+    static std::vector<int8_t> makeJiexpsJIRepresentable(const std::vector<int8_t> &jiexps, int jilimit, double mc_thresh)
     {
-        if (isMonzoJIRepresentable(monzo, jilimit)) {
-            // monzo is already representable!
-            std::vector<int8_t> res = monzo;
+        if (isJiexpsJIRepresentable(jiexps, jilimit)) {
+            // jiexps is already representable!
+            std::vector<int8_t> res = jiexps;
             return res;
         }
         
-        // otherwise, here's the complex case; we need to approximate the monzo so that only a lower primes are used
+        // otherwise, here's the complex case; we need to approximate the jiexps so that only a lower primes are used
         
-        t_rational r = monzoToRational(monzo);
+        t_rational r = jiexpsToRational(jiexps);
         
         std::vector<int> allowed_primes;
         for (long i = 0; i < BACH_PRIMES_JI_SIZE; i++) {
@@ -1158,9 +1158,9 @@ public:
 
             for (long i = 0; i < convergents.size(); i++) {
                 t_rational candidate = convergents[i];
-                std::vector<int8_t> monzo_candidate = rationalToMonzo(candidate);
-                if (isMonzoJIRepresentable(monzo_candidate, jilimit)) {
-                    return monzo_candidate; // found it!
+                std::vector<int8_t> jiexps_candidate = rationalToJiexps(candidate);
+                if (isJiexpsJIRepresentable(jiexps_candidate, jilimit)) {
+                    return jiexps_candidate; // found it!
                 }
             }
             
@@ -1169,9 +1169,9 @@ public:
             mc_thresh *= 1.5;
         }
         
-        // if still not found... well... let's just trim the monzo
+        // if still not found... well... let's just trim the jiexps
         // I tried to apply LLL algorithm but it failed even in pretty simple situations... it didn't seem to be of much help
-        std::vector<int8_t> res = monzo;
+        std::vector<int8_t> res = jiexps;
         if (res.size() > 15)
             res.resize(15);
         for (long i = 0; i < 8; i++) {

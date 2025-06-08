@@ -135,7 +135,7 @@ public:
         setArgument("jiplof", 0L);
         setArgument("commas");
         setArgument("jiratio", new astConst(t_rational(0, 1)));
-        setArgument("monzo");
+        setArgument("jiexps");
         setArgument("jilimit", 47L);
         setArgument("jiapproxthresh", 67.);
 
@@ -176,7 +176,7 @@ public:
         }
         
         {
-            // monzo
+            // jiexps
             t_llll *x = context.argv[9];
             t_llll *y = llll_get();
             if (x->l_depth == 1) {

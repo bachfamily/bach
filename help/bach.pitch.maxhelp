@@ -292,7 +292,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 17.0, 155.0, 727.0, 239.0 ],
-									"text" : "- pitch (a whole pitch literal, such as C#0+1/6t+C{1:-1}4+17/16r\n- etwhitekey (the \"white key\" of the equal-tempered part, expressed as an integer from 0 to 6: for instance, 0 is C and 4 is G)\n- etalter (the alteration in whole tones or fractions thereof of the equal-tempered part, expressed as an integer or fraction: for instance, -1/2 is a descending chromatic semitone, that is, a flat)\n- octave (the octave of the pitch, with middle C at octave 5)\n- jiwhitekey (the \"white key\" of the just intonation part, expressed as above)\n- jisharps (the Pythagorean alteration of the just intonation part, expressed as the number of sharps or, if negative, flats, with respect to the white key: for instance, 1 means one sharp above the white key; -2 means one double flat below the white key)\n- jiplof (the \"PLOF\", or Pitch in the Line of Fifths, that is, an integer counting how many Pythagorean fifths above C0 the just intonation part is: for example, 4 means E{}2; -1 means F{}-1 or, equivalently, -G{}0)\n- commas (a list containing a vector of HEJI commas for the just intonation part)\n- jiratio (a rational expressing the frequency ratio of the just intonation part with respect to C0: for example, 3/2 means one Pythagorean fifth above C0, that is, G{}0)\n- monzo (the Monzo vector of the just intonation part, that is, the list of the prime-factor exponents that constitute the frequency ratio)"
+									"text" : "- pitch (a whole pitch literal, such as C#0+1/6t+C{1:-1}4+17/16r\n- etwhitekey (the \"white key\" of the equal-tempered part, expressed as an integer from 0 to 6: for instance, 0 is C and 4 is G)\n- etalter (the alteration in whole tones or fractions thereof of the equal-tempered part, expressed as an integer or fraction: for instance, -1/2 is a descending chromatic semitone, that is, a flat)\n- octave (the octave of the pitch, with middle C at octave 5)\n- jiwhitekey (the \"white key\" of the just intonation part, expressed as above)\n- jisharps (the Pythagorean alteration of the just intonation part, expressed as the number of sharps or, if negative, flats, with respect to the white key: for instance, 1 means one sharp above the white key; -2 means one double flat below the white key)\n- jiplof (the \"PLOF\", or Pitch in the Line of Fifths, that is, an integer counting how many Pythagorean fifths above C0 the just intonation part is: for example, 4 means E{}2; -1 means F{}-1 or, equivalently, -G{}0)\n- jicommas (a list containing a vector of HEJI commas for the just intonation part)\n- jiratio (a rational expressing the frequency ratio of the just intonation part with respect to C0: for example, 3/2 means one Pythagorean fifth above C0, that is, G{}0)\n- jiexps (the Jiexps vector of the just intonation part, that is, the list of the prime-factor exponents that constitute the frequency ratio)"
 								}
 
 							}
@@ -715,7 +715,7 @@
 										"versionnumber" : 80900
 									}
 ,
-									"text" : "bach.pitch @from jiwhitekey jisharps commas octave @to jiratio monzo @out m"
+									"text" : "bach.pitch @from jiwhitekey jisharps jicommas octave @to jiratio jiexps @out m"
 								}
 
 							}

@@ -311,17 +311,17 @@ public:
     t_llll* call(const t_execEnv &context);
 };
 
-class t_fnCommas : public t_builtInFunction
+class t_fnJicommas : public t_builtInFunction
 {
 public:
-    t_fnCommas();
+    t_fnJicommas();
     t_llll* call(const t_execEnv &context);
 };
 
-class t_fnMonzo : public t_builtInFunction
+class t_fnJiexps : public t_builtInFunction
 {
 public:
-    t_fnMonzo();
+    t_fnJiexps();
     t_llll* call(const t_execEnv &context);
 };
 

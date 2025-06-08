@@ -470,7 +470,7 @@ void hatom_fn_makepitch_ext(t_hatom *whitekeyET,    // normally integer
                     t_hatom *plofJI,        // normally integer
                     t_hatom *commas,        // normally flat llll of integers passed as a H_OBJ
                     t_hatom *ratio,         // normally rational
-                    t_hatom *monzo,         // normally flat llll of integers passed as a H_OBJ
+                    t_hatom *jiexps,         // normally flat llll of integers passed as a H_OBJ
                     t_hatom *jilimit,       // normally integer
                     t_hatom *mcthresh,      // normally double
                     t_hatom *res
@@ -486,7 +486,7 @@ void hatom_fn_makepitch_ext(t_hatom *whitekeyET,    // normally integer
     t_atom_long l = hatom_getlong(jilimit);
     double t = hatom_getdouble(mcthresh);
     auto c = llll_to_int8Vector<BACH_PRIMES_JI_SIZE - 2>(static_cast<t_llll*>(hatom_getobj(commas)));
-    auto m = llll_to_int8Vector<BACH_PRIMES_JI_SIZE>(static_cast<t_llll*>(hatom_getobj(monzo)));
+    auto m = llll_to_int8Vector<BACH_PRIMES_JI_SIZE>(static_cast<t_llll*>(hatom_getobj(jiexps)));
     
     const t_pitch p(wkET, aET, o);
     const t_pitch q(wkJI, sJI, pJI, c, m, r, 0, l, t);
@@ -1370,7 +1370,7 @@ t_llll *getHEJICommas(const t_pitch &p) {
     return t_int8Vector2Llll(p.getHEJICommas());
 }
 
-t_llll *getMonzo(const t_pitch &p) {
+t_llll *getJiexps(const t_pitch &p) {
     return t_int8Vector2Llll(p.getExponents());
 }
 

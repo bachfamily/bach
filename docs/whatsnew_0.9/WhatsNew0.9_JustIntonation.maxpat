@@ -122,7 +122,7 @@
 						"versionnumber" : 80900
 					}
 ,
-					"text" : "bach.pitch @to monzo @out m"
+					"text" : "bach.pitch @to jiexps @out m"
 				}
 
 			}
@@ -554,7 +554,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 179.0, 2208.0, 359.0, 74.0 ],
-					"text" : "Make a pitch from a set of exponent for prime numbers. \nEvery just-intonation ratio can be decomposed into primes, for instance Eb{}5, which has ratio 1024/27\nhas decomposition: 2^10 * 3^(-3).\nThe list of its exponents (10, -3) is called the \"monzo\""
+					"text" : "Make a pitch from a set of exponent for prime numbers. \nEvery just-intonation ratio can be decomposed into primes, for instance Eb{}5, which has ratio 1024/27\nhas decomposition: 2^10 * 3^(-3).\nThe list of its exponents (10, -3) is called the \"jiexps\""
 				}
 
 			}
@@ -570,7 +570,7 @@
 						"versionnumber" : 80900
 					}
 ,
-					"text" : "bach.pitch @from monzo"
+					"text" : "bach.pitch @from jiexps"
 				}
 
 			}
@@ -731,7 +731,7 @@
 						"versionnumber" : 80900
 					}
 ,
-					"text" : "bach.pitch @from jiwhitekey jisharps octave commas"
+					"text" : "bach.pitch @from jiwhitekey jisharps octave jicommas"
 				}
 
 			}
@@ -2253,7 +2253,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "makepitch(@monzo 10 -3) ",
+					"code" : "makepitch(@jiexps 10 -3) ",
 					"id" : "obj-106",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
@@ -2265,7 +2265,7 @@
 						"versionnumber" : 80900
 					}
 ,
-					"text" : "bach.eval makepitch(@monzo 10 -3)"
+					"text" : "bach.eval makepitch(@jiexps 10 -3)"
 				}
 
 			}
@@ -2298,7 +2298,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "makepitch(@jiwhitekey 4, @jisharps 1, @octave 5, @commas 1 -1) ",
+					"code" : "makepitch(@jiwhitekey 4, @jisharps 1, @octave 5, @jicommas 1 -1) ",
 					"id" : "obj-247",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
@@ -2310,7 +2310,7 @@
 						"versionnumber" : 80900
 					}
 ,
-					"text" : "bach.eval makepitch(@jiwhitekey 4\\, @jisharps 1\\, @octave 5\\, @commas 1 -1)"
+					"text" : "bach.eval makepitch(@jiwhitekey 4\\, @jisharps 1\\, @octave 5\\, @jicommas 1 -1)"
 				}
 
 			}
@@ -2388,7 +2388,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "makepitch(@jiplof -1, @octave 5, @commas 1 0 -1) ",
+					"code" : "makepitch(@jiplof -1, @octave 5, @jicommas 1 0 -1) ",
 					"id" : "obj-251",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
@@ -2400,7 +2400,7 @@
 						"versionnumber" : 80900
 					}
 ,
-					"text" : "bach.eval makepitch(@jiplof -1\\, @octave 5\\, @commas 1 0 -1)"
+					"text" : "bach.eval makepitch(@jiplof -1\\, @octave 5\\, @jicommas 1 0 -1)"
 				}
 
 			}
@@ -2624,7 +2624,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 204.0, 6768.0, 272.0, 74.0 ],
-					"text" : "This function returns the list of exponents of prime numbers in the ratio of the pitch (\"monzo\"). \nFor instance Eb{}5, which has ratio 1024/27\nhas decomposition: 2^10 * 3^(-3), and hence monzo 10 -3 0 0 0 ...."
+					"text" : "This function returns the list of exponents of prime numbers in the ratio of the pitch (\"jiexps\"). \nFor instance Eb{}5, which has ratio 1024/27\nhas decomposition: 2^10 * 3^(-3), and hence jiexps 10 -3 0 0 0 ...."
 				}
 
 			}
@@ -2868,7 +2868,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "commas($x1) ",
+					"code" : "jicommas($x1) ",
 					"id" : "obj-182",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
@@ -2880,7 +2880,7 @@
 						"versionnumber" : 80900
 					}
 ,
-					"text" : "bach.eval commas($x1) @out m"
+					"text" : "bach.eval jicommas($x1) @out m"
 				}
 
 			}
@@ -2958,7 +2958,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "monzo($x1) ",
+					"code" : "jiexps($x1) ",
 					"id" : "obj-189",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
@@ -2970,7 +2970,7 @@
 						"versionnumber" : 80900
 					}
 ,
-					"text" : "bach.eval monzo($x1) @out m"
+					"text" : "bach.eval jiexps($x1) @out m"
 				}
 
 			}

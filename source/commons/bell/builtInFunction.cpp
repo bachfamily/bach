@@ -887,11 +887,11 @@ t_llll* t_fnF2mc::call(const t_execEnv &context) {
 ///////////////
 
 
-t_fnCommas::t_fnCommas() : t_builtInFunction("commas") {
+t_fnJicommas::t_fnJicommas() : t_builtInFunction("commas") {
     setArgument("x", llll_get());
 }
 
-t_llll* t_fnCommas::call(const t_execEnv &context)
+t_llll* t_fnJicommas::call(const t_execEnv &context)
 {
     t_llllelem *h = context.argv[1]->l_head;
     if (!h)
@@ -904,17 +904,17 @@ t_llll* t_fnCommas::call(const t_execEnv &context)
 ///////////////
 
 
-t_fnMonzo::t_fnMonzo() : t_builtInFunction("monzo") {
+t_fnJiexps::t_fnJiexps() : t_builtInFunction("jiexps") {
     setArgument("x", llll_get());
 }
 
-t_llll* t_fnMonzo::call(const t_execEnv &context)
+t_llll* t_fnJiexps::call(const t_execEnv &context)
 {
     t_llllelem *h = context.argv[1]->l_head;
     if (!h)
         return llll_get();
     t_pitch p = hatom_getpitch(&h->l_hatom);
-    return getMonzo(p);
+    return getJiexps(p);
 }
 
 
@@ -974,10 +974,10 @@ t_llll* t_fnPitchkeys::call(const t_execEnv &context)
     llll_appendrat(jiratioll, p.getJIRatio());
     llll_appendllll(res, jiratioll);
     
-    t_llll *monzoll = llll_get();
-    llll_appendsym(monzoll, gensym("monzo"));
-    llll_chain(monzoll, getMonzo(p));
-    llll_appendllll(res, monzoll);
+    t_llll *jiexpsll = llll_get();
+    llll_appendsym(jiexpsll, gensym("jiexps"));
+    llll_chain(jiexpsll, getJiexps(p));
+    llll_appendllll(res, jiexpsll);
     
     return res;
 }

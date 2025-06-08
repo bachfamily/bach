@@ -1340,8 +1340,8 @@ void bach_init_bifs(t_bach *x)
     (*bifTable)["maximum"] = new t_fnMaximum;
     (*bifTable)["mc2f"] = new t_fnMc2f;
     (*bifTable)["f2mc"] = new t_fnF2mc;
-    (*bifTable)["commas"] = new t_fnCommas;
-    (*bifTable)["monzo"] = new t_fnMonzo;
+    (*bifTable)["jicommas"] = new t_fnJicommas;
+    (*bifTable)["jiexps"] = new t_fnJiexps;
     (*bifTable)["pitchkeys"] = new t_fnPitchkeys;
 
     

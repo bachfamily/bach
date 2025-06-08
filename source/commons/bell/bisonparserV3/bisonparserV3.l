@@ -707,7 +707,7 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
     return BIF;
 }
 
-("etwhitekey"|"jiwhitekey"|"et"|"ji"|"jiratio"|"jiplof"|"etplof"|"jisharps"|"etsharps"|"etalter"|"foldratio"|"commas"|"monzo"|"pitchkeys")/{SEPARATOR} {
+("etwhitekey"|"jiwhitekey"|"et"|"ji"|"jiratio"|"jiplof"|"etplof"|"jisharps"|"etsharps"|"etalter"|"foldratio"|"jicommas"|"jiexps"|"pitchkeys")/{SEPARATOR} {
     code_dev_post("lex: BIF %s", yytext);
     yylval->symValue = gensym(yytext);
     BEGIN lexparams->setState(NOUNARY_ARGS);

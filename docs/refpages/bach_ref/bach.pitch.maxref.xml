@@ -110,7 +110,7 @@
 				<b>jiratio</b> (a rational expressing the frequency ratio of the just intonation part
 				with respect to C0:
 				for example, 3/2 means one Pythagorean fifth above C0, that is, G{}0) <br />
-				<b>monzo</b> (the Monzo vector of the just intonation part, that is,
+				<b>jiexps</b> (the Jiexps vector of the just intonation part, that is,
 				the list of the prime-factor exponents that constitute the frequency ratio) <br />
 				So, for example, <m>from jiwhitekey commas octave</m> creates three inlets,
 				one for each corresponding symbol. <br />
@@ -183,7 +183,7 @@
 				<b>jiratio</b> (a rational expressing the frequency ratio of the just intonation part
 				with respect to C0:
 				for example, 3/2 means one Pythagorean fifth above C0, that is, G{}0) <br />
-				<b>monzo</b> (the Monzo vector of the just intonation part, that is,
+				<b>jiexps</b> (the Jiexps vector of the just intonation part, that is,
 				the list of the prime-factor exponents that constitute the frequency ratio) <br />
 				So, for example, <m>from jiwhitekey commas octave</m> creates three inlets,
 				one for each corresponding symbol. <br />
@@ -262,7 +262,7 @@
 		</entry>
 		<entry name ="Keywords">
 			<description>
-convert, pitch, note, name, commas, ji, exponents, monzo, ratio.
+convert, pitch, note, name, commas, ji, exponents, jiexps, ratio.
 			</description>
 		</entry>
 	</misc>

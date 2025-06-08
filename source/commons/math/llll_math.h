@@ -107,7 +107,7 @@ void hatom_fn_makepitch_ext(t_hatom *whitekeyET,    // normally integer
                     t_hatom *plofJI,        // normally integer
                     t_hatom *commas,        // normally flat llll of integers passed as a H_OBJ
                     t_hatom *ratio,         // normally rational
-                    t_hatom *monzo,         // normally flat llll of integers passed as a H_OBJ
+                    t_hatom *jiexps,         // normally flat llll of integers passed as a H_OBJ
                     t_hatom *jilimit,       // normally integer
                     t_hatom *mcthresh,      // normally double
                     t_hatom *res
@@ -160,6 +160,6 @@ void hatom_op_t(t_hatom *h1, t_hatom *res);
 void hatom_op_r(t_hatom *h1, t_hatom *res);
 
 t_llll *getHEJICommas(const t_pitch &p);
-t_llll *getMonzo(const t_pitch &p);
+t_llll *getJiexps(const t_pitch &p);
 
 #endif // _LLLL_MATH_H_
