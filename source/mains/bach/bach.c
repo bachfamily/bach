@@ -1409,7 +1409,7 @@ void bach_init_bifs(t_bach *x)
     //(*bifTable)["random"] = new t_fnRandom;
     (*bifTable)["bessel"] = new t_mathBinaryFunctionAAA<hatom_fn_jn>("bessel", "x", "order");
     (*bifTable)["approx"] = new t_mathBinaryFunctionAAA<hatom_fn_approx>("approx", "pitch", "tonedivision");
-    (*bifTable)["enharm"] = new t_mathBinaryFunctionAAA<hatom_fn_enharm>("enharm", "x", "y");
+    (*bifTable)["enharm"] = new t_mathBinaryFunctionAAA<hatom_fn_enharm>("enharm", "x", "steps");
     (*bifTable)["makepitchsc"] = new t_mathBinaryFunctionAAA<hatom_fn_makepitchsc>("makepitchsc", "steps", "cents");
 
     //(*bifTable)["makepitch"] = new t_mathUnaryFunctionAA<hatom_fn_makepitch>("makepitch", "degree", "alter", "octave");

@@ -887,7 +887,7 @@ t_llll* t_fnF2mc::call(const t_execEnv &context) {
 ///////////////
 
 
-t_fnJicommas::t_fnJicommas() : t_builtInFunction("commas") {
+t_fnJicommas::t_fnJicommas() : t_builtInFunction("jicommas") {
     setArgument("x", llll_get());
 }
 
