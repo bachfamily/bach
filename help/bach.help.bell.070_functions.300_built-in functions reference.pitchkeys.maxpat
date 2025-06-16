@@ -23,7 +23,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 213.0, 543.0, 152.0 ],
-					"presentation_linecount" : 11,
 					"text" : "The returned keys are\netwhitekey (the white key number of the equal-tempered part, 0 to 6 corresponding to C to B)\netalter (the alteration of the equal-tempered part)\noctave (the octave with respect to C0)\njiwhitekey (the white key number of the just intonation part)\njisharps (the sharps of the just intonation part)\njiplof (the pitch in the line of fifths of the just intonation part)\ncommas (the HEJI commas of the just intonation part)\njiratio (the frequency ratio of the just intonation part with respect to C0)\njiexps (the prime factor exponents of the just intonation part)",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -80,7 +79,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 408.0, 129.5, 131.0, 36.0 ],
-					"text" : "Arguments:\nx (default: 'none')",
+					"text" : "Arguments:\nx (default: null)",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 

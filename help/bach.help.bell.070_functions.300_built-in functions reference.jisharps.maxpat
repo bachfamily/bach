@@ -74,19 +74,19 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "etsharps($x1) ",
+					"code" : "jisharps($x1) ",
 					"id" : "obj-7",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 136.0, 197.0, 23.0 ],
+					"patching_rect" : [ 13.0, 136.0, 191.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
 						"versionnumber" : 80900
 					}
 ,
-					"text" : "bach.eval etsharps($x1) @out m"
+					"text" : "bach.eval jisharps($x1) @out m"
 				}
 
 			}
@@ -100,7 +100,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 408.0, 129.5, 131.0, 36.0 ],
-					"text" : "Arguments:\nx (default: 'none')",
+					"text" : "Arguments:\nx (default: null)",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -115,7 +115,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 9.0, 39.0, 475.0, 36.0 ],
-					"text" : "The etsharps() function returns the number of sharps of the equal-tempered part of one or more pitches. Flats are returned as negative sharps.",
+					"text" : "The jisharps() function returns the number of sharps of the just intonation part of one or more pitches. Flats are returned as negative sharps.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -160,7 +160,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 8.0, 216.0, 23.0 ],
-					"text" : "etsharps() function reference",
+					"text" : "jisharps() function reference",
 					"varname" : "title"
 				}
 

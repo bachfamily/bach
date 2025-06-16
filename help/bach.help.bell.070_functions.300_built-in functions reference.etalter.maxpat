@@ -21,7 +21,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 106.0, 91.0, 96.0, 23.0 ],
-					"presentation_linecount" : 4,
 					"text" : "C#4+1/16t [D6]"
 				}
 
@@ -34,7 +33,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 53.0, 91.0, 33.0, 23.0 ],
-					"presentation_linecount" : 2,
 					"text" : "Gb5"
 				}
 
@@ -104,7 +102,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 408.0, 129.5, 131.0, 36.0 ],
-					"text" : "Arguments:\nx (default: 'none')",
+					"text" : "Arguments:\nx (default: null)",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -119,7 +117,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 9.0, 39.0, 451.0, 36.0 ],
-					"presentation_linecount" : 2,
 					"text" : "The etalter() function returns the alteration in semitones (or fraction thereof) of the equal-tempered part of one or more pitches. ",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}

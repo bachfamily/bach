@@ -10,18 +10,30 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 134.0, 172.0, 617.0, 539.0 ],
+		"rect" : [ 287.0, 409.0, 617.0, 539.0 ],
 		"default_fontsize" : 13.0,
 		"gridsize" : [ 15.0, 15.0 ],
 		"boxes" : [ 			{
+				"box" : 				{
+					"id" : "obj-1",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 121.0, 91.0, 33.0, 23.0 ],
+					"text" : "Gb4"
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"id" : "obj-14",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 106.0, 91.0, 112.0, 23.0 ],
-					"text" : "C1+D#{}3+4r [C0]"
+					"patching_rect" : [ 174.5, 91.0, 93.0, 23.0 ],
+					"text" : "B#4+1/2t [Fx6]"
 				}
 
 			}
@@ -32,8 +44,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 53.0, 91.0, 42.0, 23.0 ],
-					"text" : "Gb{}5"
+					"patching_rect" : [ 65.0, 91.0, 31.0, 23.0 ],
+					"text" : "F#3"
 				}
 
 			}
@@ -44,8 +56,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 91.0, 31.0, 23.0 ],
-					"text" : "F#3"
+					"patching_rect" : [ 13.0, 91.0, 29.5, 23.0 ],
+					"text" : "C3"
 				}
 
 			}
@@ -62,19 +74,19 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "octave($x1) ",
+					"code" : "etsharps($x1) ",
 					"id" : "obj-7",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 136.0, 185.0, 23.0 ],
+					"patching_rect" : [ 13.0, 136.0, 197.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
 						"versionnumber" : 80900
 					}
 ,
-					"text" : "bach.eval octave($x1) @out m"
+					"text" : "bach.eval etsharps($x1) @out m"
 				}
 
 			}
@@ -98,11 +110,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-76",
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 9.0, 39.0, 451.0, 21.0 ],
-					"text" : "The octave() function returns the octave of one or more pitches. ",
+					"patching_rect" : [ 9.0, 39.0, 475.0, 36.0 ],
+					"text" : "The etsharps() function returns the number of sharps of the equal-tempered part of one or more pitches. Flats are returned as negative sharps.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -116,7 +129,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also: pitchkeys",
+					"text" : "See Also: etalter, pitchkeys, jisharps, etplof",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -146,8 +159,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 201.0, 23.0 ],
-					"text" : "octave() function reference",
+					"patching_rect" : [ 6.0, 8.0, 216.0, 23.0 ],
+					"text" : "etsharps() function reference",
 					"varname" : "title"
 				}
 
@@ -169,6 +182,13 @@
 			}
  ],
 		"lines" : [ 			{
+				"patchline" : 				{
+					"destination" : [ "obj-7", 0 ],
+					"source" : [ "obj-1", 0 ]
+				}
+
+			}
+, 			{
 				"patchline" : 				{
 					"destination" : [ "obj-7", 0 ],
 					"source" : [ "obj-14", 0 ]

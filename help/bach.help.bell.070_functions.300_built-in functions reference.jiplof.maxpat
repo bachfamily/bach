@@ -100,7 +100,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 408.0, 129.5, 131.0, 36.0 ],
-					"text" : "Arguments:\nx (default: 'none')",
+					"text" : "Arguments:\nx (default: null)",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 

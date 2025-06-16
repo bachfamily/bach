@@ -15,25 +15,13 @@
 		"gridsize" : [ 15.0, 15.0 ],
 		"boxes" : [ 			{
 				"box" : 				{
-					"id" : "obj-14",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 106.0, 91.0, 112.0, 23.0 ],
-					"text" : "C1+D#{}3+4r [C0]"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-9",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 53.0, 91.0, 42.0, 23.0 ],
-					"text" : "Gb{}5"
+					"id" : "obj-2",
+					"maxclass" : "number",
+					"numinlets" : 1,
+					"numoutlets" : 2,
+					"outlettype" : [ "", "bang" ],
+					"parameter_enable" : 0,
+					"patching_rect" : [ 215.0, 91.0, 50.0, 23.0 ]
 				}
 
 			}
@@ -62,19 +50,19 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "octave($x1) ",
+					"code" : "foldratio($x1, $x2) ",
 					"id" : "obj-7",
 					"maxclass" : "newobj",
-					"numinlets" : 1,
+					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 136.0, 185.0, 23.0 ],
+					"patching_rect" : [ 13.0, 136.0, 221.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
 						"versionnumber" : 80900
 					}
 ,
-					"text" : "bach.eval octave($x1) @out m"
+					"text" : "bach.eval foldratio($x1\\, $x2) @out m"
 				}
 
 			}
@@ -83,12 +71,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-6",
-					"linecount" : 2,
+					"linecount" : 3,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 408.0, 129.5, 131.0, 36.0 ],
-					"text" : "Arguments:\nx (default: null)",
+					"patching_rect" : [ 408.0, 129.5, 131.0, 50.0 ],
+					"text" : "Arguments:\nx (default: null)\ny (default: null)",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -102,7 +90,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 9.0, 39.0, 451.0, 21.0 ],
-					"text" : "The octave() function returns the octave of one or more pitches. ",
+					"text" : "The foldratio() function returns the ",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -116,7 +104,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also: pitchkeys",
+					"text" : "See Also: degree, octave, alter, pitchkeys, jisharps, etsharps",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -146,8 +134,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 201.0, 23.0 ],
-					"text" : "octave() function reference",
+					"patching_rect" : [ 6.0, 8.0, 214.0, 23.0 ],
+					"text" : "foldratio() function reference",
 					"varname" : "title"
 				}
 
@@ -170,8 +158,8 @@
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
-					"destination" : [ "obj-7", 0 ],
-					"source" : [ "obj-14", 0 ]
+					"destination" : [ "obj-7", 1 ],
+					"source" : [ "obj-2", 0 ]
 				}
 
 			}
@@ -186,13 +174,6 @@
 				"patchline" : 				{
 					"destination" : [ "obj-7", 0 ],
 					"source" : [ "obj-8", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-7", 0 ],
-					"source" : [ "obj-9", 0 ]
 				}
 
 			}
