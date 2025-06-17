@@ -133,7 +133,7 @@ public:
         setArgument("jiwhitekey", 0L);
         setArgument("jisharps", 0L);
         setArgument("jiplof", 0L);
-        setArgument("commas");
+        setArgument("jicommas");
         setArgument("jiratio", new astConst(t_rational(0, 1)));
         setArgument("jiexps");
         setArgument("jilimit", 47L);
