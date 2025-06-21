@@ -141,7 +141,7 @@
 	<seealsolist>
 		<seealso name="matrixctrl" />
 		<seealso name="bach.m2matrixctrl" />
-		<seealso name="16-Into The Matrix" module="bach" type="tutorial" />
+		<seealso name="" module="bach" type="tutorial" />
 	</seealsolist>
 
 	<misc name = "Input">

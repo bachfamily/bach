@@ -116,7 +116,7 @@
 	<seealsolist>
 		<seealso name="bach.omtree2bachtree" />
 		<seealso name="bach.score" />
-		<seealso name="10-The World Outside" module="bach" type="tutorial" />
+		<seealso name="" module="bach" type="tutorial" />
 	</seealsolist>
 
 	<misc name = "Input">

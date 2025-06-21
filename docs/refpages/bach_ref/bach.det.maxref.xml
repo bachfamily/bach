@@ -126,7 +126,7 @@
 		<seealso name="bach.gausselim" />
 		<seealso name="bach.rank" />
 		<seealso name="bach.inv" />
-		<seealso name="16-Into The Matrix" module="bach" type="tutorial" />
+		<seealso name="" module="bach" type="tutorial" />
 	</seealsolist>
 
 	<misc name = "Input">

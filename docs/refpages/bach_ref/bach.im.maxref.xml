@@ -104,6 +104,7 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Make Unitary" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
@@ -155,7 +156,7 @@
 		<seealso name="bach.extractbasis" />
 		<seealso name="bach.trans" />
 		<seealso name="bach.gausselim" />
-		<seealso name="16-Into The Matrix" module="bach" type="tutorial" />
+		<seealso name="" module="bach" type="tutorial" />
 	</seealsolist>
 
 	<misc name = "Input">
