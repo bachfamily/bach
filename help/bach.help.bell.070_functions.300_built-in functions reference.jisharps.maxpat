@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 287.0, 409.0, 617.0, 539.0 ],
+		"rect" : [ 103.0, 141.0, 617.0, 539.0 ],
 		"default_fontsize" : 13.0,
 		"gridsize" : [ 15.0, 15.0 ],
 		"boxes" : [ 			{
@@ -129,7 +129,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also: etalter, pitchkeys, jisharps, etplof",
+					"text" : "See Also: etalter, pitchkeys, jisharps, etplof, makepitch",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}

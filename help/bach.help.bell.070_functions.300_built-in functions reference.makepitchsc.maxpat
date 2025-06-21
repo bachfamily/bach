@@ -23,7 +23,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 340.0, 95.0, 178.0, 25.0 ],
-					"presentation_linecount" : 2,
 					"text" : "Try different combinations!",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -49,7 +48,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 241.0, 96.0, 37.0, 23.0 ],
-					"presentation_linecount" : 2,
 					"text" : "6000"
 				}
 
@@ -143,8 +141,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 9.0, 39.0, 417.0, 36.0 ],
-					"presentation_linecount" : 2,
+					"patching_rect" : [ 9.0, 39.0, 418.0, 36.0 ],
 					"text" : "The makepitchsc() function returns an equal-tempered pitch calculated from its diatonic steps (with C0 corresponding to 0 steps) and cents.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -159,7 +156,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also: pitchkeys, etalter, jisharps, etplof",
+					"text" : "See Also: makepitch, enharm",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
