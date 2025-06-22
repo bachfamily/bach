@@ -57,12 +57,26 @@
 				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "operator", "precedence", "paren" ],
 				"title" : [ "Precedence" ]
 			},
+			"Basicunaryoperators" : {
+				"filename" : [ "bach.help.bell.010_basics.060_basicunaryoperators.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "concatenation", "whitespace", "bell+llll" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "unary", "operator" ],
+				"title" : [ "Basic Unary Operators" ]
+			},
 			"Unaryoperators" : {
 				"filename" : [ "bach.help.bell.010_basics.060_unaryoperators.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
 				"seealso" : [ "concatenation", "whitespace", "bell+llll" ],
 				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "unary", "operator" ],
 				"title" : [ "Unary operators" ]
+			},
+			"Unarypitchoperators" : {
+				"filename" : [ "bach.help.bell.010_basics.065_unarypitchoperators.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "local" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "unary", "operator", "pitch", "r", "t" ],
+				"title" : [ "Unary Pitch Operators" ]
 			},
 			"Retrievalofelements" : {
 				"filename" : [ "bach.help.bell.010_basics.070_retrievalofelements.maxpat" ],
