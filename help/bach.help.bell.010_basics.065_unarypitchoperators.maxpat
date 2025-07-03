@@ -15,6 +15,46 @@
 		"gridsize" : [ 15.0, 15.0 ],
 		"boxes" : [ 			{
 				"box" : 				{
+					"id" : "obj-7",
+					"maxclass" : "newobj",
+					"numinlets" : 0,
+					"numoutlets" : 0,
+					"patcher" : 					{
+						"fileversion" : 1,
+						"appversion" : 						{
+							"major" : 9,
+							"minor" : 0,
+							"revision" : 6,
+							"architecture" : "x64",
+							"modernui" : 1
+						}
+,
+						"classnamespace" : "box",
+						"rect" : [ 238.0, 103.0, 1000.0, 755.0 ],
+						"gridsize" : [ 15.0, 15.0 ],
+						"boxes" : [ 							{
+								"box" : 								{
+									"id" : "obj-2",
+									"linecount" : 2,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 49.0, 36.0, 304.0, 33.0 ],
+									"text" : "The r and t operator have the same precedence, between that of multiplication and addition."
+								}
+
+							}
+ ],
+						"lines" : [  ]
+					}
+,
+					"patching_rect" : [ 313.0, 74.0, 172.0, 23.0 ],
+					"text" : "p \"a note about precedence\""
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"bubble" : 1,
 					"bubblepoint" : 0.97,
 					"bubbleside" : 2,
@@ -56,7 +96,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 122.0, 359.0, 426.0, 40.0 ],
-					"presentation_linecount" : 2,
 					"text" : "All of the above applies to r (the just intonation harmonic ratio) as well"
 				}
 
@@ -81,7 +120,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 465.0, 389.5, 41.0, 23.0 ],
-					"presentation_linecount" : 2,
 					"text" : "81/16"
 				}
 
@@ -301,7 +339,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 193.0, 308.0, 404.0, 40.0 ],
-					"presentation_linecount" : 2,
 					"text" : "the chromatic deviation doesn't need to be added to a pitch. By itself, it produced a C0 pitch with the specified deviation."
 				}
 
@@ -314,7 +351,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 81.0, 181.0, 31.0, 23.0 ],
-					"presentation_linecount" : 2,
 					"text" : "-1/2"
 				}
 
@@ -383,8 +419,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 193.0, 201.0, 404.0, 54.0 ],
-					"presentation_linecount" : 4,
+					"patching_rect" : [ 193.0, 201.0, 405.0, 54.0 ],
 					"text" : "Because t is an operator, you can write things like this. Notice the space between $x1 and t: without a space, $x1t would have been considered a local variable."
 				}
 

@@ -10,9 +10,10 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 90.0, 320.0, 981.0, 579.0 ],
+		"rect" : [ 216.0, 100.0, 963.0, 579.0 ],
 		"gridsize" : [ 5.0, 5.0 ],
-		"showontab" : 1,
+		"showrootpatcherontab" : 0,
+		"showontab" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
 					"fontname" : "Arial",
@@ -32,7 +33,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 981.0, 553.0 ],
+						"rect" : [ 0.0, 26.0, 963.0, 553.0 ],
 						"default_fontsize" : 13.0,
 						"gridsize" : [ 5.0, 5.0 ],
 						"showontab" : 1,
@@ -1628,7 +1629,6 @@
 					}
 ,
 					"patching_rect" : [ 124.0, 360.0, 147.0, 22.0 ],
-					"presentation_linecount" : 2,
 					"saved_object_attributes" : 					{
 						"fontsize" : 13.0
 					}
@@ -1657,7 +1657,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 981.0, 553.0 ],
+						"rect" : [ 0.0, 26.0, 963.0, 553.0 ],
 						"default_fontsize" : 13.0,
 						"gridsize" : [ 5.0, 5.0 ],
 						"showontab" : 1,
@@ -2363,7 +2363,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 981.0, 553.0 ],
+						"rect" : [ 0.0, 26.0, 963.0, 553.0 ],
 						"default_fontsize" : 13.0,
 						"gridsize" : [ 5.0, 5.0 ],
 						"showontab" : 1,
@@ -2920,7 +2920,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 981.0, 553.0 ],
+						"rect" : [ 0.0, 26.0, 963.0, 553.0 ],
 						"default_fontsize" : 13.0,
 						"gridsize" : [ 5.0, 5.0 ],
 						"showontab" : 1,
@@ -3448,7 +3448,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 981.0, 553.0 ],
+						"rect" : [ 0.0, 26.0, 963.0, 553.0 ],
 						"default_fontsize" : 13.0,
 						"gridsize" : [ 5.0, 5.0 ],
 						"showontab" : 1,
@@ -4366,7 +4366,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 981.0, 553.0 ],
+						"rect" : [ 0.0, 26.0, 963.0, 553.0 ],
 						"default_fontsize" : 13.0,
 						"gridsize" : [ 5.0, 5.0 ],
 						"showontab" : 1,
@@ -5127,7 +5127,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 981.0, 553.0 ],
+						"rect" : [ 0.0, 26.0, 963.0, 553.0 ],
 						"default_fontsize" : 13.0,
 						"gridsize" : [ 5.0, 5.0 ],
 						"showontab" : 1,
@@ -5493,7 +5493,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 981.0, 553.0 ],
+						"rect" : [ 0.0, 26.0, 963.0, 553.0 ],
 						"default_fontsize" : 13.0,
 						"gridsize" : [ 5.0, 5.0 ],
 						"showontab" : 1,
@@ -5850,7 +5850,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 981.0, 553.0 ],
+						"rect" : [ 0.0, 26.0, 963.0, 553.0 ],
 						"default_fontsize" : 13.0,
 						"gridsize" : [ 5.0, 5.0 ],
 						"showontab" : 1,
@@ -5978,7 +5978,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 981.0, 553.0 ],
+						"rect" : [ 216.0, 126.0, 963.0, 553.0 ],
 						"default_fontsize" : 13.0,
 						"gridsize" : [ 5.0, 5.0 ],
 						"showontab" : 1,
@@ -6385,7 +6385,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 981.0, 553.0 ],
+						"rect" : [ 0.0, 26.0, 963.0, 553.0 ],
 						"default_fontsize" : 13.0,
 						"gridsize" : [ 5.0, 5.0 ],
 						"showontab" : 1,
@@ -6489,13 +6489,6 @@
 				"type" : "iLaX"
 			}
 , 			{
-				"name" : "bach.help.bell.070_functions.300_built-in functions reference.map.maxpat",
-				"bootpath" : "~/Documents/Max 8/Packages/bach/help",
-				"patcherrelativepath" : ".",
-				"type" : "JSON",
-				"implicit" : 1
-			}
-, 			{
 				"name" : "bach.help.home.maxpat",
 				"bootpath" : "~/Documents/Max 8/Packages/bach/help",
 				"patcherrelativepath" : ".",
@@ -6503,7 +6496,7 @@
 				"implicit" : 1
 			}
 , 			{
-				"name" : "bach.help.searchtag.maxpat",
+				"name" : "bach.help.welcome.maxpat",
 				"bootpath" : "~/Documents/Max 8/Packages/bach/help",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",

@@ -97,6 +97,14 @@
 
 	<!--ARGUMENTS-->
 	<objarglist>
+		<objarg name="default" optional="1" type="llll">
+			<digest>
+				Default second llll
+			</digest>
+			<description>
+				An optional second-inlet llll.
+			</description>
+		</objarg>
 	</objarglist>
 
 	<!--MESSAGES-->

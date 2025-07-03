@@ -128,8 +128,7 @@ VERSION NOTES:
 
 - bach.circle: has a new @phase attribute
 
-- bell: bach.sum, bach.prod now work
-        lists of . and : operations do not cause "out of memory" errors anymore
+- bach.diff, bach.intersection, bach.symdiff, bach.union: second-inlet llll can be set as object argument
 
 - bach.urn: fixed behavior with @autoclear 1
 
