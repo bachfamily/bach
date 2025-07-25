@@ -6550,7 +6550,7 @@
 				<br /> <br />
 			</description>
 			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Accidental Graphic" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
@@ -6573,7 +6573,7 @@
 				<br /> <br />
 			</description>
 			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Accidental Preferences" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
@@ -7427,6 +7427,28 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
+		<attribute name="eighthtonearrow" get="1" set="1" type="int" size="1">
+			<digest>
+				Eighth-Tone Arrow Display
+			</digest>
+			<description>
+				Decides how to use eighth-tone arrows: <br />
+				- According To Direction: upward accidentals always get upward arrows, downward accidentals always get downward arrows.
+				This means, for instance, that <b>Fq^5</b> is displayed instead of <b>F#v5</b>. <br />
+				- On Semitonal Accidentals Only: arrows are only placed on semitonal accidentals.
+				This means, for instance, that <b>F#v5</b> is displayed instead of <b>Fq^5</b>.
+				This feature is only supported for the (default) Bravura font.
+				<br /> <br />
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Eighth-Tone Arrow Display" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
+			</attributelist>
+		</attribute>
 		<attribute name="embed" get="1" set="1" type="int" size="1">
 			<digest>
 				Save Data With Patcher
@@ -7494,7 +7516,7 @@
 				<br /> <br />
 			</description>
 			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
 				<attribute name="default" get="1" set="1" type="sym_array" size="0" value="default" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Custom Enharmonic Table" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />

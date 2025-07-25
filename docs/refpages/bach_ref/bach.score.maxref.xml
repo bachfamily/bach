@@ -1821,34 +1821,6 @@
 				<br />				See also:<m>changeslotitem</m>,<m>prependslotitem</m>,<m>insertslotitem</m>,<m>deleteslotitem</m>,<m>setslot</m>,<m>eraseslot</m><br />
 			</description>
 		</method>
-		<method name="approxet">
-			<arg name="tonedivision" optional="1" type="int" />
-			<digest>
-				Approximate selected pitches to equal temperament
-			</digest>
-			<description>
-				Syntax: <b>approxet <m>[&lt;int: tonedivision&gt;]</m> </b><br />				<br />
-				The <m>approxet</m> message approximates the pitches of each selected note to the
-				currently defined equal temperament (see the <m>tonedivision</m> attribute).
-				If an additional integer argument is provided, it is consider to be a custom tonedivision
-				for the approximation
-				<br />				See also:<m>snappitchtogrid</m>,<m>approxji</m><br />
-			</description>
-		</method>
-		<method name="approxji">
-			<arg name="jilimit" optional="1" type="int" />
-			<digest>
-				Approximate selected pitches with just intonation
-			</digest>
-			<description>
-				Syntax: <b>approxji <m>[&lt;int: jilimit&gt;]</m> </b><br />				<br />
-				The <m>approxji</m> message approximates the pitches of each selected note to the
-				currently defined just intonation limit (see the <m>jilimit</m> attribute).
-				If an additional integer argument is provided, it is consider to be the custom prime limit
-				for the approximation
-				<br />				See also:<m>snappitchtogrid</m>,<m>approxet</m><br />
-			</description>
-		</method>
 		<method name="autobeam">
 			<arglist />
 			<digest>
@@ -2395,20 +2367,6 @@
 		<method name="delete">
 			<arglist />
 			<digest>
-				Delete content of currently selected measures
-			</digest>
-			<description>
-				Message attributes:<br />
-				<m>@transferslots</m> (llll, default: null): If non-null, when deleting notes from a chord, these slots will be transfered to another chord note whenever possible<br />
-				<m>@empty</m> (int, default: 0): Also transfer empty slots<br />
-				<m>@torests</m> (int, default: 0): Also transfer slots to rests<br />
-				<br />
-				You can use <m>deletemeasurecontent</m> to delete all the notes in a measure while preserving the measure.
-			</description>
-		</method>
-		<method name="delete">
-			<arglist />
-			<digest>
 				Delete current selected items
 			</digest>
 			<description>
@@ -2434,6 +2392,20 @@
 				use "dynamics", "lyrics", "noteheads", "articulations", "annotation" instead of slot numbers.
 				Use the additional "@empty" message argument in order to tell with a 0/1 integer whether empty slots should also be transfered (by default: 0 = false).
 				<br />				See also:<m>eraseslot</m>,<m>deletemeasures</m><br />
+			</description>
+		</method>
+		<method name="delete">
+			<arglist />
+			<digest>
+				Delete content of currently selected measures
+			</digest>
+			<description>
+				Message attributes:<br />
+				<m>@transferslots</m> (llll, default: null): If non-null, when deleting notes from a chord, these slots will be transfered to another chord note whenever possible<br />
+				<m>@empty</m> (int, default: 0): Also transfer empty slots<br />
+				<m>@torests</m> (int, default: 0): Also transfer slots to rests<br />
+				<br />
+				You can use <m>deletemeasurecontent</m> to delete all the notes in a measure while preserving the measure.
 			</description>
 		</method>
 		<method name="deletegrace">
@@ -3636,6 +3608,20 @@
 				Instead of the slot number, you can use slot names, or you can the word "active" to refer to the currently open slot,
 				or the word "all" to clear all slots.
 				<br />				See also:<m>setslot</m>,<m>changeslotitem</m><br />
+			</description>
+		</method>
+		<method name="etapprox">
+			<arg name="tonedivision" optional="1" type="int" />
+			<digest>
+				Approximate selected pitches to equal temperament
+			</digest>
+			<description>
+				Syntax: <b>etapprox <m>[&lt;int: tonedivision&gt;]</m> </b><br />				<br />
+				The <m>approxet</m> message approximates the pitches of each selected note to the
+				currently defined equal temperament (see the <m>tonedivision</m> attribute).
+				If an additional integer argument is provided, it is consider to be a custom tonedivision
+				for the approximation
+				<br />				See also:<m>snappitchtogrid</m>,<m>jiapprox</m><br />
 			</description>
 		</method>
 		<method name="exportimage">
@@ -5433,6 +5419,20 @@
 				<br />				See also:<m>getcurrentchord</m>,<m>sample</m><br />
 			</description>
 		</method>
+		<method name="jiapprox">
+			<arg name="jilimit" optional="1" type="int" />
+			<digest>
+				Approximate selected pitches with just intonation
+			</digest>
+			<description>
+				Syntax: <b>jiapprox <m>[&lt;int: jilimit&gt;]</m> </b><br />				<br />
+				The <m>approxji</m> message approximates the pitches of each selected note to the
+				currently defined just intonation limit (see the <m>jilimit</m> attribute).
+				If an additional integer argument is provided, it is consider to be the custom prime limit
+				for the approximation
+				<br />				See also:<m>snappitchtogrid</m>,<m>etapprox</m><br />
+			</description>
+		</method>
 		<method name="join">
 			<arglist />
 			<digest>
@@ -6283,22 +6283,6 @@
 		<method name="name">
 			<arg name="names" optional="0" type="llll" />
 			<digest>
-				Append name(s) to selected items
-			</digest>
-			<description>
-				Syntax: <b>name <m>&lt;llll: names&gt;</m> </b><br />
-				Examples:<br />
-				• <b>name Ringo</b>   <i>→ append 'Ringo' to selected element's names</i><br />
-				• <b>name [Ringo Starr] [[Low High Snare] [Sizzle Crash]]</b>   <i>→ append complex llll name</i><br />
-				<br />
-				Works like the <m>name</m> message, but appends the given names
-				to the already existing ones (see <m>name</m>).
-				<br />				See also:<m>name</m>,<m>clearnames</m><br />
-			</description>
-		</method>
-		<method name="name">
-			<arg name="names" optional="0" type="llll" />
-			<digest>
 				Assign name(s) to selected items
 			</digest>
 			<description>
@@ -6323,6 +6307,22 @@
 				If a <b>@progeny 1</b> attribute is added and chords are selected, not only the chord name is changed, but also the name of all its notes.
 				This is handy for instance, if one needs to send <b>name @progeny 1</b> to delete all names of selected chords and notes.
 				<br />				See also:<m>nameappend</m>,<m>clearnames</m>,<m>sel</m>,<m>unsel</m>,<m>select</m><br />
+			</description>
+		</method>
+		<method name="name">
+			<arg name="names" optional="0" type="llll" />
+			<digest>
+				Append name(s) to selected items
+			</digest>
+			<description>
+				Syntax: <b>name <m>&lt;llll: names&gt;</m> </b><br />
+				Examples:<br />
+				• <b>name Ringo</b>   <i>→ append 'Ringo' to selected element's names</i><br />
+				• <b>name [Ringo Starr] [[Low High Snare] [Sizzle Crash]]</b>   <i>→ append complex llll name</i><br />
+				<br />
+				Works like the <m>name</m> message, but appends the given names
+				to the already existing ones (see <m>name</m>).
+				<br />				See also:<m>name</m>,<m>clearnames</m><br />
 			</description>
 		</method>
 		<method name="nametoslot">
@@ -7164,15 +7164,10 @@
 		<method name="resetslotinfo">
 			<arglist />
 			<digest>
-				Reset the slotinfo to the default one
+				Reset the commands to the default one
 			</digest>
 			<description>
-				A <m>resetslotinfo</m> message will reset the all the <m>slotinfo</m> to the original one.
-				Beware that this may entail slot type conversions, which might result in loss of data if slot types are not compatible.
-				The slotinfo is the information about the types, ranges and many further characteristics of each one of the slots.
-				For bach.roll and bach.score, it is a global information: changing the slotinfo for a given slot will
-				affect such slot for all the notes inside the notation object. See the <m>llll</m> method to know more about its syntax.
-				<br />				See also:<m>eraseslot</m><br />
+				A <m>resetcommands</m> message will reset the all the <m>comnands</m> to the original ones
 			</description>
 		</method>
 		<method name="resetslotinfo">
@@ -7188,20 +7183,25 @@
 		<method name="resetslotinfo">
 			<arglist />
 			<digest>
-				Reset the custom articulations definition to the default one
+				Reset the slotinfo to the default one
 			</digest>
 			<description>
-				A <m>resetarticulationinfo</m> message will reset the all the <m>articulationinfo</m> to the original one, i.e. will delete
-				all the user-defined articulations.
+				A <m>resetslotinfo</m> message will reset the all the <m>slotinfo</m> to the original one.
+				Beware that this may entail slot type conversions, which might result in loss of data if slot types are not compatible.
+				The slotinfo is the information about the types, ranges and many further characteristics of each one of the slots.
+				For bach.roll and bach.score, it is a global information: changing the slotinfo for a given slot will
+				affect such slot for all the notes inside the notation object. See the <m>llll</m> method to know more about its syntax.
+				<br />				See also:<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="resetslotinfo">
 			<arglist />
 			<digest>
-				Reset the commands to the default one
+				Reset the custom articulations definition to the default one
 			</digest>
 			<description>
-				A <m>resetcommands</m> message will reset the all the <m>comnands</m> to the original ones
+				A <m>resetarticulationinfo</m> message will reset the all the <m>articulationinfo</m> to the original one, i.e. will delete
+				all the user-defined articulations.
 			</description>
 		</method>
 		<method name="resetwidthfactors">
@@ -8586,6 +8586,19 @@
 		<method name="unsel">
 			<arg name="arguments" optional="0" type="llll" />
 			<digest>
+				Deselect items
+			</digest>
+			<description>
+				Syntax: <b>unsel <m>&lt;llll: arguments&gt;</m> </b><br />				<br />
+				The message <m>unsel</m> works in the opposite way of the message <m>sel</m>, i.e. deselect
+				notation items (removes them from the current selection). Refer to the message <m>sel</m> to know more about the
+				syntax, since it is exactly the same.
+				<br />				See also:<m>sel</m>,<m>select</m>,<m>subsel</m>,<m>clearselection</m><br />
+			</description>
+		</method>
+		<method name="unsel">
+			<arg name="arguments" optional="0" type="llll" />
+			<digest>
 				Involutively select items
 			</digest>
 			<description>
@@ -8596,19 +8609,6 @@
 				Refer to the message <m>sel</m> to know more about the syntax, since it is exactly the same.
 				The only exception is for the <m>select all</m> message, which does not work involutively and always select all the notation items.
 				<br />				See also:<m>sel</m>,<m>unsel</m>,<m>subsel</m>,<m>clearselection</m><br />
-			</description>
-		</method>
-		<method name="unsel">
-			<arg name="arguments" optional="0" type="llll" />
-			<digest>
-				Deselect items
-			</digest>
-			<description>
-				Syntax: <b>unsel <m>&lt;llll: arguments&gt;</m> </b><br />				<br />
-				The message <m>unsel</m> works in the opposite way of the message <m>sel</m>, i.e. deselect
-				notation items (removes them from the current selection). Refer to the message <m>sel</m> to know more about the
-				syntax, since it is exactly the same.
-				<br />				See also:<m>sel</m>,<m>select</m>,<m>subsel</m>,<m>clearselection</m><br />
 			</description>
 		</method>
 		<method name="unsolo">
@@ -8865,7 +8865,7 @@
 				<br /> <br />
 			</description>
 			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Accidental Graphic" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
@@ -8888,7 +8888,7 @@
 				<br /> <br />
 			</description>
 			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Accidental Preferences" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
@@ -10087,6 +10087,28 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
+		<attribute name="eighthtonearrow" get="1" set="1" type="int" size="1">
+			<digest>
+				Eighth-Tone Arrow Display
+			</digest>
+			<description>
+				Decides how to use eighth-tone arrows: <br />
+				- According To Direction: upward accidentals always get upward arrows, downward accidentals always get downward arrows.
+				This means, for instance, that <b>Fq^5</b> is displayed instead of <b>F#v5</b>. <br />
+				- On Semitonal Accidentals Only: arrows are only placed on semitonal accidentals.
+				This means, for instance, that <b>F#v5</b> is displayed instead of <b>Fq^5</b>.
+				This feature is only supported for the (default) Bravura font.
+				<br /> <br />
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Eighth-Tone Arrow Display" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
+			</attributelist>
+		</attribute>
 		<attribute name="embed" get="1" set="1" type="int" size="1">
 			<digest>
 				Save Data With Patcher
@@ -10154,7 +10176,7 @@
 				<br /> <br />
 			</description>
 			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
 				<attribute name="default" get="1" set="1" type="sym_array" size="0" value="default" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Custom Enharmonic Table" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
@@ -14240,33 +14262,6 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
-			</attributelist>
-		</attribute>
-		<attribute name="spacingtype" get="1" set="1" type="int" size="1">
-			<digest>
-				Spacing Type
-			</digest>
-			<description>
-				Sets the spacing algorithm: <br />
-				- Smart (default): as the "Note/Time Signature" algorithm, but where the proportionality parameter is automatically inferred, and may
-				vary from measure to measure depending on the musical content. <br />
-				- Note/Time Signature: strikes a balance between two algorithms: a "Note" algorithm, where spacing takes only into account the actual width of each
-				chord and note (independently from its duration), and a "Time Signature" algorithm, where spacing takes only into account the symbolic onset of each
-				chord inside the measure (independently from how much space is required to display it). The balance between these two algorithms is handled via the
-				attribute <m>spacingproportionality</m>: when it is 0 one has the pure Note algorithm, when it is 1 one has the pure Time Signature algorithm. Any value in
-				between is allowed. <br />
-				- Proportional: music content is displayed as if it were in a <o>bach.roll</o>, i.e. proportionally to absolute durations (in milliseconds) and onsets.
-				notation elements such as time signatures or barlines are preserved, but might superpose to notes or chords. <br />
-				- Spring: display spacing using a modelization where each chords is attached to two imaginary "springs", connecting it to the next and the previous one.
-				Spacing is thus the overall result of this physical model.
-			</description>
-			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
-				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Spacing Type" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
 		<attribute name="staffcolor" get="1" set="1" type="rgba" size="1">

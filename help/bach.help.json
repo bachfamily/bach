@@ -1281,6 +1281,13 @@
 				"tags" : [ "accidental", "preference", "sharp", "flat", "accidentalpreferences", "above", "below" ],
 				"title" : [ "Accidental preferences" ]
 			},
+			"Eighthtonearrow" : {
+				"filename" : [ "bach.help.notation.accidentals and microtones.05_eighthtonearrow.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "accidental+preferences" ],
+				"tags" : [ "accidental", "preference", "sharp", "flat", "accidentalpreferences", "above", "below", "arrow", "direction", "eighth", "tone", "eighthtone", "eighthtonearrow", "semitone", "semitonal", "placement" ],
+				"title" : [ "Eighth-tone arrow direction" ]
+			},
 			"Semitonalenharmonictable" : {
 				"filename" : [ "bach.help.notation.accidentals and microtones.10_semitonalenharmonictable.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],

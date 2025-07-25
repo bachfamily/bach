@@ -25638,12 +25638,15 @@ void assign_chord_lyrics(t_notation_obj *r_ob, t_chord *chord, t_jfont *jf_lyric
             chord->lyrics->lyrics_uwidth = width;
             chord->lyrics->lyrics_uheight = height;
             
-            if (r_ob->lyrics_alignment == 2 || r_ob->lyrics_alignment == 0) // center or smart // TO DO: smart has to be perfected
+            if (r_ob->lyrics_alignment == k_ALIGNMENT_CENTER || r_ob->lyrics_alignment == k_ALIGNMENT_AUTO) { // TO DO: auto has to be perfected
                 chord->lyrics->lyrics_ux_shift = - width/2.;
-            else if (r_ob->lyrics_alignment == 3) // right
-                chord->lyrics->lyrics_ux_shift = - width;
-            else
-                chord->lyrics->lyrics_ux_shift = 0;
+            } else if (r_ob->lyrics_alignment == k_ALIGNMENT_RIGHT) {
+                double nh_uwidth = chord_get_right_notehead_uwidth(r_ob, chord);
+                chord->lyrics->lyrics_ux_shift = -width + nh_uwidth * 0.5;
+            } else { // k_ALIGNMENT_LEFT
+                double nh_uwidth = chord_get_right_notehead_uwidth(r_ob, chord);
+                chord->lyrics->lyrics_ux_shift = - nh_uwidth;
+            }
         }
     }
 }
