@@ -1425,7 +1425,7 @@ void notationobj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_di
     t_atom_long velocityhandling = -1, notificationsformessages = -1, showtempointerpline = 0, continuousbang = -1;
     char brand_new_creation = 0;
     double annotationfontsize = 0;
-    long annotationalignment = 0, showpartbrackets = 0;
+    t_atom_long annotationalignment = 0, showpartbrackets = 0;
 
 
     long num_voices_from_argument = -1; // = no need to set num voices

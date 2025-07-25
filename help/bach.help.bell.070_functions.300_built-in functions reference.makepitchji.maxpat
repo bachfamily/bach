@@ -23,7 +23,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 9.0, 225.0, 542.0, 36.0 ],
-					"presentation_linecount" : 4,
 					"text" : "The essential reason for makepitchji() is compatibility with bach.expr. In bell, it is probably more convenient to use the more general makepitch(), which has non-null defaults.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -144,7 +143,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also: pitchkeys, etalter, jisharps, etplof",
+					"text" : "See Also: makepitch, ji",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -189,7 +188,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: evaluation, language, script, scripting, code, bell, built, in, function, pitch, alteration, equal, tempered",
+					"text" : "Tags: evaluation, language, script, scripting, code, bell, built, in, function, pitch, makepitchji",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
