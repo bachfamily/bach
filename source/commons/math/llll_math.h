@@ -37,8 +37,8 @@
 #define LOG_2 0.693147180559945309417232121458176568 // ln(2)
 #define M_LN2 LOG_2
 #define bach_jn _jn
-#define isnan(x) _isnan(x)
-#define isinf(x) (!_finite(x))
+//#define isnan(x) _isnan(x)
+//#define isinf(x) (!_finite(x))
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 BEGIN_CHECK_LINKAGE

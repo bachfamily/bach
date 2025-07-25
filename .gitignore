@@ -6,11 +6,13 @@ externals/*
 *.mxe
 *.mxe64
 *.a
+*.lib
 
 # Temp build locations #
 source/vs/vs_stuff/*
 source/vs/.vs/*
 **/macosxbuild/*
+**/.vs/*
 
 
 # OS generated files #
@@ -35,6 +37,12 @@ Thumbs.db
 *.vcxproj.user
 UpgradeLog.htm
 *.aps
+
+
+# Visual Studio Code User Data #
+###########################
+**/.vscode/*
+
 
 # Emacs temp files for .gitignore and .gitattributes #
 ######################################################
