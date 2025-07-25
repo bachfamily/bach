@@ -10090,6 +10090,12 @@ void process_chord_parameters_calculation_NOW(t_roll *x){
                 chord_assign_dynamics((t_notation_obj *) x, curr_ch, jf_dynamics_nozoom, jf_dynamics_roman_nozoom);
                 compute_middleC_position_for_all_voices((t_notation_obj *) x);
                 chord_calculate_parameters((t_notation_obj *) x, curr_ch, true);
+                
+                if (x->r_ob.lyrics_alignment == k_ALIGNMENT_RIGHT || x->r_ob.lyrics_alignment == k_ALIGNMENT_LEFT) {
+                    // we call assign_chord_lyrics() twice because notehead size and position may need to
+                    // be taken into account. and this is only handled bychord_calculate_parameters()
+                    assign_chord_lyrics((t_notation_obj *) x, curr_ch, jf_lyrics_nozoom);
+                }
                 curr_ch->need_recompute_parameters = false;
             }
         }
