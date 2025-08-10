@@ -3210,7 +3210,7 @@ void get_legend(t_notation_obj *r_ob, t_note *curr_nt, t_bpt *selected_breakpoin
 
         if (r_ob->show_note_names) {
             char notename[255];
-            note_get_pitch(r_ob, temp_nt).toTextBuf(notename, 255);
+            note_get_pitch_for_legend(r_ob, temp_nt).toTextBuf(notename, 255);
             if (obj_type == k_NOTATION_OBJECT_SCORE)
                 snprintf(legend_text, 255, "%s   Cents %.1f   Duration " RATIONAL_PRINTF_FMT "   Velocity %ld   Onset %s   Duration %s", notename, temp_nt->midicents, temp_nt->parent->r_sym_duration.r_num, temp_nt->parent->r_sym_duration.r_den, temp_nt->velocity, onset_text, dur_text);
             else if (obj_type == k_NOTATION_OBJECT_ROLL)
@@ -3497,7 +3497,7 @@ void notationobj_get_legend(t_notation_obj *r_ob, char *legend_text)
 
         std::string legend;
         if (r_ob->show_note_names) {
-            legend += note_get_pitch(r_ob, nt).toString();
+            legend += note_get_pitch_for_legend(r_ob, nt).toString();
             legend += "   ";
         }
         
@@ -3563,7 +3563,7 @@ void notationobj_get_legend(t_notation_obj *r_ob, char *legend_text)
     /*
         if (r_ob->show_note_names) {
             char notename[255];
-            note_get_pitch(r_ob, nt).toTextBuf(notename, 255);
+            note_get_pitch_for_legend(r_ob, nt).toTextBuf(notename, 255);
             if (obj_type == k_NOTATION_OBJECT_SCORE)
                 snprintf(legend_text, 255, "%s   Cents %.1f   Duration " RATIONAL_PRINTF_FMT "   Velocity %ld   Onset %s   Duration %s", notename, nt->midicents, nt->parent->r_sym_duration.r_num, nt->parent->r_sym_duration.r_den, nt->velocity, onset_text, dur_text);
             else if (obj_type == k_NOTATION_OBJECT_ROLL)
@@ -3644,7 +3644,7 @@ void notationobj_get_legend(t_notation_obj *r_ob, char *legend_text)
                     t_note *nt = start->firstnote;
                     if (r_ob->show_note_names) {
                         char notename[255];
-                        note_get_pitch(r_ob, nt).toTextBuf(notename, 255);
+                        note_get_pitch_for_legend(r_ob, nt).toTextBuf(notename, 255);
                         if (obj_type == k_NOTATION_OBJECT_SCORE)
                             snprintf(legend_text, 255, "%s   Cents %.1f   Duration " RATIONAL_PRINTF_FMT "   Velocity %ld   Onset %s   Duration %s", notename, nt->midicents, sym_duration.r_num, sym_duration.r_den, nt->velocity, onset_text, dur_text);
                         else if (obj_type == k_NOTATION_OBJECT_ROLL)
@@ -3681,7 +3681,7 @@ void notationobj_get_legend(t_notation_obj *r_ob, char *legend_text)
                 t_note *nt = startnt;
                 if (r_ob->show_note_names) {
                     char notename[255];
-                    note_get_pitch(r_ob, nt).toTextBuf(notename, 255);
+                    note_get_pitch_for_legend(r_ob, nt).toTextBuf(notename, 255);
                     if (obj_type == k_NOTATION_OBJECT_SCORE)
                         snprintf(legend_text, 255, "%s   Cents %.1f   Duration " RATIONAL_PRINTF_FMT "   Velocity %ld   Onset %s   Duration %s", notename, nt->midicents, sym_duration.r_num, sym_duration.r_den, nt->velocity, onset_text, dur_text);
                     else if (obj_type == k_NOTATION_OBJECT_ROLL)
@@ -26988,6 +26988,16 @@ t_pitch note_get_pitch(t_notation_obj *r_ob, t_note *note)
         return note->pitch_displayed;
     else
         return note->pitch_original;
+}
+
+t_pitch note_get_pitch_for_legend(t_notation_obj *r_ob, t_note *note)
+{
+    t_voice *voice = notation_item_get_voice(r_ob, (t_notation_item *)note);
+    if (voice && voice->notation_style == k_VOICE_NOTATION_STYLE_LINEAR_PITCH) {
+        return t_pitch::fromMC(note->midicents, r_ob->tone_division, (e_accidentals_preferences)r_ob->accidentals_preferences);
+    } else {
+        return note_get_pitch(r_ob, note);
+    }
 }
 
 void note_get_poc(t_notation_obj *r_ob, t_note *note, t_hatom *h)

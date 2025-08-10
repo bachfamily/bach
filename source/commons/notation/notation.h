@@ -9959,6 +9959,10 @@ void notationobj_setintervalratio(t_notation_obj *r_ob, t_symbol *s, long argc, 
 t_pitch note_get_pitch(t_notation_obj *r_ob, t_note *note);
 
 
+// TBD: only for legend display (handles linpitch differently)
+t_pitch note_get_pitch_for_legend(t_notation_obj *r_ob, t_note *note);
+
+
 // TBD: pitch-or-cents
 void note_get_poc(t_notation_obj *r_ob, t_note *note, t_hatom *h);
 

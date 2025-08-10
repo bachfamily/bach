@@ -7882,7 +7882,7 @@ void perform_analysis_and_change(t_score *x, t_jfont *jf_lyrics_nozoom, t_jfont 
                 measure_validate_accidentals((t_notation_obj *) x, tmp_meas);
                 
                 // we check the ties in the measure, by substituting to all WHITENULL-ed <tie_to> note fields, the proper note to which the note is tied.
-                check_measure_ties((t_notation_obj *) x, tmp_meas, x->r_ob.tie_assign_pitch, 1);
+                check_measure_ties((t_notation_obj *) x, tmp_meas, x->r_ob.tie_assign_pitch, 0);
                 
                 // we don't unset the need_check_ties flag, since we'll have to check them again, after beaming computation
             }
@@ -7926,21 +7926,22 @@ void perform_analysis_and_change(t_score *x, t_jfont *jf_lyrics_nozoom, t_jfont 
     
     verbose_post_rhythmic_tree((t_notation_obj *) x, x->firstvoice->firstmeasure, NULL, 0);
 
-    for (tmp_voice = x->firstvoice; (tmp_voice && (tmp_voice->v_ob.number < x->r_ob.num_voices)); tmp_voice = tmp_voice->next)
+    for (tmp_voice = x->firstvoice; (tmp_voice && (tmp_voice->v_ob.number < x->r_ob.num_voices)); tmp_voice = tmp_voice->next) {
         for (tmp_meas = tmp_voice->firstmeasure; tmp_meas; tmp_meas = tmp_meas->next) {
             for (tmp_chord = tmp_meas->firstchord; tmp_chord; tmp_chord = tmp_chord->next) {
-                if (tmp_chord->need_recompute_parameters) { // we have to recalculate chord parameters 
+                if (tmp_chord->need_recompute_parameters) { // we have to recalculate chord parameters
                     
                     // we assign the lyrics to each chord (if needed)
                     assign_chord_lyrics((t_notation_obj *) x, tmp_chord, jf_lyrics_nozoom_ok);
                     chord_assign_dynamics((t_notation_obj *) x, tmp_chord, jf_dynamics_nozoom_ok, jf_dynamics_roman_nozoom_ok);
-
+                    
                     // we recalculate the chord parameters
-//                    chord_calculate_parameters((t_notation_obj *) x, tmp_chord, true);
-//                    tmp_chord->need_recompute_parameters = false;
+                    chord_calculate_parameters((t_notation_obj *) x, tmp_chord, true);
+                    tmp_chord->need_recompute_parameters = false;
                 }
             }
 
+            
             if (tmp_meas->need_check_ties) {
                 // "need check ties" again!: gotta do that twice if something has been changed in recompute beamings...
                 check_measure_ties((t_notation_obj *) x, tmp_meas, x->r_ob.tie_assign_pitch, 1);
@@ -7948,7 +7949,7 @@ void perform_analysis_and_change(t_score *x, t_jfont *jf_lyrics_nozoom, t_jfont 
                 // and we validate accidentals again (ties might have changed something)
                 measure_validate_accidentals((t_notation_obj *) x, tmp_meas);
                 tmp_meas->need_check_ties = false;
-            } 
+            }
             
             for (tmp_chord = tmp_meas->firstchord; tmp_chord; tmp_chord = tmp_chord->next) {
                 if (tmp_chord->need_recompute_parameters) {
@@ -7958,6 +7959,7 @@ void perform_analysis_and_change(t_score *x, t_jfont *jf_lyrics_nozoom, t_jfont 
                 }
             }
         }
+    }
     
     verbose_post_rhythmic_tree((t_notation_obj *) x, x->firstvoice->firstmeasure, NULL, 0);
 
