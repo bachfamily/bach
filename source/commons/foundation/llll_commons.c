@@ -7216,6 +7216,96 @@ void llll_fatten(t_llll *ll)
     pedantic_llll_check(ll);
 }
 
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+/*
+ impose the structure of modelll onto inll
+ */
+void llll_reshape(t_llll *ll, const t_llll *modelll, const llll_clone_fn fn)
+{
+    
+    if (!ll || !modelll || ll->l_size == 0 || modelll->l_size == 0)
+        return;
+    
+    if (modelll->l_thing.w_obj)
+        ll->l_thing.w_obj = fn ? (fn)(modelll->l_thing.w_obj) : modelll->l_thing.w_obj;
+
+    t_llll *basell = ll;
+    t_llll_stack *modelstack = llll_stack_new();
+    t_llllelem *elem = ll->l_head;
+    t_llllelem *prevelem = NULL;
+    const t_llllelem *modelelem = modelll->l_head;
+    ll->l_size = 0;
+    ll->l_depth = 1;
+    while (1) {
+        while (elem && modelelem) {
+            if (hatom_gettype(&modelelem->l_hatom) != H_LLLL) {
+                elem->l_parent = ll;
+                if (!prevelem) {
+                    elem->l_prev = NULL;
+                    ll->l_head = elem;
+                } else {
+                    prevelem->l_next = elem;
+                    elem->l_prev = prevelem;
+                }
+                prevelem = elem;
+                elem = elem->l_next;
+                if (hatom_gettype(&elem->l_hatom) == H_LLLL) {
+                    llll_upgrade_depth(elem->l_hatom.h_w.w_llll);
+                }
+                modelelem = modelelem->l_next;
+                ++ll->l_size;
+            } else {
+                t_llllelem *nilelem = llllelem_get();
+                t_llll *nullll = llll_get();
+                hatom_setllll(&nilelem->l_hatom, nullll);
+                nullll->l_owner = nilelem;
+                nilelem->l_parent = ll;
+                llll_stack_push(modelstack, (void*) modelelem);
+                if (prevelem) {
+                    prevelem->l_next = nilelem;
+                    nilelem->l_prev = prevelem;
+                } else {
+                    ll->l_head = nilelem;
+                }
+                ll->l_tail = nilelem;
+                if (ll->l_depth == 1) {
+                    ll->l_depth = 2;
+                }
+                prevelem = NULL;
+                ++ll->l_size;
+                ll = nullll;
+                modelelem = modelelem->l_hatom.h_w.w_llll->l_head;
+            }
+        }
+
+        if (!elem)
+            break;
+        // so if we're here we have no modelelem
+        if (prevelem) {
+            prevelem->l_next = NULL;
+            ll->l_tail = prevelem;
+        }
+        modelelem = (t_llllelem *) llll_stack_pop(modelstack);
+        if (!modelelem) {
+            t_llllelem *next;
+            for ( ; elem; elem = next) {
+                next = elem->l_next;
+                llllelem_free(elem);
+            }
+            break;
+        }
+        modelelem = modelelem->l_next;
+        ll = ll->l_owner->l_parent;
+        prevelem = ll->l_tail;
+    }
+    
+    llll_check(ll);
+    llll_stack_destroy(modelstack);
+}
+
+
+#ifdef old_reshape
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /*
  impose the structure of modelll onto inll
@@ -7225,7 +7315,7 @@ void llll_reshape(t_llll *ll, t_llll *modelll, llll_clone_fn fn)
     t_llllelem *elem, *modelelem, *nextelem = NULL, *newelem = NULL, *prevelem = NULL, *nilelem = NULL;
     t_llll_stack *modelstack;
     t_llll *newll, *parent = NULL;
-    t_atom_long newdepth;
+    t_int32 newdepth;
     long downgrade = 0;
 
     if (!ll || !modelll || ll->l_size == 0 || modelll->l_size == 0)
@@ -7243,7 +7333,7 @@ void llll_reshape(t_llll *ll, t_llll *modelll, llll_clone_fn fn)
     ll->l_tail = NULL;
     while (1) {
         while (elem && modelelem) {
-            if (prevelem) { // prevelem is NULL, unless we come 
+            if (prevelem) { // prevelem is NULL, unless we come from a pop
                 elem->l_prev = prevelem;
                 prevelem->l_next = elem;
                 prevelem = NULL;
@@ -7270,10 +7360,12 @@ void llll_reshape(t_llll *ll, t_llll *modelll, llll_clone_fn fn)
                 }
                 ll->l_size++;    
                 if (modelll->l_size != 0) {
-                    elem->l_prev = NULL; 
-                    newelem = nilelem;
-                    nilelem = NULL;
-                    newll->l_head = elem;
+                    if (modelll->l_head->l_hatom.h_type != H_LLLL) {
+                        elem->l_prev = NULL;
+                        newelem = nilelem;
+                        nilelem = NULL;
+                        newll->l_head = elem;
+                    }
                     parent = ll;
                     ll = newll;
                     llll_stack_push(modelstack, modelelem->l_next);
@@ -7354,6 +7446,7 @@ void llll_reshape(t_llll *ll, t_llll *modelll, llll_clone_fn fn)
     llll_stack_destroy(modelstack);
     pedantic_llll_check(ll);
 }
+#endif //old_reshape
 
 /*
  ---DESTRUCTIVE

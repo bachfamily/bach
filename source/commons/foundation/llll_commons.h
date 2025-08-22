@@ -1010,7 +1010,8 @@ t_llll *llll_lace(t_llll **lists, t_atom_long count, long iterationmode);
 
 // ---DESTRUCTIVE on ll
 // impose the structure of modelll upon inll
-void llll_reshape(t_llll *ll, t_llll *modelll, llll_clone_fn fn = NULL);
+//void llll_reshape(t_llll *ll, t_llll *modelll, llll_clone_fn fn = NULL);
+void llll_reshape(t_llll *ll, const t_llll *modelll, const llll_clone_fn fn = NULL);
 
 /*
  ---DESTRUCTIVE on ll (inplace)
