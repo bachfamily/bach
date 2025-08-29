@@ -3074,7 +3074,6 @@ t_llll *score_readxmlbuffer(t_score *x,
     object_attr_setlong(x, gensym("measurenumberoffset"), startfromzero ? -1 : 0);
     
     t_llll *scorell = theScore.getllll();
-    llll_print(scorell);
     
 #ifdef SCORE_READXML_POSTLL
     dev_llll_print(scorell, (t_object *) x);
