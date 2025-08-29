@@ -44119,23 +44119,28 @@ long only_keep_lists_starting_with_sym_fn(void *data, t_hatom *a, const t_llll *
     if (hatom_gettype(a) == H_LLLL) {
         t_symbol *this_sym = (t_symbol *)data; 
         t_llll *this_level = hatom_getllll(a);
-        
-        t_llllelem *elem = this_level->l_head;
-        while (elem) {
-            t_llllelem *next = elem->l_next;
-            if (hatom_gettype(&elem->l_hatom) != H_LLLL)
-                llll_destroyelem(elem);
-            else {
-                t_llll *ll = hatom_getllll(&elem->l_hatom);
-                if (!ll->l_head || hatom_gettype(&ll->l_head->l_hatom) != H_SYM ||
-                    hatom_getsym(&ll->l_head->l_hatom) != this_sym)
+
+        if (this_sym == _llllobj_sym_slots && this_level && this_level->l_head && hatom_gettype(&this_level->l_head->l_hatom) == H_SYM && hatom_getsym(&this_level->l_head->l_hatom) == _llllobj_sym_slots) {
+            // chord-based slots! gotta keep them
+        } else {
+            
+            t_llllelem *elem = this_level->l_head;
+            while (elem) {
+                t_llllelem *next = elem->l_next;
+                if (hatom_gettype(&elem->l_hatom) != H_LLLL)
                     llll_destroyelem(elem);
-                else if (ll->l_head) {
-                    llll_behead(ll);
-                    llll_splatter(ll->l_owner, LLLL_FREETHING_DONT);
+                else {
+                    t_llll *ll = hatom_getllll(&elem->l_hatom);
+                    if (!ll->l_head || hatom_gettype(&ll->l_head->l_hatom) != H_SYM ||
+                        hatom_getsym(&ll->l_head->l_hatom) != this_sym)
+                        llll_destroyelem(elem);
+                    else if (ll->l_head) {
+                        llll_behead(ll);
+                        llll_splatter(ll->l_owner, LLLL_FREETHING_DONT);
+                    }
                 }
+                elem = next;
             }
-            elem = next;
         }
     }
     return 0;
@@ -44157,6 +44162,22 @@ long keep_three_numbers_fn(void *data, t_hatom *a, const t_llll *address){
         while (count < 3) {
             llll_appendllll(this_level, llll_get(), 0, WHITENULL_llll);
             count++;
+        }
+    }
+    return 0;
+}
+
+long only_keep_non_attrsymbolic_preserve_slots_sublllls_fn(void *data, t_hatom *a, const t_llll *address){
+    if (hatom_gettype(a) == H_LLLL) {
+        t_llll *this_level = hatom_getllll(a);
+        t_llllelem *elem = this_level->l_head;
+        while (elem) {
+            t_llllelem *next = elem->l_next;
+            if (hatom_gettype(&elem->l_hatom) != H_LLLL ||
+                (hatom_getllll(&elem->l_hatom)->l_head && hatom_gettype(&hatom_getllll(&elem->l_hatom)->l_head->l_hatom) == H_SYM
+                 && hatom_getsym(&hatom_getllll(&elem->l_hatom)->l_head->l_hatom) != _llllobj_sym_slots))
+                llll_destroyelem(elem);
+            elem = next;
         }
     }
     return 0;
@@ -44231,9 +44252,10 @@ void score_gathered2separate_syntax(t_llll *gathered, t_llll **measureinfo, t_ll
         }
     }
     
+
     llll_funall(aux, (fun_fn) trans_mode2_fn, NULL, 1, 1, FUNALL_PROCESS_SUBLISTS_ONLY_AT_MAXDEPTH);
     llll_trans_inplace(aux, 2);
-    
+
     // now in aux we have (MEASUREINFO (RAT DURS) ((NOTE1) (NOTE2) ...))
     
 
@@ -44261,12 +44283,13 @@ void score_gathered2separate_syntax(t_llll *gathered, t_llll **measureinfo, t_ll
     for (elem = symbols_to_map->l_head; elem; elem = elem->l_next) {
         t_symbol *this_sym = hatom_getsym(&elem->l_hatom);
         t_llll *this_sym_ll = llll_clone(notes);
-        llll_funall(this_sym_ll, (fun_fn) only_keep_non_attrsymbolic_sublllls_fn, NULL, 3, 3, FUNALL_PROCESS_SUBLISTS_ONLY_AT_MAXDEPTH); // removing "chord-attributes" such as (name ...)
+//        llll_funall(this_sym_ll, (fun_fn) only_keep_non_attrsymbolic_sublllls_fn, NULL, 3, 3, FUNALL_PROCESS_SUBLISTS_ONLY_AT_MAXDEPTH); // removing "chord-attributes" such as (name ...) > but should preserve chord slots though!
+        llll_funall(this_sym_ll, (fun_fn) only_keep_non_attrsymbolic_preserve_slots_sublllls_fn, NULL, 3, 3, FUNALL_PROCESS_SUBLISTS_ONLY_AT_MAXDEPTH); // removing "chord-attributes" such as (name ...) > but should preserve chord slots though!
         llll_funall(this_sym_ll, (fun_fn) only_keep_lists_starting_with_sym_fn, this_sym, 4, 4, FUNALL_PROCESS_SUBLISTS_ONLY_AT_MAXDEPTH);
         llll_prependsym(this_sym_ll, this_sym, 0, WHITENULL_llll);
         llll_appendllll(*extras, this_sym_ll, 0, WHITENULL_llll);
     }
-    
+
     llll_funall(notes, (fun_fn) only_keep_non_attrsymbolic_sublllls_fn, NULL, 1, 1, FUNALL_PROCESS_SUBLISTS_ONLY_AT_MAXDEPTH); // removing "voice-attributes" such as (name ...)
     llll_funall(notes, (fun_fn) only_keep_non_attrsymbolic_sublllls_fn, NULL, 2, 2, FUNALL_PROCESS_SUBLISTS_ONLY_AT_MAXDEPTH); // removing "measure-attributes" such as (name ...)
     llll_funall(notes, (fun_fn) only_keep_non_attrsymbolic_sublllls_fn, NULL, 3, 3, FUNALL_PROCESS_SUBLISTS_ONLY_AT_MAXDEPTH); // removing "chord-attributes" such as (name ...)

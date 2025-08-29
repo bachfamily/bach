@@ -575,7 +575,7 @@ void beatbox_anything(t_beatbox *x, t_symbol *msg, long ac, t_atom *av)
                     for (    this_box_llllelem = this_box_llll ? this_box_llll->l_head : NULL, this_dur_llllelem = this_durs_llll ? this_durs_llll->l_head : NULL; 
                             this_box_llllelem || this_dur_llllelem; 
                             this_box_llllelem = this_box_llllelem ? this_box_llllelem->l_next : NULL, this_dur_llllelem = this_dur_llllelem ? this_dur_llllelem->l_next : NULL) {
-                        char info_created_from_split = (this_box_llllelem->l_thing.w_obj == WHITENULL_llll);
+                        char info_created_from_split = (this_box_llllelem && this_box_llllelem->l_thing.w_obj == WHITENULL_llll);
                         if (info_created_from_split)
                             this_box_llllelem->l_thing.w_obj = NULL;
                         if (this_box_llllelem) {
