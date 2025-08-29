@@ -1547,10 +1547,12 @@ e_accollatura_type accollatura_symbol_to_type(t_notation_obj *r_ob, t_symbol *ac
         return k_ACCOLLATURA_BRACKET;
     if (acc == gensym("brace"))
         return k_ACCOLLATURA_BRACE;
-
+/*    if (acc == gensym("none"))
+        return k_ACCOLLATURA_NONE;
+    
     char buf[1024];
     snprintf_zero(buf, 1024, "Unknown accollatura type: \"%s\". Defaulting to \"none\"", acc ? acc->s_name : "");
-    object_warn((t_object *)r_ob, buf);
+    object_warn((t_object *)r_ob, buf); */
     return k_ACCOLLATURA_NONE;
 }
 
@@ -43872,8 +43874,47 @@ long preprocess_extras_fn(void *data, t_hatom *a, const t_llll *address){
         if (ll && ll->l_head) {
             if (this_extra_is_articulations)
                 llll_funall(right_slice, (fun_fn) prepend_extras_sym_fn, &ll->l_head->l_hatom, 1, -2, FUNALL_PROCESS_SUBLISTS_ONLY_AT_MAXDEPTH);
-            else
-                llll_funall(right_slice, (fun_fn) prepend_extras_sym_fn, &ll->l_head->l_hatom, 1, 4, FUNALL_PROCESS_SUBLISTS_ONLY_AT_MAXDEPTH);
+            else {
+//            was:
+//                llll_funall(right_slice, (fun_fn) prepend_extras_sym_fn, &ll->l_head->l_hatom, 1, 4, FUNALL_PROCESS_SUBLISTS_ONLY_AT_MAXDEPTH);
+//              but now that we have slots for chords we need to be more careful and do the same thing manually
+                for (t_llllelem *e1 = right_slice->l_head; e1; e1 = e1->l_next) {
+                    if (hatom_gettype(&e1->l_hatom) == H_LLLL) {
+                        t_llll *l1 = hatom_getllll(&e1->l_hatom);
+                        if (l1) {
+                            for (t_llllelem *e2 = l1->l_head; e2; e2 = e2->l_next) {
+                                t_llll *l2 = hatom_getllll(&e2->l_hatom);
+                                for (t_llllelem *e3 = l2->l_head; e3; e3 = e3->l_next) {
+                                    t_llll *l3 = hatom_getllll(&e3->l_hatom);
+                                    
+                                    if (l3) {
+                                        if (hatom_gettype(&l3->l_head->l_hatom) == H_LLLL &&
+                                            hatom_getllll(&l3->l_head->l_hatom) &&
+                                            hatom_getllll(&l3->l_head->l_hatom)->l_head) {
+                                            if (hatom_gettype(&hatom_getllll(&l3->l_head->l_hatom)->l_head->l_hatom) != H_LLLL) {
+                                                // that's where we need to act for chords
+//                                                dev_post("stopped at chord.");
+                                                llll_prependhatom_clone(l3, &ll->l_head->l_hatom);
+                                            } else {
+                                                // going to notes
+                                                for (t_llllelem *e4 = l3->l_head; e4; e4 = e4->l_next) {
+                                                    t_llll *l4 = hatom_getllll(&e4->l_hatom);
+//                                                    dev_post("going to notes.");
+                                                    if (hatom_gettype(&l4->l_head->l_hatom) == H_LLLL &&
+                                                        hatom_getllll(&l4->l_head->l_hatom) &&
+                                                        hatom_getllll(&l4->l_head->l_hatom)->l_head) {
+                                                        llll_prependhatom_clone(l4, &ll->l_head->l_hatom);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
         llll_free(ll);
         if (right_slice)
@@ -43905,11 +43946,23 @@ long put_chords_properly1_fn(void *data, t_hatom *a, const t_llll *address){
     if (hatom_gettype(a) == H_LLLL && address->l_size > 0) {
         t_llll *ll = llll_clone(hatom_getllll(a));
         t_llll *right_slice = llll_slice(ll, 1);
+        t_llll *chordbasedslots = NULL;
         if (right_slice) {
+            // handling slot-based slots
+            t_llllelem *llelemslot = llll_getindex(right_slice, 6, I_STANDARD);
+            t_llll *llslot = llelemslot && hatom_gettype(&llelemslot->l_hatom) == H_LLLL ? hatom_getllll(&llelemslot->l_hatom) : NULL;
+            if (llslot && hatom_gettype(&llslot->l_head->l_hatom) != H_LLLL) {
+                // chord-based slots!
+                chordbasedslots = llll_clone(llslot);
+                llll_wrap(&chordbasedslots);
+                llll_clear(llslot);
+            }
             llll_trans_inplace(right_slice, 2);
             llll_funall(right_slice, (fun_fn) put_chords_properly2_fn, NULL, 1, 1, FUNALL_PROCESS_SUBLISTS_ONLY_AT_MAXDEPTH);
         }
         llll_chain(ll, right_slice);
+        if (chordbasedslots)
+            llll_chain(ll, chordbasedslots);
         hatom_change_to_llll_and_free(a, ll);
     }
     return 0;
@@ -43968,6 +44021,7 @@ long put_grace_chords_into_grace_levels_fn(void *data, t_hatom *a, const t_llll 
 // convert a score separate synatx into its gathered syntax (returned)
 t_llll *score_separate2gathered_syntax(t_llll *measureinfo, t_llll *cents, t_llll *durations, t_llll *velocities, t_llll *ties, t_llll *extras)
 {
+
     t_llll *out = llll_get();
     t_llll *cloned_extras = llll_clone(extras);
     
@@ -43979,19 +44033,21 @@ t_llll *score_separate2gathered_syntax(t_llll *measureinfo, t_llll *cents, t_lll
     llll_funall(cloned_extras, (fun_fn) preprocess_extras_fn, NULL, 1, 1, FUNALL_PROCESS_SUBLISTS_ONLY_AT_MAXDEPTH);
 //    llll_print(cloned_extras, NULL, 0, 2, NULL);
 
+
     llll_appendllll_clone(out, measureinfo, 0, WHITENULL_llll, NULL);
     llll_appendllll_clone(out, durations, 0, WHITENULL_llll, NULL);
     llll_appendllll_clone(out, cents, 0, WHITENULL_llll, NULL);
     llll_appendllll_clone(out, velocities, 0, WHITENULL_llll, NULL);
     llll_appendllll_clone(out, ties, 0, WHITENULL_llll, NULL);
     llll_chain(out, cloned_extras);
-    
+        
     llll_trans_inplace(out, 2); // trans on voices
+    
     llll_funall(out, (fun_fn) trans_mode2_fn, NULL, 1, 1, FUNALL_PROCESS_SUBLISTS_ONLY_AT_MAXDEPTH);
     llll_funall(out, (fun_fn) put_chords_properly_fn, NULL, 1, 2, FUNALL_PROCESS_SUBLISTS_ONLY_AT_MAXDEPTH);
 
     llll_funall(out, (fun_fn) put_grace_chords_into_grace_levels_fn, NULL, 1, 2, FUNALL_PROCESS_SUBLISTS_ONLY_AT_MAXDEPTH);
-    
+
     return out;
 }
 

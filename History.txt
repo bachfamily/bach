@@ -138,6 +138,7 @@ VERSION NOTES:
 
 - bach.step: now can show progress via a progress bar with @showprogress set to 1
 
+- bach.beatbox: fixed bug causing wrongly assigned chord-based slots
 
 v0.8.3
 
