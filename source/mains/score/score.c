@@ -11882,7 +11882,6 @@ t_chord *shift_note_allow_voice_change(t_score *x, t_note *note, double delta, c
                 note_set_next_step_in_farey_sequence_depending_on_editing_ranges((t_notation_obj *)x, note, delta);
         } else {
             note->midicents = get_next_step_depending_on_editing_ranges((t_notation_obj *)x, note->midicents, note->parent->parent->voiceparent->v_ob.number, delta);
-            note->pitch_original = t_pitch::NaP;
         }
 //        recompute_all_for_measure((t_notation_obj *)x, note->parent->parent, false);
 //        note->midicents += (delta * (200. / x->r_ob.tone_division));
@@ -11891,7 +11890,6 @@ t_chord *shift_note_allow_voice_change(t_score *x, t_note *note, double delta, c
         note->pitch_original = t_pitch::NaP;
         note_set_to_best_jilimited_approximation_if_jivoice((t_notation_obj *)x, note);
     }
-    note_compute_approximation((t_notation_obj *)x, note);
 
     note_y_real = mc_to_yposition((t_notation_obj *)x, note->midicents, (t_voice *) note->parent->parent->voiceparent);
 
@@ -11909,15 +11907,19 @@ t_chord *shift_note_allow_voice_change(t_score *x, t_note *note, double delta, c
             if (ji && note->pitch_original.isNaP()) {
                 note->midicents += 1200;
             }
+            note_constrain_pitch_depending_on_editing_ranges((t_notation_obj *)x, note, note_new_voice);
         } else {
+            note->pitch_original = t_pitch::NaP;
+            note_constrain_pitch_depending_on_editing_ranges((t_notation_obj *)x, note, note_new_voice);
             if (!ji) {
                 note_set_auto_enharmonicity(note); // automatic accidentals for retranscribing!
             }
         }
+        note_compute_approximation((t_notation_obj *)x, note);
 
-        note_constrain_pitch_depending_on_editing_ranges((t_notation_obj *)x, note, note_new_voice);
-        if (!ji)
-            note_set_auto_enharmonicity(note); // automatic accidentals for retranscribing!
+
+//        if (!ji)
+//            note_set_auto_enharmonicity(note); // automatic accidentals for retranscribing!
         
 //        if (!ji) {
 //            constraint_midicents_depending_on_editing_ranges((t_notation_obj *)x, &note->midicents, note_new_voice);
@@ -11927,6 +11929,9 @@ t_chord *shift_note_allow_voice_change(t_score *x, t_note *note, double delta, c
 //        post("voices: FROM %d TO %d", note->parent->voiceparent->v_ob.number, new_voice->v_ob.number);
         // new midicents?
 //        double new_mc = note->midicents
+
+        note->pitch_original = t_pitch::NaP;
+        note_compute_approximation((t_notation_obj *)x, note);
 
         t_note *note_in_new_voice = clone_note((t_notation_obj *)x, note, k_CLONE_FOR_ORIGINAL); // we clone the note
         double threshold_y, change_mc1, change_mc2;

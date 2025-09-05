@@ -14294,7 +14294,6 @@ t_chord *shift_note_allow_voice_change(t_roll *x, t_note *note, double delta, ch
                 note_set_next_step_in_farey_sequence_depending_on_editing_ranges((t_notation_obj *)x, note, delta);
         } else {
             note->midicents = get_next_step_depending_on_editing_ranges((t_notation_obj *)x, note->midicents, note->parent->voiceparent->v_ob.number, delta);
-            note->pitch_original = t_pitch::NaP;
         }
     } else {
         note->midicents += delta;
@@ -14317,14 +14316,16 @@ t_chord *shift_note_allow_voice_change(t_roll *x, t_note *note, double delta, ch
             if (ji && note->pitch_original.isNaP()) {
                 note->midicents += 1200 * num_octaves_jump;
             }
+            note_constrain_pitch_depending_on_editing_ranges((t_notation_obj *)x, note, note_new_voice);
         } else {
+            note->pitch_original = t_pitch::NaP;
+            note_constrain_pitch_depending_on_editing_ranges((t_notation_obj *)x, note, note_new_voice);
             if (!ji)
                 note_set_auto_enharmonicity(note); // automatic accidentals for retranscribing!
         }
         
-        note_constrain_pitch_depending_on_editing_ranges((t_notation_obj *)x, note, note_new_voice);
-        if (!ji)
-            note_set_auto_enharmonicity(note); // automatic accidentals for retranscribing!
+//        if (!ji)
+//            note_set_auto_enharmonicity(note); // automatic accidentals for retranscribing!
         update_all_accidentals_for_chord_if_needed((t_notation_obj *)x, note->parent);
     
     } else { // note is changing voice!
@@ -14335,6 +14336,8 @@ t_chord *shift_note_allow_voice_change(t_roll *x, t_note *note, double delta, ch
 //        post("voices: FROM %d TO %d", note->parent->voiceparent->v_ob.number, new_voice->v_ob.number);
         // new midicents?
 //        double new_mc = note->midicents
+
+        note->pitch_original = t_pitch::NaP;
 
         note_in_new_voice = clone_note((t_notation_obj *)x, note, k_CLONE_FOR_ORIGINAL); // we clone the note
         note->midicents -= (mode == 0) ? delta * (200. / x->r_ob.tone_division) : delta; // step back
