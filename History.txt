@@ -110,6 +110,7 @@ VERSION NOTES:
     á Fixed bug causing wrong refresh with dynamics2velocities when velocity was mapped on notehead size
     á Improved lyrics alignment
     á Fixed issue causing wrong pitch display in the legend with linpitch mode
+    á now octaves are preserved with pitches when transposing using Shift+Arrows
 
 - bach.roll, bach.score, bach.score2roll:
     Now user-defined pitches are correctly preserved
