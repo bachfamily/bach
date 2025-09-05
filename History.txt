@@ -140,6 +140,11 @@ VERSION NOTES:
 
 - bach.reshape: fixed bug with empty sublists in the model
 
+- bach.beatbox: fixed bug causing wrongly assigned chord-based slots
+
+- bach.beatunbox:   fixed bug causing crashes with wrong syntax
+                    fixed bug causing non-output of chord-attached slots
+                    
 v0.8.3
 
 ***********************

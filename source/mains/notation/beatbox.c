@@ -454,9 +454,20 @@ void beatbox_anything(t_beatbox *x, t_symbol *msg, long ac, t_atom *av)
                     
                     if (voice_slots_elem) {
                         llll_appendhatom_clone(thisextras, &voice_slots_elem->l_hatom, 0, WHITENULL_llll);
-                        if ((hatom_gettype(&voice_slots_elem->l_hatom) == H_LLLL) && ((long)(hatom_getllll(&voice_slots_elem->l_hatom)->l_size) > num_notes))
-                            num_notes = hatom_getllll(&voice_slots_elem->l_hatom)->l_size;
-                    } else 
+                        if ((hatom_gettype(&voice_slots_elem->l_hatom) == H_LLLL) && ((long)(hatom_getllll(&voice_slots_elem->l_hatom)->l_size) > num_notes)) {
+                            t_llll *vdl = hatom_getllll(&voice_slots_elem->l_hatom);
+                            if (vdl && vdl->l_head && hatom_gettype(&vdl->l_head->l_hatom) == H_LLLL &&
+                                hatom_getllll(&vdl->l_head->l_hatom) && hatom_getllll(&vdl->l_head->l_hatom)->l_head &&
+                                hatom_gettype(&hatom_getllll(&vdl->l_head->l_hatom)->l_head->l_hatom) != H_LLLL) {
+                                // it's a chord assignment!
+                                // nothing to do
+//                                char foo = 7;
+//                                foo++;
+                            } else {
+                                num_notes = hatom_getllll(&voice_slots_elem->l_hatom)->l_size;
+                            }
+                        }
+                    } else
                         llll_appendllll(thisextras, llll_get(), 0, WHITENULL_llll);
                     
                     if (voice_articulations_elem) {
@@ -564,7 +575,7 @@ void beatbox_anything(t_beatbox *x, t_symbol *msg, long ac, t_atom *av)
                     for (    this_box_llllelem = this_box_llll ? this_box_llll->l_head : NULL, this_dur_llllelem = this_durs_llll ? this_durs_llll->l_head : NULL; 
                             this_box_llllelem || this_dur_llllelem; 
                             this_box_llllelem = this_box_llllelem ? this_box_llllelem->l_next : NULL, this_dur_llllelem = this_dur_llllelem ? this_dur_llllelem->l_next : NULL) {
-                        char info_created_from_split = (this_box_llllelem->l_thing.w_obj == WHITENULL_llll);
+                        char info_created_from_split = (this_box_llllelem && this_box_llllelem->l_thing.w_obj == WHITENULL_llll);
                         if (info_created_from_split)
                             this_box_llllelem->l_thing.w_obj = NULL;
                         if (this_box_llllelem) {
@@ -576,7 +587,7 @@ void beatbox_anything(t_beatbox *x, t_symbol *msg, long ac, t_atom *av)
                                 llll_appendllll(this_box_cents, get_nilnil(), 0, WHITENULL_llll);
 
                             if (singleinfo_llll->l_head && singleinfo_llll->l_head->l_next) {
-                                llll_appendhatom_clone(this_box_velocities, &singleinfo_llll->l_head->l_next->l_hatom, 0, WHITENULL_llll); // QUI LEAK
+                                llll_appendhatom_clone(this_box_velocities, &singleinfo_llll->l_head->l_next->l_hatom, 0, WHITENULL_llll);
                             } else
                                 llll_appendllll(this_box_velocities, get_nilnil(), 0, WHITENULL_llll);
 
