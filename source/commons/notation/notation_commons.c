@@ -1906,11 +1906,11 @@ void paint_duration_line(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t
                     else
                         bpt_y = system_shift + curr_rupture_point * system_jump + mc_to_ypos(r_ob, mc_or_screen_mc + notationobj_rescale_with_slope(r_ob, rupture_rel_x[curr_rupture_point], temp->prev->rel_x_pos, temp->rel_x_pos, temp->prev->delta_mc, temp->delta_mc, temp->slope), voice);
                     
-                    if (r_ob->velocity_handling == k_VELOCITY_HANDLING_DURATIONLINEWIDTH && r_ob->breakpoints_have_velocity) {
+                    if ((r_ob->velocity_handling == k_VELOCITY_HANDLING_DURATIONLINEWIDTH || r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTESIZE) && r_ob->breakpoints_have_velocity) {
                         double width1 = r_ob->durations_line_width * r_ob->zoom_y * (((double) (temp->prev->prev ? temp->prev->velocity : curr_nt->velocity)) / CONST_MAX_VELOCITY + 0.1);
                         double width2 = r_ob->durations_line_width * r_ob->zoom_y * (((double) temp->velocity) / CONST_MAX_VELOCITY + 0.1);
                         notationobj_paint_doublewidth_curve(r_ob, g, notecolor, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope, width1, width2);
-                    } else if (r_ob->velocity_handling == k_VELOCITY_HANDLING_DURATIONLINEWIDTH) 
+                    } else if ((r_ob->velocity_handling == k_VELOCITY_HANDLING_DURATIONLINEWIDTH || r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTESIZE))
                         notationobj_paint_curve(r_ob, g, notecolor, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope, r_ob->durations_line_width * r_ob->zoom_y * (((double)curr_nt->velocity) / CONST_MAX_VELOCITY + 0.1));
                     else
                         notationobj_paint_curve(r_ob, g, notecolor, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope, r_ob->durations_line_width * r_ob->zoom_y);
@@ -1936,11 +1936,11 @@ void paint_duration_line(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t
                     bpt_y = system_shift + curr_rupture_point * system_jump + mc_to_ypos(r_ob, mc_or_screen_mc + round(temp->delta_mc), (t_voice *) voice);
             }
     
-            if (r_ob->velocity_handling == k_VELOCITY_HANDLING_DURATIONLINEWIDTH && r_ob->breakpoints_have_velocity)  {
+            if ((r_ob->velocity_handling == k_VELOCITY_HANDLING_DURATIONLINEWIDTH || r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTESIZE) && r_ob->breakpoints_have_velocity)  {
                 double width1 = r_ob->durations_line_width * r_ob->zoom_y * (((double) (temp->prev->prev ? temp->prev->velocity : curr_nt->velocity)) / CONST_MAX_VELOCITY + 0.1);
                 double width2 = r_ob->durations_line_width * r_ob->zoom_y * (((double) temp->velocity) / CONST_MAX_VELOCITY + 0.1);
                 notationobj_paint_doublewidth_curve(r_ob, g, notecolor, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope, width1, width2);
-            } else if (r_ob->velocity_handling == k_VELOCITY_HANDLING_DURATIONLINEWIDTH) 
+            } else if ((r_ob->velocity_handling == k_VELOCITY_HANDLING_DURATIONLINEWIDTH || r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTESIZE)) 
                 notationobj_paint_curve(r_ob, g, notecolor, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope, rescale((double)curr_nt->velocity, CONST_MIN_VELOCITY, CONST_MAX_VELOCITY, 0.5, r_ob->durations_line_width * r_ob->zoom_y));
             else if ((r_ob->velocity_handling == k_VELOCITY_HANDLING_COLORSCALE || r_ob->velocity_handling == k_VELOCITY_HANDLING_ALPHACHANNEL || 
                       r_ob->velocity_handling == k_VELOCITY_HANDLING_COLORSPECTRUM) && r_ob->breakpoints_have_velocity) {
@@ -1990,14 +1990,14 @@ void paint_duration_line(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t
                 bptcolor = tail_get_color(r_ob, curr_nt, (is_chord_selected || is_note_selected || is_durationline_selected || is_bpt_selected), is_note_played, is_note_locked, is_note_muted, is_note_solo, false, r_ob->breakpoints_have_velocity ? temp->velocity : curr_nt->velocity);
                     
                 if (r_ob->breakpoints_have_noteheads) {
-                    paint_default_small_notehead_with_accidentals(r_ob, view, g, bptcolor, temp->delta_mc + curr_nt->midicents, bpt_x, curr_nt, system_shift, (r_ob->breakpoints_have_velocity && r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE) ? velocity_to_notesize_factor(r_ob, temp->velocity) : CONST_GRACE_CHORD_SIZE );
-                } else { 
+                    paint_default_small_notehead_with_accidentals(r_ob, view, g, bptcolor, temp->delta_mc + curr_nt->midicents, bpt_x, curr_nt, system_shift, (r_ob->breakpoints_have_velocity && (r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE || r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTESIZE)) ? velocity_to_notesize_factor(r_ob, temp->velocity) : CONST_GRACE_CHORD_SIZE );
+                } else {
                     paint_rhomboid(g, r_ob->j_background_rgba, bptcolor, bpt_x, bpt_y, r_ob->breakpoints_size * 0.6 * r_ob->zoom_y, r_ob->breakpoints_size * r_ob->zoom_y, 0.9);
                 }
             } else { //it's a tail
                 if (r_ob->breakpoints_have_noteheads == 1 && (!temp->prev || temp->delta_mc != temp->prev->delta_mc)) {
-                    paint_default_small_notehead_with_accidentals(r_ob, view, g, tailcolor, temp->delta_mc + curr_nt->midicents, end_pos, curr_nt, system_shift, (r_ob->breakpoints_have_velocity && r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE) ? velocity_to_notesize_factor(r_ob, temp->velocity) : CONST_GRACE_CHORD_SIZE);
-                } else { 
+                    paint_default_small_notehead_with_accidentals(r_ob, view, g, tailcolor, temp->delta_mc + curr_nt->midicents, end_pos, curr_nt, system_shift, (r_ob->breakpoints_have_velocity && (r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE || r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTESIZE)) ? velocity_to_notesize_factor(r_ob, temp->velocity) : CONST_GRACE_CHORD_SIZE);
+                } else {
                     if (r_ob->show_tails) {
                         double bpt_y = system_shift + curr_rupture_point * system_jump + mc_to_ypos(r_ob, mc_or_screen_mc + round(temp->delta_mc), (t_voice *) voice);
                         paint_line(g, tailcolor, end_pos, bpt_y - r_ob->breakpoints_size * 0.666 * r_ob->zoom_y, end_pos, bpt_y + r_ob->breakpoints_size * 0.666 * r_ob->zoom_y, CONST_NOTETAIL_UWIDTH * r_ob->zoom_y);
@@ -25787,7 +25787,7 @@ void calculate_note_sizes_from_slots(t_notation_obj *r_ob, t_note *note){
         note->notehead_resize = note->accidentals_resize = 1.;
     }
     
-    if (r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE) {
+    if (r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE || r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTESIZE) {
         double factor = velocity_to_notesize_factor(r_ob, note->velocity);
         note->accidentals_resize *= factor;
         note->notehead_resize *= factor;
@@ -35755,7 +35755,7 @@ char change_selection_velocity(t_notation_obj *r_ob, double delta_velocity){
                     
                     note->draggingvelocity = new_vel;
                     note_set_velocity(r_ob, note, round(new_vel));
-                    if (r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE) {
+                    if (r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE || r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTESIZE) {
                         if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
                             recompute_all_for_measure(r_ob, note->parent->parent, false);
                         else
@@ -35783,7 +35783,7 @@ char change_selection_velocity(t_notation_obj *r_ob, double delta_velocity){
                     }
                     temp = temp->next;
                 }
-                if (r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE) {
+                if (r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE || r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTESIZE) {
                     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
                         recompute_all_for_measure(r_ob, chord->parent, false);
                     else
@@ -36431,7 +36431,7 @@ char change_note_velocity_from_lexpr_or_llll(t_notation_obj *r_ob, t_note *note,
         undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)note, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
         change_long(r_ob, &note->velocity, lexpr, new_velocity ? new_velocity->l_head : NULL, 0, (t_notation_item *)note);
         note_set_velocity(r_ob, note, CLAMP(note->velocity, CONST_MIN_VELOCITY, CONST_MAX_VELOCITY));
-        if (r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE)
+        if (r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE || r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTESIZE)
             chord_set_recompute_parameters_flag(r_ob,  note->parent);
         changed = 1;
     }
@@ -36451,7 +36451,7 @@ char change_chord_velocity_from_lexpr_or_llll(t_notation_obj *r_ob, t_chord *cho
                 thiselem = thiselem->l_next;
             changed = 1;
         }
-        if (r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE)
+        if (r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE || r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTESIZE)
             chord_set_recompute_parameters_flag(r_ob,  chord);
     }
     return changed;

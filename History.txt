@@ -23,6 +23,8 @@ VERSION NOTES:
         This is now in cooperation with @partsaccollatura, @multistaffaccollatura, choosing the type of accollatura
         used for displaying voice ensembles and multistaff-voices respectively.
         (Also a global @showaccollature attribute has been added.)
+    á Showvelocity had an option called "Note Size" which was actually "Notehead Size". This typo has been corrected.
+        and a true "Note Size" option (combining both notehead size and duration line width) has been added.
 
 - bach.score:
     á fixed bug causing wrong playback for grace notes!

@@ -1139,7 +1139,8 @@ typedef enum _velocity_handling {
     k_VELOCITY_HANDLING_COLORSPECTRUM = 2,        ///< Represent velocity with a colorspectrum (red being the softest, blue being the loudest)
     k_VELOCITY_HANDLING_ALPHACHANNEL = 3,        ///< Represent velocity by changing the alpha-channel of the note color (from almost 0., softest, to 1., loudest)
     k_VELOCITY_HANDLING_DURATIONLINEWIDTH = 4,    ///< Represent velocity by increasing or decreasing the width of the duration line (from almost 0., softest, to the attribute-defined width, loudest)
-    k_VELOCITY_HANDLING_NOTEHEADSIZE = 5        ///< Represent velocity by increasing or decreasing the notehead size (from almost 0., softest, to the default size, loudest)
+    k_VELOCITY_HANDLING_NOTEHEADSIZE = 5,        ///< Represent velocity by increasing or decreasing the notehead size (from almost 0., softest, to the default size, loudest)
+    k_VELOCITY_HANDLING_NOTESIZE = 6            ///< Combine k_VELOCITY_HANDLING_NOTEHEADSIZE and k_VELOCITY_HANDLING_DURATIONLINEWIDTH
 } e_velocity_handling;
 
 

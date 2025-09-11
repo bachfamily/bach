@@ -3239,7 +3239,7 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type)
 	if (obj_type != k_NOTATION_OBJECT_SLOT) {
 		CLASS_ATTR_CHAR(c, "showvelocity", 0, t_notation_obj, velocity_handling);
 		CLASS_ATTR_STYLE_LABEL(c,"showvelocity",0,"enumindex","Show Velocity");
-		CLASS_ATTR_ENUMINDEX(c,"showvelocity", 0, "None Colorscale Colorspectrum Alpha Duration Line Width Note Size");
+		CLASS_ATTR_ENUMINDEX(c,"showvelocity", 0, "None Colorscale Colorspectrum Alpha Duration Line Width Notehead Size Note Size");
 		CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showvelocity",0,"0");
 		CLASS_ATTR_ACCESSORS(c, "showvelocity", (method)NULL, (method)notationobj_setattr_showvelocity);
 		CLASS_ATTR_BASIC(c,"showvelocity", 0);
@@ -3252,7 +3252,8 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type)
 		// - Duration Line Width: velocities are mapped on the width of the duration line, from almost 0 (velocity = 1, extremely thin) to the width defined 
 		// via the attribute <m>durationlinewidth</m> (velocity = 127, maximum thickness). <br />
 		// - Notehead Size: velocities are mapped on the size of the notehead and accidentals, from the smallest size (velocity = 1) to the ordinary size (velocity = 127).
-		
+        // - Note Size: both Duration Line Width and Notehead Size are combined
+
 		CLASS_ATTR_CHAR(c,"showdurations",0, t_notation_obj, show_durations);
 		CLASS_ATTR_STYLE_LABEL(c,"showdurations",0,"onoff","Show Duration Lines");
 		CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showdurations",0, obj_type == k_NOTATION_OBJECT_ROLL ? "1" : "0");
@@ -3726,7 +3727,8 @@ t_max_err notationobj_setattr_showvelocity(t_notation_obj *r_ob, t_object *attr,
     if (ac && av) {
         long prev_vel_handling = r_ob->velocity_handling;
         r_ob->velocity_handling = atom_getlong(av);
-        if (r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE || prev_vel_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE)
+        if (r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE || prev_vel_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE ||
+            r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTESIZE || prev_vel_handling == k_VELOCITY_HANDLING_NOTESIZE)
             quick_notationobj_recompute_all_chord_parameters(r_ob);
         notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
     }

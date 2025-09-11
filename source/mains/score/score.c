@@ -2380,7 +2380,7 @@ void score_sel_change_velocity(t_score *x, t_symbol *s, long argc, t_atom *argv)
         curr_it = lambda ? NULL : curr_it->next_selected;
     }
 
-    if (x->r_ob.velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE) {
+    if (x->r_ob.velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE || x->r_ob.velocity_handling == k_VELOCITY_HANDLING_NOTESIZE) {
         set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
         perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DONT_CHANGE_ANYTHING);
     }
