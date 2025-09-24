@@ -327,7 +327,7 @@ void float2rat_anything(t_float2rat *x, t_symbol *msg, long ac, t_atom *av)
 		data[1] = errors;
 		
 		llll_funall(ll, (fun_fn) approx_single_num_fn, data, 1, -1, FUNALL_ONLY_PROCESS_ATOMS);
-		llll_reshape(errors, ll, NULL);
+        llll_reshape_old(errors, ll, NULL);
 
 		llllobj_gunload_llll((t_object *) x, LLLL_OBJ_VANILLA, errors, 1);
 		llllobj_gunload_llll((t_object *) x, LLLL_OBJ_VANILLA, ll, 0);

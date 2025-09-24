@@ -7216,12 +7216,11 @@ void llll_fatten(t_llll *ll)
     pedantic_llll_check(ll);
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /*
  impose the structure of modelll onto inll
  */
-void llll_reshape(t_llll *ll, const t_llll *modelll, const llll_clone_fn fn)
+void llll_reshape_new(t_llll *ll, const t_llll *modelll, const llll_clone_fn fn)
 {
     
     if (!ll || !modelll || ll->l_size == 0 || modelll->l_size == 0)
@@ -7304,13 +7303,11 @@ void llll_reshape(t_llll *ll, const t_llll *modelll, const llll_clone_fn fn)
     llll_stack_destroy(modelstack);
 }
 
-
-#ifdef old_reshape
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /*
  impose the structure of modelll onto inll
  */
-void llll_reshape(t_llll *ll, t_llll *modelll, llll_clone_fn fn)
+void llll_reshape_old(t_llll *ll, t_llll *modelll, llll_clone_fn fn)
 {
     t_llllelem *elem, *modelelem, *nextelem = NULL, *newelem = NULL, *prevelem = NULL, *nilelem = NULL;
     t_llll_stack *modelstack;
@@ -7446,7 +7443,6 @@ void llll_reshape(t_llll *ll, t_llll *modelll, llll_clone_fn fn)
     llll_stack_destroy(modelstack);
     pedantic_llll_check(ll);
 }
-#endif //old_reshape
 
 /*
  ---DESTRUCTIVE

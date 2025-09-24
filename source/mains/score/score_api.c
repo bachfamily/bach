@@ -8446,7 +8446,7 @@ t_llll *measure_get_cents_values_as_llll(t_score *x, t_measure *measure, char tr
         temp_chord = temp_chord->next;
     }
     if (tree)
-        llll_reshape(meas_llll, measure->rhythmic_tree, ignore_l_thing_fn);
+        llll_reshape_old(meas_llll, measure->rhythmic_tree, ignore_l_thing_fn);
     
     return meas_llll;
 }
@@ -8545,7 +8545,7 @@ t_llll* measure_get_durations_values_as_llll(t_score *x, t_measure *measure, cha
             llll_funall(model, add_t_after_all_tied_chords_fn, data, 1, -1, 0);
         }
         
-        llll_reshape(out_llll, model, clone_rhythm_level_properties_fn);
+        llll_reshape_old(out_llll, model, clone_rhythm_level_properties_fn);
         
         // adding the "g" symbol in front of any grace level
 //        verbose_post_rhythmic_tree((t_notation_obj *) x, measure, NULL, 2);
@@ -8637,7 +8637,7 @@ t_llll* measure_get_velocities_values_as_llll(t_measure *measure, char tree)
         temp_chord = temp_chord->next;
     }
     if (tree)
-        llll_reshape(out_llll, measure->rhythmic_tree, ignore_l_thing_fn);
+        llll_reshape_old(out_llll, measure->rhythmic_tree, ignore_l_thing_fn);
     return out_llll;
 }
 
@@ -8745,9 +8745,9 @@ t_llll* get_all_extras_values_as_llll(t_score *x, char tree)
             }
             
             if (tree){
-//                llll_reshape(graphic_measllll, temp_meas->rhythmic_tree, ignore_l_thing_fn);
-                llll_reshape(breakpoints_measllll, temp_meas->rhythmic_tree, ignore_l_thing_fn);
-                llll_reshape(slots_measllll, temp_meas->rhythmic_tree, ignore_l_thing_fn);
+//                llll_reshape_old(graphic_measllll, temp_meas->rhythmic_tree, ignore_l_thing_fn);
+                llll_reshape_old(breakpoints_measllll, temp_meas->rhythmic_tree, ignore_l_thing_fn);
+                llll_reshape_old(slots_measllll, temp_meas->rhythmic_tree, ignore_l_thing_fn);
             }
             
 //            llll_appendllll(graphic_voicellll, graphic_measllll, 0, WHITENULL_llll);

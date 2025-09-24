@@ -31771,11 +31771,11 @@ t_llll* measure_get_values_as_llll(t_notation_obj *r_ob, t_measure *measure, e_d
     }
     
     if (tree) {
-        llll_reshape(body_llll, measure->rhythmic_tree, clone_rhythm_level_properties_fn);
+        llll_reshape_old(body_llll, measure->rhythmic_tree, clone_rhythm_level_properties_fn);
         
         // adding the "g" symbol in front of any grace level
         llll_funall(body_llll, add_g_in_front_of_grace_levels_fn, NULL, 1, -1, FUNALL_SKIP_ATOMS);
-        
+
         // adding level information, if requested
         if (also_get_level_information)
             llll_funall(body_llll, add_level_information_fn, NULL, 1, -1, FUNALL_SKIP_ATOMS);
@@ -31785,12 +31785,12 @@ t_llll* measure_get_values_as_llll(t_notation_obj *r_ob, t_measure *measure, e_d
     
     llll_chain(out_llll, body_llll);
 
-    if (for_what == k_CONSIDER_FOR_UNDO || (measure->r_it.names->l_size > 0 && for_what != k_CONSIDER_FOR_EXPORT_OM && for_what != k_CONSIDER_FOR_EXPORT_PWGL)) 
+    if (for_what == k_CONSIDER_FOR_UNDO || (measure->r_it.names->l_size > 0 && for_what != k_CONSIDER_FOR_EXPORT_OM && for_what != k_CONSIDER_FOR_EXPORT_PWGL))
         llll_appendllll(out_llll, get_names_as_llll((t_notation_item *)measure, true), 0, WHITENULL_llll);
 
     llll_append_notationitem_flag(r_ob, out_llll, (t_notation_item *)measure);
 
-    if (for_what == k_CONSIDER_FOR_UNDO) 
+    if (for_what == k_CONSIDER_FOR_UNDO)
         llll_appendllll(out_llll, get_ID_as_llll((t_notation_item *)measure), 0, WHITENULL_llll);
 
     return out_llll;
