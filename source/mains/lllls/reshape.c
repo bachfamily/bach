@@ -159,7 +159,7 @@ void reshape_anything(t_reshape *x, t_symbol *msg, long ac, t_atom *av)
         } else
             ll = llllobj_get_store_contents((t_object *) x, LLLL_OBJ_VANILLA, 0, 1);
         model = llllobj_get_store_contents((t_object *) x, LLLL_OBJ_VANILLA, 1, 0);
-        llll_reshape_old(ll, model, NULL);
+        llll_reshape_new(ll, model, NULL);
         llll_release(model);
         x->n_ob.l_rebuild = 0;
         llllobj_gunload_llll((t_object *)x, LLLL_OBJ_VANILLA, ll, 0);

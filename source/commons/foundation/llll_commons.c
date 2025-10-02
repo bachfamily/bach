@@ -7223,6 +7223,8 @@ void llll_fatten(t_llll *ll)
 void llll_reshape_new(t_llll *ll, const t_llll *modelll, const llll_clone_fn fn)
 {
     
+    //t_llll *origLl = ll;
+    
     if (!ll || !modelll || ll->l_size == 0 || modelll->l_size == 0)
         return;
     
@@ -7247,13 +7249,13 @@ void llll_reshape_new(t_llll *ll, const t_llll *modelll, const llll_clone_fn fn)
                     prevelem->l_next = elem;
                     elem->l_prev = prevelem;
                 }
-                prevelem = elem;
-                elem = elem->l_next;
                 if (hatom_gettype(&elem->l_hatom) == H_LLLL) {
                     llll_upgrade_depth(elem->l_hatom.h_w.w_llll);
                 }
                 modelelem = modelelem->l_next;
                 ++ll->l_size;
+                prevelem = elem;
+                elem = elem->l_next;
             } else {
                 t_llllelem *nilelem = llllelem_get();
                 t_llll *nullll = llll_get();
@@ -7269,7 +7271,7 @@ void llll_reshape_new(t_llll *ll, const t_llll *modelll, const llll_clone_fn fn)
                 }
                 ll->l_tail = nilelem;
                 if (ll->l_depth == 1) {
-                    ll->l_depth = 2;
+                    llll_upgrade_depth(nullll);
                 }
                 prevelem = NULL;
                 ++ll->l_size;
@@ -7278,13 +7280,13 @@ void llll_reshape_new(t_llll *ll, const t_llll *modelll, const llll_clone_fn fn)
             }
         }
 
-        if (!elem)
-            break;
         // so if we're here we have no modelelem
         if (prevelem) {
             prevelem->l_next = NULL;
             ll->l_tail = prevelem;
         }
+        if (!elem)
+            break;
         modelelem = (t_llllelem *) llll_stack_pop(modelstack);
         if (!modelelem) {
             t_llllelem *next;
@@ -7299,7 +7301,7 @@ void llll_reshape_new(t_llll *ll, const t_llll *modelll, const llll_clone_fn fn)
         prevelem = ll->l_tail;
     }
     
-    llll_check(ll);
+    //llll_check(origLl);
     llll_stack_destroy(modelstack);
 }
 
