@@ -4226,6 +4226,8 @@ typedef struct _notation_obj
     
     // staff lines
     t_llll            *stafflines_as_llll;    ///< Stafflines as an llll
+    double            stafflines_width;                  ///< width
+    char              stafflines_width_scales_with_zoom; ///< by default off
     
     // autoclear
     char            autoclear;                   ///< If this flag is set, when a reconstruction bang is received,
@@ -10743,6 +10745,8 @@ double paint_label_for_ruler(t_notation_obj *r_ob, t_jgraphics* g, double millis
  */ 
 void paint_staff_lines(t_notation_obj *r_ob, t_jgraphics* g, double x1, double x2, double width, double middleC_y, long clef, 
                        t_jrgba main_staff_color, t_jrgba aux_staff_color, long num_staff_lines, char *staff_lines);
+
+double notationobj_get_stafflines_width(t_notation_obj *r_ob);
 
 void paint_staff_lines_pianoroll(t_notation_obj *r_ob, t_jgraphics *g, double x1, double x2, double width, double middleC_y, long clef, t_jrgba color);
 

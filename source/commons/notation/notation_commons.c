@@ -664,6 +664,15 @@ void paint_staff_lines_pianoroll(t_notation_obj *r_ob, t_jgraphics *g, double x1
     }
 }
 
+double notationobj_get_stafflines_width(t_notation_obj *r_ob)
+{
+    if (r_ob->stafflines_width_scales_with_zoom) {
+        return r_ob->stafflines_width * r_ob->zoom_y;
+    } else {
+        return r_ob->stafflines_width;
+    }
+}
+
 void paint_staff_lines(t_notation_obj *r_ob, t_jgraphics* g, double x1, double x2, double width, double middleC_y, long clef, t_jrgba main_staff_color, t_jrgba aux_staff_color, long num_staff_lines, char *staff_lines){
 
     switch (clef) {

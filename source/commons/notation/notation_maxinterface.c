@@ -2190,6 +2190,19 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type){
     // @exclude bach.slot
     // Sets the line width for markers.
 
+    CLASS_ATTR_DOUBLE(c, "stafflineswidth", 0, t_notation_obj, stafflines_width);
+    CLASS_ATTR_STYLE_LABEL(c,"stafflineswidth",0,"text","Staff Lines Width");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"stafflineswidth",0,"1.");
+    // @exclude bach.slot
+    // Sets the line width for staff lines. By default this width is fixed, meaning
+    // that it does not scale with <m>vzoom</m>. You can tie the width to <m>vzoom</m>
+
+    CLASS_ATTR_CHAR(c, "scalablestafflineswidth", 0, t_notation_obj, stafflines_width_scales_with_zoom);
+    CLASS_ATTR_STYLE_LABEL(c,"scalablestafflineswidth",0,"onoff","Staff Lines Scale With Vertical Zoom");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"scalablestafflineswidth",0,"0");
+    // @exclude bach.slot
+    // Toggles the ability to scale staff line width for staff lines with vertical zoom. By default it is off.
+
     CLASS_ATTR_CHAR(c, "markerspan", 0, t_notation_obj, markers_span);
     CLASS_ATTR_STYLE_LABEL(c,"markerspan",0,"enumindex","Marker Vertical Span");
     CLASS_ATTR_ENUMINDEX(c,"markerspan", 0, "PlayHead Above First Staff Till Last Staff Between Staves");
