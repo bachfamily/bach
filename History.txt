@@ -131,6 +131,8 @@ VERSION NOTES:
     á XML export: added "voice" tag to ensure correct behaviour with Dorico
                   fixed crash happening when importing files without "attributes" tag
 
+- bach.n2mc: fixed @middlecoctave not working for pitches
+
 - bach.circle: has a new @phase attribute
 
 - bach.diff, bach.intersection, bach.symdiff, bach.union: second-inlet llll can be set as object argument

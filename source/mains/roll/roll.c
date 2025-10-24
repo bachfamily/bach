@@ -12386,6 +12386,11 @@ void paint_static_stuff1(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
         
         lock_general_mutex((t_notation_obj *)x);
         
+        // first update middleC position for every voice
+        for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next) { //
+            compute_middleC_position_for_voice((t_notation_obj *) x, (t_voice *) voice);
+        }
+        
         roll_preprocess_group_beamings(x);
         
         // cycle on voices
@@ -12419,7 +12424,6 @@ void paint_static_stuff1(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
             //        if (voice->prev)
             //            paint_line((t_notation_obj *) x, g, x->r_ob.j_selection_rgba, 0, voice->v_ob.offset_y + ((CONST_DEFAULT_ROLLVOICES_SPACING_UY - voice->prev->v_ob.vertical_spacing) / 2. + CONST_VOICE_THRESHOLD) *  x->r_ob.zoom_y, rect.width, voice->v_ob.offset_y + ((CONST_DEFAULT_ROLLVOICES_SPACING_UY - voice->prev->v_ob.vertical_spacing) / 2 + CONST_VOICE_THRESHOLD) * x->r_ob.zoom_y, 1.);
             //    
-            compute_middleC_position_for_voice((t_notation_obj *) x, (t_voice *) voice);
             staff_bottom_y = voice_get_staff_bottom_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
             staff_top_y = voice_get_staff_top_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
             
@@ -12582,6 +12586,10 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
             if (!jf_dynamics_nozoom) jf_dynamics_nozoom = jfont_create_debug(notationobj_get_dynamic_fontname((t_notation_obj *)x), JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.dynamics_font_size);
             if (!jf_dynamics_roman_nozoom) jf_dynamics_nozoom = jfont_create_debug("Times New Roman", JGRAPHICS_FONT_SLANT_ITALIC, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.dynamics_roman_font_size);
 
+            for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next) { // first update all middleC positions
+                compute_middleC_position_for_voice((t_notation_obj *) x, (t_voice *) voice);
+            }
+            
             roll_preprocess_group_beamings(x);
 
             for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next) { // cycle on the voices
@@ -12602,7 +12610,6 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
                 //        if (voice->prev)
                 //            paint_line((t_notation_obj *) x, g, x->r_ob.j_selection_rgba, 0, voice->v_ob.offset_y + ((CONST_DEFAULT_ROLLVOICES_SPACING_UY - voice->prev->v_ob.vertical_spacing) / 2. + CONST_VOICE_THRESHOLD) *  x->r_ob.zoom_y, rect.width, voice->v_ob.offset_y + ((CONST_DEFAULT_ROLLVOICES_SPACING_UY - voice->prev->v_ob.vertical_spacing) / 2 + CONST_VOICE_THRESHOLD) * x->r_ob.zoom_y, 1.);
                 //
-                compute_middleC_position_for_voice((t_notation_obj *) x, (t_voice *) voice);
                 staff_bottom_y = voice_get_staff_bottom_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
                 staff_top_y = voice_get_staff_top_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
                 
@@ -14318,10 +14325,11 @@ t_chord *shift_note_allow_voice_change(t_roll *x, t_note *note, double delta, ch
             }
             note_constrain_pitch_depending_on_editing_ranges((t_notation_obj *)x, note, note_new_voice);
         } else {
-            note->pitch_original = t_pitch::NaP;
-            note_constrain_pitch_depending_on_editing_ranges((t_notation_obj *)x, note, note_new_voice);
-            if (!ji)
+            if (!ji) {
+                note->pitch_original = t_pitch::NaP;
+                note_constrain_pitch_depending_on_editing_ranges((t_notation_obj *)x, note, note_new_voice);
                 note_set_auto_enharmonicity(note); // automatic accidentals for retranscribing!
+            }
         }
         
 //        if (!ji)
