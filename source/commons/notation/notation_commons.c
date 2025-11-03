@@ -10395,6 +10395,7 @@ t_group *build_and_append_group_from_selection(t_notation_obj *r_ob){
             if (thischord->r_it.group)
                 remove_element_from_group(r_ob, thischord->r_it.group, (t_notation_item *)thischord);
             append_element_in_group(r_ob, newgroup, (t_notation_item *) thischord);
+            thischord->need_recompute_parameters = true;
         }
     }
     
@@ -10557,6 +10558,17 @@ void append_group(t_notation_obj *r_ob, t_group *group){
 
 void delete_group(t_notation_obj *r_ob, t_group *group){
     t_group *next = group->next;
+    
+    // removing imposed directions
+    if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
+        for (t_notation_item *it = group_get_leftmost_item(r_ob, group); it; it = it->next_group_item) {
+            if (it->type == k_CHORD) {
+                t_chord *ch = (t_chord *)it;
+                ch->imposed_direction = 0;
+                ch->need_recompute_parameters = true;
+            }
+        }
+    }
     
     // removing references
     t_notation_item *item = group->firstelem;
@@ -10746,6 +10758,9 @@ void get_pianoroll_display_range(t_notation_obj *r_ob, long clef, long *mincents
     
 double voice_get_staff_top_y(t_notation_obj *r_ob, t_voice *voice, e_nonstandard_staffline_topbottom_options nonstandard_stafflines) 
 {
+    if (!voice)
+        return 0;
+    
     if (voice->notation_style == k_VOICE_NOTATION_STYLE_LINEAR_PITCH) {
         long minmc, maxmc;
         get_pianoroll_display_range(r_ob, voice->clef, &minmc, &maxmc);
@@ -10803,6 +10818,8 @@ double voice_get_staff_top_y(t_notation_obj *r_ob, t_voice *voice, e_nonstandard
 //nonstandard_stafflines=0: ignore them
 double voice_get_staff_bottom_y(t_notation_obj *r_ob, t_voice *voice, e_nonstandard_staffline_topbottom_options nonstandard_stafflines) 
 {
+    if (!voice) 
+        return 0;
     if (voice->notation_style == k_VOICE_NOTATION_STYLE_LINEAR_PITCH) {
         long minmc, maxmc;
         get_pianoroll_display_range(r_ob, voice->clef, &minmc, &maxmc);
@@ -45908,6 +45925,7 @@ void notationobj_pixel_to_element(t_notation_obj *r_ob, t_pt pix, void **clicked
     
     // Noteheads are far too important, we handle them with a loop BEFORE all other elements, except for clefs
     for (voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
+        if (voice->hidden) continue;
         for (curr_ch = chord_get_first(r_ob, voice); curr_ch; curr_ch = chord_get_next(curr_ch)){
             double align_x = chord_get_alignment_x(r_ob, curr_ch);
             
@@ -45928,6 +45946,7 @@ void notationobj_pixel_to_element(t_notation_obj *r_ob, t_pt pix, void **clicked
     }
     
     for (voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
+        if (voice->hidden) continue;
         for (curr_ch = chord_get_first(r_ob, voice); curr_ch; curr_ch = chord_get_next(curr_ch)){
             double align_x = chord_get_alignment_x(r_ob, curr_ch);
             t_note *longestnote = chord_get_longest_note(r_ob, curr_ch);

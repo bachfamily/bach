@@ -113,7 +113,10 @@ VERSION NOTES:
     · Improved lyrics alignment
     · Fixed issue causing wrong pitch display in the legend with linpitch mode
     · now octaves are preserved with pitches when transposing using Shift+Arrows
-
+    · @stafflineswidth and @scalablestafflineswidth: new attributes for roll/score
+    · Fixed bug causing crashes with highlighted playback and no fade-domain
+    · Added parameter to "distribute" message to warp the distribution
+    
 - bach.roll, bach.score, bach.score2roll:
     Now user-defined pitches are correctly preserved
 
