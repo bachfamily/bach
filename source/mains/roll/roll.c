@@ -159,7 +159,7 @@ void roll_resetslotinfo(t_roll *x);
 void roll_resetcommands(t_roll *x);
 void roll_resetarticulationinfo(t_roll *x);
 void roll_resetnoteheadinfo(t_roll *x);
-void roll_distribute(t_roll *x);
+void roll_distribute(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 
 void roll_paste_clipboard(t_roll *x, char keep_original_onsets, double force_onset, char keep_original_voice, long force_first_voice, char snap, char also_clear_selection);
 void roll_copy_selection(t_roll *x, char cut);
@@ -458,8 +458,8 @@ t_chord* addchord_from_notes(t_roll *x, long voicenumber, double onset, long unu
 void change_note_duration(t_roll *x, t_note *note, double delta_ms);
 char is_note_in_selected_region(t_roll *x, t_chord *chord, t_note *note);
 char is_chord_in_selected_region(t_roll *x, t_chord *chord);
-char equally_respace_selection_onsets(t_roll *x);
-char change_selection_duration(t_roll *x, double delta_ms); 
+char equally_respace_selection_onsets(t_roll *x, double power_exp);
+char change_selection_duration(t_roll *x, double delta_ms);
 char change_selection_onset(t_roll *x, double *delta_ms);
 //char change_selection_tail(t_roll *x, double delta_ms);  
 char align_selection_onsets(t_roll *x);
@@ -6696,7 +6696,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @method distribute @digest Evenly distribute onsets
     // @description Distributes onsets of selected items so that they are spaced evenly in time.
     // @seealso onset
-    class_addmethod(c, (method) roll_distribute, "distribute", 0);
+    class_addmethod(c, (method) roll_distribute, "distribute", A_GIMME, 0);
 
     
     // @method setnotationcolors @digest Change all notation colors at once
@@ -12287,8 +12287,8 @@ void roll_preprocess_group_beamings(t_roll *x)
             t_voice *voice = (t_voice *)firstchord->voiceparent;
             bool all_same_voice = true;
             double average_scaleposition = 0;
-            double highest_y = x->r_ob.height;
-            double lowest_y = 0;
+            double highest_y = DBL_MAX;
+            double lowest_y = DBL_MIN;
             long countnotes = 0;
             
             for (t_notation_item *it = gr->firstelem; it; it = it->next_group_item) {
@@ -12334,6 +12334,7 @@ void roll_preprocess_group_beamings(t_roll *x)
     }
 }
 
+
 void roll_paint_groups_as_beams(t_roll *x, t_jgraphics *g)
 {
     // paint groups as beams if needed
@@ -12344,6 +12345,10 @@ void roll_paint_groups_as_beams(t_roll *x, t_jgraphics *g)
             if (firstitem && lastitem && firstitem->type == k_CHORD && lastitem->type == k_CHORD) {
                 t_chord *firstchord = (t_chord *)firstitem;
                 t_chord *lastchord = (t_chord *)lastitem;
+                // if any of the voices of first/lastchord is hidden, we don't paint it
+                if (firstchord->voiceparent->v_ob.hidden || lastchord->voiceparent->v_ob.hidden)
+                    continue; // nothing to paint
+                
                 if (firstchord && firstchord->firstnote && lastchord && lastchord->firstnote) {
                     double firstchordstemx = chord_get_stem_x((t_notation_obj *)x, firstchord);
                     double lastchordstemx = chord_get_stem_x((t_notation_obj *)x, lastchord);
@@ -12386,6 +12391,11 @@ void paint_static_stuff1(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
         
         lock_general_mutex((t_notation_obj *)x);
         
+        // first update middleC position for every voice
+        for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next) { //
+            compute_middleC_position_for_voice((t_notation_obj *) x, (t_voice *) voice);
+        }
+        
         roll_preprocess_group_beamings(x);
         
         // cycle on voices
@@ -12419,7 +12429,6 @@ void paint_static_stuff1(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
             //        if (voice->prev)
             //            paint_line((t_notation_obj *) x, g, x->r_ob.j_selection_rgba, 0, voice->v_ob.offset_y + ((CONST_DEFAULT_ROLLVOICES_SPACING_UY - voice->prev->v_ob.vertical_spacing) / 2. + CONST_VOICE_THRESHOLD) *  x->r_ob.zoom_y, rect.width, voice->v_ob.offset_y + ((CONST_DEFAULT_ROLLVOICES_SPACING_UY - voice->prev->v_ob.vertical_spacing) / 2 + CONST_VOICE_THRESHOLD) * x->r_ob.zoom_y, 1.);
             //    
-            compute_middleC_position_for_voice((t_notation_obj *) x, (t_voice *) voice);
             staff_bottom_y = voice_get_staff_bottom_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
             staff_top_y = voice_get_staff_top_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
             
@@ -12433,9 +12442,9 @@ void paint_static_stuff1(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
             if (voice->v_ob.part_index == 0)
                 for (k=x->r_ob.first_shown_system; k <= x->r_ob.last_shown_system; k++) {
                     if (voice->v_ob.notation_style == k_VOICE_NOTATION_STYLE_LINEAR_PITCH)
-                        paint_staff_lines_pianoroll((t_notation_obj *)x, g, end_x_to_repaint, rect.width - x->r_ob.j_inset_x, 1., voice->v_ob.middleC_y + k * system_jump, clef, mainstaffcolor);
+                        paint_staff_lines_pianoroll((t_notation_obj *)x, g, end_x_to_repaint, rect.width - x->r_ob.j_inset_x, notationobj_get_stafflines_width((t_notation_obj *)x), voice->v_ob.middleC_y + k * system_jump, clef, mainstaffcolor);
                     else
-                        paint_staff_lines((t_notation_obj *)x, g, end_x_to_repaint, rect.width - x->r_ob.j_inset_x, 1.,
+                        paint_staff_lines((t_notation_obj *)x, g, end_x_to_repaint, rect.width - x->r_ob.j_inset_x, notationobj_get_stafflines_width((t_notation_obj *)x),
                                           voice->v_ob.middleC_y + k * system_jump, clef, mainstaffcolor, auxstaffcolor, voice->v_ob.num_staff_lines, voice->v_ob.staff_lines);
                 }
 			
@@ -12485,12 +12494,12 @@ void paint_static_stuff1(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
 
             roll_paint_linear_editing_stuff(x, g, voice, staff_top_y, staff_bottom_y);
 
-            roll_paint_groups_as_beams(x, g);
-            
             // TODO: repaint selection!
             // the selction must be in the foreground
         }
-        
+
+        roll_paint_groups_as_beams(x, g);
+
         unlock_general_mutex((t_notation_obj *)x);
         
         roll_paint_markers(x, g, rect);
@@ -12556,6 +12565,19 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
         annotation_line_y_pos[vn] = 0;
         last_annotation_text[vn][0] = 0;
     }
+    
+    // defining fonts
+    if (!jf_text_small) jf_text_small = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(x->r_ob.slot_background_font_size * x->r_ob.zoom_y * (x->r_ob.bgslot_zoom/100.)));  // text font (small)
+    if (!jf_text_smallbold) jf_text_smallbold = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, round(x->r_ob.slot_background_font_size * x->r_ob.zoom_y * (x->r_ob.bgslot_zoom/100.)));  // text font (small and bold)
+    if (!jf_lyrics) jf_lyrics = jfont_create_debug(x->r_ob.lyrics_font ? x->r_ob.lyrics_font->s_name : "Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.lyrics_font_size * x->r_ob.zoom_y);
+    if (!jf_lyrics_nozoom) jf_lyrics_nozoom = jfont_create_debug(x->r_ob.lyrics_font ? x->r_ob.lyrics_font->s_name : "Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.lyrics_font_size);
+    if (!jf_ann) jf_ann = jfont_create_debug(x->r_ob.annotations_font ? x->r_ob.annotations_font->s_name : "Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.annotation_font_size * x->r_ob.zoom_y);
+    if (!jf_small_dynamics) jf_small_dynamics = jfont_create_debug(notationobj_get_dynamic_fontname((t_notation_obj *)x), JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.slot_background_font_size * 2 * x->r_ob.zoom_y * (x->r_ob.bgslot_zoom/100.));
+    if (!jf_small_dynamics_roman) jf_small_dynamics_roman = jfont_create_debug("Times New Roman", JGRAPHICS_FONT_SLANT_ITALIC, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.slot_background_font_size * x->r_ob.zoom_y * (x->r_ob.bgslot_zoom/100.));
+    if (!jf_dynamics) jf_dynamics = jfont_create_debug(notationobj_get_dynamic_fontname((t_notation_obj *)x), JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.dynamics_font_size * x->r_ob.zoom_y);
+    if (!jf_dynamics_roman) jf_dynamics_roman = jfont_create_debug("Times New Roman", JGRAPHICS_FONT_SLANT_ITALIC, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.dynamics_roman_font_size * x->r_ob.zoom_y);
+    if (!jf_dynamics_nozoom) jf_dynamics_nozoom = jfont_create_debug(notationobj_get_dynamic_fontname((t_notation_obj *)x), JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.dynamics_font_size);
+    if (!jf_dynamics_roman_nozoom) jf_dynamics_nozoom = jfont_create_debug("Times New Roman", JGRAPHICS_FONT_SLANT_ITALIC, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.dynamics_roman_font_size);
 
     // First part
     jgraphics_set_source_rgba(main_g, 0, 0, 0, 1);   // setting alpha to 1 before painting layers! otherwise we have blending issues
@@ -12569,19 +12591,10 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
             // some constant that will be useful later for the "retouches" left to do, in order to have things working properly
             // e.g.: if some notes have been drawn over these parts, we cover the notes with the keys/background/staves...
             
-            // defining fonts
-            if (!jf_text_small) jf_text_small = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(x->r_ob.slot_background_font_size * x->r_ob.zoom_y * (x->r_ob.bgslot_zoom/100.)));  // text font (small)
-            if (!jf_text_smallbold) jf_text_smallbold = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, round(x->r_ob.slot_background_font_size * x->r_ob.zoom_y * (x->r_ob.bgslot_zoom/100.)));  // text font (small and bold)
-            if (!jf_lyrics) jf_lyrics = jfont_create_debug(x->r_ob.lyrics_font ? x->r_ob.lyrics_font->s_name : "Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.lyrics_font_size * x->r_ob.zoom_y);
-            if (!jf_lyrics_nozoom) jf_lyrics_nozoom = jfont_create_debug(x->r_ob.lyrics_font ? x->r_ob.lyrics_font->s_name : "Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.lyrics_font_size);
-            if (!jf_ann) jf_ann = jfont_create_debug(x->r_ob.annotations_font ? x->r_ob.annotations_font->s_name : "Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.annotation_font_size * x->r_ob.zoom_y);
-            if (!jf_small_dynamics) jf_small_dynamics = jfont_create_debug(notationobj_get_dynamic_fontname((t_notation_obj *)x), JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.slot_background_font_size * 2 * x->r_ob.zoom_y * (x->r_ob.bgslot_zoom/100.));
-            if (!jf_small_dynamics_roman) jf_small_dynamics_roman = jfont_create_debug("Times New Roman", JGRAPHICS_FONT_SLANT_ITALIC, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.slot_background_font_size * x->r_ob.zoom_y * (x->r_ob.bgslot_zoom/100.));
-            if (!jf_dynamics) jf_dynamics = jfont_create_debug(notationobj_get_dynamic_fontname((t_notation_obj *)x), JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.dynamics_font_size * x->r_ob.zoom_y);
-            if (!jf_dynamics_roman) jf_dynamics_roman = jfont_create_debug("Times New Roman", JGRAPHICS_FONT_SLANT_ITALIC, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.dynamics_roman_font_size * x->r_ob.zoom_y);
-            if (!jf_dynamics_nozoom) jf_dynamics_nozoom = jfont_create_debug(notationobj_get_dynamic_fontname((t_notation_obj *)x), JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.dynamics_font_size);
-            if (!jf_dynamics_roman_nozoom) jf_dynamics_nozoom = jfont_create_debug("Times New Roman", JGRAPHICS_FONT_SLANT_ITALIC, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.dynamics_roman_font_size);
-
+            for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next) { // first update all middleC positions
+                compute_middleC_position_for_voice((t_notation_obj *) x, (t_voice *) voice);
+            }
+            
             roll_preprocess_group_beamings(x);
 
             for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next) { // cycle on the voices
@@ -12602,7 +12615,6 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
                 //        if (voice->prev)
                 //            paint_line((t_notation_obj *) x, g, x->r_ob.j_selection_rgba, 0, voice->v_ob.offset_y + ((CONST_DEFAULT_ROLLVOICES_SPACING_UY - voice->prev->v_ob.vertical_spacing) / 2. + CONST_VOICE_THRESHOLD) *  x->r_ob.zoom_y, rect.width, voice->v_ob.offset_y + ((CONST_DEFAULT_ROLLVOICES_SPACING_UY - voice->prev->v_ob.vertical_spacing) / 2 + CONST_VOICE_THRESHOLD) * x->r_ob.zoom_y, 1.);
                 //
-                compute_middleC_position_for_voice((t_notation_obj *) x, (t_voice *) voice);
                 staff_bottom_y = voice_get_staff_bottom_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
                 staff_top_y = voice_get_staff_top_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
                 
@@ -12616,9 +12628,9 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
                 if (voice->v_ob.part_index == 0)
                     for (k=x->r_ob.first_shown_system; k <= x->r_ob.last_shown_system; k++) {
                         if (voice->v_ob.notation_style == k_VOICE_NOTATION_STYLE_LINEAR_PITCH)
-                            paint_staff_lines_pianoroll((t_notation_obj *)x, g, end_x_to_repaint, rect.width - x->r_ob.j_inset_x, 1., voice->v_ob.middleC_y + k * system_jump, clef, mainstaffcolor);
+                            paint_staff_lines_pianoroll((t_notation_obj *)x, g, end_x_to_repaint, rect.width - x->r_ob.j_inset_x, notationobj_get_stafflines_width((t_notation_obj *)x), voice->v_ob.middleC_y + k * system_jump, clef, mainstaffcolor);
                         else
-                            paint_staff_lines((t_notation_obj *)x, g, end_x_to_repaint, rect.width - x->r_ob.j_inset_x, 1.,
+                            paint_staff_lines((t_notation_obj *)x, g, end_x_to_repaint, rect.width - x->r_ob.j_inset_x, notationobj_get_stafflines_width((t_notation_obj *)x),
                                               voice->v_ob.middleC_y + k * system_jump, clef, mainstaffcolor, auxstaffcolor, voice->v_ob.num_staff_lines, voice->v_ob.staff_lines);
                     }
                 
@@ -12676,7 +12688,9 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
     unlock_general_mutex((t_notation_obj *)x);
 
     paint_playhead((t_notation_obj *)x, main_g, rect);
-    
+
+    assert(jf_text_small != NULL);
+
 
     // Now, second part
     jgraphics_set_source_rgba(main_g, 0, 0, 0, 1);   // setting alpha to 1 before painting layers! otherwise we have blending issues
@@ -12736,9 +12750,9 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
                 // paint first parts of staves
                 for (k=x->r_ob.first_shown_system; k <= x->r_ob.last_shown_system; k++) {
                     if (voice->v_ob.notation_style == k_VOICE_NOTATION_STYLE_LINEAR_PITCH)
-                        paint_staff_lines_pianoroll((t_notation_obj *)x, g, x->r_ob.j_inset_x + x->r_ob.voice_names_uwidth * x->r_ob.zoom_y, end_x_to_repaint, 1., voice->v_ob.middleC_y + k * system_jump, clef, mainstaffcolor);
+                        paint_staff_lines_pianoroll((t_notation_obj *)x, g, x->r_ob.j_inset_x + x->r_ob.voice_names_uwidth * x->r_ob.zoom_y, end_x_to_repaint, notationobj_get_stafflines_width((t_notation_obj *)x), voice->v_ob.middleC_y + k * system_jump, clef, mainstaffcolor);
                     else
-                        paint_staff_lines((t_notation_obj *)x, g, x->r_ob.j_inset_x + x->r_ob.voice_names_uwidth * x->r_ob.zoom_y, end_x_to_repaint, 1., voice->v_ob.middleC_y + k * system_jump, clef, mainstaffcolor, auxstaffcolor, voice->v_ob.num_staff_lines, voice->v_ob.staff_lines);
+                        paint_staff_lines((t_notation_obj *)x, g, x->r_ob.j_inset_x + x->r_ob.voice_names_uwidth * x->r_ob.zoom_y, end_x_to_repaint, notationobj_get_stafflines_width((t_notation_obj *)x), voice->v_ob.middleC_y + k * system_jump, clef, mainstaffcolor, auxstaffcolor, voice->v_ob.num_staff_lines, voice->v_ob.staff_lines);
                 }
                 
                 // paint clefs
@@ -12777,6 +12791,7 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
                     // we check if the chord is IN the screen: if so, we draw it!
                     e_chord_position_in_screen position = chord_get_screen_position_for_painting(x, voice_cur[vn]);
                     
+                    assert(jf_text_small != NULL);
                     if (position == k_CHORDPOSITIONINSCREEN_STARTS_INSIDE_DOMAIN) {
                         roll_paint_chord(x, view, g, voice, voice_cur[vn], rect, system_index, &(first_painted_chord[vn]), &(curr_hairpin_type[vn]), &(curr_hairpin_start_x[vn]), jf, jf_lyrics_nozoom, jf_dynamics_nozoom, jf_dynamics_roman_nozoom, jf_text_small, jf_text_smallbold, jf_small_dynamics, jf_small_dynamics_roman, jf_acc, jf_text_fractions, jf_acc_bogus, jf_dynamics, jf_dynamics_roman, jf_ann, jf_lyrics, clef, octave_stem_length, part_direction, staff_top_y, staff_bottom_y, last_annotation_text[vn], &(prev_hairpin_color[vn]), &(prev_hairpin_dontpaint[vn]), &(annotation_sequence_start_x_pos[vn]), &(annotation_sequence_end_x_pos[vn]), &(annotation_line_y_pos[vn]), &(lyrics_dashed_going_on[vn]), &(left_dashed_x[vn]), predomain_width);
                     } else {
@@ -12791,12 +12806,12 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
                 
                 roll_paint_linear_editing_stuff(x, g, voice, staff_top_y, staff_bottom_y);
                 
-                roll_paint_groups_as_beams(x, g);
-                
                 // TODO: repaint selection!
                 // the selction must be in the foreground
             }
-            
+
+            roll_paint_groups_as_beams(x, g);
+
             paint_voicegroups_accollature((t_notation_obj *)x, g);
 
             roll_paint_markers_twopass(x, g, rect, restart_from_this_marker, NULL, 2);
@@ -12955,9 +12970,9 @@ void paint_static_stuff2(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
             // repaint first parts of staves
             for (k=x->r_ob.first_shown_system; k <= x->r_ob.last_shown_system; k++) {
                 if (voice->v_ob.notation_style == k_VOICE_NOTATION_STYLE_LINEAR_PITCH)
-                    paint_staff_lines_pianoroll((t_notation_obj *)x, g, x->r_ob.j_inset_x + x->r_ob.voice_names_uwidth * x->r_ob.zoom_y, end_x_to_repaint, 1., voice->v_ob.middleC_y + k * system_jump, clef, mainstaffcolor);
+                    paint_staff_lines_pianoroll((t_notation_obj *)x, g, x->r_ob.j_inset_x + x->r_ob.voice_names_uwidth * x->r_ob.zoom_y, end_x_to_repaint, notationobj_get_stafflines_width((t_notation_obj *)x), voice->v_ob.middleC_y + k * system_jump, clef, mainstaffcolor);
                 else
-                    paint_staff_lines((t_notation_obj *)x, g, x->r_ob.j_inset_x + x->r_ob.voice_names_uwidth * x->r_ob.zoom_y, end_x_to_repaint, 1., voice->v_ob.middleC_y + k * system_jump, clef, mainstaffcolor, auxstaffcolor, voice->v_ob.num_staff_lines, voice->v_ob.staff_lines);
+                    paint_staff_lines((t_notation_obj *)x, g, x->r_ob.j_inset_x + x->r_ob.voice_names_uwidth * x->r_ob.zoom_y, end_x_to_repaint, notationobj_get_stafflines_width((t_notation_obj *)x), voice->v_ob.middleC_y + k * system_jump, clef, mainstaffcolor, auxstaffcolor, voice->v_ob.num_staff_lines, voice->v_ob.staff_lines);
             }
             
             // paint clefs
@@ -14318,10 +14333,11 @@ t_chord *shift_note_allow_voice_change(t_roll *x, t_note *note, double delta, ch
             }
             note_constrain_pitch_depending_on_editing_ranges((t_notation_obj *)x, note, note_new_voice);
         } else {
-            note->pitch_original = t_pitch::NaP;
-            note_constrain_pitch_depending_on_editing_ranges((t_notation_obj *)x, note, note_new_voice);
-            if (!ji)
+            if (!ji) {
+                note->pitch_original = t_pitch::NaP;
+                note_constrain_pitch_depending_on_editing_ranges((t_notation_obj *)x, note, note_new_voice);
                 note_set_auto_enharmonicity(note); // automatic accidentals for retranscribing!
+            }
         }
         
 //        if (!ji)
@@ -14895,6 +14911,7 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
         char clicked_is_selected = false;
         double clicked_onset = 0;
         for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next) {
+            if (voice->v_ob.hidden) continue;
             t_chord *curr_ch;
             for (curr_ch = voice->firstchord; curr_ch; curr_ch = curr_ch->next){
                 t_note *curr_nt;
@@ -14940,7 +14957,7 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                                 align_selection_onsets(x);
                                 handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_ALIGN_SELECTION);
                             } else if (res == 474 && is_editable((t_notation_obj *)x, k_NOTE_OR_CHORD, k_MODIFICATION_ONSET))  {
-                                equally_respace_selection_onsets(x);
+                                equally_respace_selection_onsets(x, 1.);
                                 handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_EQUALLY_RESPACE_SELECTION);
                             } else if (res == 475 && is_editable((t_notation_obj *)x, k_NOTE_OR_CHORD, k_MODIFICATION_DURATION)) {
                                 legato(x, 0);
@@ -15100,21 +15117,23 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
         t_rollvoice *voice = x->firstvoice;
         t_chord *curr_ch;
         while (voice && (voice->v_ob.number < x->r_ob.num_voices)) {
-            curr_ch = voice->firstchord;
-            while ((curr_ch)&&(!(clicked_ptr))) { // cycle on the chords
-                //            post("chord onset: %ld, chord numnotes: %d", curr_ch->onset, curr_ch->num_notes);
-                t_note *curr_nt = curr_ch->firstnote;
-                //            post("note midic: %ld, duration: %ld, velocity: %ld, next: %lx", curr_nt->midicents, curr_nt->duration, curr_nt->velocity, curr_nt->next);
-                while ((curr_nt)&&(!(clicked_ptr))) { // cycle on the notes
-                    if (is_in_tail_shape((t_notation_obj *)x,curr_nt,this_x,this_y)) {
-                        clicked_ptr = curr_nt->lastbreakpoint;
-                        clicked_obj = k_PITCH_BREAKPOINT;
-                        need_set_selection_dragging_velocity = true; 
-                        break;
+            if (!voice->v_ob.hidden) {
+                curr_ch = voice->firstchord;
+                while ((curr_ch)&&(!(clicked_ptr))) { // cycle on the chords
+                    //            post("chord onset: %ld, chord numnotes: %d", curr_ch->onset, curr_ch->num_notes);
+                    t_note *curr_nt = curr_ch->firstnote;
+                    //            post("note midic: %ld, duration: %ld, velocity: %ld, next: %lx", curr_nt->midicents, curr_nt->duration, curr_nt->velocity, curr_nt->next);
+                    while ((curr_nt)&&(!(clicked_ptr))) { // cycle on the notes
+                        if (is_in_tail_shape((t_notation_obj *)x,curr_nt,this_x,this_y)) {
+                            clicked_ptr = curr_nt->lastbreakpoint;
+                            clicked_obj = k_PITCH_BREAKPOINT;
+                            need_set_selection_dragging_velocity = true;
+                            break;
+                        }
+                        curr_nt = curr_nt->next;
                     }
-                    curr_nt = curr_nt->next;
-                } 
-                curr_ch = curr_ch->next;
+                    curr_ch = curr_ch->next;
+                }
             }
             voice = voice->next;
         }
@@ -15126,37 +15145,39 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
         t_rollvoice *voice = x->firstvoice;
         t_chord *curr_ch;
         while (voice && (voice->v_ob.number < x->r_ob.num_voices)) {
-            curr_ch = voice->firstchord;
-            while (curr_ch && !clicked_ptr) { // cycle on the chords
-                t_note *curr_nt = curr_ch->firstnote;
-                while (curr_nt && !clicked_ptr) { // cycle on the notes
-                    if (curr_nt->num_breakpoints > 2) { // if there are nontrivial breakpoints
-                        t_bpt *curr_bpt = curr_nt->firstbreakpoint->next;
-                        while (curr_bpt && !clicked_ptr) { // cycle on the breakpoints
-                            if (is_in_breakpoint_shape((t_notation_obj *)x, curr_bpt, this_x, this_y)) {
-                                if ((modifiers == eCommandKey) && !notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)curr_nt)) { // delete bpt!
-                                    if (is_editable((t_notation_obj *)x, k_PITCH_BREAKPOINT, k_DELETION)) {
-                                        clicked_ptr = NULL;
-                                        undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)curr_ch, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-                                        delete_breakpoint((t_notation_obj *) x, curr_bpt);
-                                        x->r_ob.item_changed_at_mousedown = 1;
+            if (!voice->v_ob.hidden) {
+                curr_ch = voice->firstchord;
+                while (curr_ch && !clicked_ptr) { // cycle on the chords
+                    t_note *curr_nt = curr_ch->firstnote;
+                    while (curr_nt && !clicked_ptr) { // cycle on the notes
+                        if (curr_nt->num_breakpoints > 2) { // if there are nontrivial breakpoints
+                            t_bpt *curr_bpt = curr_nt->firstbreakpoint->next;
+                            while (curr_bpt && !clicked_ptr) { // cycle on the breakpoints
+                                if (is_in_breakpoint_shape((t_notation_obj *)x, curr_bpt, this_x, this_y)) {
+                                    if ((modifiers == eCommandKey) && !notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)curr_nt)) { // delete bpt!
+                                        if (is_editable((t_notation_obj *)x, k_PITCH_BREAKPOINT, k_DELETION)) {
+                                            clicked_ptr = NULL;
+                                            undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)curr_ch, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+                                            delete_breakpoint((t_notation_obj *) x, curr_bpt);
+                                            x->r_ob.item_changed_at_mousedown = 1;
+                                        }
+                                        unlock_general_mutex((t_notation_obj *)x);
+                                        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_PITCH_BREAKPOINT);
+                                        return;
+                                    } else {
+                                        clicked_ptr = curr_bpt;
+                                        clicked_obj = k_PITCH_BREAKPOINT;
+                                        need_set_selection_dragging_velocity = true;
+                                        break;
                                     }
-                                    unlock_general_mutex((t_notation_obj *)x);
-                                    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_PITCH_BREAKPOINT);
-                                    return;
-                                } else {
-                                    clicked_ptr = curr_bpt;
-                                    clicked_obj = k_PITCH_BREAKPOINT;
-                                    need_set_selection_dragging_velocity = true; 
-                                    break;
                                 }
+                                curr_bpt = curr_bpt->next;
                             }
-                            curr_bpt = curr_bpt->next;
                         }
+                        curr_nt = curr_nt->next;
                     }
-                    curr_nt = curr_nt->next;
-                } 
-                curr_ch = curr_ch->next;
+                    curr_ch = curr_ch->next;
+                }
             }
             voice = voice->next;
         }
@@ -15167,68 +15188,70 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
         t_rollvoice *voice = x->firstvoice;
         t_chord *curr_ch;
         while (voice && (voice->v_ob.number < x->r_ob.num_voices)) {
-            curr_ch = voice->firstchord;
-            while ((curr_ch)&&(!(clicked_ptr))) { // cycle on the chords
-                t_note *curr_nt = curr_ch->firstnote;
-                while (curr_nt && !clicked_ptr) { // cycle on the notes
-                    if (is_in_durationline_shape((t_notation_obj *)x,curr_nt,this_x,this_y)) {
-                        
-                        
-                        if (need_popup && !rightclick_to_play_offline) {
-                            // popup menu
-                            long res = k_CHANGED_DO_NOTHING;
-                            unlock_general_mutex((t_notation_obj *)x);
+            if (!voice->v_ob.hidden) {
+                curr_ch = voice->firstchord;
+                while ((curr_ch)&&(!(clicked_ptr))) { // cycle on the chords
+                    t_note *curr_nt = curr_ch->firstnote;
+                    while (curr_nt && !clicked_ptr) { // cycle on the notes
+                        if (is_in_durationline_shape((t_notation_obj *)x,curr_nt,this_x,this_y)) {
                             
-                            if (!is_editable((t_notation_obj *)x, k_POPUP_MENU, k_ELEMENT_ACTIONS_NONE)) return;
-                            res = handle_durationline_popup((t_notation_obj *) x, curr_nt->durationline, modifiers);
-                            if (res == 8000 && is_editable((t_notation_obj *)x, k_NOTE_OR_CHORD, k_MODIFICATION_GENERIC) && is_editable((t_notation_obj *)x, k_NOTE_OR_CHORD, k_CREATION)) {
-                                roll_slice_note(x, curr_nt, xposition_to_onset((t_notation_obj *) x, this_x, 0));
-                                handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_SLICE);
-                            } else if (res != k_CHANGED_DO_NOTHING)
-                                handle_change((t_notation_obj *)x, res, k_UNDO_OP_UNKNOWN);
-                            return;
-                        } else if (!rightclick_to_play_offline && (modifiers == eAltKey) && (x->r_ob.allow_glissandi) && !notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)curr_nt)) {
-                            // add a breakpoint!
-                            if (is_editable((t_notation_obj *)x, k_PITCH_BREAKPOINT, k_CREATION)) {
-                                double start_x = onset_to_xposition_roll((t_notation_obj *) x, curr_ch->onset, NULL);
-                                double end_x = onset_to_xposition_roll((t_notation_obj *) x, curr_ch->onset + curr_nt->duration, NULL);
-                                double rel_x_pos = (end_x > start_x) ? (this_x-start_x)/(end_x-start_x) : -1.;
-                                double y_pos = 0; //yposition_to_mc(x, this_y) - curr_nt->midicents;
-                                t_bpt *this_bpt;
+                            
+                            if (need_popup && !rightclick_to_play_offline) {
+                                // popup menu
+                                long res = k_CHANGED_DO_NOTHING;
+                                unlock_general_mutex((t_notation_obj *)x);
                                 
-                                undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)curr_ch, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-                                this_bpt = add_breakpoint((t_notation_obj *) x, curr_nt, rel_x_pos, y_pos, 0., true, CONST_DEFAULT_NEW_NOTE_VELOCITY, true); 
-                                x->r_ob.item_changed_at_mousedown = 1;
-                                //                            x->r_ob.changed_while_dragging = true;
-                                need_send_changed_bang = true;
-                                clicked_ptr = this_bpt;
-                                clicked_obj = k_PITCH_BREAKPOINT;
+                                if (!is_editable((t_notation_obj *)x, k_POPUP_MENU, k_ELEMENT_ACTIONS_NONE)) return;
+                                res = handle_durationline_popup((t_notation_obj *) x, curr_nt->durationline, modifiers);
+                                if (res == 8000 && is_editable((t_notation_obj *)x, k_NOTE_OR_CHORD, k_MODIFICATION_GENERIC) && is_editable((t_notation_obj *)x, k_NOTE_OR_CHORD, k_CREATION)) {
+                                    roll_slice_note(x, curr_nt, xposition_to_onset((t_notation_obj *) x, this_x, 0));
+                                    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_SLICE);
+                                } else if (res != k_CHANGED_DO_NOTHING)
+                                    handle_change((t_notation_obj *)x, res, k_UNDO_OP_UNKNOWN);
+                                return;
+                            } else if (!rightclick_to_play_offline && (modifiers == eAltKey) && (x->r_ob.allow_glissandi) && !notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)curr_nt)) {
+                                // add a breakpoint!
+                                if (is_editable((t_notation_obj *)x, k_PITCH_BREAKPOINT, k_CREATION)) {
+                                    double start_x = onset_to_xposition_roll((t_notation_obj *) x, curr_ch->onset, NULL);
+                                    double end_x = onset_to_xposition_roll((t_notation_obj *) x, curr_ch->onset + curr_nt->duration, NULL);
+                                    double rel_x_pos = (end_x > start_x) ? (this_x-start_x)/(end_x-start_x) : -1.;
+                                    double y_pos = 0; //yposition_to_mc(x, this_y) - curr_nt->midicents;
+                                    t_bpt *this_bpt;
+                                    
+                                    undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)curr_ch, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+                                    this_bpt = add_breakpoint((t_notation_obj *) x, curr_nt, rel_x_pos, y_pos, 0., true, CONST_DEFAULT_NEW_NOTE_VELOCITY, true);
+                                    x->r_ob.item_changed_at_mousedown = 1;
+                                    //                            x->r_ob.changed_while_dragging = true;
+                                    need_send_changed_bang = true;
+                                    clicked_ptr = this_bpt;
+                                    clicked_obj = k_PITCH_BREAKPOINT;
+                                }
+                                //                            unlock_general_mutex((t_notation_obj *)x);
+                                //                            handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ADD_PITCH_BREAKPOINT);
+                                //                            lock_general_mutex((t_notation_obj *)x);
+                                break;
+                            } else if (!rightclick_to_play_offline && modifiers == eShiftKey + eControlKey && !notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)curr_nt)) {
+                                // cut note
+                                clicked_ptr = roll_slice_note(x, curr_nt, xposition_to_onset((t_notation_obj *) x, this_x, 0));
+                                clicked_obj = k_NOTE;
+                                break;
+                            } else {
+                                clicked_ptr = curr_nt->durationline;
+                                clicked_obj = k_DURATION_LINE; // was: k_NOTE
+                                need_set_selection_dragging_velocity = true;
+                                
+                                if ((!rightclick_to_play_offline && x->r_ob.play_offline_bitfield[k_PLAYOFFLINE_KEY_LEFTCLICK]) ||
+                                    (rightclick_to_play_offline && x->r_ob.play_offline_bitfield[k_PLAYOFFLINE_KEY_RIGHTCLICK])) {
+                                    must_evaluate_selection = true;
+                                }
+                                
+                                break;
                             }
-//                            unlock_general_mutex((t_notation_obj *)x);    
-//                            handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ADD_PITCH_BREAKPOINT);
-//                            lock_general_mutex((t_notation_obj *)x);    
-                            break;
-                        } else if (!rightclick_to_play_offline && modifiers == eShiftKey + eControlKey && !notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)curr_nt)) {
-                            // cut note
-                            clicked_ptr = roll_slice_note(x, curr_nt, xposition_to_onset((t_notation_obj *) x, this_x, 0));
-                            clicked_obj = k_NOTE;
-                            break;
-                        } else {
-                            clicked_ptr = curr_nt->durationline;
-                            clicked_obj = k_DURATION_LINE; // was: k_NOTE
-                            need_set_selection_dragging_velocity = true;
-                            
-                            if ((!rightclick_to_play_offline && x->r_ob.play_offline_bitfield[k_PLAYOFFLINE_KEY_LEFTCLICK]) ||
-                                (rightclick_to_play_offline && x->r_ob.play_offline_bitfield[k_PLAYOFFLINE_KEY_RIGHTCLICK])) {
-                                must_evaluate_selection = true;
-                            }
-
-                            break;
                         }
+                        curr_nt = curr_nt->next;
                     }
-                    curr_nt = curr_nt->next;
-                } 
-                curr_ch = curr_ch->next;
+                    curr_ch = curr_ch->next;
+                }
             }
             voice = voice->next;
         }
@@ -18055,7 +18078,7 @@ long roll_key(t_roll *x, t_object *patcherview, long keycode, long modifiers, lo
 
         case 102: // Cmd+F
             if (modifiers & eCommandKey && is_editable((t_notation_obj *)x, k_NOTE_OR_CHORD, k_MODIFICATION_ONSET)) {
-                equally_respace_selection_onsets(x);
+                equally_respace_selection_onsets(x, 1.);
                 handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_EQUALLY_RESPACE_SELECTION);
                 return 1;
             }
@@ -18565,13 +18588,17 @@ char align_selection_onsets(t_roll *x){
     return changed;
 }
 
-void roll_distribute(t_roll *x){
-    equally_respace_selection_onsets(x);
+void roll_distribute(t_roll *x, t_symbol *s, long argc, t_atom *argv){
+    double power_exp = 1.;
+    if (argc >= 1 && is_atom_number(argv))
+        power_exp = atom_getfloat(argv);
+    equally_respace_selection_onsets(x, power_exp);
     handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_EQUALLY_RESPACE_SELECTION);
 }
 
-char equally_respace_selection_onsets(t_roll *x){
-//equally respace all the onsets of the selection  
+char equally_respace_selection_onsets(t_roll *x, double power_exp)
+{
+//equally respace all the onsets of the selection
     char changed = false;
     t_rollvoice *voice;
     t_notation_item *curr_it;
@@ -18614,13 +18641,24 @@ char equally_respace_selection_onsets(t_roll *x){
     
     if (onsets_and_chords[0] && onsets_and_chords[0]->l_size > 1){
         t_llllelem *elem;
-        double step = (hatom_getdouble(&onsets_and_chords[0]->l_tail->l_hatom) - hatom_getdouble(&onsets_and_chords[0]->l_head->l_hatom)) / (onsets_and_chords[0]->l_size - 1);
+        double last_onset = hatom_getdouble(&onsets_and_chords[0]->l_tail->l_hatom);
+        double first_onset = hatom_getdouble(&onsets_and_chords[0]->l_head->l_hatom);
+        long num_onsets = onsets_and_chords[0]->l_size;
+        double step = (last_onset - first_onset) / (num_onsets - 1);
         double this_onset;
+        long count;
         changed = true;
-        for (elem = onsets_and_chords[1]->l_head, this_onset = hatom_getdouble(&onsets_and_chords[0]->l_head->l_hatom); 
-             elem; 
-             elem = elem->l_next, this_onset += step){
+        for (elem = onsets_and_chords[1]->l_head, count = 0; //this_onset = hatom_getdouble(&onsets_and_chords[0]->l_head->l_hatom);
+             elem;
+             elem = elem->l_next, count ++){ //this_onset += step){
             t_notation_item *item = (t_notation_item *)hatom_getobj(&elem->l_hatom);
+
+            if (power_exp == 1.) {
+                this_onset = first_onset + (((double)count) / (num_onsets - 1)) * (last_onset - first_onset);
+            } else {
+                this_onset = first_onset + pow(((double)count) / (num_onsets - 1), power_exp) * (last_onset - first_onset);
+            }
+            
             if (item->type == k_CHORD) {
                 t_chord *ch = (t_chord *)item;
                 if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)ch)) {
@@ -18665,6 +18703,8 @@ char equally_respace_selection_onsets(t_roll *x){
     recompute_total_length((t_notation_obj *)x);
     return changed;
 }
+
+
 
 
 void select_all(t_roll *x){

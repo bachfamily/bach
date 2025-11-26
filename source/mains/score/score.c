@@ -11909,9 +11909,9 @@ t_chord *shift_note_allow_voice_change(t_score *x, t_note *note, double delta, c
             }
             note_constrain_pitch_depending_on_editing_ranges((t_notation_obj *)x, note, note_new_voice);
         } else {
-            note->pitch_original = t_pitch::NaP;
-            note_constrain_pitch_depending_on_editing_ranges((t_notation_obj *)x, note, note_new_voice);
             if (!ji) {
+                note->pitch_original = t_pitch::NaP;
+                note_constrain_pitch_depending_on_editing_ranges((t_notation_obj *)x, note, note_new_voice);
                 note_set_auto_enharmonicity(note); // automatic accidentals for retranscribing!
             }
         }
