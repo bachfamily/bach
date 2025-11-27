@@ -383,7 +383,7 @@ void bach_version(t_bach *x)
 {
     
     post("--- bach: automated composer's helper ---");
-    post("© 2010-2022 - Andrea Agostini and Daniele Ghisi");
+    post("© 2010-2025 - Andrea Agostini and Daniele Ghisi");
     if (x && x->b_no_ss) {
         post("♥ Thank you so much for supporting us on Patreon! ♥");
     } else {
