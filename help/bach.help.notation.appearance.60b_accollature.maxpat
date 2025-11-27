@@ -2,42 +2,16 @@
 	"patcher" : 	{
 		"fileversion" : 1,
 		"appversion" : 		{
-			"major" : 8,
-			"minor" : 6,
-			"revision" : 1,
+			"major" : 9,
+			"minor" : 0,
+			"revision" : 7,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
 		"classnamespace" : "box",
 		"rect" : [ 223.0, 146.0, 617.0, 539.0 ],
-		"bglocked" : 0,
-		"openinpresentation" : 0,
-		"default_fontsize" : 12.0,
-		"default_fontface" : 0,
-		"default_fontname" : "Arial",
-		"gridonopen" : 1,
 		"gridsize" : [ 15.0, 15.0 ],
-		"gridsnaponopen" : 1,
-		"objectsnaponopen" : 1,
-		"statusbarvisible" : 2,
-		"toolbarvisible" : 1,
-		"lefttoolbarpinned" : 0,
-		"toptoolbarpinned" : 0,
-		"righttoolbarpinned" : 0,
-		"bottomtoolbarpinned" : 0,
-		"toolbars_unpinned_last_save" : 0,
-		"tallnewobj" : 0,
-		"boxanimatetime" : 200,
-		"enablehscroll" : 1,
-		"enablevscroll" : 1,
-		"devicewidth" : 0.0,
-		"description" : "",
-		"digest" : "",
-		"tags" : "",
-		"style" : "",
-		"subpatcher_template" : "",
-		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
 					"attr" : "showinitialrule",
@@ -90,12 +64,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-1",
-					"linecount" : 3,
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 503.0, 81.0, 105.0, 69.0 ],
-					"text" : "Useful for nicer\ndisplay with accollature"
+					"patching_rect" : [ 503.0, 96.0, 105.0, 55.0 ],
+					"text" : "Nicer display\nw/ accollature"
 				}
 
 			}
@@ -385,7 +359,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 31.0, 592.0, 65.0 ],
 					"sendto" : "bach.help.filtertags",
-					"text" : "Accollature (i.e., the type of bracketing that is displayed to group more than one voice) can be displayed in several different ways, with different shapes. These include: \"none\" (no shape), \"rule\" (line), \"thinbracket\" (a thin bracket), \"bracket\" (the standard musical bracket), and \"brace\" (the usual piano-staff brace)",
+					"text" : "Accollature (i.e., the type of bracketing that is displayed to group more than one voice) can be displayed in several different ways, with different shapes. These include: \"none\" (no shape), \"rule\" (line), \"thinbracket\" (a thin bracket), \"bracket\" (the standard musical bracket), and \"brace\" (the usual piano-staff brace). Retouch the #inset attribute if your accollaturas are too close to the border!",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 

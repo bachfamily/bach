@@ -43977,12 +43977,18 @@ long put_chords_properly1_fn(void *data, t_hatom *a, const t_llll *address){
             // handling slot-based slots
             t_llllelem *llelemslot = llll_getindex(right_slice, 6, I_STANDARD);
             t_llll *llslot = llelemslot && hatom_gettype(&llelemslot->l_hatom) == H_LLLL ? hatom_getllll(&llelemslot->l_hatom) : NULL;
+            
             if (llslot && hatom_gettype(&llslot->l_head->l_hatom) != H_LLLL) {
                 // chord-based slots!
                 chordbasedslots = llll_clone(llslot);
+/*                if (hatom_gettype(&chordbasedslots->l_head->l_hatom) == H_SYM && hatom_getsym(&chordbasedslots->l_head->l_hatom) == _llllobj_sym_slots) {
+                    llll_behead(chordbasedslots);
+                    llll_flatten(chordbasedslots, 1, 0);
+                } */
                 llll_wrap(&chordbasedslots);
                 llll_clear(llslot);
             }
+            
             llll_trans_inplace(right_slice, 2);
             llll_funall(right_slice, (fun_fn) put_chords_properly2_fn, NULL, 1, 1, FUNALL_PROCESS_SUBLISTS_ONLY_AT_MAXDEPTH);
         }
@@ -44070,6 +44076,7 @@ t_llll *score_separate2gathered_syntax(t_llll *measureinfo, t_llll *cents, t_lll
     llll_trans_inplace(out, 2); // trans on voices
     
     llll_funall(out, (fun_fn) trans_mode2_fn, NULL, 1, 1, FUNALL_PROCESS_SUBLISTS_ONLY_AT_MAXDEPTH);
+
     llll_funall(out, (fun_fn) put_chords_properly_fn, NULL, 1, 2, FUNALL_PROCESS_SUBLISTS_ONLY_AT_MAXDEPTH);
 
     llll_funall(out, (fun_fn) put_grace_chords_into_grace_levels_fn, NULL, 1, 2, FUNALL_PROCESS_SUBLISTS_ONLY_AT_MAXDEPTH);
@@ -44148,6 +44155,8 @@ long only_keep_lists_starting_with_sym_fn(void *data, t_hatom *a, const t_llll *
 
         if (this_sym == _llllobj_sym_slots && this_level && this_level->l_head && hatom_gettype(&this_level->l_head->l_hatom) == H_SYM && hatom_getsym(&this_level->l_head->l_hatom) == _llllobj_sym_slots) {
             // chord-based slots! gotta keep them
+            llll_destroyelem(this_level->l_head);
+            llll_splatter(this_level->l_owner, LLLL_FREETHING_DONT);
         } else {
             
             t_llllelem *elem = this_level->l_head;
@@ -44282,6 +44291,7 @@ void score_gathered2separate_syntax(t_llll *gathered, t_llll **measureinfo, t_ll
     llll_funall(aux, (fun_fn) trans_mode2_fn, NULL, 1, 1, FUNALL_PROCESS_SUBLISTS_ONLY_AT_MAXDEPTH);
     llll_trans_inplace(aux, 2);
 
+    
     // now in aux we have (MEASUREINFO (RAT DURS) ((NOTE1) (NOTE2) ...))
     
 

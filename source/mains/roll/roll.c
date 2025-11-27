@@ -16326,8 +16326,8 @@ void roll_mouseup(t_roll *x, t_object *patcherview, t_pt pt, long modifiers) {
                 if (ch->onset < 0)
                     ch->onset = 0;
         check_all_chords_order(x);
-        notationobj_set_selection_to_best_jilimited_approximation_if_jivoice((t_notation_obj *)x);
         unlock_general_mutex((t_notation_obj *)x);
+        notationobj_set_selection_to_best_jilimited_approximation_if_jivoice((t_notation_obj *)x);
         recompute_total_length((t_notation_obj *)x);
     }
 
@@ -16955,6 +16955,10 @@ t_chord *roll_change_pitch_from_linear_edit(t_roll *x, long diatonic_step)
     else if (labs((mc - 1200) - x->r_ob.notation_cursor.midicents) < labs(mc - x->r_ob.notation_cursor.midicents))
         mc -= 1200;
     
+    if (diatonic_step >= 0 && diatonic_step <= 6 && x->r_ob.notation_cursor.voice) {
+        mc += (double)x->r_ob.notation_cursor.voice->acc_pattern[diatonic_step] * 200;
+    }
+    
     double mc_double = mc;
     constraint_midicents_depending_on_editing_ranges((t_notation_obj *)x, &mc_double, chord->voiceparent->v_ob.number);
     mc = round(mc_double);
@@ -16973,7 +16977,9 @@ t_chord *roll_change_pitch_from_linear_edit(t_roll *x, long diatonic_step)
         
         for (nt = chord->firstnote; nt; nt = nt->next) {
             if (!cursor_nt || cursor_nt == nt) {
-                note_set_user_enharmonicity_from_display_representation(nt, mc, long2rat(0), true);
+                nt->midicents = mc;
+                note_set_auto_enharmonicity(nt);
+//                note_set_user_enharmonicity_from_display_representation(nt, mc, long2rat(0), true);
                 note_compute_approximation((t_notation_obj *)x, nt);
                 chord_calculate_parameters((t_notation_obj *) x, nt->parent, true);
             }
@@ -17055,9 +17061,17 @@ void roll_add_note_to_chord_from_linear_edit(t_roll *x, long number, long force_
             else if (labs((mc - 1200) - x->r_ob.notation_cursor.midicents) < labs(mc - x->r_ob.notation_cursor.midicents))
                 mc -= 1200;
             argv[1] = mc;
-        } else
+        } else {
             argv[1] = x->r_ob.notation_cursor.midicents;
+        }
+
+//        long screen_mc = argv[1];
         
+        long step = midicents2diatonicstep(argv[1]);
+        if (step >= 0) {
+            argv[1] += (double)x->r_ob.notation_cursor.voice->acc_pattern[step] * 200;
+        }
+
         constraint_midicents_depending_on_editing_ranges((t_notation_obj *)x, &(argv[1]), x->r_ob.notation_cursor.chord->voiceparent->v_ob.number);
         
         this_nt = build_note_from_ac_av((t_notation_obj *) x, 2, argv);
@@ -17067,7 +17081,8 @@ void roll_add_note_to_chord_from_linear_edit(t_roll *x, long number, long force_
         if (add_undo_tick)
             undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)x->r_ob.notation_cursor.chord, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
         
-        note_set_user_enharmonicity_from_display_representation(this_nt, argv[1], long2rat(0), true);
+        note_set_auto_enharmonicity(this_nt);
+//        note_set_user_enharmonicity_from_display_representation(this_nt, argv[1], long2rat(0), true);
         note_insert((t_notation_obj *) x, x->r_ob.notation_cursor.chord, this_nt, 0);
         note_compute_approximation((t_notation_obj *) x, this_nt);
         chord_calculate_parameters((t_notation_obj *) x, x->r_ob.notation_cursor.chord, false);
@@ -18643,21 +18658,35 @@ char equally_respace_selection_onsets(t_roll *x, double power_exp)
         t_llllelem *elem;
         double last_onset = hatom_getdouble(&onsets_and_chords[0]->l_tail->l_hatom);
         double first_onset = hatom_getdouble(&onsets_and_chords[0]->l_head->l_hatom);
+        double first_interval, last_interval;
         long num_onsets = onsets_and_chords[0]->l_size;
-        double step = (last_onset - first_onset) / (num_onsets - 1);
-        double this_onset;
+        double this_onset = 0;
         long count;
         changed = true;
+        
+/*        if (num_onsets <= 4)
+            distribute_intervals = false;
+        
+        if (distribute_intervals) {
+            first_interval = hatom_getdouble(&onsets_and_chords[0]->l_head->l_next->l_hatom) - first_onset;
+            last_interval = last_onset - hatom_getdouble(&onsets_and_chords[0]->l_tail->l_prev->l_hatom);
+        } */
+        
         for (elem = onsets_and_chords[1]->l_head, count = 0; //this_onset = hatom_getdouble(&onsets_and_chords[0]->l_head->l_hatom);
              elem;
              elem = elem->l_next, count ++){ //this_onset += step){
             t_notation_item *item = (t_notation_item *)hatom_getobj(&elem->l_hatom);
 
-            if (power_exp == 1.) {
-                this_onset = first_onset + (((double)count) / (num_onsets - 1)) * (last_onset - first_onset);
-            } else {
-                this_onset = first_onset + pow(((double)count) / (num_onsets - 1), power_exp) * (last_onset - first_onset);
-            }
+/*            if (distribute_intervals) {
+                this_interval = first_interval + (((double)count) / (num_onsets - 4)) * (last_interval - first_interval);
+                this_onset += this_interval;
+            } else { */
+                if (power_exp == 1.) {
+                    this_onset = first_onset + (((double)count) / (num_onsets - 1)) * (last_onset - first_onset);
+                } else {
+                    this_onset = first_onset + pow(((double)count) / (num_onsets - 1), power_exp) * (last_onset - first_onset);
+                }
+//            }
             
             if (item->type == k_CHORD) {
                 t_chord *ch = (t_chord *)item;
