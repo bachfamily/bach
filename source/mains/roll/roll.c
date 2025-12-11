@@ -4869,6 +4869,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     class_addmethod(c, (method) roll_setvalueof, "setvalueof", A_CANT, 0);
 #endif
     
+
     // @method paintjit @digest Draw the score onto a jitter matrix
     // @description @copy BACH_DOC_PAINTJIT
     class_addmethod(c, (method) roll_paint_to_jitter_matrix, "paintjit", A_SYM, 0);
@@ -5452,7 +5453,6 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @seealso copyslot, eraseslot, setslot, changeslotitem, resetslotinfo
     class_addmethod(c, (method) roll_sel_move_slot, "moveslot", A_GIMME, 0);
 
-    
     // @method copyslot @digest Copy a slot to another one for selected items
     // @description @copy BACH_DOC_MESSAGE_COPYSLOT
     // @marg 0 @name slot_from @optional 0 @type int/symbol
@@ -5569,18 +5569,18 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @description @copy BACH_DOC_MESSAGE_APPROXET
     // @seealso snappitchtogrid, jiapprox
     // @marg 0 @name tonedivision @optional 1 @type int
-    class_addmethod(c, (method) roll_sel_approxet, "approxet", A_DEFLONG);
-    class_addmethod(c, (method) roll_sel_approxet, "etapprox", A_DEFLONG);
+    class_addmethod(c, (method) roll_sel_approxet, "approxet", A_DEFLONG, 0);
+    class_addmethod(c, (method) roll_sel_approxet, "etapprox", A_DEFLONG, 0);
 
 
     // @method jiapprox @digest Approximate selected pitches with just intonation
     // @description @copy BACH_DOC_MESSAGE_APPROXJI
     // @seealso snappitchtogrid, etapprox
     // @marg 0 @name jilimit @optional 1 @type int
-    class_addmethod(c, (method) roll_sel_approxji, "approxji", A_DEFLONG);
-    class_addmethod(c, (method) roll_sel_approxji, "jiapprox", A_DEFLONG);
+    class_addmethod(c, (method) roll_sel_approxji, "approxji", A_DEFLONG, 0);
+    class_addmethod(c, (method) roll_sel_approxji, "jiapprox", A_DEFLONG, 0);
 
-    class_addmethod(c, (method) notationobj_setintervalratio, "setintervalratio", A_GIMME);
+    class_addmethod(c, (method) notationobj_setintervalratio, "setintervalratio", A_GIMME, 0);
 
 
     // @method snaponsettogrid @digest Snap selected chords' onsets to the current temporal grid
@@ -6470,7 +6470,6 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example cut durationline @caption cut the duration line
     // @seealso copy, paste
     class_addmethod(c, (method) roll_cut, "cut", A_GIMME, 0);
-    
     
     // @method paste @digest Paste
     // @description Pastes the content contained in the global clipboard. <br />

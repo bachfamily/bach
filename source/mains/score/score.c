@@ -6144,16 +6144,16 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @description @copy BACH_DOC_MESSAGE_APPROXET
     // @seealso snappitchtogrid, jiapprox
     // @marg 0 @name tonedivision @optional 1 @type int
-    class_addmethod(c, (method) score_sel_approxet, "approxet", A_DEFLONG);
-    class_addmethod(c, (method) score_sel_approxet, "etapprox", A_DEFLONG);
+    class_addmethod(c, (method) score_sel_approxet, "approxet", A_DEFLONG, 0);
+    class_addmethod(c, (method) score_sel_approxet, "etapprox", A_DEFLONG, 0);
 
 
     // @method jiapprox @digest Approximate selected pitches with just intonation
     // @description @copy BACH_DOC_MESSAGE_APPROXJI
     // @seealso snappitchtogrid, etapprox
     // @marg 0 @name jilimit @optional 1 @type int
-    class_addmethod(c, (method) score_sel_approxji, "approxji", A_DEFLONG);
-    class_addmethod(c, (method) score_sel_approxji, "jiapprox", A_DEFLONG);
+    class_addmethod(c, (method) score_sel_approxji, "approxji", A_DEFLONG, 0);
+    class_addmethod(c, (method) score_sel_approxji, "jiapprox", A_DEFLONG, 0);
 
     
     // @method respell @digest Respell selected notes automatically
