@@ -4938,8 +4938,22 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example sel chords, merge selection 200 -1 @caption just merge chords <= 200ms
     // @example merge 200 10 -1 @caption align result to the leftmost merged chord
     // @example merge 200 10 1 -1 @caption align result to the rightmost merged chord and bottommost pitch
-    // @seealso explodechords
+    // @seealso glue, explodechords
     class_addmethod(c, (method) roll_merge_or_glue, "merge", A_GIMME, 0);
+
+    // @method glue @digest Connect notes
+    // @description You can use the <m>glue</m> message to connect notes whenever the tail of the first and the head of the
+    // second are less than a given time threshold and pitch threshold apart. These two thresholds are the arguments
+    // (in milliseconds and cents respectively).
+    // If an optional "selection" symbol is put in front of the time threshold argument, the merging is performend only on the current selection,
+    // otherwise it is performed on the whole score. <br />
+    // @marg 0 @name selection @optional 1 @type sym
+    // @marg 1 @name threshold_ms @optional 0 @type float
+    // @marg 2 @name threshold_cents @optional 0 @type float
+    // @marg 3 @name smoothing_ms @optional 1 @type float
+    // @example glue 200 10 @caption connect notes that are tail-to-head <= 200ms and <= 10cents apart
+    // @example merge selection 200 10 @caption same, but only connect elements if selected
+    // @seealso merge, gluechord
     class_addmethod(c, (method) roll_merge_or_glue, "glue", A_GIMME, 0);
 
 
@@ -9499,6 +9513,41 @@ t_chord *addchord_from_llll(t_roll *x, t_llll* chord, t_rollvoice* voice, char a
     return newchord;
 }
 
+void roll_glue_notes(t_roll *x, t_note *receiver, double giver_onset, double giver_duration, double giver_velocity, t_llll *giver_note_llll, double smooth_ms, bool also_select, t_note *giver_for_breakpoints)
+{
+    t_note *foundnt = receiver;
+    if (foundnt){ // there's a note which we can make longer!
+        if (giver_onset + giver_duration > foundnt->parent->onset + foundnt->duration) {
+            double new_duration = giver_onset + giver_duration - foundnt->parent->onset;
+            
+            // handling temporal slots' and breakpoints' information
+            if (foundnt->duration <= 0) { // pathological case
+                undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)foundnt->parent, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+                note_set_slots_from_llll((t_notation_obj *)x, foundnt, find_sublist_with_router((t_notation_obj *)x, giver_note_llll, _llllobj_sym_slots));
+                note_set_breakpoints_from_llll((t_notation_obj *)x, foundnt, find_sublist_with_router((t_notation_obj *)x, giver_note_llll, _llllobj_sym_breakpoints));
+            } else if (giver_duration > 0){
+                double start_glued_note_portion_rel_x = CLAMP((foundnt->parent->onset + foundnt->duration - giver_onset)/giver_duration, 0., 1.);
+                undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)foundnt->parent, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+                glue_portion_of_temporal_slots((t_notation_obj *)x, foundnt, giver_note_llll, start_glued_note_portion_rel_x, 1., (giver_onset + giver_duration - (foundnt->parent->onset + foundnt->duration))/foundnt->duration, 1, smooth_ms, giver_duration, new_duration);
+                glue_portion_of_breakpoints((t_notation_obj *)x, foundnt, giver_note_llll, giver_for_breakpoints, start_glued_note_portion_rel_x, 1., (giver_onset + giver_duration - (foundnt->parent->onset + foundnt->duration))/foundnt->duration, 1, smooth_ms);
+            }
+            
+            // updating velocity
+            if (giver_velocity > 0)
+                note_set_velocity((t_notation_obj *)x, foundnt, CLAMP(((foundnt->velocity * foundnt->duration) + (giver_velocity * giver_duration))/(foundnt->duration + giver_duration), CONST_MIN_VELOCITY, CONST_MAX_VELOCITY));
+            
+            // updating duration
+            foundnt->duration = new_duration; //update duration
+            
+            if (also_select && !notation_item_is_selected((t_notation_obj *)x, (t_notation_item *) foundnt) && !notation_item_is_selected((t_notation_obj *)x, (t_notation_item *) foundnt->parent)) {
+                notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *) foundnt);
+                move_preselecteditems_to_selection((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT, false, false);
+            }
+
+         }
+    }
+}
+
 // beware!! this function changes the <chord> llll, destroying stuff inside it
 void gluechord_from_llll(t_roll *x, t_llll* chord, t_rollvoice *voice, double threshold_ms, double threshold_cents, double smooth_ms, char also_select)
 {
@@ -9580,38 +9629,8 @@ void gluechord_from_llll(t_roll *x, t_llll* chord, t_rollvoice *voice, double th
                         }
                         
                         if (foundnt){ // there's a note which we can make longer!
-                            if (onset + duration > foundnt->parent->onset + foundnt->duration) {
-                                double new_duration = onset + duration - foundnt->parent->onset;
-                                
-                                // handling temporal slots' and breakpoints' information
-                                if (foundnt->duration <= 0) { // pathological case
-                                    undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)foundnt->parent, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-                                    note_set_slots_from_llll((t_notation_obj *)x, foundnt, find_sublist_with_router((t_notation_obj *)x, note_llll, _llllobj_sym_slots));
-                                    note_set_breakpoints_from_llll((t_notation_obj *)x, foundnt, find_sublist_with_router((t_notation_obj *)x, note_llll, _llllobj_sym_breakpoints));
-                                } else if (duration > 0){
-                                    double start_glued_note_portion_rel_x = CLAMP((foundnt->parent->onset + foundnt->duration - onset)/duration, 0., 1.);
-                                    undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)foundnt->parent, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-                                    glue_portion_of_temporal_slots((t_notation_obj *)x, foundnt, note_llll, start_glued_note_portion_rel_x, 1., (onset + duration - (foundnt->parent->onset + foundnt->duration))/foundnt->duration, 1, smooth_ms, duration, new_duration);
-                                    glue_portion_of_breakpoints((t_notation_obj *)x, foundnt, note_llll, dummy_breakpoints_note, start_glued_note_portion_rel_x, 1., (onset + duration - (foundnt->parent->onset + foundnt->duration))/foundnt->duration, 1, smooth_ms);
-                                }
-                                
-                                // updating velocity 
-                                if (velocity > 0)
-                                    note_set_velocity((t_notation_obj *)x, foundnt, CLAMP(((foundnt->velocity * foundnt->duration) + (velocity * duration))/(foundnt->duration + duration), CONST_MIN_VELOCITY, CONST_MAX_VELOCITY));
-                                
-                                // updating duration
-                                foundnt->duration = onset + duration - foundnt->parent->onset; //update duration
-                                
-                                if (also_select && !notation_item_is_selected((t_notation_obj *)x, (t_notation_item *) foundnt) && !notation_item_is_selected((t_notation_obj *)x, (t_notation_item *) foundnt->parent)) {
-                                    notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *) foundnt);
-                                    move_preselecteditems_to_selection((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT, false, false);
-                                }
-
-                             }
+                            roll_glue_notes(x, foundnt, onset, duration, velocity, note_llll, smooth_ms, also_select, dummy_breakpoints_note);
                             llll_destroyelem(note_elem); // delete the note from the chord llll
-/*                        } else {
-                            char foo = 7;
-                            foo++; */
                         }
                         
                         if (breakpoints) 
@@ -10917,26 +10936,41 @@ char merge(t_roll *x, double threshold_ms, double threshold_cents, char gatherin
     return changed;
 }
 
-char glue(t_roll *x, double threshold_ms, double threshold_cents, char gathering_policy_ms, char gathering_policy_cents, char only_selected)
+char glue(t_roll *x, double threshold_ms, double threshold_cents, double smooth_ms, char only_selected)
 {
     char changed = 0;
     for (t_rollvoice *voice = x->firstvoice; voice && (voice->v_ob.number < x->r_ob.num_voices); voice = voice->next) {
         for (t_chord *chord = voice->firstchord; chord; chord = chord->next){
             for (t_note *note = chord->firstnote; note; note = note->next){
                 
-                if (only_selected && !notation_item_is_globally_selected((t_notation_obj *)x, (t_notation_item *)chord))
+                if (only_selected && !notation_item_is_globally_selected((t_notation_obj *)x, (t_notation_item *)note))
                     continue;
                 
-                double tail_ms = notation_item_get_tail_ms_accurate((t_notation_obj *)x, (t_notation_item *)note);
-                double tail_cents = notation_item_get_cents((t_notation_obj *)x, note->lastbreakpoint ? (t_notation_item *)note->lastbreakpoint : (t_notation_item *)note);
-                for (t_chord *chord2 = chord->next; chord2; chord2 = chord2->next) {
+                for (t_chord *chord2 = chord->next; chord2; ) {
+                    t_chord *chord2next = chord2->next;
+                    
+                    // these two have to be computed here inside the loop, because they may change with successive glueings
+                    double tail_ms = notation_item_get_tail_ms_accurate((t_notation_obj *)x, (t_notation_item *)note);
+                    double tail_cents = notation_item_get_cents((t_notation_obj *)x, note->lastbreakpoint ? (t_notation_item *)note->lastbreakpoint : (t_notation_item *)note);
                     
                     if (fabs(chord2->onset - tail_ms) < threshold_ms) {
                         //we may need to glue!
                         for (t_note *note2 = chord2->firstnote; note2; note2 = note2->next) {
+                            if (only_selected && !notation_item_is_globally_selected((t_notation_obj *)x, (t_notation_item *)note2))
+                                continue;
+
                             if (fabs(note2->midicents - tail_cents) < threshold_cents) {
                                 // gotta glue with this note
                                 changed = true;
+                                
+                                t_llll *note2_ll = get_rollnote_values_as_llll((t_notation_obj *)x, note2, k_CONSIDER_FOR_SAVING);
+                                t_llll *note2_ll_as_chord = llll_get();
+                                llll_appenddouble(note2_ll_as_chord, chord2->onset);
+                                llll_appendllll(note2_ll_as_chord, note2_ll);
+                                
+                                roll_glue_notes(x, note, chord2->onset, note2->duration, note2->velocity, note2_ll, smooth_ms, false, note2);
+                                
+                                llll_free(note2_ll_as_chord);
                                 
                                 if (chord2->num_notes == 1) {
                                     chord_delete((t_notation_obj *)x, chord2, NULL, false);
@@ -10945,12 +10979,14 @@ char glue(t_roll *x, double threshold_ms, double threshold_cents, char gathering
                                     chord_set_recompute_parameters_flag((t_notation_obj *)x, chord2);
                                 }
                                 chord_set_recompute_parameters_flag((t_notation_obj *)x, chord);
+                                break;
                             }
                         }
                         
                     } else if (chord2->onset > tail_ms + threshold_ms) {
                         break; // nothing more to glue
                     }
+                    chord2 = chord2next;
                 }
             }
         }
@@ -10969,13 +11005,14 @@ char glue(t_roll *x, double threshold_ms, double threshold_cents, char gathering
 
 void roll_merge_or_glue(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 {
-    bool glue = (s == _llllobj_sym_glue);
+    bool must_glue = (s == _llllobj_sym_glue);
     if (proxy_getinlet((t_object *) x) == 0) {
         t_llll *inputlist = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE); // We clone it: we operate destructively
         if (inputlist && inputlist->l_head) {
             t_llllelem *firstelem = inputlist->l_head;
-            double threshold_ms = -1.;  // negative = not computed
-            double threshold_cents = -1.;
+            double threshold_ms = CONST_DEFAULT_GLUECHORD_THRESHOLD_MS;
+            double threshold_cents = CONST_DEFAULT_GLUECHORD_THRESHOLD_CENTS;
+            double smooth_ms = 0;
             char gathering_policy_ms = 0;
             char gathering_policy_cents = 0;
             char only_selected = false;
@@ -10991,9 +11028,13 @@ void roll_merge_or_glue(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                 if (firstelem->l_next) {
                     threshold_cents = hatom_getdouble(&firstelem->l_next->l_hatom);
                     if (firstelem->l_next->l_next) {
-                        gathering_policy_ms = hatom_getlong(&firstelem->l_next->l_next->l_hatom);
-                        if (firstelem->l_next->l_next->l_next) {
-                            gathering_policy_cents = hatom_getlong(&firstelem->l_next->l_next->l_next->l_hatom);
+                        if (must_glue) {
+                            smooth_ms = hatom_getdouble(&firstelem->l_next->l_next->l_hatom);
+                        } else {
+                            gathering_policy_ms = hatom_getlong(&firstelem->l_next->l_next->l_hatom);
+                            if (firstelem->l_next->l_next->l_next) {
+                                gathering_policy_cents = hatom_getlong(&firstelem->l_next->l_next->l_next->l_hatom);
+                            }
                         }
                     }
                 }
@@ -11003,8 +11044,8 @@ void roll_merge_or_glue(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 
             // ok, ready to merge.
             lock_general_mutex((t_notation_obj *)x);
-            if (glue)
-                glue(x, threshold_ms, threshold_cents, gathering_policy_ms, gathering_policy_cents, only_selected, true);
+            if (must_glue)
+                glue(x, threshold_ms, threshold_cents, smooth_ms, only_selected);
             else
                 merge(x, threshold_ms, threshold_cents, gathering_policy_ms, gathering_policy_cents, only_selected, true);
             unlock_general_mutex((t_notation_obj *)x);

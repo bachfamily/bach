@@ -116,12 +116,15 @@ VERSION NOTES:
     · @stafflineswidth and @scalablestafflineswidth: new attributes for roll/score
     · Fixed bug causing crashes with highlighted playback and no fade-domain
     · Added parameter to "distribute" message to warp the distribution
+    · Fixed bug with deleting breakpoints possibly causing issues in several places
     
 - bach.roll, bach.score, bach.score2roll:
     Now user-defined pitches are correctly preserved
 
-- bach.roll:  Improved intelligent ruler
-              exportmidi: added "defaulttempo" message attribute
+- bach.roll:
+    · Improved intelligent ruler
+    · exportmidi: added "defaulttempo" message attribute
+    · New "glue" message (similar to "merge")
 
 - bach.score:
     · Fixed bug causing crashes with wrong select syntax (e.g., unbalanced parentheses)

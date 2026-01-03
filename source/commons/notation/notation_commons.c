@@ -28698,13 +28698,23 @@ char note_delete_breakpoints(t_notation_obj *r_ob, t_note *note){
 //delete the breakpoints of a given note
     char changed = 0;
     t_bpt *bpt = note->firstbreakpoint;
-    while (bpt) { // cycle on the selected items
+    if (bpt)
+        bpt = bpt->next;
+    while (bpt && bpt->next) { // cycle on the selected items
+        t_bpt *nextbpt = bpt->next;
         delete_breakpoint(r_ob, bpt);
         changed = 1;
-        bpt = bpt->next;
+        bpt = nextbpt;
     }
-    if (note->firstbreakpoint)
-        note->firstbreakpoint->velocity = note->lastbreakpoint->velocity = note->velocity;
+    if (note->lastbreakpoint) {
+        note->lastbreakpoint->delta_mc = 0;
+        note->lastbreakpoint->velocity = note->velocity;
+    }
+    if (note->firstbreakpoint) {
+        note->firstbreakpoint->velocity = note->velocity;
+        note->firstbreakpoint->delta_mc = 0;
+    }
+    note->num_breakpoints = 2;
     return changed;
 }
 
