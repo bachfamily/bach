@@ -43,7 +43,7 @@
 					"patching_rect" : [ 366.75, 420.0, 234.75, 40.0 ],
 					"presentation_rect" : [ 363.5, 418.5, 0.0, 0.0 ],
 					"text" : "Cmd+click (mac) or Ctrl+click (win) on a filter column to delete a filter",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -63,7 +63,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 9.5, 359.5, 145.0, 69.0 ],
 					"text" : "Click on a red square and drag it up/down to change the cutoff frequency",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -83,7 +83,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 9.5, 412.5, 131.0, 55.0 ],
 					"text" : "Add Shift+Cmd (mac) for fine editing",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -135,7 +135,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 227.5, 134.5, 314.0, 54.0 ],
 					"text" : "To define the filter type, right-click (or perform a two-finger tap) on the filter red column, and choose the appropriate type from the popup menu",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -170,7 +170,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 170.0, 280.5, 219.0, 54.0 ],
 					"text" : "Click on the filter column and drag it horizontally to change its horizontal (temporal) position",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -188,7 +188,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 345.5, 378.5, 210.0, 40.0 ],
 					"text" : "Cmd+Alt+click on a filter column to revert its gain to 0dB",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -206,7 +206,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 342.0, 342.5, 259.5, 40.0 ],
 					"text" : "Shift+Ctrl+click (mac) on a filter column and drag up/down to change the gain",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -226,7 +226,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 141.0, 394.0, 231.0, 69.0 ],
 					"text" : "Ctrl+click (mac) or Shift+Ctrl+click (win) on a filter column and drag up/down to change the Q (or slope)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -245,7 +245,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 2.0, 273.5, 154.0, 83.0 ],
 					"text" : "Right-click or two-fingers tap on the filter column to change all filters type via the popup menu",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -299,7 +299,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 217.0, 73.5, 267.0, 25.0 ],
 					"text" : "To add a filter, double click in any position",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

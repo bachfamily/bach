@@ -1,7 +1,7 @@
 /*
  *  llll_append.h
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -78,7 +78,7 @@ t_llllelem *llll_appendrat_from_elems(t_llll *where, t_atom_long what_num, t_ato
 
 // a new llllelem is created
 t_llllelem *llll_appendpitch(t_llll *where, t_pitch what, long flags = 0, t_llll *adopter = WHITENULL_llll);
-t_llllelem *llll_appendpitch_from_elems(t_llll *where, t_atom_short degree, t_shortRational alter, t_atom_short octave, long flags = 0, t_llll *adopter = WHITENULL_llll);
+t_llllelem *llll_appendpitch_from_elems(t_llll *where, const t_atom_short degree, const t_tinyRational alter, const t_shortRational r, const t_atom_short octave, const t_int32 flags = 0, t_llll *adopter = WHITENULL_llll);
 t_llllelem *llll_appenddouble(t_llll *where, double what, long flags = 0, t_llll *adopter = WHITENULL_llll);
 t_llllelem *llll_appendsym(t_llll *where, const t_symbol *what, long flags = 0, t_llll *adopter = WHITENULL_llll);
 t_llllelem *llll_appendobj(t_llll *where, void *what, long flags = 0, t_llll *adopter = WHITENULL_llll);
@@ -98,7 +98,7 @@ t_llllelem *llll_prependlong(t_llll *where, t_atom_long what, long flags = 0, t_
 t_llllelem *llll_prependrat(t_llll *where, t_rational what, long flags = 0, t_llll *adopter = WHITENULL_llll);
 t_llllelem *llll_prependrat_from_elems(t_llll *where, long what_num, long what_den, long flags = 0, t_llll *adopter = WHITENULL_llll);
 t_llllelem *llll_prependpitch(t_llll *where, t_pitch what, long flags = 0, t_llll *adopter = WHITENULL_llll);
-t_llllelem *llll_prependpitch_from_elems(t_llll *where, t_atom_short degree, t_shortRational alter, t_atom_short octave, long flags = 0, t_llll *adopter = WHITENULL_llll);
+t_llllelem *llll_prependpitch_from_elems(t_llll *where, const t_atom_short degree, const t_tinyRational alter, const t_shortRational r, const t_atom_short octave, const t_int32 flags = 0, t_llll *adopter = WHITENULL_llll);
 t_llllelem *llll_prependdouble(t_llll *where, double what, long flags = 0, t_llll *adopter = WHITENULL_llll);
 t_llllelem *llll_prependsym(t_llll *where, t_symbol *what, long flags = 0, t_llll *adopter = WHITENULL_llll);
 t_llllelem *llll_prependobj(t_llll *where, void *what, long flags = 0, t_llll *adopter = WHITENULL_llll);
@@ -115,7 +115,7 @@ t_llllelem *llll_insertrat_before(t_rational what, t_llllelem *before_what, long
 t_llllelem *llll_insertrat_from_elems_before(long what_num, long what_den, t_llllelem *before_what, long flags = 0, t_llll *adopter = WHITENULL_llll);
 t_llllelem *llll_insertdouble_before(double what, t_llllelem *before_what, long flags = 0, t_llll *adopter = WHITENULL_llll);
 t_llllelem *llll_insertpitch_before(t_pitch what, t_llllelem *before_what, long flags = 0, t_llll *adopter = WHITENULL_llll);
-t_llllelem *llll_insertpitch_from_elems_before(t_atom_short degree, t_shortRational alter, t_atom_short octave, t_llllelem *before_what, long flags = 0, t_llll *adopter = WHITENULL_llll);
+t_llllelem *llll_insertpitch_from_elems_before(const t_atom_short degree, const t_tinyRational alter, const t_shortRational r, const t_atom_short octave, t_llllelem *before_what, const t_int32 flags = 0, t_llll *adopter = WHITENULL_llll);
 t_llllelem *llll_insertsym_before(t_symbol *what, t_llllelem *before_what, long flags = 0, t_llll *adopter = WHITENULL_llll);
 t_llllelem *llll_insertobj_before(void *what, t_llllelem *before_what, long flags = 0, t_llll *adopter = WHITENULL_llll);
 t_llllelem *llll_insertfunc_before(t_function *what, t_llllelem *before_what, long flags = 0, t_llll *adopter = WHITENULL_llll);
@@ -128,6 +128,8 @@ t_llllelem *llll_insertlong_after(t_atom_long what, t_llllelem *after_what, long
 t_llllelem *llll_insertrat_after(t_rational what, t_llllelem *after_what, long flags = 0, t_llll *adopter = WHITENULL_llll);
 t_llllelem *llll_insertrat_from_elems_after(long what_num, long what_den, t_llllelem *after_what, long flags = 0, t_llll *adopter = WHITENULL_llll);
 t_llllelem *llll_insertdouble_after(double what, t_llllelem *after_what, long flags = 0, t_llll *adopter = WHITENULL_llll);
+t_llllelem *llll_insertpitch_after(t_pitch what, t_llllelem *after_what, long flags = 0, t_llll *adopter = WHITENULL_llll);
+t_llllelem *llll_insertpitch_from_elems_after(const t_atom_short degree, const t_tinyRational alter, const t_shortRational r, const t_atom_short octave, t_llllelem *after_what, const t_int32 flags = 0, t_llll *adopter = WHITENULL_llll);
 t_llllelem *llll_insertsym_after(t_symbol *what, t_llllelem *after_what, long flags = 0, t_llll *adopter = WHITENULL_llll);
 t_llllelem *llll_insertobj_after(void *what, t_llllelem *after_what, long flags = 0, t_llll *adopter = WHITENULL_llll);
 t_llllelem *llll_insertfunc_after(t_function *what, t_llllelem *after_what, long flags = 0, t_llll *adopter = WHITENULL_llll);

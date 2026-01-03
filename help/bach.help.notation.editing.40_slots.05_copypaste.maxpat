@@ -146,7 +146,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 335.0, 361.0, 50.0 ],
 					"text" : "When a slot window is open, you can also copy with Cmd+Shift+C (mac) or Ctrl+Shift+C (win) and the content of all the slots will be copied, ready to be pasted.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -166,7 +166,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 412.0, 268.166656, 159.0, 84.0 ],
 					"text" : "Press Cmd+V (mac) or Ctrl+V (win) to paste the slot content to all selected notes",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -186,7 +186,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 163.5, 268.166656, 250.0, 55.0 ],
 					"text" : "Select the destination notes, the one to which the slot content has to be pasted",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -205,7 +205,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 114.5, 144.166656, 154.0, 54.0 ],
 					"text" : "Press Cmd+C (mac) or Ctrl+C (win) to copy the slot content. ",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -224,7 +224,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 255.0, 159.166656, 154.0, 40.0 ],
 					"text" : "Use Cmd+X (mac) or Ctrl+X (win) to cut it",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -244,7 +244,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 55.75, 79.0, 180.0, 84.0 ],
 					"text" : "Open the slot window whose content has to be copied (or cut). For instance, open the first slot of the first note.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

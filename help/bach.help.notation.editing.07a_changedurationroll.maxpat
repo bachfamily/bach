@@ -42,7 +42,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 281.0, 53.0, 329.0, 69.0 ],
 					"text" : "The simplest way to change the onset of a chord is to click on one of its noteheads, and then drag it left or right. Holding the Shift key pressed helps not to change notes' pitches.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -63,7 +63,7 @@
 					"patching_rect" : [ 298.0, 106.0, 312.0, 55.0 ],
 					"presentation_rect" : [ 296.0, 134.0, 0.0, 0.0 ],
 					"text" : "Keeping also the Cmd (mac) or Ctrl (win) key pressed will allow fine editing.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -84,7 +84,7 @@
 					"patching_rect" : [ 6.0, 255.0, 253.0, 55.0 ],
 					"presentation_rect" : [ 6.0, 245.0, 0.0, 0.0 ],
 					"text" : "Keeping also the Cmd (mac) or Ctrl (win) key pressed will allow fine editing.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -104,7 +104,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 206.0, 248.0, 69.0 ],
 					"text" : "The simplest way to change the duration of a note is to drag its note tail left or right, while holding the Shift key pressed",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -140,7 +140,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 243.0, 325.0, 240.0, 54.0 ],
 					"text" : "Another way is to select the notes you want to make longer or shorter, and then use Alt+← or Alt+→.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -160,7 +160,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 256.0, 367.0, 228.0, 55.0 ],
 					"text" : "If you add the Shift key, durations will change more rapidly!",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -179,7 +179,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 281.0, 163.0, 262.0, 40.0 ],
 					"text" : "Another way is to select the chord, and then use the keyboard arrows: ← or →.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -342,7 +342,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 303.0, 191.0, 240.0, 55.0 ],
 					"text" : "If you add the Shift key, onsets will move faster!",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

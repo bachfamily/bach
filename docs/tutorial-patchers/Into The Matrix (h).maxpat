@@ -488,7 +488,7 @@
 					"patching_rect" : [ 182.0, 512.0, 212.0, 33.0 ],
 					"style" : "",
 					"text" : "I'm curious about the rank, but still don't believe to this annihilation...",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

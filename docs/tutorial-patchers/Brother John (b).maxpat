@@ -455,7 +455,7 @@
 					"patching_rect" : [ 336.0, 514.0, 259.0, 33.0 ],
 					"style" : "",
 					"text" : "Uhm... Assigning parameters is fun. But what does it happen in reality when I do that?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

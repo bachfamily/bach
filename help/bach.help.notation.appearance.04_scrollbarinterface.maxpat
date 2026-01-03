@@ -44,7 +44,7 @@
 					"patching_rect" : [ 177.0, 152.0, 213.0, 98.0 ],
 					"presentation_rect" : [ 197.0, 152.0, 0.0, 0.0 ],
 					"text" : "If you have a mouse, you can use the vertical mouse wheel to scroll up/down, and the horizontal one (if any, otherwise Shift+the vertical one) to scroll left/right)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -65,7 +65,7 @@
 					"patching_rect" : [ 390.0, 152.0, 225.0, 98.0 ],
 					"presentation_rect" : [ 43.5, 341.0, 0.0, 0.0 ],
 					"text" : "Also, you can keep Alt+Ctrl (mac) or Shift+Alt+Ctrl (win) key pressed on the notation object, and a hand appears: click and drag to navigate up/down/left/right",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -86,7 +86,7 @@
 					"patching_rect" : [ 6.0, 152.0, 171.0, 98.0 ],
 					"presentation_rect" : [ 176.0, 83.0, 0.0, 0.0 ],
 					"text" : "If you have a trackpad, you can use the two fingers scroll (when the cursor is positioned on the score) to scroll left, right, up or down",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -105,7 +105,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 52.0, 330.0, 213.0, 54.0 ],
 					"text" : "Of course you can directly click and drag either of the two scrollbars to scroll!",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

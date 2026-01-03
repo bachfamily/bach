@@ -1,7 +1,7 @@
 /*
  *  astNode.hpp
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -51,6 +51,8 @@ public:
     t_symbol* getName() { return name; }
     t_bool isLifted() { return lifted; }
 };
+
+
 
 template <typename T>
 class countedList {
@@ -128,19 +130,6 @@ public:
     T getItem() { return item; }
     countedList<T>* getNext() { return next; }
     countedList<T>* getHead() { return head; }
-    
-    void copyIntoNullTerminatedArray(T** array)
-    {
-        *array = new T [*count + 1];
-        countedList<T> *item;
-        long idx;
-        for (item = getHead(), idx = 0;
-             item;
-             item = item->getNext(), idx++) {
-            (*array)[idx] = item->getItem();
-        }
-        (*array)[idx] = nullptr;
-    };
 
 /*
     countedList<T>* prune(t_bool (*check)(T* toCheck, void *data), void *data) {
@@ -164,6 +153,31 @@ public:
  */
 };
 
+
+template <typename T>
+void copyIntoNullTerminatedArray(countedList<T>* c, T** array)
+{
+    *array = new T [c->getCount() + 1];
+    countedList<T> *item;
+    long idx;
+    for (item = c->getHead(), idx = 0;
+         item;
+         item = item->getNext(), idx++) {
+        (*array)[idx] = item->getItem();
+    }
+    (*array)[idx] = nullptr;
+};
+
+template <typename T>
+void copyIntoNullTerminatedArray(std::vector<T>* v, T** array)
+{
+    *array = new T [v->size() + 1];
+    long idx = 0;
+    for (auto i : *v) {
+        (*array)[idx++] = i;
+    }
+    (*array)[idx] = nullptr;
+};
 
 class t_userFunction;
 class t_mainFunction;
@@ -240,6 +254,7 @@ public:
 
     // to be called at every round of every lambda function
     void resetFnNamedArgs(t_function *fn, long lambdaParams);
+    void resetAndRetainFnNamedArgs(t_function *fn, long lambdaParams);
 
     void setFnLocalVariables(t_function *fn);
     void resetLocalVariables();
@@ -407,14 +422,20 @@ public:
 class astConcat : public astNode
 {
 protected:
-    astNode *n1;
-    astNode *n2;
+    std::vector<astNode*> *n;
 public:
-    astConcat(astNode *n1, astNode *n2, t_codableobj *owner) : astNode(owner), n1(n1), n2(n2) { }
+    astConcat(astNode *n1, astNode *n2, t_codableobj *owner) : astNode(owner) {
+        n = new std::vector<astNode*>;
+        n->push_back(n1);
+        n->push_back(n2);
+    }
+    
+    astConcat(std::vector<astNode*> *n, t_codableobj *owner) : astNode(owner), n(n) { }
     
     ~astConcat() {
-        delete n1;
-        delete n2;
+        for (auto node: *n)
+            delete node;
+        delete n;
     }
     
     t_llll *eval(t_execEnv const &context);
@@ -471,6 +492,23 @@ public:
             return n2->eval(context);
         else
             return llll_get();
+    }
+};
+
+class astNullify : public astNode
+{
+protected:
+    astNode *n;
+public:
+    astNullify(astNode *n, t_codableobj *owner) : astNode(owner), n(n) { }
+
+    ~astNullify() {
+        delete n;
+    }
+    
+    t_llll *eval(t_execEnv const &context) {
+        bell_release_llll(n->eval(context));
+        return llll_get();
     }
 };
 
@@ -633,24 +671,81 @@ public:
 };
 
 
-class lvalueStep {
+class lvalueStep final {
 public:
     enum lvalueOpTypes {
+        E_LV_NONE,
         E_LV_NTH,
-        E_LV_KEY
+        E_LV_KEY,
+        E_LV_PICK
     };
     
     lvalueOpTypes type;
     astNode *value;
     
 public:
+    lvalueStep() : type(E_LV_NONE), value(nullptr) { };
+    
     lvalueStep(lvalueOpTypes type, astNode *value) : type(type), value(value) { };
-    virtual ~lvalueStep() {
+    
+    void setType(lvalueOpTypes t) { type = t; }
+    
+    void setNode(astNode *node) { value = node; }
+        
+    ~lvalueStep() {
         delete value;
     }
+
+    lvalueOpTypes getType() { return type; }
+    astNode* getValue() { return value; }
 };
 
 typedef countedList<lvalueStep*> lvalueStepList;
+
+
+class lvalueSpecs final {
+private:
+
+public:
+
+    std::vector<lvalueStep*> *steps;
+
+    lvalueSpecs() {
+        steps = new std::vector<lvalueStep*>;
+    };
+
+    ~lvalueSpecs() {
+        for (auto s: *steps)
+            delete s;
+    }
+    
+    void addStep(lvalueStep *s) {
+        steps->push_back(s);
+    }
+        
+    astNode *toReadNode(astNode *n, t_codableobj *owner) {
+        for (auto step : *steps) {
+            auto type = step->getType();
+            auto node = step->getValue();
+            switch(type) {
+                case lvalueStep::E_LV_NTH:
+                    n = new astNthOp(n, node, owner);
+                    break;
+                case lvalueStep::E_LV_KEY:
+                    n = new astKeyOp<e_keyOpStandard>(n, node, owner);
+                    break;
+                case lvalueStep::E_LV_PICK:
+                    n = new astPickOp(n, node, owner);
+                    break;
+                default:
+                    break;
+            }
+        }
+        return n;
+    }
+    
+};
+
 
 template<typename firstType>
 class astTwoSided : public astNode
@@ -737,15 +832,19 @@ protected:
         llll_free(key);
     }
     
-    
-    
-    void lastNth(lvalueStep** step, int nStep, t_llllelem* &lookHere, t_llll* &current, t_llll* origV, t_bool previousWasKey, t_execEnv const &context) {
-        t_bool created = nonLastNth(step, nStep, lookHere, current, previousWasKey, context);
-        if (current && lookHere)
-            lastNthDo(current, lookHere, origV, created, context);
+    void lastNth(lvalueStep** step, int nStep, t_llllelem* &lookHere, t_llll* &current, t_llll* origV, t_bool previousWasKey, t_bool pick, t_execEnv const &context) {
+        t_bool created = nonLastNth(step, nStep, lookHere, current, previousWasKey, false, context);
+        if (current && lookHere) {
+            t_llll *subll = hatom_getllll(&lookHere->l_hatom);
+            if (pick && subll) {
+                lastPickDo(subll, origV, context);
+            } else {
+                lastNthDo(current, lookHere, origV, created, context);
+            }
+        }
     }
     
-    static t_bool nonLastNth(lvalueStep** step, int nStep, t_llllelem* &lookHere, t_llll* &current, t_bool previousWasKey, t_execEnv const &context) {
+    static t_bool nonLastNth(lvalueStep** step, int nStep, t_llllelem* &lookHere, t_llll* &current, t_bool previousWasKey, t_bool pick, t_execEnv const &context) {
         t_bool created = false;
         t_llll *address = (*step)->value->eval(context);
         if (address->l_depth > 1) {
@@ -767,7 +866,7 @@ protected:
                     return false;
                 }
             } else
-                created = consumeNthAddressLevel(lookHere, current, address_step, previousWasKey);
+                created = consumeNthAddressLevel(lookHere, current, address_step, previousWasKey, pick);
             
             if ((address_elem = address_elem->l_next)) {
                 address_step = hatom_getlong(&address_elem->l_hatom);
@@ -784,7 +883,7 @@ protected:
             // THIS DOES THE FIRST TERM OF THE ADDRESS, BUT WHAT ABOUT THE NEXT ONES?
             
             for (; address_elem; ) {
-                created = consumeNthAddressLevel(lookHere, current, address_step, previousWasKey);
+                created = consumeNthAddressLevel(lookHere, current, address_step, previousWasKey, pick);
                 
                 if ((address_elem = address_elem->l_next)) {
                     address_step = hatom_getlong(&address_elem->l_hatom);
@@ -808,6 +907,12 @@ protected:
     virtual void lastKeyDo(t_llll *subll, t_llll *origV, t_execEnv const &context) {
         llll_destroy_everything_but_head(subll);
         llll_chain(subll, llll_clone(origV));
+        return;
+    }
+    
+    virtual void lastPickDo(t_llll *subll, t_llll *origV, t_execEnv const &context) {
+        llll_clear(subll);
+        llll_clone_upon(origV, subll);
         return;
     }
     
@@ -851,11 +956,16 @@ private:
     }
 
     
-    static t_bool consumeNthAddressLevel(t_llllelem* &lookHere, t_llll* &current, long& address_step, t_bool previousWasKey) {
+    static t_bool consumeNthAddressLevel(t_llllelem* &lookHere, t_llll* &current, long& address_step, t_bool previousWasKey, t_bool pick) {
         t_bool created = false;
         if (address_step > 0) {
             for ( ; lookHere && address_step > 1; address_step--) {
                 lookHere = lookHere->l_next;
+                if (pick) {
+                    if (t_llll *subll = hatom_getllll(&lookHere->l_hatom); subll) {
+                        lookHere = subll->l_head;
+                    }
+                }
             }
             if (!lookHere) {
                 for ( ; address_step > 0; address_step--) {
@@ -875,6 +985,10 @@ private:
                         llll_appendllll(current, llll_get());
                 }
                 created = true;
+            } else if (pick) {
+                if (t_llll *subll = hatom_getllll(&lookHere->l_hatom); subll) {
+                    lookHere = subll->l_head;
+                }
             }
         }
         return created;
@@ -889,11 +1003,28 @@ public:
     {
         if (lvalueStepList) {
             nLvSteps = lvalueStepList->getCount();
-            lvalueStepList->copyIntoNullTerminatedArray(&lvStep);
+            copyIntoNullTerminatedArray(lvalueStepList, &lvStep);
         } else
             nLvSteps = 0;
     }
     
+    AstRichAccessNode(firstType *varNode,
+              astNode *valueNode,
+              lvalueSpecs *lvs,
+                  t_codableobj *owner)  : BASE(varNode, valueNode, owner)
+    {
+        if (lvs) {
+            auto steps = lvs->steps;
+            nLvSteps = steps->size();
+            lvStep = new lvalueStep* [nLvSteps + 1];
+            int i = 0;
+            for (auto s : *steps) {
+                lvStep[i++] = s;
+            }
+            lvStep[i] = nullptr;
+        } else
+            nLvSteps = 0;
+    }
     
     t_llll *eval(t_execEnv const &context) {
         
@@ -921,21 +1052,31 @@ public:
                     break;
                     
                 case lvalueStep::E_LV_NTH:
-                    nonLastNth(lvStep + i, i, lookHere, current, previousWasKey, context);
+                    nonLastNth(lvStep + i, i, lookHere, current, previousWasKey, false, context);
+                    previousWasKey = false;
+                    break;
+                    
+                case lvalueStep::E_LV_PICK:
+                    nonLastNth(lvStep + i, i, lookHere, current, previousWasKey, true, context);
                     previousWasKey = false;
                     break;
             }
         }
         
         // last round with assignment
-        if (current /* && lookHere */) { // was it there for some good reason????
+        if (current /* && lookHere */) { // was it there for any good reason????
             switch(lvStep[i]->type) {
                 case lvalueStep::E_LV_KEY:
                     lastKey(lvStep + i, lookHere, current, origV, context);
                     break;
                     
                 case lvalueStep::E_LV_NTH: {
-                    lastNth(lvStep + i, i, lookHere, current, origV, previousWasKey, context);
+                    lastNth(lvStep + i, i, lookHere, current, origV, previousWasKey, false, context);
+                    break;
+                }
+                    
+                case lvalueStep::E_LV_PICK: {
+                    lastNth(lvStep + i, i, lookHere, current, origV, previousWasKey, true, context);
                     break;
                 }
             }
@@ -1008,6 +1149,11 @@ public:
                           lvalueStepList *lvalueStepList,
                           t_codableobj *owner)  : BASE(lNode, rNode, lvalueStepList, owner) { }
 
+    astRichAccessConcatOp(typename BASE::firstType *lNode,
+                          astNode *rNode,
+                          lvalueSpecs *lvalueSpecs,
+                          t_codableobj *owner)  : BASE(lNode, rNode, lvalueSpecs, owner) { }
+    
     ~astRichAccessConcatOp() { }
 
 private:
@@ -1030,6 +1176,11 @@ public:
                           lvalueStepList *lvalueStepList,
                           t_codableobj *owner)  : BASE(lNode, rNode, lvalueStepList, owner) { }
     
+    astRichAccessRConcatOp(typename BASE::firstType *lNode,
+                          astNode *rNode,
+                          lvalueSpecs *lvalueSpecs,
+                          t_codableobj *owner)  : BASE(lNode, rNode, lvalueSpecs, owner) { }
+    
     ~astRichAccessRConcatOp() { };
 private:
     void lastNthDo(t_llll *current, t_llllelem* &lookHere, t_llll* origV, t_bool created, t_execEnv const &context) {
@@ -1041,5 +1192,9 @@ private:
     }
 };
 
+typedef astRichAccessConcatOp<astRichAssignment<E_RA_STANDARD>> astRAConcat;
+typedef astRichAccessRConcatOp<astRichAssignment<E_RA_STANDARD>> astRARConcat;
+typedef astRichAccessConcatOp<astRichEdit<E_RA_STANDARD>> astREConcat;
+typedef astRichAccessRConcatOp<astRichEdit<E_RA_STANDARD>> astRERConcat;
 
 #endif /* ast_hpp */

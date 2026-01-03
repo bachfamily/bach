@@ -832,7 +832,7 @@
 					"patching_rect" : [ 587.0, 527.0, 155.0, 20.0 ],
 					"style" : "",
 					"text" : "More! More cosmetic stuff!!",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

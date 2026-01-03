@@ -1,7 +1,7 @@
 /*
  *  bach_inspector.c
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -365,7 +365,7 @@ void get_access_types_as_sym_list(t_notation_obj *r_ob, t_symbol **list){
 }
 
 
-void notationobj_bach_attribute_declares(t_notation_obj *r_ob)
+void notationobj_declare_bach_attributes(t_notation_obj *r_ob)
 {
 	// SLOTINFO ATTRIBUTES
 	t_symbol *slottypes[k_NUM_SLOT_TYPES];
@@ -461,6 +461,13 @@ void notationobj_bach_attribute_declares(t_notation_obj *r_ob)
 	get_clefs_as_sym_list(r_ob, clefs);
 	bach_attribute_add_enumindex(bach_attribute_get(man, k_VOICE, _llllobj_sym_clef), 23, clefs);
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_stafflines, "Staff Lines", k_VOICE, t_voice, staff_lines_dummy, k_BACH_ATTR_SYM, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
+    DECLARE_BACH_ATTR(man, -1, _llllobj_sym_notationstyle, "Notation Style", k_VOICE, t_voice, notation_style, k_BACH_ATTR_LONG, 1, k_BACH_ATTR_DISPLAY_ENUMINDEX, 0, 0);
+    t_symbol *notationstyles[4];
+    notationstyles[0] = gensym("Equal Temperament");
+    notationstyles[1] = gensym("Just Intonation");
+    notationstyles[2] = gensym("Linear Pitch");
+//    notationstyles[3] = gensym("Linear Frequency");
+    bach_attribute_add_enumindex(bach_attribute_get(man, k_VOICE, _llllobj_sym_notationstyle), 3, notationstyles);
 
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_lock, "Lock", k_VOICE, t_voice, locked, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_mute, "Mute", k_VOICE, t_voice, muted, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
@@ -826,8 +833,8 @@ t_jsurface *bach_get_icon_surface_fn(t_notation_obj *r_ob, t_bach_inspector_mana
 
 t_rect bach_chord_miniature_fn(t_notation_obj *r_ob, void *elem, long elem_type, char *show_line){
 	t_voice *voice = r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *)((t_chord *)elem)->voiceparent : (t_voice *)((t_chord *)elem)->parent->voiceparent;
-	double topmmost_voice_y = get_staff_top_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
-	double bottommost_voice_y = get_staff_bottom_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
+	double topmmost_voice_y = voice_get_staff_top_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
+	double bottommost_voice_y = voice_get_staff_bottom_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
 	double hh = (bottommost_voice_y - topmmost_voice_y) + 30 * r_ob->zoom_y;
 	double ww = 70 * r_ob->zoom_y;
 	double xx = ((t_chord *)elem)->stem_x - ww/2.;
@@ -847,8 +854,8 @@ t_rect bach_note_miniature_fn(t_notation_obj *r_ob, void *elem, long elem_type, 
 
 t_rect bach_voice_miniature_fn(t_notation_obj *r_ob, void *elem, long elem_type, char *show_line){
 	t_voice *voice = (t_voice *)elem;
-	double topmmost_voice_y = get_staff_top_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
-	double bottommost_voice_y = get_staff_bottom_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
+	double topmmost_voice_y = voice_get_staff_top_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
+	double bottommost_voice_y = voice_get_staff_bottom_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
 	double hh = (bottommost_voice_y - topmmost_voice_y) + 30 * r_ob->zoom_y;
 	double ww = deltauxpixels_to_deltaxpixels(r_ob, 30 + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth);
 	double xx = r_ob->j_inset_x - 8 * r_ob->zoom_y;
@@ -1022,6 +1029,8 @@ void bach_default_preprocess(t_notation_obj *r_ob, void *obj, t_bach_attribute *
 			undo_tick_create_for_header(r_ob, k_HEADER_KEYS);
 		else if (attr->name == _llllobj_sym_midichannel)
 			undo_tick_create_for_header(r_ob, k_HEADER_MIDICHANNELS);
+        else if (attr->name == _llllobj_sym_notationstyle)
+            undo_tick_create_for_header(r_ob, k_HEADER_NOTATIONSTYLES);
 		else if (attr->name == _llllobj_sym_stafflines)
 			undo_tick_create_for_header(r_ob, k_HEADER_STAFFLINES);
 		else
@@ -1085,16 +1094,24 @@ void bach_default_postprocess(t_notation_obj *r_ob, void *obj, t_bach_attribute 
             recompute_total_length(r_ob);
             update_hscrollbar(r_ob, 1);
         }
-	} else if (attr->owner_type == k_MEASURE) {
-		if (attr->name == _llllobj_sym_lockrhythmictree)
-			recompute_all_for_measure(r_ob, (t_measure *)obj, true);
-		else if (attr->name == _llllobj_sym_boxes || attr->name == _llllobj_sym_usecustomboxes) {
-			synchronize_boxes_for_measure(r_ob, (t_measure *)obj);
-			recompute_all_for_measure(r_ob, (t_measure *)obj, true);
-		} else
-			recompute_all_for_measure(r_ob, (t_measure *)obj, false);
-	} else if (attr->owner_type == k_VOICE) {
-		if (attr->name == _llllobj_sym_name) {
+    } else if (attr->owner_type == k_MEASURE) {
+        if (attr->name == _llllobj_sym_lockrhythmictree) {
+            recompute_all_for_measure(r_ob, (t_measure *)obj, true);
+        } else if (attr->name == _llllobj_sym_boxes || attr->name == _llllobj_sym_usecustomboxes) {
+            synchronize_boxes_for_measure(r_ob, (t_measure *)obj);
+            recompute_all_for_measure(r_ob, (t_measure *)obj, true);
+        } else if (attr->name == _llllobj_sym_barline) {
+            recompute_all_for_measure(r_ob, (t_measure *)obj, true);
+            if (((t_measure *)obj)->next)
+                recompute_all_for_measure(r_ob, (((t_measure *)obj)->next), true);
+/*        } else if (strncmp(attr->name->s_name, "repeat", 6) == 0) {
+            recompute_all_for_measure(r_ob, (t_measure *)obj, true);
+            if (((t_measure *)obj)->next)
+                recompute_all_for_measure(r_ob, (((t_measure *)obj)->next), true); */
+        } else
+            recompute_all_for_measure(r_ob, (t_measure *)obj, false);
+    } else if (attr->owner_type == k_VOICE) {
+        if (attr->name == _llllobj_sym_name) {
 			recalculate_voicenames_width(r_ob);
 			update_hscrollbar(r_ob, 0);
 		}
@@ -1169,6 +1186,10 @@ long bach_default_attr_inactive(t_notation_obj *r_ob, void *elem, t_bach_attribu
 		} else if (attr->name == _llllobj_sym_boxes) {
 			if (!((t_measure *)elem)->custom_boxing)
 				return 1;	// inactive
+        } else if (attr->name == _llllobj_sym_repeatnum || attr->name == _llllobj_sym_repeatendinglength) {
+            if ((((t_measure *)elem)->end_barline->barline_type != k_BARLINE_REPEAT_END) &&
+                (((t_measure *)elem)->end_barline->barline_type != k_BARLINE_REPEAT_END_AND_START))
+                return 1;    // inactive
 		}
 	} else if (attr->owner_type == k_SLOTINFO) {
 		char slot_type = ((t_slotinfo *)elem)->slot_type;
@@ -1237,7 +1258,8 @@ void bach_default_set_bach_attr(t_notation_obj *r_ob, void *obj, t_bach_attribut
 		} else
 			return;
 	}
-		
+	
+    //TODO: change if/else to switch
 	if (attr->owner_type == k_SLOTINFO) {
 		long slotnum = ((t_slotinfo *)obj)->slot_num;
 		if ((attr->name == _llllobj_sym_slope || attr->name == _llllobj_sym_domainslope)) {
@@ -1398,6 +1420,15 @@ void bach_default_set_bach_attr(t_notation_obj *r_ob, void *obj, t_bach_attribut
                     case 9:
                         barline_type_as_char = k_BARLINE_INTERVOICES;
                         break;
+                    case 10:
+                        barline_type_as_char = k_BARLINE_REPEAT_START;
+                        break;
+                    case 11:
+                        barline_type_as_char = k_BARLINE_REPEAT_END;
+                        break;
+                    case 12:
+                        barline_type_as_char = k_BARLINE_REPEAT_END_AND_START;
+                        break;
 					default:
 						barline_type_as_char = k_BARLINE_AUTOMATIC;
 						break;
@@ -1406,6 +1437,30 @@ void bach_default_set_bach_attr(t_notation_obj *r_ob, void *obj, t_bach_attribut
 				recompute_all_for_measure(r_ob, (t_measure *)obj, false);
 			}
 			return;
+/*        } else if (attr->name == _llllobj_sym_repeatstart) {
+            if (ac && av && atom_gettype(av) == A_LONG) {
+                ((t_measure *)obj)->repeat_start = atom_getlong(av) > 0 ? 1 : 0;
+                synchronize_repeats_for_measure(r_ob, (t_measure *)obj, true);
+            }
+            return;
+        } else if (attr->name == _llllobj_sym_repeatend) {
+            if (ac && av && atom_gettype(av) == A_LONG) {
+                ((t_measure *)obj)->repeat_end = atom_getlong(av) > 0 ? 1 : 0;
+                synchronize_repeats_for_measure(r_ob, (t_measure *)obj, true);
+            }
+            return; */
+        } else if (attr->name == _llllobj_sym_repeatnum) {
+            if (ac && av && atom_gettype(av) == A_LONG) {
+                ((t_measure *)obj)->end_barline->repeat_num = MAX(1, atom_getlong(av));
+                synchronize_repeats_across_voices(r_ob, (t_measure *)obj);
+            }
+            return;
+/*        } else if (attr->name == _llllobj_sym_repeatendinglength) {
+            if (ac && av && atom_gettype(av) == A_LONG) {
+                ((t_measure *)obj)->end_barline->repeat_alternate_ending_length = MAX(0, abs(atom_getlong(av)));
+                synchronize_repeats_for_measure(r_ob, (t_measure *)obj, true);
+            }
+            return; */
 		} else if (attr->name == _llllobj_sym_lockwidth) {
 			if (ac && av && atom_gettype(av) == A_LONG && atom_getlong(av)) {
 				assign_local_spacing_width_multiplier(r_ob, ((t_measure *)obj)->tuttipoint_reference, 1.);
@@ -1491,6 +1546,9 @@ void bach_default_set_bach_attr(t_notation_obj *r_ob, void *obj, t_bach_attribut
 		} else if (attr->name == _llllobj_sym_name) {
 			change_single_voicename_from_ac_av(r_ob, (t_voice *)obj, ac, av, true);
 			return;
+        } else if (attr->name == _llllobj_sym_notationstyle) {
+            change_single_notationstyle(r_ob, (t_voice *)obj, notationstyle_to_symbol((e_voice_notation_style) atom_getlong(av)), true);
+            return;
 		} else if (attr->name == _llllobj_sym_stafflines) {
             t_llll *parsed = llllobj_parse_llll((t_object *)r_ob, LLLL_OBJ_UI, NULL, ac, av, LLLL_PARSE_CLONE);
             if (parsed) {
@@ -1508,6 +1566,11 @@ void bach_default_set_bach_attr(t_notation_obj *r_ob, void *obj, t_bach_attribut
             return;
         } else if (attr->name == _llllobj_sym_symduration && atom_getsym(av) == _llllobj_sym_tillnext) {
             *((t_rational *)field) = genrat(-1, 1);
+            return;
+        }
+    } else if (attr->owner_type == k_SLUR) {
+        if (attr->name == _llllobj_sym_direction && ac >= 1) {
+            *((char *)field) = CLAMP(atom_getlong(av), -1, 1);
             return;
         }
     }
@@ -1711,12 +1774,26 @@ void bach_default_get_bach_attr(t_notation_obj *r_ob, void *obj, t_bach_attribut
                 case k_BARLINE_INTERVOICES:
                     idx = 9;
                     break;
+                case k_BARLINE_REPEAT_START:
+                    idx = 10;
+                    break;
+                case k_BARLINE_REPEAT_END:
+                    idx = 11;
+                    break;
+                case k_BARLINE_REPEAT_END_AND_START:
+                    idx = 12;
+                    break;
 				default:
 					idx = 0;
 					break;
 			}
 			atom_setlong(*av, idx);
 			return;
+        } else if (attr->name == _llllobj_sym_repeatnum) {
+            *ac = 1;
+            *av = (t_atom *)bach_newptr(sizeof(t_atom));
+            atom_setlong(*av, ((t_measure *)obj)->end_barline->repeat_num);
+            return;
 		} else if (attr->name == _llllobj_sym_number) {
 			*ac = 1;
 			*av = (t_atom *)bach_newptr(sizeof(t_atom));
@@ -1737,12 +1814,18 @@ void bach_default_get_bach_attr(t_notation_obj *r_ob, void *obj, t_bach_attribut
 			*av = (t_atom *)bach_newptr(sizeof(t_atom));
 			atom_setlong(*av, mode == k_MODE_MAJOR ? 0 : (mode == k_MODE_MINOR ? 1 : 2));
 			return;
-		} else if (attr->name == _llllobj_sym_key) {
-			*ac = 1;
-			*av = (t_atom *)bach_newptr(sizeof(t_atom));
-			atom_setsym(*av, r_ob->keys_as_symlist[((t_voice *)obj)->number]);
-
-			return;
+        } else if (attr->name == _llllobj_sym_key) {
+            *ac = 1;
+            *av = (t_atom *)bach_newptr(sizeof(t_atom));
+            atom_setsym(*av, r_ob->keys_as_symlist[((t_voice *)obj)->number]);
+            
+            return;
+        } else if (attr->name == _llllobj_sym_notationstyle) {
+            long styleidx = (*((long *)field));
+            *ac = 1;
+            *av = (t_atom *)bach_newptr(sizeof(t_atom));
+            atom_setlong(*av, styleidx);
+            return;
 		} else if (attr->name == _llllobj_sym_stafflines) {
 			t_voice *voice = (t_voice *)obj;
 			if (voice->are_staff_lines_standard) {

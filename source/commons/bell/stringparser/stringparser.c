@@ -1953,7 +1953,7 @@ static const flex_int32_t yy_rule_can_match_eol[138] =
     /*
      *  stringparser.l
      *
-     * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+     * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
      *
      * This program is free software: you can redistribute it and/or modify it
      * under the terms of the GNU General Public License
@@ -1989,8 +1989,8 @@ static const flex_int32_t yy_rule_can_match_eol[138] =
     
     #include "parsers/bach_parser.hpp"
     #include "bell/ast.hpp"
-    #include "stringparser.h"
-    
+    #include "bell/bellparser_commons.h"
+
     #include "stringparser_tab_nolines.h"
     
     #define YY_DECL int yylex \
@@ -2596,7 +2596,7 @@ YY_RULE_SETUP
 case 27:
 YY_RULE_SETUP
 {
-    code_dev_post("lex: OPERATOR !\n");
+    code_dev_post("lex: OPERATOR ~\n");
     BEGIN lexparams->setState(UNARY_NOARGS);
     return BITNOT;
 }

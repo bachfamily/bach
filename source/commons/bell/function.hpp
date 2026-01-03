@@ -1,7 +1,7 @@
 /*
  *  function.hpp
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -29,36 +29,47 @@ protected:
     t_symbol *sym;
     astNode *node;
     countedList<t_localVar> *varsList;
+    std::vector<t_localVar> *varsVector;
     t_localVar *vars;
     
 public:
-    funArg(t_symbol *sym, astNode *node = nullptr) : sym(sym), node(node), varsList(nullptr), vars(nullptr) { };
+    funArg(t_symbol *sym, astNode *node = nullptr) : sym(sym), node(node), varsList(nullptr), varsVector(nullptr), vars(nullptr) { };
     
     funArg(t_symbol *sym, astNode *node, countedList<t_localVar> *v) : funArg(sym, node) {
         if (v) {
             varsList = new countedList<t_localVar>(v);
-        } else
-            varsList = nullptr;
+        }
+    }
+    
+    funArg(t_symbol *sym, astNode *node, std::vector<t_localVar> *v) : funArg(sym, node) {
+        if (v) {
+            varsVector = new std::vector<t_localVar>(*v);
+        }
     };
     
     virtual ~funArg() {
         if (varsList)
             delete varsList;
+        if (varsVector)
+            delete varsVector;
         if (vars)
             delete[] vars;
     }
     
     void conform() {
         if (varsList) {
-            varsList->copyIntoNullTerminatedArray(&vars);
+            copyIntoNullTerminatedArray<t_localVar>(varsList, &vars);
             delete varsList;
             varsList = nullptr;
+        } else if (varsVector) {
+            copyIntoNullTerminatedArray<t_localVar>(varsVector, &vars);
+            delete varsVector;
+            varsVector = nullptr;
         }
     };
     
     t_symbol* getSym() { return sym; };
     astNode* getNode() { return node; };
-    countedList<t_localVar> *getVarsList() { return varsList; };
     t_localVar *getVars() { return vars; };
 };
 
@@ -179,8 +190,14 @@ protected:
     
     virtual ~t_userFunction();
 
+private:
+    template <typename argumentsT, typename localVariablesT>
+    void setup(argumentsT argumentsList, localVariablesT localVariablesList, astNode *ast, t_codableobj *culprit);
+    
 public:
-    t_userFunction(countedList<funArg *> *argumentsList, countedList<t_localVar> *localVariablesList, astNode *ast, t_codableobj *culprit);
+    t_userFunction(countedList<funArg *> *arguments, countedList<t_localVar> *localVariables, astNode *ast, t_codableobj *culprit);
+    
+    t_userFunction(std::vector<funArg *> *arguments, std::vector<t_localVar> *localVariables, astNode *ast, t_codableobj *culprit);
     
     virtual t_llll* call(const t_execEnv &context);
     virtual t_localVar* getLocalVariables() { return localVariables; };
@@ -205,7 +222,7 @@ private:
     t_codableobj *owner;
     
     void removePatcherVars();
-    
+
 protected:
     virtual ~t_mainFunction();
     
@@ -216,6 +233,13 @@ public:
                    pvMap *name2astVars,
                    std::unordered_set<t_function*> *funcs,
                    t_codableobj *caller);
+    
+    t_mainFunction(astNode *mainAst,
+                                   std::vector<t_localVar> *localVariablesList,
+                                   std::unordered_set<t_globalVariable*> *globalVariables,
+                                   pvMap *name2astVars,
+                                   std::unordered_set<t_function*> *funcs,
+                                   t_codableobj *caller);
     
     virtual t_llll* call(t_execEnv const &context);
 
@@ -272,7 +296,7 @@ private:
     astNode *functionNode;
     long argsByPositionCount;
     astNode **argsByPosition;
-    t_bool OopStyleCall;
+    t_bool DataflowStyleCall;
     long argsByNameCount;
     astNode **argsByName;
     t_symbol **argsNames;
@@ -286,11 +310,15 @@ public:
 
     astFunctionCall(astNode *functionNode, countedList<astNode *> *argsByPositionList, countedList<symNodePair *> *argsByNameList, t_codableobj *owner);
     
-    void addOopStyleArg(astNode *arg);
+    astFunctionCall(astNode *functionNode, std::vector<astNode *> *argsByPositionList, std::vector<symNodePair *> *argsByNameList, t_codableobj *owner);
     
-    void setOopStyleArgValue(t_llll *ll);
+    astFunctionCall(astNode *functionNode, t_codableobj *owner);
+
+    void addDataflowStyleArg(astNode *arg);
     
-    void setOopStyleArg(t_llll *ll);
+    void setDataflowStyleArgValue(t_llll *ll);
+    
+    void setDataflowStyleArg(t_llll *ll);
     
     ~astFunctionCall();
     
@@ -311,6 +339,13 @@ public:
     BASE(lNode, nullptr, lvalueStepList, owner),
     functionCall(functionCall) { }
     
+    astRichAccessApplyOp(typename BASE::firstType *lNode,
+                 astFunctionCall *functionCall,
+                 lvalueSpecs *lvalueSpecs,
+                         t_codableobj *owner)  :
+    BASE(lNode, nullptr, lvalueSpecs, owner),
+    functionCall(functionCall) { }
+    
     ~astRichAccessApplyOp() {
         delete functionCall;
     }
@@ -318,7 +353,7 @@ public:
     void lastNthDo(t_llll *current, t_llllelem* &lookHere, t_llll* origV, t_bool created, t_execEnv const &context) {
         t_llll *hereV = llll_get();
         llll_appendhatom_clone(hereV, &lookHere->l_hatom);
-        functionCall->setOopStyleArgValue(hereV);
+        functionCall->setDataflowStyleArgValue(hereV);
         t_llll *res = functionCall->eval(context);
         llll_replacewith<false>(current, lookHere, res);
     }
@@ -326,7 +361,7 @@ public:
     void lastKeyDo(t_llll *subll, t_llll *origV, t_execEnv const &context) {
         t_llll *v = llll_clone(subll);
         llll_destroyelem(v->l_head);
-        functionCall->setOopStyleArgValue(v);
+        functionCall->setDataflowStyleArgValue(v);
         t_llll *res = functionCall->eval(context);
         llll_destroy_everything_but_head(subll);
         llll_chain(subll, res);

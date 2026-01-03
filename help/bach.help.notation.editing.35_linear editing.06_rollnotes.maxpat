@@ -51,7 +51,7 @@
 					"presentation_rect" : [ 6.0, 427.0, 0.0, 0.0 ],
 					"sendto" : "bach.help.filtertags",
 					"text" : "When the cursor is aligned on a chord, use N to create a new note and Backspace to delete the chord. To delete a single note from a chord, also align the pitch tick of the cursor to the desired note, and press Shift+Backspace.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -69,7 +69,7 @@
 					"patching_rect" : [ 6.0, 368.0, 594.0, 50.0 ],
 					"sendto" : "bach.help.filtertags",
 					"text" : "You can raise/lower any pitch (i.e. create accidentals) by aligning the linear editing cursor with the chord (to know how, see #linear+edit+time+cursor) until it turns yellowish (it becomes active for editing), and then press the \"+\" or \"-\" key.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -105,7 +105,7 @@
 					"patching_rect" : [ 449.0, 230.0, 140.0, 40.0 ],
 					"style" : "",
 					"text" : "Use Cmd+up/down to change voice",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -175,7 +175,7 @@
 					"patching_rect" : [ 10.0, 295.0, 217.0, 69.0 ],
 					"style" : "",
 					"text" : "When you press a letter key A to G, the corresponding note is inserted at the cursor horizontal position.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -195,7 +195,7 @@
 					"patching_rect" : [ 6.0, 75.0, 233.0, 84.0 ],
 					"style" : "",
 					"text" : "When you press a numeric key (1 to 9, or 0 meaning 10), a note will be created at the current cursor horizontal and vertical position. ",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

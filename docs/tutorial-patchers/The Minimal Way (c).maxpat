@@ -874,11 +874,11 @@
 				"box" : 				{
 					"maxclass" : "comment",
 					"text" : "This random sucks!",
-					"frgb" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"frgb" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"patching_rect" : [ 613.0, 484.0, 115.0, 20.0 ],
 					"id" : "obj-61",
 					"fontname" : "Arial",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"numinlets" : 1,
 					"fontface" : 2,
 					"fontsize" : 12.0,

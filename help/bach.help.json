@@ -57,12 +57,26 @@
 				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "operator", "precedence", "paren" ],
 				"title" : [ "Precedence" ]
 			},
+			"Basicunaryoperators" : {
+				"filename" : [ "bach.help.bell.010_basics.060_basicunaryoperators.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "concatenation", "whitespace", "bell+llll" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "unary", "operator" ],
+				"title" : [ "Basic Unary Operators" ]
+			},
 			"Unaryoperators" : {
 				"filename" : [ "bach.help.bell.010_basics.060_unaryoperators.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
 				"seealso" : [ "concatenation", "whitespace", "bell+llll" ],
 				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "unary", "operator" ],
 				"title" : [ "Unary operators" ]
+			},
+			"Unarypitchoperators" : {
+				"filename" : [ "bach.help.bell.010_basics.065_unarypitchoperators.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "local" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "unary", "operator", "pitch", "r", "t" ],
+				"title" : [ "Unary Pitch Operators" ]
 			},
 			"Retrievalofelements" : {
 				"filename" : [ "bach.help.bell.010_basics.070_retrievalofelements.maxpat" ],
@@ -172,12 +186,12 @@
 				"title" : [ "Conditional booleans" ]
 			}
 		},
-		"Sequence" : {
-			"filename" : [ "bach.help.bell.030_sequence.maxpat" ],
+		"Nullify" : {
+			"filename" : [ "bach.help.bell.030_nullify.maxpat" ],
 			"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
 			"seealso" : [ "precedence", "return+value" ],
 			"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "sequence", "semicolon" ],
-			"title" : [ "Sequence" ]
+			"title" : [ "Nullify" ]
 		},
 		"Variables" : {
 			"Localvariables" : {
@@ -261,7 +275,7 @@
 				"filename" : [ "bach.help.bell.040_variables.100_richassignmentsyntax.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
 				"seealso" : [ "colon" ],
-				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "variable", "rich", "assignment", "substitution" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "variable", "rich", "assignment", "substitution", "nth", "dot", "key", "pick" ],
 				"title" : [ "Rich assignment syntax" ]
 			},
 			"Moreaboutrichassignmentsyntax" : {
@@ -359,6 +373,13 @@
 				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "name", "named", "position", "variable", "local", "default", "argument" ],
 				"title" : [ "User-defined functions" ]
 			},
+			"Userdefinedfunctionswithoutarguments" : {
+				"filename" : [ "bach.help.bell.060_functions.035_userdefinedfunctionswithoutarguments.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "local+variable" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "argument", "dollar" ],
+				"title" : [ "User-defined functions without arguments" ]
+			},
 			"Globalfunctionsandfunctionassignment" : {
 				"filename" : [ "bach.help.bell.060_functions.040_globalfunctionsandfunctionassignment.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
@@ -380,26 +401,26 @@
 				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "variable", "local", "assignment", "scope", "visibility", "scoping", "propagation", "lift", "lifted" ],
 				"title" : [ "Lifted variables" ]
 			},
+			"Liftedlocalvariablesexamples" : {
+				"filename" : [ "bach.help.bell.060_functions.062_liftedlocalvariablesexamples.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "global+variable", "global+function" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "variable", "local", "assignment", "scope", "visibility", "scoping", "lift", "lifted" ],
+				"title" : [ "Lifted variables: examples" ]
+			},
 			"Keepingthevalueofalocalvariables" : {
-				"filename" : [ "bach.help.bell.060_functions.062_keepingthevalueofalocalvariables.maxpat" ],
+				"filename" : [ "bach.help.bell.060_functions.064_keepingthevalueofalocalvariables.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
 				"seealso" : [  ],
 				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "variable", "local", "assignment", "persistence", "keep", "init", "static" ],
 				"title" : [ "Keeping the value of a local variable" ]
 			},
 			"Keepingvaluesinsidefunctions" : {
-				"filename" : [ "bach.help.bell.060_functions.064_keepingvaluesinsidefunctions.maxpat" ],
+				"filename" : [ "bach.help.bell.060_functions.066_keepingvaluesinsidefunctions.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
 				"seealso" : [  ],
 				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "variable", "local", "assignment", "persistence", "keep", "init", "static" ],
 				"title" : [ "Keeping values inside functions" ]
-			},
-			"Precedenceofvariableinitialization" : {
-				"filename" : [ "bach.help.bell.060_functions.066_precedenceofvariableinitialization.maxpat" ],
-				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
-				"seealso" : [  ],
-				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "variable", "local", "assignment", "persistence", "keep", "init", "static", "initialization", "order", "precedence" ],
-				"title" : [ "Precedence of variable initialization" ]
 			},
 			"Unkeepingvalues" : {
 				"filename" : [ "bach.help.bell.060_functions.068_unkeepingvalues.maxpat" ],
@@ -408,12 +429,12 @@
 				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "variable", "local", "assignment", "persistence", "keep", "init", "static", "unkeep" ],
 				"title" : [ "Unkeeping values" ]
 			},
-			"Scopeoflocalvariablesexamples" : {
-				"filename" : [ "bach.help.bell.060_functions.070_scopeoflocalvariablesexamples.maxpat" ],
+			"Precedenceofvariableinitialization" : {
+				"filename" : [ "bach.help.bell.060_functions.070_precedenceofvariableinitialization.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
-				"seealso" : [ "global+variable", "global+function" ],
-				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "variable", "local", "assignment", "scope", "visibility", "scoping", "lift", "lifted" ],
-				"title" : [ "Lifted local variables: examples" ]
+				"seealso" : [  ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "variable", "local", "assignment", "persistence", "keep", "init", "static", "initialization", "order", "precedence" ],
+				"title" : [ "Precedence of variable initialization" ]
 			},
 			"Argumentnames" : {
 				"filename" : [ "bach.help.bell.060_functions.080_argumentnames.maxpat" ],
@@ -429,12 +450,26 @@
 				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "literal", "user", "defined", "argument" ],
 				"title" : [ "Function fun" ]
 			},
+			"Outputtingfunctionsasdata" : {
+				"filename" : [ "bach.help.bell.060_functions.095_outputtingfunctionsasdata.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "local+variable", "lambda" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "data", "output", "expr" ],
+				"title" : [ "Outputting functions as data" ]
+			},
 			"Dataflowstylefunctioncalls" : {
 				"filename" : [ "bach.help.bell.060_functions.100_dataflowstylefunctioncalls.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
 				"seealso" : [ "global+variable", "assigning+operator" ],
 				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "call", "calling", "dataflow", "style", "first", "argument", "passing", "assigning" ],
 				"title" : [ "Dataflow-style function calls" ]
+			},
+			"Dataflowstyleandfloats" : {
+				"filename" : [ "bach.help.bell.060_functions.105_dataflowstyleandfloats.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "global+variable", "assigning+operator" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "call", "calling", "dataflow", "style", "first", "argument", "passing", "assigning", "dot", "float", "keys" ],
+				"title" : [ "Dataflow style and other dots" ]
 			},
 			"Lambdafunctions" : {
 				"filename" : [ "bach.help.bell.060_functions.110_lambdafunctions.maxpat" ],
@@ -511,8 +546,15 @@
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.00_mathfunctions.maxpat" ],
 					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
 					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "math", "mathematics", "functional", "form", "operator", "#!", "#~", "#u-", "abs", "acos", "acosh", "alter", "asin", "asinh", "atan", "atanh", "ceil", "cents", "cos", "cosh", "degree", "den", "exp", "exp2", "float", "floor", "int", "log", "log10", "log2", "num", "oct" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "math", "mathematics", "functional", "form", "operator", "#!", "#~", "#u-", "abs", "acos", "acosh", "asin", "asinh", "atan", "atanh", "ceil", "cos", "cosh", "den", "exp", "exp2", "float", "floor", "int", "log", "log10", "log2", "num", "rat", "round", "sgn", "sin", "sin" ],
 					"title" : [ "Math functions reference" ]
+				},
+				"Alter" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.alter.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "degree", "octave", "etalter", "pitchkeys", "jisharps", "etsharps", "makepitch" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "pitch", "alter" ],
+					"title" : [ "alter() function reference" ]
 				},
 				"Apply" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.apply.maxpat" ],
@@ -520,6 +562,13 @@
 					"seealso" : [ "$argcount" ],
 					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "$args" ],
 					"title" : [ "apply() function reference" ]
+				},
+				"Approx" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.approx.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "et", "ji", "enharm", "cents" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "pitch", "approx" ],
+					"title" : [ "approx() function reference" ]
 				},
 				"Args" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.args.maxpat" ],
@@ -542,6 +591,13 @@
 					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "cartesianprod", "cartesian", "product" ],
 					"title" : [ "cartesianprod() function reference" ]
 				},
+				"Cents" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.cents.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "approx", "makepitch" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "pitch", "cents" ],
+					"title" : [ "cents() function reference" ]
+				},
 				"Classify" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.classify.maxpat" ],
 					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
@@ -562,6 +618,13 @@
 					"seealso" : [  ],
 					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "contains", "contents" ],
 					"title" : [ "contains() function reference" ]
+				},
+				"Degree" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.degree.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "etwhitekey", "jiwhitekey", "octave", "etalter", "pitchkeys" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "pitch", "degree" ],
+					"title" : [ "degree() function reference" ]
 				},
 				"Delace" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.delace.maxpat" ],
@@ -598,6 +661,48 @@
 					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet", "directout", "direct", "out" ],
 					"title" : [ "directout() function reference" ]
 				},
+				"Enharm" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.enharm.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "et", "ji", "approx", "makepitch" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "pitch", "enharm" ],
+					"title" : [ "enharm() function reference" ]
+				},
+				"Et" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.et.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "ji", "approx", "makepitch" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "pitch", "et" ],
+					"title" : [ "et() function reference" ]
+				},
+				"Etalter" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.etalter.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "degree", "octave", "alter", "pitchkeys", "jisharps", "etsharps", "makepitch" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "pitch", "etalter" ],
+					"title" : [ "etalter() function reference" ]
+				},
+				"Etplof" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.etplof.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "pitchkeys", "etalter", "etsharps", "jiplof", "makepitch" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "pitch", "etplof" ],
+					"title" : [ "etplof() function reference" ]
+				},
+				"Etsharps" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.etsharps.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "etalter", "pitchkeys", "jisharps", "etplof", "makepitch" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "pitch", "etsharps" ],
+					"title" : [ "etsharps() function reference" ]
+				},
+				"Etwhitekey" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.etwhitekey.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "degree", "jiwhitekey", "octave", "etalter", "pitchkeys", "makepitch" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "pitch", "etwhitekey" ],
+					"title" : [ "etwhitekey() function reference" ]
+				},
 				"F2mc" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.f2mc.maxpat" ],
 					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
@@ -632,6 +737,13 @@
 					"seealso" : [ "depth" ],
 					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "flat", "llll", "level" ],
 					"title" : [ "flat() function reference" ]
+				},
+				"Foldratio" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.foldratio.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "degree", "octave", "alter", "pitchkeys", "jisharps", "etsharps" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "pitch", "alteration", "equal", "tempered" ],
+					"title" : [ "foldratio() function reference" ]
 				},
 				"Geomser" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.geomser.maxpat" ],
@@ -668,6 +780,55 @@
 					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet", "intersection", "set" ],
 					"title" : [ "intersection() function reference" ]
 				},
+				"Ji" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.ji.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "et", "approx", "makepitch" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "pitch", "approx" ],
+					"title" : [ "approx() function reference" ]
+				},
+				"Jicommas" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.jicommas.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "jiexps", "pitchkeys", "makepitch" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "pitch", "jicommas" ],
+					"title" : [ "jicommas() function reference" ]
+				},
+				"Jiexps" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.jiexps.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "jicommas", "pitchkeys", "makepitch" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "pitch", "jiexps" ],
+					"title" : [ "jiexps() function reference" ]
+				},
+				"Jiplof" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.jiplof.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "pitchkeys", "etalter", "jisharps", "etplof", "makepitch" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "pitch", "jiplof" ],
+					"title" : [ "jiplof() function reference" ]
+				},
+				"Jiratio" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.jiratio.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "pitchkeys", "jisharps", "jiplof", "jiexps", "makepitch" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "pitch", "jiratio" ],
+					"title" : [ "jiratio() function reference" ]
+				},
+				"Jisharps" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.jisharps.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "etalter", "pitchkeys", "jisharps", "etplof", "makepitch" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "pitch", "jisharps" ],
+					"title" : [ "jisharps() function reference" ]
+				},
+				"Jiwhitekey" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.jiwhitekey.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "etwhitekey", "octave", "jialter", "pitchkeys", "makepitch" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "pitch", "jiwhitekey" ],
+					"title" : [ "jiwhitekey() function reference" ]
+				},
 				"Left" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.left.maxpat" ],
 					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
@@ -681,6 +842,27 @@
 					"seealso" : [ "depth" ],
 					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "length" ],
 					"title" : [ "length() function reference" ]
+				},
+				"Makepitch" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.makepitch.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "pitchkeys", "etalter", "jisharps", "etplof" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "pitch", "makepitch" ],
+					"title" : [ "makepitch() function reference" ]
+				},
+				"Makepitchji" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.makepitchji.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "makepitch", "ji" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "pitch", "makepitchji" ],
+					"title" : [ "makepitchji() function reference" ]
+				},
+				"Makepitchsc" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.makepitchsc.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "makepitch", "enharm" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "makepitchsc", "pitch" ],
+					"title" : [ "makepitchsc() function reference" ]
 				},
 				"Map" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.map.maxpat" ],
@@ -724,6 +906,13 @@
 					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "nth", "address", "permutation" ],
 					"title" : [ "nth() function reference" ]
 				},
+				"Octave" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.octave.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "pitchkeys", "makepitch" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "octave", "pitch" ],
+					"title" : [ "octave() function reference" ]
+				},
 				"Outlet" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.outlet.maxpat" ],
 					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
@@ -737,6 +926,20 @@
 					"seealso" : [ "comb", "scramble", "sort" ],
 					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "perm", "permutation" ],
 					"title" : [ "perm() function reference" ]
+				},
+				"Pitch" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.pitch.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "int", "rat", "num", "den", "float", "makepitch" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "pitch" ],
+					"title" : [ "pitch() function reference" ]
+				},
+				"Pitchkeys" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.pitchkeys.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "makepitch" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "pitchkeys", "pitch" ],
+					"title" : [ "pitchkeys() function reference" ]
 				},
 				"Primeser" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.primeser.maxpat" ],
@@ -1219,7 +1422,7 @@
 			"filename" : [ "bach.help.messages to bach.04_nonative.maxpat" ],
 			"objects" : [ "all" ],
 			"seealso" : [ "llll+outlet+native", "llll+outlet+text", "llll+outlet+max" ],
-			"tags" : [ "llll", "pronounce", "pronounciation" ],
+			"tags" : [ "llll", "nonative", "no", "native", "messages", "to", "bach" ],
 			"title" : [ "Messages to bach: nonative" ]
 		},
 		"Messagesforglobalvariables" : {
@@ -1235,16 +1438,16 @@
 			"Tonedivision" : {
 				"filename" : [ "bach.help.notation.accidentals and microtones.01_tonedivision.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
-				"seealso" : [  ],
+				"seealso" : [ "justintonation", "ji" ],
 				"tags" : [ "microtone", "tone", "division", "tonedivision" ],
-				"title" : [ "Microtonality" ]
+				"title" : [ "Equal-tempered microtonality" ]
 			},
 			"Tonedivisioncorresp" : {
 				"filename" : [ "bach.help.notation.accidentals and microtones.02_tonedivisioncorresp.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "tonedivision" ],
 				"tags" : [ "microtone", "conversion", "tone", "division", "tonedivision", "equivalent", "parameter" ],
-				"title" : [ "Microtonal equivalent parameters" ]
+				"title" : [ "Equal tempered microtonal parameters" ]
 			},
 			"Accidentals" : {
 				"filename" : [ "bach.help.notation.accidentals and microtones.03_accidentals.maxpat" ],
@@ -1259,6 +1462,13 @@
 				"seealso" : [ "tonedivision", "key+signature" ],
 				"tags" : [ "accidental", "preference", "sharp", "flat", "accidentalpreferences", "above", "below" ],
 				"title" : [ "Accidental preferences" ]
+			},
+			"Eighthtonearrow" : {
+				"filename" : [ "bach.help.notation.accidentals and microtones.05_eighthtonearrow.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "accidental+preferences" ],
+				"tags" : [ "accidental", "preference", "sharp", "flat", "accidentalpreferences", "above", "below", "arrow", "direction", "eighth", "tone", "eighthtone", "eighthtonearrow", "semitone", "semitonal", "placement" ],
+				"title" : [ "Eighth-tone arrow direction" ]
 			},
 			"Semitonalenharmonictable" : {
 				"filename" : [ "bach.help.notation.accidentals and microtones.10_semitonalenharmonictable.maxpat" ],
@@ -1301,6 +1511,13 @@
 				"seealso" : [ "cautionary+accidental", "repeat+accidental" ],
 				"tags" : [ "accidental", "cautionary", "cautionaryaccidentals", "scope", "decay", "remind", "cautionaryaccidentalsdecay", "cautionaryaccidentalsremind" ],
 				"title" : [ "Cautionary accidentals" ]
+			},
+			"Centsifferences" : {
+				"filename" : [ "bach.help.notation.accidentals and microtones.23_centsifferences.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "accidental" ],
+				"tags" : [ "accidental", "display", "deviation", "difference", "cents", "showcentsdiff", "showcents", "centsdifferences", "centsdiff", "show" ],
+				"title" : [ "Displaying deviations in cents" ]
 			}
 		},
 		"Appearance" : {
@@ -1392,8 +1609,8 @@
 				"filename" : [ "bach.help.notation.appearance.12_additionalstartpad.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "vzoom" ],
-				"tags" : [ "appearance", "pad", "startpad", "additional", "padding", "space", "additionalstartpad", "adjustadditionalstartpad", "start", "pretime", "pre", "time" ],
-				"title" : [ "Additional padding space" ]
+				"tags" : [ "appearance", "pad", "startpad", "additional", "padding", "space", "additionalstartpad", "adjustadditionalstartpad", "start", "pretime", "pre", "time", "after", "before", "padbeforeclef", "padafterclef", "clef" ],
+				"title" : [ "Padding space before and after clefs" ]
 			},
 			"Inset" : {
 				"filename" : [ "bach.help.notation.appearance.13_inset.maxpat" ],
@@ -1450,6 +1667,13 @@
 				"seealso" : [ "slot+linkage", "slotinfo+inspector", "dynamics" ],
 				"tags" : [ "appearance", "dynamics", "attribute", "show", "showdynamics", "hairpin", "showhairpins", "adjust", "baseline", "position", "base", "line dynamicsvadj", "dynamicsfontsize", "font", "size", "affect", "spacing", "dynamicsaffectspacing", "dynamicsfontsize" ],
 				"title" : [ "Dynamics display" ]
+			},
+			"B_annotationsattributes" : {
+				"filename" : [ "bach.help.notation.appearance.19b_annotationsattributes.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "annotation" ],
+				"tags" : [ "appearance", "annotation", "show", "showannotations", "annotationsvadj", "annotationsfontsize", "annotationsalign", "align", "font", "size", "adjust", "adj", "vertical", "shift" ],
+				"title" : [ "Annotations display" ]
 			},
 			"Changefonts" : {
 				"filename" : [ "bach.help.notation.appearance.20_changefonts.maxpat" ],
@@ -1571,6 +1795,13 @@
 					"tags" : [ "appearance", "ruler", "grid", "color", "rulercolor", "gridcolor", "subdivisiongridcolor" ],
 					"title" : [ "Grid and ruler colors" ]
 				}
+			},
+			"Markersappear" : {
+				"filename" : [ "bach.help.notation.appearance.36_markersappear.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "marker", "marker+name" ],
+				"tags" : [ "appearance", "marker", "width", "span", "vertical", "barline", "markerwidth", "markerspan" ],
+				"title" : [ "Marker appearance" ]
 			},
 			"Markernames" : {
 				"filename" : [ "bach.help.notation.appearance.37_markernames.maxpat" ],
@@ -1751,6 +1982,13 @@
 				"tags" : [ "appearance", "barline", "across", "staff", "staves", "show", "hide", "showbarlines", "drawbarlinesacrossstaves" ],
 				"title" : [ "Barlines" ]
 			},
+			"B_accollature" : {
+				"filename" : [ "bach.help.notation.appearance.60b_accollature.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "part" ],
+				"tags" : [ "appearance", "accollatura", "accollature", "bracket", "brace", "thinbracket", "rule", "ruler", "line", "none", "pad", "before", "clef", "padbeforeclef", "group", "voicegroups", "voice", "showaccollature", "show", "showaccollatura", "initial", "rule", "showinitialrule" ],
+				"title" : [ "Accollature (brackets and braces)" ]
+			},
 			"Measurenumbers" : {
 				"filename" : [ "bach.help.notation.appearance.61_measurenumbers.maxpat" ],
 				"objects" : [ "bach.score" ],
@@ -1771,6 +2009,13 @@
 				"seealso" : [ "measureinfo" ],
 				"tags" : [ "appearance", "tempo", "tempi", "time", "signature", "show", "hide", "showtempi", "showtimesignatures", "vertical", "shift", "position", "adjust", "tempovadj", "showtempointerpline", "interpolation", "acc", "rall", "accelerando", "rallentando", "line", "dashed", "temposize", "showtempointerp" ],
 				"title" : [ "Tempi and time signatures" ]
+			},
+			"Ruleaccollatura" : {
+				"filename" : [ "bach.help.notation.appearance.64_ruleaccollatura.maxpat" ],
+				"objects" : [ "bach.score", "bach.roll" ],
+				"seealso" : [ "measure+number" ],
+				"tags" : [ "appearance", "barline", "across", "staff", "staves", "show", "hide", "accollatura", "system", "part", "voiceensemble", "ensemble", "voice", "rule", "initial", "showinitialrule" ],
+				"title" : [ "System lines" ]
 			},
 			"Paintmethodandthreading" : {
 				"filename" : [ "bach.help.notation.appearance.80_paintmethodandthreading.maxpat" ],
@@ -2830,7 +3075,7 @@
 				"filename" : [ "bach.help.notation.markers.30_regions.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "region" ],
-				"tags" : [ "marker", "region", "duration", "select", "selection" ],
+				"tags" : [ "marker", "region", "duration", "select", "selection", "show", "region", "end", "showregionend" ],
 				"title" : [ "Markers and regions" ]
 			},
 			"Regionsyntax" : {
@@ -3067,6 +3312,13 @@
 				"seealso" : [ "merge", "undo" ],
 				"tags" : [ "message", "split", "splitting", "divide" ],
 				"title" : [ "Splitting chords in bach.score" ]
+			},
+			"B_splitchordinscoreproportions" : {
+				"filename" : [ "bach.help.notation.messages.19b_splitchordinscoreproportions.maxpat" ],
+				"objects" : [ "bach.score" ],
+				"seealso" : [ "split" ],
+				"tags" : [ "message", "split", "splitting", "divide", "proportion", "subdivide", "tuplet" ],
+				"title" : [ "Uneven splitting of chords using proportions" ]
 			},
 			"Selection" : {
 				"Basic" : {
@@ -3399,7 +3651,7 @@
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.02a_delete.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "sel", "select+all", "clearselection" ],
-					"tags" : [ "message", "operate", "on", "selection", "delete", "erase", "ripple", "rippledelete", "shift", "measure", "deletemeasures", "selected" ],
+					"tags" : [ "message", "operate", "on", "selection", "delete", "erase", "ripple", "rippledelete", "shift", "measure", "deletemeasures", "selected", "deletemeasurecontent" ],
 					"title" : [ "Delete selection" ]
 				},
 				"B_deletetransfer" : {
@@ -3738,6 +3990,13 @@
 					"tags" : [ "message", "operate", "on", "selection", "poly", "polyphony", "assign", "assignment", "mono", "monophony", "voicing", "voice", "number", "max", "maxnum", "used" ],
 					"title" : [ "Obtaining the number of used voices" ]
 				},
+				"Pitchapprox" : {
+					"filename" : [ "bach.help.notation.messages.30_operate on selection.78_pitchapprox.maxpat" ],
+					"objects" : [ "bach.roll" ],
+					"seealso" : [ "jilimit", "tonedivision" ],
+					"tags" : [ "message", "operate", "on", "selection", "approximate", "snap", "pitch", "ji", "et", "just", "intonation", "jiapprox", "approx", "etapprox", "limit", "tonedivision" ],
+					"title" : [ "Approximate pitches" ]
+				},
 				"Othermessages" : {
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.80_othermessages.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
@@ -3829,7 +4088,7 @@
 				"filename" : [ "bach.help.notation.messages.51_setmeasureparameters.maxpat" ],
 				"objects" : [ "bach.score" ],
 				"seealso" : [ "syntax+measure+parameter" ],
-				"tags" : [ "message", "measure", "parameter", "set", "setmeasureparameters", "width", "barline", "number", "shownumber" ],
+				"tags" : [ "message", "measure", "parameter", "set", "setmeasureparameters", "width", "barline", "number", "shownumber", "measureparameter" ],
 				"title" : [ "Setting measure parameters" ]
 			},
 			"Scroll" : {
@@ -4127,7 +4386,7 @@
 				"filename" : [ "bach.help.notation.noteheads.11_customnoteheadsspecs.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "noteheadinfo", "custom+notehead" ],
-				"tags" : [ "notehead", "define", "custom", "specification", "syntax", "spec", "white", "black", "note", "head", "fullname", "shortname", "alias", "font", "basept", "char", "xshift", "yshift", "width", "shift", "xshiftsmall", "yshiftsmall", "small", "distartxshift", "offset" ],
+				"tags" : [ "notehead", "define", "custom", "specification", "syntax", "spec", "white", "black", "note", "head", "fullname", "shortname", "alias", "font", "basept", "char", "xshift", "yshift", "width", "shift", "xshiftsmall", "yshiftsmall", "small", "distartxshift", "offset", "opaque" ],
 				"title" : [ "Custom noteheads specifications" ]
 			},
 			"Customnhexample" : {
@@ -4139,18 +4398,25 @@
 			},
 			"Customnhexample2" : {
 				"filename" : [ "bach.help.notation.noteheads.13_customnhexample2.maxpat" ],
-				"objects" : [ "bach.score" ],
+				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "noteheadinfo", "custom+notehead+specification" ],
 				"tags" : [ "notehead", "define", "custom", "syntax", "spec", "example", "character", "family", "families", "black", "white", "whole", "doublewhole" ],
 				"title" : [ "Another custom noteheads example" ]
+			},
+			"Tablatures" : {
+				"filename" : [ "bach.help.notation.noteheads.14_tablatures.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "noteheadinfo", "custom+notehead+specification" ],
+				"tags" : [ "notehead", "define", "custom", "syntax", "spec", "example", "tablature", "tab", "guitar", "fret" ],
+				"title" : [ "Tablatures" ]
 			}
 		},
 		"Parts" : {
 			"Intro" : {
 				"filename" : [ "bach.help.notation.parts.01_intro.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
-				"seealso" : [ "clef", "numparts" ],
-				"tags" : [ "part", "voice", "ensemble", "voiceensemble", "staff" ],
+				"seealso" : [ "clef", "numparts", "accollature" ],
+				"tags" : [ "part", "voice", "ensemble", "voiceensemble", "staff", "bracket", "show", "hide", "showpartbrackets" ],
 				"title" : [ "Voices, voice ensembles and parts" ]
 			},
 			"Partsattribute" : {
@@ -4180,6 +4446,71 @@
 				"seealso" : [ "voice+ensemble", "part", "variables", "sel", "unsel", "select", "subsel" ],
 				"tags" : [ "part", "voice", "ensemble", "voiceensemble", "part", "select", "sel", "unsel", "select", "subsel" ],
 				"title" : [ "Part selection" ]
+			},
+			"Partmiscellanea" : {
+				"filename" : [ "bach.help.notation.parts.06_partmiscellanea.maxpat" ],
+				"objects" : [ "bach.score" ],
+				"seealso" : [ "voice+ensemble", "part" ],
+				"tags" : [ "part", "voice", "ensemble", "voiceensemble", "part", "rest", "pause", "shift", "step", "restpartshiftsteps" ],
+				"title" : [ "Rests and parts" ]
+			}
+		},
+		"Pitches" : {
+			"Notenames" : {
+				"filename" : [ "bach.help.notation.pitches.01_notenames.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "separate+syntax", "gathered+syntax", "show+note+name", "pitch+syntax" ],
+				"tags" : [ "syntax", "note", "name", "pitch", "middlecoctave", "notename" ],
+				"title" : [ "Inputting pitches" ]
+			},
+			"Pitchsyntaxet" : {
+				"filename" : [ "bach.help.notation.pitches.02_pitchsyntaxet.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "separate+syntax", "gathered+syntax", "pitch+output", "pitch+syntax", "intervals+syntax" ],
+				"tags" : [ "syntax", "note", "name", "pitch", "notename", "pitches", "tone", "sharp", "flat", "quarter", "eighth", "microtone", "accidental", "middle" ],
+				"title" : [ "Equal-tempered pitch syntax" ]
+			},
+			"Pitchsyntaxji" : {
+				"filename" : [ "bach.help.notation.pitches.05_pitchsyntaxji.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "ji+comma+list" ],
+				"tags" : [ "syntax", "note", "name", "pitch", "notename", "pitches", "just", "intonation", "ji", "justintonation", "comma" ],
+				"title" : [ "Just-intonation pitch syntax" ]
+			},
+			"Jicommas" : {
+				"filename" : [ "bach.help.notation.pitches.06_jicommas.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "ji" ],
+				"tags" : [ "syntax", "note", "name", "pitch", "notename", "pitches", "just", "intonation", "justintonation", "ji", "comma", "list" ],
+				"title" : [ "List of just intonation commas" ]
+			},
+			"Pitchsyntaxjir" : {
+				"filename" : [ "bach.help.notation.pitches.07_pitchsyntaxjir.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "ji" ],
+				"tags" : [ "syntax", "note", "name", "pitch", "notename", "pitches", "just", "intonation", "justintonation", "ji", "ratio", "interval", "r", "writing", "comma", "justly", "tuned" ],
+				"title" : [ "Writing justly tuned intervals as ratio" ]
+			},
+			"Mixedpitches" : {
+				"filename" : [ "bach.help.notation.pitches.08_mixedpitches.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [  ],
+				"tags" : [ "syntax", "note", "name", "pitch", "notename", "pitches", "just", "intonation", "justintonation", "ji", "mixed", "equal-tempered", "et", "hybrid", "combine" ],
+				"title" : [ "Mixed pitches" ]
+			},
+			"Intervals" : {
+				"filename" : [ "bach.help.notation.pitches.09_intervals.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "pitch+syntax" ],
+				"tags" : [ "syntax", "note", "name", "pitch", "pitches", "arithmetics", "add", "divide", "multiply", "subtract", "subtract", "remainder", "interval" ],
+				"title" : [ "Pitch arithmetics and intervals" ]
+			},
+			"Pack" : {
+				"filename" : [ "bach.help.notation.pitches.10_pack.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "pitch+syntax" ],
+				"tags" : [ "syntax", "note", "name", "pitch", "pitches", "create", "break", "build", "pack", "unpack", "pitchpack", "pitchunpack" ],
+				"title" : [ "Packing and unpacking pitches" ]
 			}
 		},
 		"Quantization" : {
@@ -4904,19 +5235,33 @@
 				"tags" : [ "sequencer", "sequencing", "play", "playing", "interface", "selection", "pause", "start", "stop", "dump", "offline", "off-line", "evaluate", "validate" ],
 				"title" : [ "Playing interface" ]
 			},
-			"B_catchplay" : {
-				"filename" : [ "bach.help.notation.sequencing.05b_catchplay.maxpat" ],
-				"objects" : [ "bach.roll", "bach.score" ],
-				"seealso" : [ "show+focus" ],
-				"tags" : [ "sequencer", "sequencing", "play", "playing", "catch", "play", "playhead", "head", "follow", "redraw", "screen", "optimize", "optimization", "improve", "time", "timing", "cpu", "usage", "encapsulate", "score" ],
-				"title" : [ "Catch playhead and optimization" ]
-			},
 			"B_playinginterfacecmd" : {
 				"filename" : [ "bach.help.notation.sequencing.05b_playinginterfacecmd.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "play+offline" ],
 				"tags" : [ "sequencer", "sequencing", "play", "playing", "interface", "selection", "offline", "off-line", "off", "line", "play", "command", "keyboard", "shortcut", "right", "left", "double", "click", "leftclick", "rightclick", "doubleclick", "evaluate", "playofflinecmd", "dump", "play" ],
 				"title" : [ "Dump play command" ]
+			},
+			"C_catchplay" : {
+				"filename" : [ "bach.help.notation.sequencing.05c_catchplay.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "catchplay", "realtime", "optimize" ],
+				"tags" : [ "sequencer", "sequencing", "play", "playing", "catch", "play", "playhead", "head", "follow", "redraw", "screen", "optimize", "score", "domain", "fixed", "catchplay", "playheadfixedpos", "position", "pos" ],
+				"title" : [ "Playback scroll and domain interaction" ]
+			},
+			"D_optimizeplayback" : {
+				"filename" : [ "bach.help.notation.sequencing.05d_optimizeplayback.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "catchplay", "realtime" ],
+				"tags" : [ "sequencer", "sequencing", "play", "playing", "catch", "play", "playhead", "head", "follow", "redraw", "screen", "optimize", "optimization", "improve", "time", "timing", "cpu", "usage", "encapsulate", "score", "domain", "fixed" ],
+				"title" : [ "Optimizing playback" ]
+			},
+			"E_notifyplayhead" : {
+				"filename" : [ "bach.help.notation.sequencing.05e_notifyplayhead.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "getcursor" ],
+				"tags" : [ "sequencer", "sequencing", "play", "playing", "notify", "head", "playhead", "position", "playback", "playheadnotify", "cursor", "getcursor" ],
+				"title" : [ "Get playhead position during playback" ]
 			},
 			"Playmode" : {
 				"filename" : [ "bach.help.notation.sequencing.06_playmode.maxpat" ],
@@ -5036,6 +5381,13 @@
 				"seealso" : [ "loop+notification", "show+loop" ],
 				"tags" : [ "sequencer", "sequencing", "loop", "region", "useloop", "showloop" ],
 				"title" : [ "Loop region interface" ]
+			},
+			"Repeats" : {
+				"filename" : [ "bach.help.notation.sequencing.24_repeats.maxpat" ],
+				"objects" : [ "bach.score" ],
+				"seealso" : [ "loop+region", "repeat+number" ],
+				"tags" : [ "sequencer", "sequencing", "repeat", "loop" ],
+				"title" : [ "Repeats" ]
 			},
 			"Offlineplay" : {
 				"filename" : [ "bach.help.notation.sequencing.25_offlineplay.maxpat" ],
@@ -5538,7 +5890,7 @@
 					"filename" : [ "bach.help.notation.slots.30_slot linkage.30_annotation.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "slot+linkage", "slotinfo+inspector" ],
-					"tags" : [ "slot", "link", "linkage", "appearance", "display", "write", "text", "size", "annotation", "accidental", "linkannotationtoslot", "commentary", "text", "expression", "annotationfontsize", "font", "text", "comment" ],
+					"tags" : [ "slot", "link", "linkage", "appearance", "display", "write", "text", "size", "annotation", "accidental", "linkannotationtoslot", "commentary", "text", "expression", "annotationfontsize", "font", "text", "comment", "annotationalignment", "alignment" ],
 					"title" : [ "Setting up annotations" ]
 				},
 				"Annotationmore" : {
@@ -5702,6 +6054,13 @@
 					"seealso" : [ "separate+syntax", "hierarchy", "rest" ],
 					"tags" : [ "separate", "syntax", "rest", "nil", "empty", "chord", "note", "no", "duration", "cent", "pitch", "two", "ways", "introduce", "set", "introducing" ],
 					"title" : [ "Two ways of introducing rests" ]
+				},
+				"Restsoutput" : {
+					"filename" : [ "bach.help.notation.syntax.10_separate syntax.06_restsoutput.maxpat" ],
+					"objects" : [ "bach.score" ],
+					"seealso" : [ "rest" ],
+					"tags" : [ "separate", "syntax", "rest", "nil", "empty", "chord", "duration", "output", "negative", "positive", "sign", "outputnegativerests" ],
+					"title" : [ "Outputting durations for rests" ]
 				},
 				"Ties" : {
 					"filename" : [ "bach.help.notation.syntax.10_separate syntax.10_ties.maxpat" ],
@@ -6066,12 +6425,19 @@
 					"tags" : [ "syntax", "measureinfo", "measure", "parameter", "width", "widthfactor", "auto" ],
 					"title" : [ "Measure width parameters" ]
 				},
-				"Barlinetypes" : {
-					"filename" : [ "bach.help.notation.syntax.40_measureinfo.32_barlinetypes.maxpat" ],
+				"A_barlinetypes" : {
+					"filename" : [ "bach.help.notation.syntax.40_measureinfo.32a_barlinetypes.maxpat" ],
 					"objects" : [ "bach.score", "bach.quantize" ],
 					"seealso" : [ "measureinfo", "measure+parameter", "zoom", "vzoom", "measure+width+lock" ],
-					"tags" : [ "syntax", "measureinfo", "measure", "parameter", "barline", "type", "automatic", "dashed", "normal", "dotted", "double", "solid", "final", "hidden", "tick", "intervoice" ],
+					"tags" : [ "syntax", "measureinfo", "measure", "parameter", "barline", "type", "automatic", "dashed", "normal", "dotted", "double", "solid", "final", "hidden", "tick", "intervoice", "repeat", "sign", "start", "end" ],
 					"title" : [ "Barline types" ]
+				},
+				"B_repeatnum" : {
+					"filename" : [ "bach.help.notation.syntax.40_measureinfo.32b_repeatnum.maxpat" ],
+					"objects" : [ "bach.score" ],
+					"seealso" : [ "measureinfo", "measure+parameter", "barline+type" ],
+					"tags" : [ "syntax", "measureinfo", "measure", "parameter", "barline", "repeat", "num", "number", "repetitions", "ritornello", "cycle", "loop", "repeatnum" ],
+					"title" : [ "Number of repetitions" ]
 				},
 				"Measurenumbers" : {
 					"filename" : [ "bach.help.notation.syntax.40_measureinfo.33_measurenumbers.maxpat" ],
@@ -6149,7 +6515,7 @@
 					"filename" : [ "bach.help.notation.syntax.50_header.10_voicespacinghidevoices.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "voicespacing", "hidevoices" ],
-					"tags" : [ "header", "syntax", "voice", "space", "spacing", "hide", "hidevoices", "voicespacing" ],
+					"tags" : [ "header", "syntax", "voice", "space", "spacing", "hide", "hidevoices", "voicespacing", "offset" ],
 					"title" : [ "Voice spacing, hide voices" ]
 				},
 				"Stafflines" : {
@@ -6331,36 +6697,6 @@
 					"tags" : [ "syntax", "slot", "separate", "syntax", "rest", "assign" ],
 					"title" : [ "Slots for rests in separate syntax" ]
 				}
-			},
-			"Pitches" : {
-				"Notenames" : {
-					"filename" : [ "bach.help.notation.syntax.90_pitches.01_notenames.maxpat" ],
-					"objects" : [ "bach.roll", "bach.score" ],
-					"seealso" : [ "separate+syntax", "gathered+syntax", "show+note+name", "pitch+syntax" ],
-					"tags" : [ "syntax", "note", "name", "pitch", "middlecoctave", "notename" ],
-					"title" : [ "Inputting pitches" ]
-				},
-				"Pitchsyntax" : {
-					"filename" : [ "bach.help.notation.syntax.90_pitches.02_pitchsyntax.maxpat" ],
-					"objects" : [ "bach.roll", "bach.score" ],
-					"seealso" : [ "separate+syntax", "gathered+syntax", "pitch+output", "pitch+syntax", "intervals+syntax" ],
-					"tags" : [ "syntax", "note", "name", "pitch", "notename", "pitches", "tone", "sharp", "flat", "quarter", "eighth", "microtone", "accidental", "middle" ],
-					"title" : [ "Pitch syntax" ]
-				},
-				"Intervals" : {
-					"filename" : [ "bach.help.notation.syntax.90_pitches.03_intervals.maxpat" ],
-					"objects" : [ "bach.roll", "bach.score" ],
-					"seealso" : [ "pitch+syntax" ],
-					"tags" : [ "syntax", "note", "name", "pitch", "pitches", "arithmetics", "add", "divide", "multiply", "subtract", "subtract", "remainder", "interval" ],
-					"title" : [ "Pitch arithmetics and intervals" ]
-				},
-				"Pack" : {
-					"filename" : [ "bach.help.notation.syntax.90_pitches.04_pack.maxpat" ],
-					"objects" : [ "bach.roll", "bach.score" ],
-					"seealso" : [ "pitch+syntax" ],
-					"tags" : [ "syntax", "note", "name", "pitch", "pitches", "create", "break", "build", "pack", "unpack", "pitchpack", "pitchunpack" ],
-					"title" : [ "Packing and unpacking pitches" ]
-				}
 			}
 		},
 		"Voice properties" : {
@@ -6438,7 +6774,7 @@
 				"filename" : [ "bach.help.notation.voice properties.15_spacing.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "vzoom" ],
-				"tags" : [ "voice", "space", "spacing", "position", "change", "voicespacing" ],
+				"tags" : [ "voice", "space", "spacing", "position", "change", "voicespacing", "offset" ],
 				"title" : [ "Change space between voices" ]
 			},
 			"Stafflines" : {

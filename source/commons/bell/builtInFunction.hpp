@@ -1,7 +1,7 @@
 /*
  *  builtInFunction.hpp
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -276,6 +276,13 @@ public:
     t_llll* call(const t_execEnv &context);
 };
 
+class t_fnFareyser : public t_builtInFunction
+{
+public:
+    t_fnFareyser();
+    t_llll* call(const t_execEnv &context);
+};
+
 class t_fnSum : public t_builtInFunction
 {
 public:
@@ -303,5 +310,27 @@ public:
     t_fnF2mc();
     t_llll* call(const t_execEnv &context);
 };
+
+class t_fnJicommas : public t_builtInFunction
+{
+public:
+    t_fnJicommas();
+    t_llll* call(const t_execEnv &context);
+};
+
+class t_fnJiexps : public t_builtInFunction
+{
+public:
+    t_fnJiexps();
+    t_llll* call(const t_execEnv &context);
+};
+
+class t_fnPitchkeys : public t_builtInFunction
+{
+public:
+    t_fnPitchkeys();
+    t_llll* call(const t_execEnv &context);
+};
+
 
 #endif /* builtInFunction_hpp */

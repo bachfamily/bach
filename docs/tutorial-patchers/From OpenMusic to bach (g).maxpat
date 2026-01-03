@@ -460,7 +460,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 442.828552, 476.0, 262.171448, 36.0 ],
 					"text" : "What if I don't want to bang? I am tired of banging. (Tired of banging?!?)",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

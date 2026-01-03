@@ -597,7 +597,7 @@
 					"patching_rect" : [ 536.0, 453.0, 219.0, 36.0 ],
 					"style" : "",
 					"text" : "Yet if I Shift+Alt+click, I can always create markers. I don't want that!",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

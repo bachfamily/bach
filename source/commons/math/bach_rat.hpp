@@ -1,7 +1,7 @@
 /*
  *  bach_rat.hpp
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -43,6 +43,9 @@ template <> struct TwiceAsBigInt<t_int16> {
     typedef t_int32 data;
 };
 
+template <> struct TwiceAsBigInt<t_int8> {
+    typedef t_int16 data;
+};
 
 
 template <typename U, typename V> struct TwiceAsBigInt2 {
@@ -71,7 +74,15 @@ template <> struct TwiceAsBigInt2<t_int16, t_int32> {
     typedef t_int64 data;
 };
 
+template <> struct TwiceAsBigInt2<t_int8, t_int32> {
+    typedef t_int64 data;
+};
+
 template <> struct TwiceAsBigInt2<t_int32, t_int16> {
+    typedef t_int64 data;
+};
+
+template <> struct TwiceAsBigInt2<t_int32, t_int8> {
     typedef t_int64 data;
 };
 
@@ -79,9 +90,17 @@ template <> struct TwiceAsBigInt2<t_int16, t_int16> {
     typedef t_int32 data;
 };
 
+template <> struct TwiceAsBigInt2<t_int16, t_int8> {
+    typedef t_int32 data;
+};
 
+template <> struct TwiceAsBigInt2<t_int8, t_int16> {
+    typedef t_int32 data;
+};
 
-
+template <> struct TwiceAsBigInt2<t_int8, t_int8> {
+    typedef t_int16 data;
+};
 
 template <typename T>
 class t_rat : public t_urrat<T>
@@ -120,6 +139,52 @@ public:
     t_rat & operator*=(const t_rat &b);
     t_rat & operator/=(const t_rat &b);
     t_rat & operator%=(t_rat b);
+    
+    t_rat fold(t_rat b) const {
+        // "folds" a rational as a pitch multiplicatively, so that it lies inside the fundamenetal "pseudooctave" between 1 and b
+        // Similarly to r=mod(a,b), i.e. there is an integer q s.t. a=qb+r (with r<b) , q and r unique
+        // f = fold(a, b): there is an integer p s.t. a = f · b^p; f and p are unique
+
+        t_rat<T> a = *this;
+        t_rat<T> invalid, oneoverzero;
+        invalid.r_num = invalid.r_den = 0;
+        oneoverzero.r_num = oneoverzero.r_den = 0;
+
+        // the matter of signs on anything mod-related is a nightmare in implementations.
+        // Here, we assume that  fold(a, b) = fold(a, 1/b), and that both a and b must be >0
+        // otherwise an invalid rational is returned (0/0)
+        
+        if (a.r_num == 0)
+            return a; // either 0 or invalid rational: let's keep them this way
+
+        if (b.r_den == 0)
+            return invalid; // invalid rational
+
+        if (b <= 0 || a <= 0)
+            return invalid; // invalid rational
+
+        if (b == 1)
+            return oneoverzero; // 1/0 as output: folding by 1 is just like dividing by 0
+        
+        if (b < 1)
+            b = b.inv();
+        
+        // iterative version
+        while (a >= b) { // TODO: there must be a non-iterative way via logarithms – still...
+            a /= b;
+        }
+        while (a < 1) {
+            a *= b;
+        }
+
+        // log-based version , but that's not faster, since ipow() is iterative :-)
+/*        double L = log(a)/log(b);
+        long Lfloor = (long)floor(L);
+        return sign * a / ipow(b, Lfloor); */
+
+         
+        return a;
+    }
 
     template <typename U> t_rat & operator+=(const U b) {
         t_rat<T>::r_num += t_rat<T>::r_den * b;

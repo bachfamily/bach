@@ -555,7 +555,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 330.5, 458.0, 257.0, 21.0 ],
 					"text" : "Ok. One, two, three, four... So far, so good.",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

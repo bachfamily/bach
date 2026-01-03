@@ -49,7 +49,7 @@
 					"patching_rect" : [ 288.0, 103.0, 205.0, 25.0 ],
 					"style" : "",
 					"text" : "Either via the slotinfo inspector",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -154,7 +154,7 @@
 					"patching_rect" : [ 311.5, 328.0, 222.0, 40.0 ],
 					"style" : "",
 					"text" : "The \"slope\" can be also changed via the slotinfo inspector",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

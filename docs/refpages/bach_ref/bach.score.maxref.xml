@@ -85,7 +85,10 @@
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
 				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
-				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
+				'i' = intervoice barline only (barline is only between voice staves, not over staves), 're' = repeat end, 'rs' = repeat start,
+				'res' = repeat end and then start. <br />.
+				- <b>repeatnum</b>: if the measure end barline has a repeat ending, this number sets the number of times the relevant region
+				should be repeated (defaulting to 2). <br />
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -231,7 +234,10 @@
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
 				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
-				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
+				'i' = intervoice barline only (barline is only between voice staves, not over staves), 're' = repeat end, 'rs' = repeat start,
+				'res' = repeat end and then start. <br />.
+				- <b>repeatnum</b>: if the measure end barline has a repeat ending, this number sets the number of times the relevant region
+				should be repeated (defaulting to 2). <br />
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -722,7 +728,10 @@
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
 				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
-				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
+				'i' = intervoice barline only (barline is only between voice staves, not over staves), 're' = repeat end, 'rs' = repeat start,
+				'res' = repeat end and then start. <br />.
+				- <b>repeatnum</b>: if the measure end barline has a repeat ending, this number sets the number of times the relevant region
+				should be repeated (defaulting to 2). <br />
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -981,9 +990,10 @@
 				(voice popup menu), measure (measure popup menu), measure barlines (barline popup menu) or on the background (backgroun popup menu). <br />
 				<br />
 				Marker regions
-				• <m>doubleclick</m> on marker region strips: Select items in region <br />
+				• <m>doubleclick</m> on marker region strips (but not on names), or <m>Shift+doubleclick</m> on marker region strips: Select items in region <br />
 				• <m>click+drag</m> on the end portion of a marker region strip: Extend the marker region <br />
 				• <m>doubleclick</m> on the end portion of a marker region strip: Extend the marker region till the next marker <br />
+				• <m>Cmd+click</m> (mac) or <m>Ctrl+click</m> (win) on the end portion of a marker region strip: Turn region into a simple marker <br />
 				<br />
 				Selection, zooming, scrollbar and dilation rectangle: <br />
 				• <m>click</m> on any item: Select item <br />
@@ -1382,7 +1392,10 @@
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
 				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
-				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
+				'i' = intervoice barline only (barline is only between voice staves, not over staves), 're' = repeat end, 'rs' = repeat start,
+				'res' = repeat end and then start. <br />.
+				- <b>repeatnum</b>: if the measure end barline has a repeat ending, this number sets the number of times the relevant region
+				should be repeated (defaulting to 2). <br />
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -1405,6 +1418,16 @@
 				Each of these specifications is done in the form <b>[<m>specification_name</m> <m>SPECIFICATION CONTENT</m>]</b>, and must be put after the last note llll,
 				and before the <m>chord_flag</m>. The order in which the specifications are listed is, on the other hand, irrelevant. For instance, a chord definition might
 				have the form <b>[1/4 [7000. 127 1] [7200. 100 0] [name john] [slots [10 fermata]] 0]</b>.
+				<br /> <br />
+				Chords can also bear an additional slur specification, accounting for slurs that start on the chord.
+				<br /> <br />
+				A slur beginning on a given chord is identified by appending a list of the type
+				<b>[slurs <m>SLUR1</m> <m>optional:SLUR2</m> <m>optional:SLUR3</m>]</b>.
+				Up to three slurs can be defined. Every <m>SLUR</m> can be represented by an integer number, simply
+				counting the number of chords spanned by the slur.
+				Alternatively, every <m>SLUR</m> can be a complex list of the kind:
+				<b>[ <m>number_of_spanned_chords</m> [ name <m>name_or_llll_of_names</m> ] [ direction <m>direction_as_int</m> ] ]</b>
+				where <m>direction_as_int</m> sets the slur direction: 0 for auto, 1 for up and -1 for down.
 				<br /> <br />
 				For <o>bach.score</o>, the gathered syntax for any note is, in its simplest form <b>[<m>pitch_cents</m> <m>velocity</m> <m>tie?</m> <m>note_flag</m>]</b>
 				where <m>pitch_cents</m> is the pitch of the note in MIDI cents, the <m>velocity</m>
@@ -1628,7 +1651,10 @@
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
 				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
-				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
+				'i' = intervoice barline only (barline is only between voice staves, not over staves), 're' = repeat end, 'rs' = repeat start,
+				'res' = repeat end and then start. <br />.
+				- <b>repeatnum</b>: if the measure end barline has a repeat ending, this number sets the number of times the relevant region
+				should be repeated (defaulting to 2). <br />
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -1651,6 +1677,16 @@
 				Each of these specifications is done in the form <b>[<m>specification_name</m> <m>SPECIFICATION CONTENT</m>]</b>, and must be put after the last note llll,
 				and before the <m>chord_flag</m>. The order in which the specifications are listed is, on the other hand, irrelevant. For instance, a chord definition might
 				have the form <b>[1/4 [7000. 127 1] [7200. 100 0] [name john] [slots [10 fermata]] 0]</b>.
+				<br /> <br />
+				Chords can also bear an additional slur specification, accounting for slurs that start on the chord.
+				<br /> <br />
+				A slur beginning on a given chord is identified by appending a list of the type
+				<b>[slurs <m>SLUR1</m> <m>optional:SLUR2</m> <m>optional:SLUR3</m>]</b>.
+				Up to three slurs can be defined. Every <m>SLUR</m> can be represented by an integer number, simply
+				counting the number of chords spanned by the slur.
+				Alternatively, every <m>SLUR</m> can be a complex list of the kind:
+				<b>[ <m>number_of_spanned_chords</m> [ name <m>name_or_llll_of_names</m> ] [ direction <m>direction_as_int</m> ] ]</b>
+				where <m>direction_as_int</m> sets the slur direction: 0 for auto, 1 for up and -1 for down.
 				<br /> <br />
 				For <o>bach.score</o>, the gathered syntax for any note is, in its simplest form <b>[<m>pitch_cents</m> <m>velocity</m> <m>tie?</m> <m>note_flag</m>]</b>
 				where <m>pitch_cents</m> is the pitch of the note in MIDI cents, the <m>velocity</m>
@@ -2344,6 +2380,7 @@
 				Message attributes:<br />
 				<m>@transferslots</m> (llll, default: null): If non-null, when deleting notes from a chord, these slots will be transfered to another chord note whenever possible<br />
 				<m>@empty</m> (int, default: 0): Also transfer empty slots<br />
+				<m>@torests</m> (int, default: 0): Also transfer slots to rests<br />
 				<br />
 				The word <m>delete</m> simply deletes all the currently selected items.
 				If measures are selected, only their notes and chords are deleted, and measure are preserved.
@@ -2355,6 +2392,20 @@
 				use "dynamics", "lyrics", "noteheads", "articulations", "annotation" instead of slot numbers.
 				Use the additional "@empty" message argument in order to tell with a 0/1 integer whether empty slots should also be transfered (by default: 0 = false).
 				<br />				See also:<m>eraseslot</m>,<m>deletemeasures</m><br />
+			</description>
+		</method>
+		<method name="delete">
+			<arglist />
+			<digest>
+				Delete content of currently selected measures
+			</digest>
+			<description>
+				Message attributes:<br />
+				<m>@transferslots</m> (llll, default: null): If non-null, when deleting notes from a chord, these slots will be transfered to another chord note whenever possible<br />
+				<m>@empty</m> (int, default: 0): Also transfer empty slots<br />
+				<m>@torests</m> (int, default: 0): Also transfer slots to rests<br />
+				<br />
+				You can use <m>deletemeasurecontent</m> to delete all the notes in a measure while preserving the measure.
 			</description>
 		</method>
 		<method name="deletegrace">
@@ -2836,7 +2887,10 @@
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
 				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
-				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
+				'i' = intervoice barline only (barline is only between voice staves, not over staves), 're' = repeat end, 'rs' = repeat start,
+				'res' = repeat end and then start. <br />.
+				- <b>repeatnum</b>: if the measure end barline has a repeat ending, this number sets the number of times the relevant region
+				should be repeated (defaulting to 2). <br />
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -2859,6 +2913,16 @@
 				Each of these specifications is done in the form <b>[<m>specification_name</m> <m>SPECIFICATION CONTENT</m>]</b>, and must be put after the last note llll,
 				and before the <m>chord_flag</m>. The order in which the specifications are listed is, on the other hand, irrelevant. For instance, a chord definition might
 				have the form <b>[1/4 [7000. 127 1] [7200. 100 0] [name john] [slots [10 fermata]] 0]</b>.
+				<br /> <br />
+				Chords can also bear an additional slur specification, accounting for slurs that start on the chord.
+				<br /> <br />
+				A slur beginning on a given chord is identified by appending a list of the type
+				<b>[slurs <m>SLUR1</m> <m>optional:SLUR2</m> <m>optional:SLUR3</m>]</b>.
+				Up to three slurs can be defined. Every <m>SLUR</m> can be represented by an integer number, simply
+				counting the number of chords spanned by the slur.
+				Alternatively, every <m>SLUR</m> can be a complex list of the kind:
+				<b>[ <m>number_of_spanned_chords</m> [ name <m>name_or_llll_of_names</m> ] [ direction <m>direction_as_int</m> ] ]</b>
+				where <m>direction_as_int</m> sets the slur direction: 0 for auto, 1 for up and -1 for down.
 				<br /> <br />
 				For <o>bach.score</o>, the gathered syntax for any note is, in its simplest form <b>[<m>pitch_cents</m> <m>velocity</m> <m>tie?</m> <m>note_flag</m>]</b>
 				where <m>pitch_cents</m> is the pitch of the note in MIDI cents, the <m>velocity</m>
@@ -3406,7 +3470,10 @@
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
 				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
-				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
+				'i' = intervoice barline only (barline is only between voice staves, not over staves), 're' = repeat end, 'rs' = repeat start,
+				'res' = repeat end and then start. <br />.
+				- <b>repeatnum</b>: if the measure end barline has a repeat ending, this number sets the number of times the relevant region
+				should be repeated (defaulting to 2). <br />
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -3541,6 +3608,20 @@
 				Instead of the slot number, you can use slot names, or you can the word "active" to refer to the currently open slot,
 				or the word "all" to clear all slots.
 				<br />				See also:<m>setslot</m>,<m>changeslotitem</m><br />
+			</description>
+		</method>
+		<method name="etapprox">
+			<arg name="tonedivision" optional="1" type="int" />
+			<digest>
+				Approximate selected pitches to equal temperament
+			</digest>
+			<description>
+				Syntax: <b>etapprox <m>[&lt;int: tonedivision&gt;]</m> </b><br />				<br />
+				The <m>approxet</m> message approximates the pitches of each selected note to the
+				currently defined equal temperament (see the <m>tonedivision</m> attribute).
+				If an additional integer argument is provided, it is consider to be a custom tonedivision
+				for the approximation
+				<br />				See also:<m>snappitchtogrid</m>,<m>jiapprox</m><br />
 			</description>
 		</method>
 		<method name="exportimage">
@@ -4514,7 +4595,10 @@
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
 				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
-				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
+				'i' = intervoice barline only (barline is only between voice staves, not over staves), 're' = repeat end, 'rs' = repeat start,
+				'res' = repeat end and then start. <br />.
+				- <b>repeatnum</b>: if the measure end barline has a repeat ending, this number sets the number of times the relevant region
+				should be repeated (defaulting to 2). <br />
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -4537,6 +4621,16 @@
 				Each of these specifications is done in the form <b>[<m>specification_name</m> <m>SPECIFICATION CONTENT</m>]</b>, and must be put after the last note llll,
 				and before the <m>chord_flag</m>. The order in which the specifications are listed is, on the other hand, irrelevant. For instance, a chord definition might
 				have the form <b>[1/4 [7000. 127 1] [7200. 100 0] [name john] [slots [10 fermata]] 0]</b>.
+				<br /> <br />
+				Chords can also bear an additional slur specification, accounting for slurs that start on the chord.
+				<br /> <br />
+				A slur beginning on a given chord is identified by appending a list of the type
+				<b>[slurs <m>SLUR1</m> <m>optional:SLUR2</m> <m>optional:SLUR3</m>]</b>.
+				Up to three slurs can be defined. Every <m>SLUR</m> can be represented by an integer number, simply
+				counting the number of chords spanned by the slur.
+				Alternatively, every <m>SLUR</m> can be a complex list of the kind:
+				<b>[ <m>number_of_spanned_chords</m> [ name <m>name_or_llll_of_names</m> ] [ direction <m>direction_as_int</m> ] ]</b>
+				where <m>direction_as_int</m> sets the slur direction: 0 for auto, 1 for up and -1 for down.
 				<br /> <br />
 				For <o>bach.score</o>, the gathered syntax for any note is, in its simplest form <b>[<m>pitch_cents</m> <m>velocity</m> <m>tie?</m> <m>note_flag</m>]</b>
 				where <m>pitch_cents</m> is the pitch of the note in MIDI cents, the <m>velocity</m>
@@ -4757,7 +4851,10 @@
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
 				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
-				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
+				'i' = intervoice barline only (barline is only between voice staves, not over staves), 're' = repeat end, 'rs' = repeat start,
+				'res' = repeat end and then start. <br />.
+				- <b>repeatnum</b>: if the measure end barline has a repeat ending, this number sets the number of times the relevant region
+				should be repeated (defaulting to 2). <br />
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -4780,6 +4877,16 @@
 				Each of these specifications is done in the form <b>[<m>specification_name</m> <m>SPECIFICATION CONTENT</m>]</b>, and must be put after the last note llll,
 				and before the <m>chord_flag</m>. The order in which the specifications are listed is, on the other hand, irrelevant. For instance, a chord definition might
 				have the form <b>[1/4 [7000. 127 1] [7200. 100 0] [name john] [slots [10 fermata]] 0]</b>.
+				<br /> <br />
+				Chords can also bear an additional slur specification, accounting for slurs that start on the chord.
+				<br /> <br />
+				A slur beginning on a given chord is identified by appending a list of the type
+				<b>[slurs <m>SLUR1</m> <m>optional:SLUR2</m> <m>optional:SLUR3</m>]</b>.
+				Up to three slurs can be defined. Every <m>SLUR</m> can be represented by an integer number, simply
+				counting the number of chords spanned by the slur.
+				Alternatively, every <m>SLUR</m> can be a complex list of the kind:
+				<b>[ <m>number_of_spanned_chords</m> [ name <m>name_or_llll_of_names</m> ] [ direction <m>direction_as_int</m> ] ]</b>
+				where <m>direction_as_int</m> sets the slur direction: 0 for auto, 1 for up and -1 for down.
 				<br /> <br />
 				For <o>bach.score</o>, the gathered syntax for any note is, in its simplest form <b>[<m>pitch_cents</m> <m>velocity</m> <m>tie?</m> <m>note_flag</m>]</b>
 				where <m>pitch_cents</m> is the pitch of the note in MIDI cents, the <m>velocity</m>
@@ -5006,7 +5113,10 @@
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
 				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
-				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
+				'i' = intervoice barline only (barline is only between voice staves, not over staves), 're' = repeat end, 'rs' = repeat start,
+				'res' = repeat end and then start. <br />.
+				- <b>repeatnum</b>: if the measure end barline has a repeat ending, this number sets the number of times the relevant region
+				should be repeated (defaulting to 2). <br />
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -5029,6 +5139,16 @@
 				Each of these specifications is done in the form <b>[<m>specification_name</m> <m>SPECIFICATION CONTENT</m>]</b>, and must be put after the last note llll,
 				and before the <m>chord_flag</m>. The order in which the specifications are listed is, on the other hand, irrelevant. For instance, a chord definition might
 				have the form <b>[1/4 [7000. 127 1] [7200. 100 0] [name john] [slots [10 fermata]] 0]</b>.
+				<br /> <br />
+				Chords can also bear an additional slur specification, accounting for slurs that start on the chord.
+				<br /> <br />
+				A slur beginning on a given chord is identified by appending a list of the type
+				<b>[slurs <m>SLUR1</m> <m>optional:SLUR2</m> <m>optional:SLUR3</m>]</b>.
+				Up to three slurs can be defined. Every <m>SLUR</m> can be represented by an integer number, simply
+				counting the number of chords spanned by the slur.
+				Alternatively, every <m>SLUR</m> can be a complex list of the kind:
+				<b>[ <m>number_of_spanned_chords</m> [ name <m>name_or_llll_of_names</m> ] [ direction <m>direction_as_int</m> ] ]</b>
+				where <m>direction_as_int</m> sets the slur direction: 0 for auto, 1 for up and -1 for down.
 				<br /> <br />
 				For <o>bach.score</o>, the gathered syntax for any note is, in its simplest form <b>[<m>pitch_cents</m> <m>velocity</m> <m>tie?</m> <m>note_flag</m>]</b>
 				where <m>pitch_cents</m> is the pitch of the note in MIDI cents, the <m>velocity</m>
@@ -5297,6 +5417,20 @@
 				(e.g. tremoli with Boulez), it might be because the font doesn't have the proper character, so try to use another font.
 				<br /> <br />
 				<br />				See also:<m>getcurrentchord</m>,<m>sample</m><br />
+			</description>
+		</method>
+		<method name="jiapprox">
+			<arg name="jilimit" optional="1" type="int" />
+			<digest>
+				Approximate selected pitches with just intonation
+			</digest>
+			<description>
+				Syntax: <b>jiapprox <m>[&lt;int: jilimit&gt;]</m> </b><br />				<br />
+				The <m>approxji</m> message approximates the pitches of each selected note to the
+				currently defined just intonation limit (see the <m>jilimit</m> attribute).
+				If an additional integer argument is provided, it is consider to be the custom prime limit
+				for the approximation
+				<br />				See also:<m>snappitchtogrid</m>,<m>etapprox</m><br />
 			</description>
 		</method>
 		<method name="join">
@@ -5682,7 +5816,10 @@
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
 				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
-				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
+				'i' = intervoice barline only (barline is only between voice staves, not over staves), 're' = repeat end, 'rs' = repeat start,
+				'res' = repeat end and then start. <br />.
+				- <b>repeatnum</b>: if the measure end barline has a repeat ending, this number sets the number of times the relevant region
+				should be repeated (defaulting to 2). <br />
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -5705,6 +5842,16 @@
 				Each of these specifications is done in the form <b>[<m>specification_name</m> <m>SPECIFICATION CONTENT</m>]</b>, and must be put after the last note llll,
 				and before the <m>chord_flag</m>. The order in which the specifications are listed is, on the other hand, irrelevant. For instance, a chord definition might
 				have the form <b>[1/4 [7000. 127 1] [7200. 100 0] [name john] [slots [10 fermata]] 0]</b>.
+				<br /> <br />
+				Chords can also bear an additional slur specification, accounting for slurs that start on the chord.
+				<br /> <br />
+				A slur beginning on a given chord is identified by appending a list of the type
+				<b>[slurs <m>SLUR1</m> <m>optional:SLUR2</m> <m>optional:SLUR3</m>]</b>.
+				Up to three slurs can be defined. Every <m>SLUR</m> can be represented by an integer number, simply
+				counting the number of chords spanned by the slur.
+				Alternatively, every <m>SLUR</m> can be a complex list of the kind:
+				<b>[ <m>number_of_spanned_chords</m> [ name <m>name_or_llll_of_names</m> ] [ direction <m>direction_as_int</m> ] ]</b>
+				where <m>direction_as_int</m> sets the slur direction: 0 for auto, 1 for up and -1 for down.
 				<br /> <br />
 				For <o>bach.score</o>, the gathered syntax for any note is, in its simplest form <b>[<m>pitch_cents</m> <m>velocity</m> <m>tie?</m> <m>note_flag</m>]</b>
 				where <m>pitch_cents</m> is the pitch of the note in MIDI cents, the <m>velocity</m>
@@ -6035,7 +6182,10 @@
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
 				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
-				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
+				'i' = intervoice barline only (barline is only between voice staves, not over staves), 're' = repeat end, 'rs' = repeat start,
+				'res' = repeat end and then start. <br />.
+				- <b>repeatnum</b>: if the measure end barline has a repeat ending, this number sets the number of times the relevant region
+				should be repeated (defaulting to 2). <br />
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -6796,7 +6946,10 @@
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
 				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
-				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
+				'i' = intervoice barline only (barline is only between voice staves, not over staves), 're' = repeat end, 'rs' = repeat start,
+				'res' = repeat end and then start. <br />.
+				- <b>repeatnum</b>: if the measure end barline has a repeat ending, this number sets the number of times the relevant region
+				should be repeated (defaulting to 2). <br />
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -7030,16 +7183,6 @@
 		<method name="resetslotinfo">
 			<arglist />
 			<digest>
-				Reset the custom articulations definition to the default one
-			</digest>
-			<description>
-				A <m>resetarticulationinfo</m> message will reset the all the <m>articulationinfo</m> to the original one, i.e. will delete
-				all the user-defined articulations.
-			</description>
-		</method>
-		<method name="resetslotinfo">
-			<arglist />
-			<digest>
 				Reset the slotinfo to the default one
 			</digest>
 			<description>
@@ -7049,6 +7192,16 @@
 				For bach.roll and bach.score, it is a global information: changing the slotinfo for a given slot will
 				affect such slot for all the notes inside the notation object. See the <m>llll</m> method to know more about its syntax.
 				<br />				See also:<m>eraseslot</m><br />
+			</description>
+		</method>
+		<method name="resetslotinfo">
+			<arglist />
+			<digest>
+				Reset the custom articulations definition to the default one
+			</digest>
+			<description>
+				A <m>resetarticulationinfo</m> message will reset the all the <m>articulationinfo</m> to the original one, i.e. will delete
+				all the user-defined articulations.
 			</description>
 		</method>
 		<method name="resetwidthfactors">
@@ -7122,7 +7275,10 @@
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
 				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
-				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
+				'i' = intervoice barline only (barline is only between voice staves, not over staves), 're' = repeat end, 'rs' = repeat start,
+				'res' = repeat end and then start. <br />.
+				- <b>repeatnum</b>: if the measure end barline has a repeat ending, this number sets the number of times the relevant region
+				should be repeated (defaulting to 2). <br />
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -7699,7 +7855,10 @@
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
 				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
-				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
+				'i' = intervoice barline only (barline is only between voice staves, not over staves), 're' = repeat end, 'rs' = repeat start,
+				'res' = repeat end and then start. <br />.
+				- <b>repeatnum</b>: if the measure end barline has a repeat ending, this number sets the number of times the relevant region
+				should be repeated (defaulting to 2). <br />
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -7818,7 +7977,10 @@
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
 				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
-				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
+				'i' = intervoice barline only (barline is only between voice staves, not over staves), 're' = repeat end, 'rs' = repeat start,
+				'res' = repeat end and then start. <br />.
+				- <b>repeatnum</b>: if the measure end barline has a repeat ending, this number sets the number of times the relevant region
+				should be repeated (defaulting to 2). <br />
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -7979,7 +8141,7 @@
 			</digest>
 			<description>
 				The <m>snappitchtogrid</m> message snaps the midicents of each selected note to the
-				currently active microtonal grid (see the <m>tonedivision</m> attribute).
+				currently displayed pitch.
 				<br />				See also:<m>respell</m>,<m>snaponsettogrid</m>,<m>snaptailtogrid</m><br />
 			</description>
 		</method>
@@ -8000,14 +8162,19 @@
 				Split selected chords
 			</digest>
 			<description>
-				Syntax: <b>split <m>&lt;int: num_parts&gt;</m> <m>[&lt;symbol: separate&gt;]</m> </b><br />
+				Syntax: <b>split <m>&lt;int: num_parts&gt;</m> <m>[&lt;symbol: separate&gt;]</m> <i>[message attributes]</i> </b><br />
 				Examples:<br />
 				• <b>split 3</b>   <i>→ split selected chords into 3 pieces each</i><br />
 				• <b>split 3 separate</b>   <i>→ the same, separately splitting each chord in a tied sequence (if any)</i><br />
+				• <b>split @proportions 1 3 7</b>   <i>→ split selected chords into 3 pieces with proportions 1:3:7</i><br />
+				<br />
+				Message attributes:<br />
+				<m>@proportions</m> (llll): Splitting proportions<br />
 				<br />
 				The <m>split</m> message splits each selected chord into a number of pieces given as argument.
 				By default, sequences of completely tied chords are split as a whole (e.g. splitting a 1/4 chord tied to an 1/8 chord into 3 pieces, will yield
 				three 1/8 chords); you can individually split each one of the chords instead by adding the "separate" symbol as second argument.
+				If a "proportions" message argument is entered, this sets a list of proportions for the splitting.
 				<br />				See also:<m>merge</m>,<m>join</m><br />
 			</description>
 		</method>
@@ -8419,6 +8586,19 @@
 		<method name="unsel">
 			<arg name="arguments" optional="0" type="llll" />
 			<digest>
+				Deselect items
+			</digest>
+			<description>
+				Syntax: <b>unsel <m>&lt;llll: arguments&gt;</m> </b><br />				<br />
+				The message <m>unsel</m> works in the opposite way of the message <m>sel</m>, i.e. deselect
+				notation items (removes them from the current selection). Refer to the message <m>sel</m> to know more about the
+				syntax, since it is exactly the same.
+				<br />				See also:<m>sel</m>,<m>select</m>,<m>subsel</m>,<m>clearselection</m><br />
+			</description>
+		</method>
+		<method name="unsel">
+			<arg name="arguments" optional="0" type="llll" />
+			<digest>
 				Involutively select items
 			</digest>
 			<description>
@@ -8429,19 +8609,6 @@
 				Refer to the message <m>sel</m> to know more about the syntax, since it is exactly the same.
 				The only exception is for the <m>select all</m> message, which does not work involutively and always select all the notation items.
 				<br />				See also:<m>sel</m>,<m>unsel</m>,<m>subsel</m>,<m>clearselection</m><br />
-			</description>
-		</method>
-		<method name="unsel">
-			<arg name="arguments" optional="0" type="llll" />
-			<digest>
-				Deselect items
-			</digest>
-			<description>
-				Syntax: <b>unsel <m>&lt;llll: arguments&gt;</m> </b><br />				<br />
-				The message <m>unsel</m> works in the opposite way of the message <m>sel</m>, i.e. deselect
-				notation items (removes them from the current selection). Refer to the message <m>sel</m> to know more about the
-				syntax, since it is exactly the same.
-				<br />				See also:<m>sel</m>,<m>select</m>,<m>subsel</m>,<m>clearselection</m><br />
 			</description>
 		</method>
 		<method name="unsolo">
@@ -8664,17 +8831,16 @@
 			</digest>
 			<description>
 				@description Sets the font used to display accidentals.
-				The official notation bach font is "November for bach", created by Robert Piéchaud (www.poeticprocessing.net) and
-				automatically loaded at bach startup. "November for bach" is a light version of the famous November font.
+				The bach package by default loads the "Bravura" font, developed by Steinberg.
+				The bach package also includes the font "November for bach", created by Robert Piéchaud (www.poeticprocessing.net).
+				"November for bach" is a light version of the famous November font.
 				The full November font covers a wide range of music symbols, from Renaissance to the XXI century, and gives a unique,
 				warm and lively look to your music scores. It is fully compatible with Finale, Sibelius and other notation softwares.
 				You can purchase November from this web address: www.klemm-music.de/notation/november/.
-				Other supported fonts are: Accidentals (up to the eighth-tones), Tamburo (up to the quartertones),
-				Maestro, Petrucci, Boulez, Engraver Font Set (up to the semitones).
+				Other supported fonts are: Boulez, Maestro, Petrucci, Engraver Font Set.
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
-				<attribute name="default" get="1" set="1" type="symbol" size="1" value="\" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Accidentals Font" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
@@ -8700,7 +8866,7 @@
 				<br /> <br />
 			</description>
 			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Accidental Graphic" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
@@ -8723,7 +8889,7 @@
 				<br /> <br />
 			</description>
 			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Accidental Preferences" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
@@ -8742,23 +8908,6 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Edit" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Active Part" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
-			</attributelist>
-		</attribute>
-		<attribute name="additionalstartpad" get="1" set="1" type="float" size="1">
-			<digest>
-				Additional Start Pad
-			</digest>
-			<description>
-				Sets an additional left pad to the domain display start, in pixels (rescaled according to the <m>vzoom</m>),
-				This pad is located right after each clef, before the music content starts.
-			</description>
-			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
-				<attribute name="default" get="1" set="1" type="float" size="1" value="0." />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Additional Start Pad" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
@@ -8947,10 +9096,42 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Annotation Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
-		<attribute name="annotationfontsize" get="1" set="1" type="float" size="1">
+		<attribute name="annotationsalign" get="1" set="1" type="int" size="1">
+			<digest>
+				Annotation Alignment
+			</digest>
+			<description>
+				Sets how the annotation must be aligned with respect to the note to which they refer.
+				Possibilities are: "Auto", "Left", "Center", "Right". Currently "Auto" completely coincides with "Left".
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Annotation Alignment" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
+			</attributelist>
+		</attribute>
+		<attribute name="annotationsfont" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Annotations Font
+			</digest>
+			<description>
+				@description Sets the font used to display annotations (default is Arial).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
+				<attribute name="default" get="1" set="1" type="symbol" size="1" value="Arial" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Annotations Font" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
+			</attributelist>
+		</attribute>
+		<attribute name="annotationsfontsize" get="1" set="1" type="float" size="1">
 			<digest>
 				Annotation Font Size
 			</digest>
@@ -8966,18 +9147,21 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
-		<attribute name="annotationsfont" get="1" set="1" type="symbol" size="1">
+		<attribute name="annotationsvadj" get="1" set="1" type="float" size="1">
 			<digest>
-				Annotations Font
+				Annotations Vertical Adjustment
 			</digest>
 			<description>
-				@description Sets the font used to display annotations (default is Arial).
+				Sets a vertical shift (in pixels, rescaled depending on the <m>vzoom</m>) of the
+				annotations display.
 			</description>
 			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
-				<attribute name="default" get="1" set="1" type="symbol" size="1" value="Arial" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Annotations Font" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Annotations Vertical Adjustment" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
 		<attribute name="applyslope" get="1" set="1" type="int" size="1">
@@ -9008,6 +9192,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Articulation Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -9017,17 +9202,16 @@
 			</digest>
 			<description>
 				@description Sets the font used to display articulations.
-				The official notation bach font is "November for bach", created by Robert Piéchaud (www.poeticprocessing.net) and
-				automatically loaded at bach startup. "November for bach" is a light version of the famous November font.
+				The bach package by default loads the "Bravura" font, developed by Steinberg.
+				The bach package also includes the font "November for bach", created by Robert Piéchaud (www.poeticprocessing.net).
+				"November for bach" is a light version of the famous November font.
 				The full November font covers a wide range of music symbols, from Renaissance to the XXI century, and gives a unique,
 				warm and lively look to your music scores. It is fully compatible with Finale, Sibelius and other notation softwares.
 				You can purchase November from this web address: www.klemm-music.de/notation/november/.
-				Other supported fonts are: Boulez, Maestro, Petrucci, Engraver Font Set. Not all articulations are supported by all fonts.
-				You can however always define custom articulations with any font of your choice.
+				Other supported fonts are: Boulez, Maestro, Petrucci, Engraver Font Set.
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
-				<attribute name="default" get="1" set="1" type="symbol" size="1" value="\" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Articulations Font" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
@@ -9144,6 +9328,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Auxiliary Clef Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -9162,6 +9347,21 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
+		<attribute name="barlinecolor" get="1" set="1" type="rgba" size="1">
+			<digest>
+				Barline Color
+			</digest>
+			<description>
+				Sets the color of the barline, in RGBA format.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
+				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Barline Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
+			</attributelist>
+		</attribute>
 		<attribute name="beamcolor" get="1" set="1" type="rgba" size="1">
 			<digest>
 				Beam Color
@@ -9173,6 +9373,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Beam Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -9272,6 +9473,22 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
+		<attribute name="bigtsabovetempi" get="1" set="1" type="int" size="1">
+			<digest>
+				Big Time Signatures Above Tempi
+			</digest>
+			<description>
+				Toggles the ability to automatically place big time signatures above tempi.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Big Time Signatures Above Tempi" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
 		<attribute name="bigtsratio" get="1" set="1" type="float" size="1">
 			<digest>
 				Big Time Signatures Ratio
@@ -9283,6 +9500,22 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
 				<attribute name="default" get="1" set="1" type="float" size="1" value="2." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Big Time Signatures Ratio" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="bigtsvadj" get="1" set="1" type="float" size="1">
+			<digest>
+				Big Time Signatures Vertical Adjustment
+			</digest>
+			<description>
+				Sets a vertical adjustment parameter for big time signatures.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="0." />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Big Time Signatures Vertical Adjustment" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
@@ -9325,7 +9558,8 @@
 			</digest>
 			<description>
 				Toggles the ability to display pitch breakpoints as real notes (possibly with accidentals).
-				If this is not set, pitch breakpoints are displayed as small diamonds.
+				The options are: no noteheads (0, default); all noteheads, tails included (1); noteheads only
+				for internal breakpoints (2)
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
@@ -9333,7 +9567,7 @@
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Breakpoints Have Noteheads" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
 		<attribute name="breakpointshavevelocity" get="1" set="1" type="int" size="1">
@@ -9386,18 +9620,21 @@
 		</attribute>
 		<attribute name="catchplay" get="1" set="1" type="int" size="1">
 			<digest>
-				Catch Play Head
+				Catch Playhead
 			</digest>
 			<description>
-				Toggles the ability to follow the playhead in the domain during playback.
+				Handles how the playhead moves during playback, and how its moving modifies the domain of the object. <br />
+				0 = Don't: playhead moves, but domain stays the same; <br />
+				1 = ChangePage: playhead moves, and domain changes once playhead gets to the end of the line; <br />
+				2 = FixedPlayhead: playhead remains fixed at a specific position, set by the attribute <m>playheadfixedpos</m>; <br />
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Play" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Catch Play Head" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Catch Playhead" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
 		<attribute name="cautionaryaccidentals" get="1" set="1" type="int" size="1">
@@ -9472,6 +9709,51 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
+		<attribute name="centsdifffont" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Cents Differences Font
+			</digest>
+			<description>
+				Sets the font for cents difference display.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
+				<attribute name="default" get="1" set="1" type="symbol" size="1" value="Arial" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Cents Differences Font" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
+			</attributelist>
+		</attribute>
+		<attribute name="centsdifffontsize" get="1" set="1" type="float" size="1">
+			<digest>
+				Cents Differences Font Size
+			</digest>
+			<description>
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="8" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Cents Differences Font Size" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="centssymbol" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Cents Symbol
+			</digest>
+			<description>
+				Symbol used to represent cents (or MIDIcents).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="symbol" size="1" value="¢" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Cents Symbol" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
 		<attribute name="changecentstomeasuresbydragging" get="1" set="1" type="int" size="1">
 			<digest>
 				Allow Whole Measure Dragging
@@ -9500,6 +9782,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Clef Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -9705,6 +9988,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Dynamics Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -9811,6 +10095,28 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
+		<attribute name="eighthtonearrow" get="1" set="1" type="int" size="1">
+			<digest>
+				Eighth-Tone Arrow Display
+			</digest>
+			<description>
+				Decides how to use eighth-tone arrows: <br />
+				- According To Direction: upward accidentals always get upward arrows, downward accidentals always get downward arrows.
+				This means, for instance, that <b>Fq^5</b> is displayed instead of <b>F#v5</b>. <br />
+				- On Semitonal Accidentals Only: arrows are only placed on semitonal accidentals.
+				This means, for instance, that <b>F#v5</b> is displayed instead of <b>Fq^5</b>.
+				This feature is only supported for the (default) Bravura font.
+				<br /> <br />
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Eighth-Tone Arrow Display" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
+			</attributelist>
+		</attribute>
 		<attribute name="embed" get="1" set="1" type="int" size="1">
 			<digest>
 				Save Data With Patcher
@@ -9878,7 +10184,7 @@
 				<br /> <br />
 			</description>
 			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
 				<attribute name="default" get="1" set="1" type="sym_array" size="0" value="default" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Custom Enharmonic Table" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
@@ -9952,6 +10258,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Flag Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -9968,36 +10275,6 @@
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Border Width With Focus" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
-			</attributelist>
-		</attribute>
-		<attribute name="fontface" get="1" set="1" type="" size="1">
-			<digest>
-				
-			</digest>
-			<description>
-			</description>
-			<attributelist>
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
-			</attributelist>
-		</attribute>
-		<attribute name="fontname" get="1" set="1" type="" size="1">
-			<digest>
-				
-			</digest>
-			<description>
-			</description>
-			<attributelist>
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
-			</attributelist>
-		</attribute>
-		<attribute name="fontsize" get="1" set="1" type="" size="1">
-			<digest>
-				
-			</digest>
-			<description>
-			</description>
-			<attributelist>
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -10082,24 +10359,6 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
-		<attribute name="hidetupletshapeonbeams" get="1" set="1" type="int" size="1">
-			<digest>
-				Hide Tuplet Shape If Tuplet Is Beamed
-			</digest>
-			<description>
-				Toggles the display of tuplet brackets only when tuplets are not singularly beamed.
-				By default this is set to 1: if a tuplet is already identified by a beam gathering it, no bracket will be shown.
-				The bracket will be shown for unbeam chords only.
-			</description>
-			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
-				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Hide Tuplet Shape If Tuplet Is Beamed" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
-			</attributelist>
-		</attribute>
 		<attribute name="hidevoices" get="1" set="1" type="char_array" size="0">
 			<digest>
 				Hide Voices
@@ -10167,6 +10426,90 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="jialwaysshowpythacc" get="1" set="1" type="int" size="1">
+			<digest>
+				Always Show JI Pythagorean Accidentals
+			</digest>
+			<description>
+				Toggles the ability to always display accidentals for Pythagorean diatonic pitches in jusst intonation.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Just Intonation" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Always Show JI Pythagorean Accidentals" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="jiapproxthresh" get="1" set="1" type="float" size="1">
+			<digest>
+				JI Approximation Threshold (Cents)
+			</digest>
+			<description>
+				Sets the approximation threshold for automatically converting cents into just intonation.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Just Intonation" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="67" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="JI Approximation Threshold (Cents)" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="jibase" get="1" set="1" type="" size="1">
+			<digest>
+				Reference Diatonic Pitch for JI Ratios
+			</digest>
+			<description>
+				Sets the reference diatonic pitch for just intonation ratios.
+			</description>
+			<attributelist>
+				<attribute name="default" get="1" set="1" type="" size="1" value="C5" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Reference Diatonic Pitch for JI Ratios" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="jilimit" get="1" set="1" type="int" size="1">
+			<digest>
+				JI Harmonic Limit
+			</digest>
+			<description>
+				Sets the just intonation harmonic limit for the score display.
+				This is the analogous, for just intonation, of the <m>tonedivision</m> attribute, in that
+				it doesn't change the profound nature of the pitch (which can very well be in a higher limit)
+				but it only trims its display to the selected harmonic prime number, and adjusts the interface
+				accordingly
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Just Intonation" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="5" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="JI Harmonic Limit" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="jishowetoffset" get="1" set="1" type="int" size="1">
+			<digest>
+				Show Equal-Tempered Offset for Mixed Pitches
+			</digest>
+			<description>
+				Toggles the ability to display the equal-tempered offsets for mixed pitches (including
+				both an equal-tempered offset and a non-trivial just intonation portion).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Just Intonation" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Equal-Tempered Offset for Mixed Pitches" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
 		<attribute name="jitmatrix" get="1" set="1" type="symbol" size="1">
@@ -10609,49 +10952,8 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.83 0.04 0.04 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Lock Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
-			</attributelist>
-		</attribute>
-		<attribute name="loop" get="1" set="1" type="llll" size="1">
-			<digest>
-				Loop Region
-			</digest>
-			<description>
-				Sets the loop region. Two elements are expected: the starting and ending points of the loop region.
-				Such elements can be simple numbers, thus representing absolute millisecond positions, or can be lllls, thus considered timepoints.
-				You can substitute to the first element the "start" symbol to have the loop region start from the beginning (equivalent to 0).
-				You can substitute to the second number the "end" symbol to have the loop region last till the end of the <o>bach.score</o>.
-				You can simply set a <b>loop all</b> to loop the entire <o>bach.score</o>.
-				A timepoint represents a given instant inside <o>bach.score</o>, as a measure-attached position.
-				It identifies such point according to a measure, a position inside such measure,
-				and possibly a voice (in case tempi and time signatures are not synchronous for all voices).
-				Differently from absolute millisecond positions,
-				timepoints are represented by lllls, in one of the following syntaxes: <br />
-				- <b>[<m>measure_number</m>]</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice.
-				For instance, <b>[4]</b> represents the point at the very beginning of measure 4, voice 1. <br />
-				- <b>[<m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
-				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>. Sometimes <m>sym_onset_in_measure</m> is called <m>pim</m> (for point in measure)
-				For instance, <b>[4 1/4]</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
-				- <b>[<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number,
-				in the voice identified, by the introduced voice number, at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
-				For instance, <b>[2 4 1/4]</b> represents the point at measure 4, voice 2, after 1/4 from the beginning of the measure. Specifying voice numbers explicitly is especially
-				important if voices don't have the same tempi or time signatures.
-				<br />
-				A timepoint can also  be specified via a <b>[<m>float_measure_number</m>]</b>, representing the point in a floating
-				point position between two measures (referred to the first voice). For instance, <b>[4.2]</b> represents the point at the 20% of measure 4, voice 1.
-				Furthermore, the <m>sym_onset_in_measure</m> can be replaced by a float between 0 and 1 to represent a point between the beginning (0) and the end
-				of the measure (1); for instance <b>[1 4 0.2]</b> represents the point after 20% of measure 4, voice 1.
-				<br />
-				If the measure number is replaced by the <b>any</b> symbol, then the following rational is interpreted as a global symbolic onset inside the score.
-				For instance, <b>[any 27/4]</b> represents the point at 27/4 after the beginning of the score, referred to the measureinfo of voice 1;
-				<b>[3 any 27/4]</b> does the same for voice 3.
-				<br /> <br />
-			</description>
-			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Play" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Loop Region" />
-				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text_large" />
 			</attributelist>
 		</attribute>
 		<attribute name="loopcolor" get="1" set="1" type="rgba" size="1">
@@ -10665,6 +10967,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.68 0.48 0.69 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Loop Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -10793,7 +11096,7 @@
 				Markers Font
 			</digest>
 			<description>
-				Sets the font size of markers
+				Sets the font for markers
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
@@ -10818,20 +11121,31 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
-		<attribute name="maxbeamdeltay" get="1" set="1" type="int" size="1">
+		<attribute name="markerspan" get="1" set="1" type="int" size="1">
 			<digest>
-				Maximum Delta Y For Beamings In Steps
+				Marker Vertical Span
 			</digest>
 			<description>
-				Maximum vertical difference (in steps) between the starting and ending positions of a beam.
-				A step is half of the vertical distance between two stafflines.
-				It corresponds the the vertical distance between the notehead centers of two subsequent diatonic notes. <br /> <br />
-				<br /> <br />
 			</description>
 			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
-				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Maximum Delta Y For Beamings In Steps" />
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Marker Vertical Span" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
+			</attributelist>
+		</attribute>
+		<attribute name="markerwidth" get="1" set="1" type="float" size="1">
+			<digest>
+				Marker Line Width
+			</digest>
+			<description>
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="1.5" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Marker Line Width" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
@@ -10848,26 +11162,6 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Maximum Number Of Dots" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
-			</attributelist>
-		</attribute>
-		<attribute name="maxrestfloatsteps" get="1" set="1" type="int" size="1">
-			<digest>
-				Rests Floating Maximum Number Of Steps
-			</digest>
-			<description>
-				Maximum vertical distance (in steps) of which rests are allowed to float, when they are under a beam.
-				Set 0 if you never want rests to float.
-				A step is half of the vertical distance between two stafflines.
-				It corresponds the the vertical distance between the notehead centers of two subsequent diatonic notes. <br /> <br />
-				<br /> <br />
-			</description>
-			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
-				<attribute name="default" get="1" set="1" type="int" size="1" value="4" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Rests Floating Maximum Number Of Steps" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
@@ -10903,6 +11197,35 @@
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.17 0.25 0.88 0.9" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Measure-Attached Marker Color" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
+			</attributelist>
+		</attribute>
+		<attribute name="measurenumbercolor" get="1" set="1" type="rgba" size="1">
+			<digest>
+				Measure Number Color
+			</digest>
+			<description>
+				Sets the color of the measure numbers, in RGBA format.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
+				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Measure Number Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
+			</attributelist>
+		</attribute>
+		<attribute name="measurenumberfont" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Measure Numbers Font
+			</digest>
+			<description>
+				Sets the font used to display measure numbers (default is Arial).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
+				<attribute name="default" get="1" set="1" type="symbol" size="1" value="Arial" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Measure Numbers Font" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
 		<attribute name="measurenumberfontsize" get="1" set="1" type="float" size="1">
@@ -10953,41 +11276,6 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
-		<attribute name="minmeaswidth" get="1" set="1" type="float" size="1">
-			<digest>
-				Minimum Measure Width
-			</digest>
-			<description>
-				Sets the minimum width that any measure must have, in pixels (rescaled with respect to the current <m>vzoom</m>).
-			</description>
-			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
-				<attribute name="default" get="1" set="1" type="float" size="1" value="60" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Minimum Measure Width" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
-			</attributelist>
-		</attribute>
-		<attribute name="minmeaswidthpersymunit" get="1" set="1" type="float" size="1">
-			<digest>
-				Minimum Measure Width Per Symbolic Unit
-			</digest>
-			<description>
-				Sets the minimum width corresponding to a whole note, in pixels (rescaled with respect to the current <m>vzoom</m>).
-				More precisely: each notation element lasting a fraction of the whole note will have to last at least for the corresponding fraction
-				of pixels. For instance, if our <m>minmeaswidthpersymunit</m> a quarter chord cannot graphically last less than 110/4 = 27,5 pixels
-				(rescaled then with respect to the current <m>vzoom</m>).
-			</description>
-			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
-				<attribute name="default" get="1" set="1" type="float" size="1" value="110" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Minimum Measure Width Per Symbolic Unit" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
-			</attributelist>
-		</attribute>
 		<attribute name="mousehover" get="1" set="1" type="int" size="1">
 			<digest>
 				Allow Mouse Hovering
@@ -11004,6 +11292,22 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
+		<attribute name="multistaffaccollatura" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Accollatura Type for Multi-Staff Voices
+			</digest>
+			<description>
+				Chooses the type of accollatura display for voice displayed with more than one staff.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="symbol" size="1" value="rule" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Accollatura Type for Multi-Staff Voices" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enum" />
+			</attributelist>
+		</attribute>
 		<attribute name="mutecolor" get="1" set="1" type="rgba" size="1">
 			<digest>
 				Mute Color
@@ -11015,6 +11319,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.29 0.29 0.72 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Mute Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -11044,8 +11349,9 @@
 			</digest>
 			<description>
 				@description Sets the font used to display all notation elements except accidentals.
-				The official notation bach font is "November for bach", created by Robert Piéchaud (www.poeticprocessing.net) and
-				automatically loaded at bach startup. "November for bach" is a light version of the famous November font.
+				The bach package by default loads the "Bravura" font, developed by Steinberg.
+				The bach package also includes the font "November for bach", created by Robert Piéchaud (www.poeticprocessing.net).
+				"November for bach" is a light version of the famous November font.
 				The full November font covers a wide range of music symbols, from Renaissance to the XXI century, and gives a unique,
 				warm and lively look to your music scores. It is fully compatible with Finale, Sibelius and other notation softwares.
 				You can purchase November from this web address: www.klemm-music.de/notation/november/.
@@ -11053,9 +11359,27 @@
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
-				<attribute name="default" get="1" set="1" type="symbol" size="1" value="\" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Notation Font" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
+			</attributelist>
+		</attribute>
+		<attribute name="notationstyles" get="1" set="1" type="sym_array" size="0">
+			<digest>
+				Notation Styles
+			</digest>
+			<description>
+				Sets the notation styles, which are a property of voices: a list with one symbol per voice is expected.
+				Symbols can be one of the following: "et" (equal temperament), "ji" (just intonation, displayed via the
+				Helmholtz-Ellis Just Intonation system, version 2.0), "linpitch" (continuous linear pitch),
+				"linfreq" (continuous linear frequency).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
+				<attribute name="default" get="1" set="1" type="sym_array" size="0" value="et" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Notation Styles" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
 		<attribute name="notecolor" get="1" set="1" type="rgba" size="1">
@@ -11255,6 +11579,28 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
+		<attribute name="outputnegativerests" get="1" set="1" type="int" size="1">
+			<digest>
+				Output Rests With Negative Duration
+			</digest>
+			<description>
+				Chooses when rest durations should be output as negative numbers: <br />
+				- Never (0): rests are always output with their positive duration. <br />
+				- First Outlet Only (1): rests are output with negative duration from the first outlet of <o>bach.score</o> (the one
+				with the score gathered syntax), but never from any of the other outlets. <br />
+				- First Outlet And Durations outlet (2, default): rests are output with negative duration from the first outlet of <o>bach.score</o> (the one
+				with the score gathered syntax) and from the durations outlet, but not from the playout. <br />
+				- All Outlets Including Playout (3): rhythmic trees are output as negative from all outlets, including playout.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Rhythm" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="2" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Output Rests With Negative Duration" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
+			</attributelist>
+		</attribute>
 		<attribute name="outputpitchesgathered" get="1" set="1" type="int" size="1">
 			<digest>
 				Output Pitches In Gathered Syntax
@@ -11374,6 +11720,116 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
+		<attribute name="padafterclef" get="1" set="1" type="float" size="1">
+			<digest>
+				Pad After Clef
+			</digest>
+			<description>
+				Shifts the beginning of the musical content after the clefs (and key signatures), in pixels
+				(rescaled according to the <m>vzoom</m>),
+				This pad is located right after each clef, before the music content starts.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="0." />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Pad After Clef" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="padbeforeclef" get="1" set="1" type="float" size="1">
+			<digest>
+				Pad Before Clef
+			</digest>
+			<description>
+				Sets an additional left pad before the clef, in pixels (rescaled according to the <m>vzoom</m>).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="0." />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Pad Before Clef" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="partsaccollatura" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Accollatura Type for Parts
+			</digest>
+			<description>
+				Chooses the type of accollatura display for voice ensembles.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="symbol" size="1" value="bracket" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Accollatura Type for Parts" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enum" />
+			</attributelist>
+		</attribute>
+		<attribute name="pianorolldarkcolor" get="1" set="1" type="rgba" size="1">
+			<digest>
+				Piano Roll Dark Color
+			</digest>
+			<description>
+				Sets the color of dark piano roll background, in RGBA format.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
+				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 0.3" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Piano Roll Dark Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
+			</attributelist>
+		</attribute>
+		<attribute name="pianorollkeyboardtype" get="1" set="1" type="int" size="1">
+			<digest>
+				Piano Roll Keyboard Type
+			</digest>
+			<description>
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Piano Roll Keyboard Type" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
+			</attributelist>
+		</attribute>
+		<attribute name="pianorolllightcolor" get="1" set="1" type="rgba" size="1">
+			<digest>
+				Piano Roll Light Color
+			</digest>
+			<description>
+				Sets the color of light piano roll background, in RGBA format.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
+				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 0.1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Piano Roll Light Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
+			</attributelist>
+		</attribute>
+		<attribute name="pianorolltype" get="1" set="1" type="int" size="1">
+			<digest>
+				Piano Roll Display Type
+			</digest>
+			<description>
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Piano Roll Display Type" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
+			</attributelist>
+		</attribute>
 		<attribute name="pitcheditrange" get="1" set="1" type="llll" size="1">
 			<digest>
 				Constraint Pitches While Editing
@@ -11410,6 +11866,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.34 0.87 0.20 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Play Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -11429,6 +11886,38 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
+			</attributelist>
+		</attribute>
+		<attribute name="playheadfixedpos" get="1" set="1" type="float" size="1">
+			<digest>
+				Playhead Fixed Position
+			</digest>
+			<description>
+				Fixed position of the playhead, only used if <m>catch_playhead</m> is set to 2 (FixedPlayhead).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Play" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Playhead Fixed Position" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="playheadnotify" get="1" set="1" type="int" size="1">
+			<digest>
+				Notify Playhead Position During Playback
+			</digest>
+			<description>
+				Constantly notify playhead position during playback.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Play" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Notify Playhead Position During Playback" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
 		<attribute name="playheadwidth" get="1" set="1" type="float" size="1">
@@ -11453,7 +11942,7 @@
 			</digest>
 			<description>
 				Toggle the ability to also send the marker information through the playout during the playback.
-				By default this is 1.
+				By default this is on (1).
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Play" />
@@ -11702,7 +12191,10 @@
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
 				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
-				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
+				'i' = intervoice barline only (barline is only between voice staves, not over staves), 're' = repeat end, 'rs' = repeat start,
+				'res' = repeat end and then start. <br />.
+				- <b>repeatnum</b>: if the measure end barline has a repeat ending, this number sets the number of times the relevant region
+				should be repeated (defaulting to 2). <br />
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -12024,7 +12516,10 @@
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
 				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
-				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
+				'i' = intervoice barline only (barline is only between voice staves, not over staves), 're' = repeat end, 'rs' = repeat start,
+				'res' = repeat end and then start. <br />.
+				- <b>repeatnum</b>: if the measure end barline has a repeat ending, this number sets the number of times the relevant region
+				should be repeated (defaulting to 2). <br />
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -12064,6 +12559,29 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="playslurs" get="1" set="1" type="int" size="1">
+			<digest>
+				Play Slurs
+			</digest>
+			<description>
+				Toggle the ability to also send the slur information through the playout during the playback.
+				There are several options: <br />
+				0 (Don't): don't send out slurs information; <br />
+				1 (Chordwise Only, default): send out slur information only with chordwise <m>playmode</m>; <br />
+				2 (Also Notewise [Highest]): also send out slur information with notewise <m>playmode</m>, and
+				assign the slur to the highest note of a chord; <br />
+				3 (Also Notewise [Lowest]): the same, with the lowest note of a chord; <br />
+				4 (Also Notewise [Any]): the same, with the any note of a chord. <br />
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Play" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Play Slurs" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
 		<attribute name="playstep" get="1" set="1" type="float" size="1">
@@ -12208,7 +12726,23 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Rest Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
+			</attributelist>
+		</attribute>
+		<attribute name="restpartshiftsteps" get="1" set="1" type="int" size="1">
+			<digest>
+				Amount Of Vertical Shift Of Rests (In Steps) In Voice Ensembles
+			</digest>
+			<description>
+				Sets the amount of shifting of rests in a voice ensemble in steps. This must be an even number, otherwise
+				it's made even by default.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="2" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Amount Of Vertical Shift Of Rests (In Steps) In Voice Ensembles" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
 		<attribute name="restswithinbeaming" get="1" set="1" type="int" size="1">
@@ -12228,25 +12762,6 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
-			</attributelist>
-		</attribute>
-		<attribute name="reversegracedirection" get="1" set="1" type="int" size="1">
-			<digest>
-				Reverse Grace Chords Direction
-			</digest>
-			<description>
-				Toggles the reversal of the grace chord direction with respect to the main chord to which it is connected.
-				If this is 1 (default), each grace chord will have as direction the opposite direction of the next chord to which they refer.
-				For instance, if the main chord has stem up, the grace chord will have stem down. Set this attribute to 0 if you want grace chords
-				to have direction only depending on their notes, and not depending on the main chord to which they refer.
-			</description>
-			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
-				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Reverse Grace Chords Direction" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
 		<attribute name="rightclickslot" get="1" set="1" type="int" size="1">
@@ -12317,12 +12832,26 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
+		<attribute name="rulerlabelsfont" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Ruler Labels Font
+			</digest>
+			<description>
+				@description Sets the font used to display ruler labels (default is Arial).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
+				<attribute name="default" get="1" set="1" type="symbol" size="1" value="Arial" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Ruler Labels Font" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
+			</attributelist>
+		</attribute>
 		<attribute name="rulerlabelsfontsize" get="1" set="1" type="float" size="1">
 			<digest>
 				Ruler Labels Font Size
 			</digest>
 			<description>
-				Sets the font size of ruler labels (rescaled according to the <m>vzoom</m>).
+				Sets the font size of cents differences display.
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
@@ -12391,6 +12920,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.3 0.3 0.3 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Scrollbar Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -12463,6 +12993,21 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
+		<attribute name="shiftunisons" get="1" set="1" type="int" size="1">
+			<digest>
+				Shift Unisons in Different Parts
+			</digest>
+			<description>
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Shift Unisons in Different Parts" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
+			</attributelist>
+		</attribute>
 		<attribute name="showaccidentalspreferences" get="1" set="1" type="int" size="1">
 			<digest>
 				Display Accidentals
@@ -12510,6 +13055,22 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
+			</attributelist>
+		</attribute>
+		<attribute name="showaccollature" get="1" set="1" type="int" size="1">
+			<digest>
+				Show Accollature
+			</digest>
+			<description>
+				Toggles the display of accollature for voice groups and voice ensembles.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Show" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Accollature" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
 		<attribute name="showannotations" get="1" set="1" type="int" size="1">
@@ -12643,6 +13204,24 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
+		<attribute name="showcents" get="1" set="1" type="int" size="1">
+			<digest>
+				Show Cents
+			</digest>
+			<description>
+				Toggles the display of cents differences above the accidentals, either detailing
+				the difference between the actual note and the displayed one (1) or detailing the
+				contribution of the displayed accidental in cents (2).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Show" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Cents" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
+			</attributelist>
+		</attribute>
 		<attribute name="showclefs" get="1" set="1" type="int" size="1">
 			<digest>
 				Show Clefs
@@ -12770,6 +13349,22 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="showinitialrule" get="1" set="1" type="int" size="1">
+			<digest>
+				Show Initial Rule
+			</digest>
+			<description>
+				Toggles the display of the initial vertical line running through all the staves.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Show" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Initial Rule" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
 		<attribute name="showledgerlines" get="1" set="1" type="int" size="1">
@@ -12916,6 +13511,24 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
+		<attribute name="shownoteheads" get="1" set="1" type="int" size="1">
+			<digest>
+				Show Noteheads
+			</digest>
+			<description>
+				Toggles the display of noteheads. When noteheads are not displayed,
+				the notation object will override the <m>align</m> attribute and align
+				every chord with respect to its stem.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Show" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Noteheads" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
 		<attribute name="shownotenames" get="1" set="1" type="int" size="1">
 			<digest>
 				Show Note Names In Selection Legend
@@ -12962,6 +13575,37 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="showregionend" get="1" set="1" type="int" size="1">
+			<digest>
+				Show Region End
+			</digest>
+			<description>
+				Toggles the display of ending markers for regions
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Show" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Region End" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="showrepeatnums" get="1" set="1" type="int" size="1">
+			<digest>
+				Show Number of Repetitions
+			</digest>
+			<description>
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Show" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Number of Repetitions" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
 		<attribute name="showrests" get="1" set="1" type="int" size="1">
@@ -13061,6 +13705,22 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Slots" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Slot Legend" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="showslotnames" get="1" set="1" type="int" size="1">
+			<digest>
+				Show Slot Names In Slot Window
+			</digest>
+			<description>
+				Toggles the display of slot names in the slot windows.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Slots" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Slot Names In Slot Window" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
@@ -13257,29 +13917,6 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
-		<attribute name="showtupletspreferences" get="1" set="1" type="int" size="1">
-			<digest>
-				Show Tuplets As
-			</digest>
-			<description>
-				Sets the display for tuplets: <br />
-				- None: tuplets are not marked in any particular way (only as ordinary beams, if any). <br />
-				- Auto (default): bach will automatically choose between one the "Number", "Ratio" and "Ratio And Figure" display modes, depending on the tuplet type. <br />
-				- Number: tuplets are always displayed as a single number, e.g. "3" for triplets, "5" for 5-plets, and so on. <br />
-				- Ratio: tuplets are always displayed with an explicit ratio, e.g. "3:2" for triplets, "5:4" for 5-plets, and so on. <br />
-				- Ratio And Figure: tuplets are always displayed with an explicit ratio where a small note appears, indicating the duration of notes inside the ratio,
-				e.g. "3q:2" for eighth triplets, where "q" has to be imagined as an eighth note, and so on. <br />
-				- Fraction: each element inside a tuplet is marked with an explicit fraction over it, e.g. "2/3" for triplets, "4/5" for 5-plets, and so on.
-			</description>
-			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
-				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Tuplets As" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
-			</attributelist>
-		</attribute>
 		<attribute name="showvelocity" get="1" set="1" type="int" size="1">
 			<digest>
 				Show Velocity
@@ -13356,33 +13993,18 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
-		<attribute name="slashgracebeams" get="1" set="1" type="int" size="1">
+		<attribute name="singlelyricsdash" get="1" set="1" type="int" size="1">
 			<digest>
-				Slash Grace Beams
+				Lyrics Always Connect With A Single Dash
 			</digest>
 			<description>
-				If this is 1, a slash is put on the beams of beamed grace chords.
+				Toggles the ability to always connect lyrics with single dashes, and not with repeated dashes
+				when the space between them is too large
 			</description>
 			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
-				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Slash Grace Beams" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
-			</attributelist>
-		</attribute>
-		<attribute name="slashgraceflags" get="1" set="1" type="int" size="1">
-			<digest>
-				Slash Grace Flags
-			</digest>
-			<description>
-				If this is 1, a slash is put on the flags of single grace chords.
-			</description>
-			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
-				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Slash Grace Flags" />
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Lyrics Always Connect With A Single Dash" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
@@ -13416,6 +14038,52 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Slots" />
 				<attribute name="default" get="1" set="1" type="float" size="1" value="1.3" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Function Slot Point Radius" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="slotlabelsfont" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Slot Labels Font
+			</digest>
+			<description>
+				Sets the font for slot labels
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
+				<attribute name="default" get="1" set="1" type="symbol" size="1" value="Arial" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Slot Labels Font" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
+			</attributelist>
+		</attribute>
+		<attribute name="slotlabelsfontface" get="1" set="1" type="int" size="1">
+			<digest>
+				Slot Labels Font Style
+			</digest>
+			<description>
+				Sets the font style of slot labels
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Slot Labels Font Style" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
+			</attributelist>
+		</attribute>
+		<attribute name="slotlabelsfontsize" get="1" set="1" type="float" size="1">
+			<digest>
+				Slot Labels Font Size
+			</digest>
+			<description>
+				Sets the font size of slot labels (rescaled according to the <m>vzoom</m>).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="5" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Slot Labels Font Size" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
@@ -13547,7 +14215,40 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.61 0.61 0.21 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Solo Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
+			</attributelist>
+		</attribute>
+		<attribute name="spaceafterbarline" get="1" set="1" type="float" size="1">
+			<digest>
+				Empty Space After Barline With No Time Signature
+			</digest>
+			<description>
+				Sets the width of the empty space after a barline with no time signature.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="6" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Empty Space After Barline With No Time Signature" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="spaceafterts" get="1" set="1" type="float" size="1">
+			<digest>
+				Empty Space After Time Signature
+			</digest>
+			<description>
+				Sets the width of the empty space after a time signature.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="8" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Empty Space After Time Signature" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
 		<attribute name="spacebarplay" get="1" set="1" type="int" size="1">
@@ -13566,63 +14267,17 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
-		<attribute name="spacingproportionality" get="1" set="1" type="float" size="1">
+		<attribute name="spacebetweenbarlineandts" get="1" set="1" type="float" size="1">
 			<digest>
-				Spacing Proportionality
+				Empty Space Between Barline And Time Signature
 			</digest>
 			<description>
-				If the <m>spacingtype</m> is Note/Time Signature, this is represents the linear interpolation between the pure Note and
-				the pure Time Signature algorithms (the first one corresponding to 0, the last one corresponding to 1). Any value between 0 and 1 is accepted.
-				See <m>spacingtype</m> for more information.
+				Sets the width of the empty space between a barline and a time signature.
 			</description>
 			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
-				<attribute name="default" get="1" set="1" type="float" size="1" value="0.5" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Spacing Proportionality" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
-			</attributelist>
-		</attribute>
-		<attribute name="spacingtype" get="1" set="1" type="int" size="1">
-			<digest>
-				Spacing Type
-			</digest>
-			<description>
-				Sets the spacing algorithm: <br />
-				- Smart (default): as the "Note/Time Signature" algorithm, but where the proportionality parameter is automatically inferred, and may
-				vary from measure to measure depending on the musical content. <br />
-				- Note/Time Signature: strikes a balance between two algorithms: a "Note" algorithm, where spacing takes only into account the actual width of each
-				chord and note (independently from its duration), and a "Time Signature" algorithm, where spacing takes only into account the symbolic onset of each
-				chord inside the measure (independently from how much space is required to display it). The balance between these two algorithms is handled via the
-				attribute <m>spacingproportionality</m>: when it is 0 one has the pure Note algorithm, when it is 1 one has the pure Time Signature algorithm. Any value in
-				between is allowed. <br />
-				- Proportional: music content is displayed as if it were in a <o>bach.roll</o>, i.e. proportionally to absolute durations (in milliseconds) and onsets.
-				notation elements such as time signatures or barlines are preserved, but might superpose to notes or chords. <br />
-				- Spring: display spacing using a modelization where each chords is attached to two imaginary "springs", connecting it to the next and the previous one.
-				Spacing is thus the overall result of this physical model.
-			</description>
-			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
-				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Spacing Type" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
-			</attributelist>
-		</attribute>
-		<attribute name="spacingwidth" get="1" set="1" type="float" size="1">
-			<digest>
-				Spacing Width
-			</digest>
-			<description>
-				Sets a factor for globally tightening or loosening the spacing of the score. Small values will correspond to
-				notation elements being closer; high values will separate them.
-			</description>
-			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
-				<attribute name="default" get="1" set="1" type="float" size="1" value="2." />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Spacing Width" />
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="5" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Empty Space Between Barline And Time Signature" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
@@ -13663,6 +14318,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Number Of Staff Lines" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text_large" />
 			</attributelist>
@@ -13678,6 +14334,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Stem Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -13777,6 +14434,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Tempo Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -13792,6 +14450,20 @@
 				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Number Of Digits For Tempo Approximation" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="tempofont" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Tempo Font
+			</digest>
+			<description>
+				Sets the font used to display tempo (default is Arial).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
+				<attribute name="default" get="1" set="1" type="symbol" size="1" value="Arial" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Tempo Font" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
 		<attribute name="temposize" get="1" set="1" type="float" size="1">
@@ -13885,6 +14557,21 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
+		<attribute name="timesigcolor" get="1" set="1" type="rgba" size="1">
+			<digest>
+				Time Signature Color
+			</digest>
+			<description>
+				Sets the color of the time signature, in RGBA format.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
+				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Time Signature Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
+			</attributelist>
+		</attribute>
 		<attribute name="tonedivision" get="1" set="1" type="int" size="1">
 			<digest>
 				Microtonal Division
@@ -13944,26 +14631,38 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Tuplet Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
-		<attribute name="tupletshape" get="1" set="1" type="int" size="1">
+		<attribute name="tupletfont" get="1" set="1" type="symbol" size="1">
 			<digest>
-				Tuplet Shape
+				Tuplet Font
 			</digest>
 			<description>
-				Sets the display for tuplets shape: <br />
-				- None: no shape is ever displayed. <br />
-				- Bracked: an ordinary square bracked is displayed. <br />
-				- Slur: a slur is displayed.
+				Sets the font used to display tuplets (default is Arial).
 			</description>
 			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
-				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Tuplet Shape" />
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
+				<attribute name="default" get="1" set="1" type="symbol" size="1" value="Arial" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Tuplet Font" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
+			</attributelist>
+		</attribute>
+		<attribute name="tupletfontsize" get="1" set="1" type="float" size="1">
+			<digest>
+				Tuplets Font Size
+			</digest>
+			<description>
+				Sets the font size of tuplets (rescaled according to the <m>vzoom</m>).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="10" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Tuplets Font Size" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
 		<attribute name="undobang" get="1" set="1" type="int" size="1">
@@ -14015,6 +14714,25 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="voicegroups" get="1" set="1" type="llll" size="1">
+			<digest>
+				Voice Groups
+			</digest>
+			<description>
+				Sets the voice groups, i.e. the runs of voices that may be shown as gathered with a bracket, slur, .
+				The syntax is a list of <b><m>GROUP1</m> <m>GROUP2</m> <m>GROUP3</m>...</b>, where each <m>GROUP</m>
+				is <b>[<m>numvoice_start</m> <m>numvoice_end</m> <m>display_type</m>]</b>, where in turn <m>display_type</m>
+				is one of the following symbols: "none" (no display), "rule" (display with a straight line),
+				"bracket" (display with a bracket), "brace" (display with a brace).
+				<br /> <br />
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Voice Groups" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text_large" />
 			</attributelist>
 		</attribute>
 		<attribute name="voicenames" get="1" set="1" type="llll" size="1">
@@ -14254,7 +14972,10 @@
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
 				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
-				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
+				'i' = intervoice barline only (barline is only between voice staves, not over staves), 're' = repeat end, 'rs' = repeat start,
+				'res' = repeat end and then start. <br />.
+				- <b>repeatnum</b>: if the measure end barline has a repeat ending, this number sets the number of times the relevant region
+				should be repeated (defaulting to 2). <br />
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -14385,7 +15106,10 @@
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
 				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
-				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
+				'i' = intervoice barline only (barline is only between voice staves, not over staves), 're' = repeat end, 'rs' = repeat start,
+				'res' = repeat end and then start. <br />.
+				- <b>repeatnum</b>: if the measure end barline has a repeat ending, this number sets the number of times the relevant region
+				should be repeated (defaulting to 2). <br />
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -14864,7 +15588,10 @@
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
 				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
-				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
+				'i' = intervoice barline only (barline is only between voice staves, not over staves), 're' = repeat end, 'rs' = repeat start,
+				'res' = repeat end and then start. <br />.
+				- <b>repeatnum</b>: if the measure end barline has a repeat ending, this number sets the number of times the relevant region
+				should be repeated (defaulting to 2). <br />
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically

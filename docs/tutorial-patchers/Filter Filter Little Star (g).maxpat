@@ -481,13 +481,13 @@
 				"box" : 				{
 					"maxclass" : "comment",
 					"text" : "Hey, that looks nice. Seems like I'm ready to develop software for the NASA...",
-					"frgb" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"frgb" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 319.0, 551.0, 423.0, 20.0 ],
 					"id" : "obj-61",
 					"fontname" : "Arial",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"fontface" : 2,
 					"fontsize" : 12.0
 				}

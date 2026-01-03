@@ -116,7 +116,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 53.0, 542.0, 36.0 ],
 					"text" : "Use Cmd+Z (mac) or Ctrl+Z (win) to undo the last step of interface editing. \nUse Cmd+Shift+Z (mac) or Ctrl+Y (win) to redo the newly undone step.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

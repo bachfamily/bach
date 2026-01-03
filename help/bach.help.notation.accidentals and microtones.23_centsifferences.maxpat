@@ -3,8 +3,8 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 5,
-			"revision" : 5,
+			"minor" : 6,
+			"revision" : 1,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -63,7 +63,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 65.5, 153.0, 360.0, 21.0 ],
 					"sendto" : "bach.help.filtertags",
-					"text" : "Here's a harmonic series with all the cents differences w.r. to ",
+					"text" : "Here's a harmonic series with all the cents differences w.r.t. ",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -78,7 +78,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 201.5, 126.0, 260.0, 25.0 ],
-					"presentation_linecount" : 2,
 					"text" : "Choose the symbol to represent the cent"
 				}
 
@@ -109,7 +108,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 165.75, 79.0, 205.0, 25.0 ],
+					"patching_rect" : [ 263.0, 77.5, 205.0, 25.0 ],
 					"text" : "Display the differences in cents"
 				}
 
@@ -131,7 +130,7 @@
 					"outlettype" : [ "", "", "", "", "", "", "", "", "" ],
 					"patching_rect" : [ 15.0, 348.0, 309.0, 110.666666666666686 ],
 					"pitcheditrange" : [ "null" ],
-					"showcentsdiff" : 1,
+					"showcents" : 1,
 					"showvelocity" : 1,
 					"stafflines" : [ 5 ],
 					"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ],
@@ -145,14 +144,14 @@
 			}
 , 			{
 				"box" : 				{
-					"attr" : "showcentsdiff",
+					"attr" : "showcents",
 					"id" : "obj-5",
 					"maxclass" : "attrui",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 6.0, 79.0, 150.0, 22.0 ]
+					"patching_rect" : [ 6.0, 79.0, 261.0, 22.0 ]
 				}
 
 			}
@@ -187,7 +186,7 @@
 					"outlettype" : [ "", "", "", "", "", "", "", "" ],
 					"patching_rect" : [ 49.5, 186.0, 504.0, 151.833333333333343 ],
 					"pitcheditrange" : [ "null" ],
-					"showcentsdiff" : 1,
+					"showcents" : 1,
 					"showvelocity" : 1,
 					"stafflines" : [ 5 ],
 					"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ],
@@ -284,7 +283,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: accidental, display, deviation, difference, cents, showcentsdiff",
+					"text" : "Tags: accidental, display, deviation, difference, cents, showcentsdiff, showcents, centsdifferences, centsdiff, show",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
@@ -301,7 +300,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 32.0, 625.0, 36.0 ],
+					"patching_rect" : [ 6.0, 32.0, 628.0, 36.0 ],
 					"sendto" : "bach.help.filtertags",
 					"text" : "In addition to the #accidental+display, you can decide to show the cents difference between the actual pitch of the note, and the displayed pitch (subject to the #tonedivision). ",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
@@ -311,7 +310,16 @@
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
+					"destination" : [ "obj-2", 0 ],
+					"order" : 1,
+					"source" : [ "obj-21", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-3", 0 ],
+					"order" : 0,
 					"source" : [ "obj-21", 0 ]
 				}
 

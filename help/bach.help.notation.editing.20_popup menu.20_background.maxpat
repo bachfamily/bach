@@ -51,7 +51,7 @@
 					"presentation_rect" : [ 293.0, 283.5, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "Add an absolute-onset marker",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -70,7 +70,7 @@
 					"presentation_rect" : [ 293.0, 265.5, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "Add a measure-attached marker",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -105,7 +105,7 @@
 					"presentation_rect" : [ 250.0, 119.5, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "Paste selected content (if any) at original position",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -124,7 +124,7 @@
 					"presentation_rect" : [ 198.0, 104.5, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "Paste selected content (if any) at click position",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -143,7 +143,7 @@
 					"presentation_rect" : [ 195.0, 76.5, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "Add a marker",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -162,7 +162,7 @@
 					"patching_rect" : [ 220.0, 407.5, 189.0, 40.0 ],
 					"style" : "",
 					"text" : "Force all voices to have the same number of measures",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -179,7 +179,7 @@
 					"patching_rect" : [ 257.0, 387.5, 313.0, 25.0 ],
 					"style" : "",
 					"text" : "Select all elements at the left of the clicked point",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -196,7 +196,7 @@
 					"patching_rect" : [ 266.0, 363.5, 313.0, 25.0 ],
 					"style" : "",
 					"text" : "Select all elements at the right of the clicked point",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -214,7 +214,7 @@
 					"patching_rect" : [ 220.0, 330.5, 189.0, 25.0 ],
 					"style" : "",
 					"text" : "Remove all muted elements",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -232,7 +232,7 @@
 					"patching_rect" : [ 220.0, 308.5, 176.0, 25.0 ],
 					"style" : "",
 					"text" : "Remove all solo elements",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -249,7 +249,7 @@
 					"patching_rect" : [ 248.0, 215.5, 313.0, 25.0 ],
 					"style" : "",
 					"text" : "Select all elements at the left of the clicked point",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -266,7 +266,7 @@
 					"patching_rect" : [ 257.0, 191.5, 313.0, 25.0 ],
 					"style" : "",
 					"text" : "Select all elements at the right of the clicked point",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -284,7 +284,7 @@
 					"patching_rect" : [ 184.0, 163.5, 189.0, 25.0 ],
 					"style" : "",
 					"text" : "Remove all muted elements",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -302,7 +302,7 @@
 					"patching_rect" : [ 184.0, 144.5, 176.0, 25.0 ],
 					"style" : "",
 					"text" : "Remove all solo elements",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

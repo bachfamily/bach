@@ -368,11 +368,11 @@
 				"box" : 				{
 					"maxclass" : "comment",
 					"text" : "And Ties? And Extras?",
-					"frgb" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"frgb" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"patching_rect" : [ 431.0, 416.0, 133.0, 20.0 ],
 					"id" : "obj-61",
 					"fontname" : "Arial",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"fontface" : 2,

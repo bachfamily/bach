@@ -1,7 +1,7 @@
 /*
  *  bach_doc_commons.h
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -116,7 +116,16 @@
 	//  choose a representation such that the displayed diatonic pitch is above the actual note). <br /> 
 	//  - Custom: use a custom enharmonic table, defined via the <m>enharmonictable</m> attribute.
 	//  <br /> <br />		
-	
+
+#define BACH_DOC_EIGHTHTONEARROW
+    //  Decides how to use eighth-tone arrows: <br />
+    //  - According To Direction: upward accidentals always get upward arrows, downward accidentals always get downward arrows.
+    //  This means, for instance, that <b>Fq^5</b> is displayed instead of <b>F#v5</b>. <br />
+    //  - On Semitonal Accidentals Only: arrows are only placed on semitonal accidentals.
+    //  This means, for instance, that <b>F#v5</b> is displayed instead of <b>Fq^5</b>.
+    //  This feature is only supported for the (default) Bravura font.
+    //  <br /> <br />
+
 #define BACH_DOC_ACCIDENTALSGRAPHIC
 	// 	Sets the way of displaying accidentals: <br />
 	//  - None: no accidental is displayed. <br />
@@ -482,6 +491,15 @@
 	//  @copy BACH_DOC_MEASUREINFO_SYNTAX
 	//  @copy BACH_DOC_CHORD_GATHERED_SYNTAX_SCORE
 
+#define BACH_DOC_SLURS_GATHERED_SYNTAX
+    //  A slur beginning on a given chord is identified by appending a list of the type
+    //  <b>[slurs <m>SLUR1</m> <m>optional:SLUR2</m> <m>optional:SLUR3</m>]</b>.
+    //  Up to three slurs can be defined. Every <m>SLUR</m> can be represented by an integer number, simply
+    //  counting the number of chords spanned by the slur.
+    //  Alternatively, every <m>SLUR</m> can be a complex list of the kind:
+    //  <b>[ <m>number_of_spanned_chords</m> [ name <m>name_or_llll_of_names</m> ] [ direction <m>direction_as_int</m> ] ]</b>
+    //  where <m>direction_as_int</m> sets the slur direction: 0 for auto, 1 for up and -1 for down.
+    //  <br /> <br />
 
 #define BACH_DOC_CHORD_GATHERED_SYNTAX_ROLL
 	// 	For <o>bach.roll</o>, the gathered syntax for any chord, in its simplest form <b>[<m>onset_ms</m> <m>NOTE1</m> <m>NOTE2</m>... <m>chord_flag</m>]</b>
@@ -491,8 +509,10 @@
 	//  In its most general form, each chord can have a specification defining its name(s). This specification must be in the form
 	//  <b>[name <m>NAME_OR_LLLL_OF_NAMES</m>]</b>, and must be put after the last note llll,
 	//  before the <m>chord_flag</m>. For instance, a chord definition might 
-	//  have the form <b>[500 [7000. 500 127] [7200. 1200 100] [name paul] 0]</b>
+	//  have the form <b>[500 [7000. 500 127] [7200. 1200 100] [name paul] 0]</b>. <br />
+    //  Chords can also bear an additional slur specification, accounting for slurs that start on the chord.
 	//  <br /> <br />
+    //  @copy BACH_DOC_SLURS_GATHERED_SYNTAX
 	//  @copy BACH_DOC_NOTE_GATHERED_SYNTAX_ROLL
 
 
@@ -506,6 +526,9 @@
 	//  and before the <m>chord_flag</m>. The order in which the specifications are listed is, on the other hand, irrelevant. For instance, a chord definition might 
 	//  have the form <b>[1/4 [7000. 127 1] [7200. 100 0] [name john] [slots [10 fermata]] 0]</b>.
 	//  <br /> <br />
+    //  Chords can also bear an additional slur specification, accounting for slurs that start on the chord.
+    //  <br /> <br />
+    //  @copy BACH_DOC_SLURS_GATHERED_SYNTAX
 	//  @copy BACH_DOC_NOTE_GATHERED_SYNTAX_SCORE
 
 
@@ -717,8 +740,11 @@
 	//  - <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 	//  can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
 	//  't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
-    //  'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
-	//  - <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will 
+    //  'i' = intervoice barline only (barline is only between voice staves, not over staves), 're' = repeat end, 'rs' = repeat start,
+    //  'res' = repeat end and then start. <br />.
+    //  - <b>repeatnum</b>: if the measure end barline has a repeat ending, this number sets the number of times the relevant region
+    // should be repeated (defaulting to 2). <br />
+	//  - <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 	//  not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 	//  show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically 
 	//  assigned measure number (default). <br />
@@ -1035,6 +1061,14 @@
 	// (as a single symbol) as name for the fourth voice. 
 	// <br /> <br />
 
+#define BACH_DOC_VOICEGROUPS
+    // Sets the voice groups, i.e. the runs of voices that may be shown as gathered with a bracket, slur, .
+    // The syntax is a list of <b><m>GROUP1</m> <m>GROUP2</m> <m>GROUP3</m>...</b>, where each <m>GROUP</m>
+    // is <b>[<m>numvoice_start</m> <m>numvoice_end</m> <m>display_type</m>]</b>, where in turn <m>display_type</m>
+    // is one of the following symbols: "none" (no display), "rule" (display with a straight line),
+    // "bracket" (display with a bracket), "brace" (display with a brace).
+    // <br /> <br />
+
 #define BACH_DOC_STAFFLINES
 	// Sets the staff lines. An llll containing as many elements as the number of voices is expected, 
 	// if less elements are input, the last one is padded.
@@ -1077,9 +1111,9 @@
 	// <br /> <br />
 
 #define BACH_DOC_ROLL_START_PAD
-	// In <o>bach.roll</o>, this pad is extremely useful if you have chords around 0ms
-	// having a lot of accidentals. In this case you can shift, via this pad, the position of the 0ms on the screen, so that all accidentals
-	// are correctly displayed. Also see the message <m>adjustadditionalstartpad</m>.
+	// In <o>bach.roll</o>, this pad is particularly useful if you have chords around 0ms
+	// bearing many accidentals. In this case you can shift, via this pad, the position of the 0ms on the screen, so that all accidentals
+	// are correctly displayed. Also see the message <m>adjustpadafterclef</m>.
 	// <br /> <br />
 	
 #define BACH_DOC_STAFFLINE_STEP
@@ -1461,8 +1495,20 @@
 
 #define BACH_DOC_MESSAGE_SNAPPITCHTOGRID
 	// The <m>snappitchtogrid</m> message snaps the midicents of each selected note to the
-	// currently active microtonal grid (see the <m>tonedivision</m> attribute).
-	
+	// currently displayed pitch.
+
+#define BACH_DOC_MESSAGE_APPROXET
+    // The <m>approxet</m> message approximates the pitches of each selected note to the
+    // currently defined equal temperament (see the <m>tonedivision</m> attribute).
+    // If an additional integer argument is provided, it is consider to be a custom tonedivision
+    // for the approximation
+
+#define BACH_DOC_MESSAGE_APPROXJI
+    // The <m>approxji</m> message approximates the pitches of each selected note to the
+    // currently defined just intonation limit (see the <m>jilimit</m> attribute).
+    // If an additional integer argument is provided, it is consider to be the custom prime limit
+    // for the approximation
+
 	
 #define BACH_DOC_MESSAGE_NAME
 	// The word <m>name</m>, followed by a symbol, a number or an llll, assigns such content as names for the
@@ -2299,9 +2345,10 @@
 	// <br /> <br />
 
 #define BACH_DOC_NOTATION_FONT
-	// @description Sets the font used to display all notation elements except accidentals. 
-	// The official notation bach font is "November for bach", created by Robert Piéchaud (www.poeticprocessing.net) and 
-	// automatically loaded at bach startup. "November for bach" is a light version of the famous November font. 
+	// @description Sets the font used to display all notation elements except accidentals.
+    // The bach package by default loads the "Bravura" font, developed by Steinberg.
+	// The bach package also includes the font "November for bach", created by Robert Piéchaud (www.poeticprocessing.net).
+	// "November for bach" is a light version of the famous November font.
 	// The full November font covers a wide range of music symbols, from Renaissance to the XXI century, and gives a unique, 
 	// warm and lively look to your music scores. It is fully compatible with Finale, Sibelius and other notation softwares. 
 	// You can purchase November from this web address: www.klemm-music.de/notation/november/.
@@ -2309,23 +2356,23 @@
 
 #define BACH_DOC_ACCIDENTALS_FONT
 	// @description Sets the font used to display accidentals. 
-	// The official notation bach font is "November for bach", created by Robert Piéchaud (www.poeticprocessing.net) and 
-	// automatically loaded at bach startup. "November for bach" is a light version of the famous November font. 
-	// The full November font covers a wide range of music symbols, from Renaissance to the XXI century, and gives a unique, 
-	// warm and lively look to your music scores. It is fully compatible with Finale, Sibelius and other notation softwares. 
-	// You can purchase November from this web address: www.klemm-music.de/notation/november/.
-	// Other supported fonts are: Accidentals (up to the eighth-tones), Tamburo (up to the quartertones), 
-	// Maestro, Petrucci, Boulez, Engraver Font Set (up to the semitones).
-
-#define BACH_DOC_ARTICULATIONS_FONT
-    // @description Sets the font used to display articulations.
-    // The official notation bach font is "November for bach", created by Robert Piéchaud (www.poeticprocessing.net) and
-    // automatically loaded at bach startup. "November for bach" is a light version of the famous November font.
+    // The bach package by default loads the "Bravura" font, developed by Steinberg.
+    // The bach package also includes the font "November for bach", created by Robert Piéchaud (www.poeticprocessing.net).
+    // "November for bach" is a light version of the famous November font.
     // The full November font covers a wide range of music symbols, from Renaissance to the XXI century, and gives a unique,
     // warm and lively look to your music scores. It is fully compatible with Finale, Sibelius and other notation softwares.
     // You can purchase November from this web address: www.klemm-music.de/notation/november/.
-    // Other supported fonts are: Boulez, Maestro, Petrucci, Engraver Font Set. Not all articulations are supported by all fonts.
-    // You can however always define custom articulations with any font of your choice.
+    // Other supported fonts are: Boulez, Maestro, Petrucci, Engraver Font Set.
+
+#define BACH_DOC_ARTICULATIONS_FONT
+    // @description Sets the font used to display articulations.
+    // The bach package by default loads the "Bravura" font, developed by Steinberg.
+    // The bach package also includes the font "November for bach", created by Robert Piéchaud (www.poeticprocessing.net).
+    // "November for bach" is a light version of the famous November font.
+    // The full November font covers a wide range of music symbols, from Renaissance to the XXI century, and gives a unique,
+    // warm and lively look to your music scores. It is fully compatible with Finale, Sibelius and other notation softwares.
+    // You can purchase November from this web address: www.klemm-music.de/notation/november/.
+    // Other supported fonts are: Boulez, Maestro, Petrucci, Engraver Font Set.
 
 #define BACH_DOC_LYRICS_FONT
     // @description Sets the font used to display lyrics (default is Arial).

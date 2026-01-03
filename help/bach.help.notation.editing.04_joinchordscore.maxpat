@@ -165,7 +165,7 @@
 					"patching_rect" : [ 220.0, 311.0, 206.0, 69.0 ],
 					"style" : "",
 					"text" : "Press Cmd+2 (mac) or Ctrl+2 (win) on the second 1/8th note to split it into two 1/16 notes.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -185,7 +185,7 @@
 					"patching_rect" : [ 6.0, 419.0, 264.5, 55.0 ],
 					"style" : "",
 					"text" : "Cmd+click (mac) or Ctrl+click (win) on the notehead which has to be turned into a rest.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -205,7 +205,7 @@
 					"patching_rect" : [ 274.5, 416.0, 305.5, 55.0 ],
 					"style" : "",
 					"text" : "Select the last three 1/8th notes, and press Cmd+Shift+Y (mac) or Ctrl+Shift+Y to merge them.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -225,7 +225,7 @@
 					"patching_rect" : [ 337.5, 352.0, 264.5, 69.0 ],
 					"style" : "",
 					"text" : "Select the second 1/16 note, and press Cmd+Shift+T (mac) or Ctrl+Shift+T (win) to tie it to the next one",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -245,7 +245,7 @@
 					"patching_rect" : [ 21.0, 319.0, 199.0, 69.0 ],
 					"style" : "",
 					"text" : "Select the whole note and press Cmd+8 (mac) or Ctrl+8 (win) to split it into eight 1/8th notes",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -296,7 +296,7 @@
 					"patching_rect" : [ 53.5, 165.0, 375.0, 55.0 ],
 					"style" : "",
 					"text" : "Or you can select any chord, note or group of notes, and press Cmd+T (mac) or Ctrl+T (win) in order to tie it to the next one.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -316,7 +316,7 @@
 					"patching_rect" : [ 109.0, 51.5, 248.0, 69.0 ],
 					"style" : "",
 					"text" : "Select the last three notes and press Cmd+Shift+Y (mac) or Ctrl+Shift+Y (win) to join them into a single chord.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

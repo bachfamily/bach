@@ -1,7 +1,7 @@
 /*
  *  astNode.cpp
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -251,6 +251,28 @@ void t_execEnv::resetFnNamedArgs(t_function *fn, long lambdaParams)
     }
 }
 
+void t_execEnv::resetAndRetainFnNamedArgs(t_function *fn, long lambdaParams)
+{
+    long start = fn->getNamedArgumentsCountAfterEllipsis(); // <= 0
+    long end = fn->getNamedArgumentsCount(); // >= 0
+    long firstNamedArgumentOffset = end != 0 ? 0 : lambdaParams;
+    long offset = start < 0 ? 0 : firstNamedArgumentOffset;
+    for (long i = start; i <= end; i++) {
+        if (i == 0) {
+            offset = firstNamedArgumentOffset;
+            continue;
+        }
+        funArg *thisANAD = fn->getArgNameAndDefault(i);
+        t_symbol *name = thisANAD->getSym();
+        t_llll *def = argv[i + offset];
+        t_llll *old = scope[name]->get();
+        if (old != def) { // which means it has changed
+            scope[name]->set(llll_retain(def));
+        }
+        llll_release(old);
+    }
+}
+
 void t_execEnv::setLocalVariables(t_localVar *vars, t_function *fn)
 {
     if (!vars)
@@ -397,6 +419,15 @@ t_llll* astWrap::eval(t_execEnv const &context) {
 ////////////
 
 t_llll* astConcat::eval(t_execEnv const &context) {
+    t_llll *x = llll_get();
+    
+    for (auto node : *n) {
+        t_llll *l = node->eval(context);
+        llll_chain(x, llll_clone(l));
+        bell_release_llll(l);
+    }
+    
+    /*
     t_llll *v1 = n1->eval(context);
     t_llll *v2 = n2->eval(context);
     t_llll *x = llll_clone(v1);
@@ -404,6 +435,8 @@ t_llll* astConcat::eval(t_execEnv const &context) {
     llll_chain(x, giver);
     bell_release_llll(v1);
     bell_release_llll(v2);
+     */
+    
     return x;
 }
 

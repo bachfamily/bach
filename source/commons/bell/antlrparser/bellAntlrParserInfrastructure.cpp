@@ -1,0 +1,1001 @@
+//
+//  bellAntlrParserInfrastructure.cpp
+//  lib_bach
+//
+//  Created by Andrea Agostini on 03/07/24.
+//
+
+#include "bellAntlrParserInfrastructure.hpp"
+
+#include "antlr4-runtime.h"
+#include "bellLexer.h"
+#include "bellParser.h"
+#include "bellBaseVisitor.h"
+#include "preprocLexer.h"
+#include "preproc.h"
+#include "preprocBaseVisitor.h"
+#include "ast.hpp"
+#include "bellparser_commons.h"
+#include "parsers/bach_parser.hpp"
+#include <algorithm>
+#include <string>
+#include <functional>
+
+using namespace std;
+using namespace antlr4;
+
+/*
+void addVariableToScope(t_parseParams *params, t_symbol *name)
+{
+    auto known = (*(params->localVariablesAuxMapStack))->find(name);
+    if (known == (*(params->localVariablesAuxMapStack))->end()) { // yet unknown
+        (**(params->localVariablesAuxMapStack))[name] = 1;
+        
+        if (params->liftedVariablesStack == params->liftedVariablesStackBase) {
+            *(params->localVariablesStack) = new countedList<t_localVar> (t_localVar(name, true), *(params->localVariablesStack)); // if we're at the main function level, then everything is lifted (as it can be set from the outside)
+        } else {
+            t_bool lifted = (*(params->liftedVariablesStack))->find(name) != (*(params->liftedVariablesStack))->end();
+            
+            *(params->localVariablesStack) = new countedList<t_localVar> (t_localVar(name, lifted), *(params->localVariablesStack));
+
+
+        }
+    }
+}
+*/
+
+template<typename T>
+T safeAnyCast(const std::any a) {
+    if (a.type() == typeid(T)) {
+        return any_cast<T>(a);
+    } else {
+        return nullptr;
+    }
+}
+
+class bellErrorListener: public BaseErrorListener {
+public:
+
+    bellErrorListener(): BaseErrorListener() { }
+    virtual ~bellErrorListener() { }
+    
+    void syntaxError(Recognizer *recognizer, Token * offendingSymbol, size_t line, size_t charPositionInLine,
+                     const std::string &msg, std::exception_ptr e) {
+        antlr4::Parser *p = dynamic_cast<antlr4::Parser*>(recognizer);
+        auto v = p->getRuleInvocationStack();
+        for (auto s : v) {
+            post("%s\n", s.c_str());
+        }
+        
+        auto os = offendingSymbol->getText();
+        std::replace(os.begin(), os.end(), (char) 1, (char) ' ');
+        
+        std::string m = msg;
+        std::replace(m.begin(), m.end(), (char) 1, (char) ' ');
+        
+        post("at pos %ld:%ld %s:%s", line, charPositionInLine, offendingSymbol->getText().c_str(), m.c_str());
+    }
+    
+};
+
+class everythingVisitor: public bellBaseVisitor {
+    
+private:
+
+public:
+    t_parseParams *params;
+    
+    everythingVisitor(t_parseParams *p) : params(p) { } ;
+    
+    antlrcpp::Any visitEverything(bellParser::EverythingContext *ctx) override {
+        auto r = safeAnyCast<astNode*>(visit(ctx->program()));
+        return r;
+    }
+    
+    antlrcpp::Any visitProgramEOF(bellParser::ProgramEOFContext *ctx) override {
+        *params->codeac = -1;
+        astNode* r = new astConst(llll_get(), params->owner);
+        return r;
+    }
+    
+    antlrcpp::Any visitProgramSequence(bellParser::ProgramSequenceContext *ctx) override {
+        *params->codeac = -1;
+        auto r = safeAnyCast<astNode*>(visit(ctx->sequence()));
+        return r;
+    }
+    
+    antlrcpp::Any visitProgramSequenceNamedparam (bellParser::ProgramSequenceNamedparamContext *ctx) override {
+        auto r = safeAnyCast<astNode*>(visit(ctx->sequence()));
+        --*params->codeac;
+        return r;
+    }
+    
+    antlrcpp::Any visitProgramNamedparam (bellParser::ProgramNamedparamContext *ctx) override {
+        *params->codeac = 0;
+        astNode* r = new astConst(llll_get(), params->owner);
+        return r;
+    }
+    
+    antlrcpp::Any visitSequence(bellParser::SequenceContext *ctx) override {
+        if (ctx->children.size() == 1)
+            return visit(ctx->children[0]);
+        
+        auto v = new std::vector<astNode*>;
+        for (auto child: ctx->children) {
+            astNode* n = safeAnyCast<astNode*>(visit(child));
+            if (n)
+                v->push_back(n);
+            else {
+                delete v;
+                return nullptr;
+            }
+        }
+        astNode* n = new astConcat(v, params->owner);
+        return n;
+    }
+    
+    antlrcpp::Any visitNullified(bellParser::NullifiedContext *ctx) override {
+        astNode* n = new astNullify(safeAnyCast<astNode*>(visit(ctx->list())), params->owner);
+        return n;
+    }
+    
+    antlrcpp::Any visitArgsByNameList(bellParser::ArgsByNameListContext *ctx) override {
+        size_t c = ctx->sequence().size();
+        auto r = new std::vector<symNodePair*>;
+        for (size_t i = 0; i < c; i++) {
+            std::string txt = ctx->NAMEDPARAM(i)->getText();
+            auto s = gensym(txt.c_str() + 1);
+            auto n = safeAnyCast<astNode*>(visit(ctx->sequence(i)));
+            if (!n) {
+                for (size_t j = 0; j <= i; j++) {
+                    delete (*r)[j]->getNode();
+                }
+                delete r;
+                return nullptr;
+            }
+            auto p = new symNodePair(s, n);
+            r->push_back(p);
+        }
+        return r;
+    }
+    
+    antlrcpp::Any visitArgsByPositionList(bellParser::ArgsByPositionListContext *ctx) override {
+        size_t c = ctx->sequence().size();
+        auto r = new std::vector<astNode*>;
+        for (size_t i = 0; i < c; i++) {
+            auto n = safeAnyCast<astNode*>(visit(ctx->sequence(i)));
+            if (!n) {
+                for (size_t j = 0; j <= i; j++) {
+                    delete (*r)[j];
+                }
+                delete r;
+                return nullptr;
+            }
+            r->push_back(n);
+        }
+        return r;
+    }
+    
+    antlrcpp::Any visitWhileloop(bellParser::WhileloopContext *ctx) override {
+        astNode* s = safeAnyCast<astNode*>(visit(ctx->sequence()));
+        if (!s)
+            return nullptr;
+        astNode* l = safeAnyCast<astNode*>(visit(ctx->list()));
+        if (!l) {
+            delete s;
+            return nullptr;
+        }
+        astNode *r;
+        switch(ctx->kind->getType()) {
+            case bellParser::DO: r = new astWhileLoop<E_LOOP_DO>(s, l, params->owner); break;
+            case bellParser::COLLECT: r = new astWhileLoop<E_LOOP_COLLECT>(s, l, params->owner); break;
+            default: r = nullptr; break;
+        }
+        return r;
+    }
+    
+    antlrcpp::Any visitForarg(bellParser::ForargContext *ctx) override {
+        auto seq = safeAnyCast<astNode*>(visit(ctx->sequence()));
+        std::string n1 = ctx->LOCALVAR(0)->getText();
+        t_symbol *s1 = gensym(n1.c_str() + (n1[0] == '\\' ? 2 : 1));
+        addVariableToScope<e_antlr4>(params, s1);
+        forArg* r;
+        if (ctx->LOCALVAR(1)) {
+            std::string n2 = ctx->LOCALVAR(1)->getText();
+            t_symbol *s2 = gensym(n2.c_str() + (n2[0] == '\\' ? 2 : 1));
+            addVariableToScope<e_antlr4>(params, s2);
+            r = new forArg(s1, s2, seq);
+        } else {
+            r = new forArg(s1, nullptr, seq);
+        }
+        return r;
+    }
+    
+    antlrcpp::Any visitForargList(bellParser::ForargListContext *ctx) override {
+        auto v = new std::vector<forArg*>;
+        for (auto c : ctx->forarg()) {
+            auto f = safeAnyCast<forArg*>(visit(c));
+            v->push_back(f);
+        }
+        return v;
+    }
+    
+    antlrcpp::Any visitForloop(bellParser::ForloopContext *ctx) override {
+        auto fal = safeAnyCast<std::vector<forArg*>*>(visit(ctx->forargList()));
+        auto l = safeAnyCast<astNode*>(visit(ctx->list()));
+        astNode *as = nullptr;
+        if (ctx->AS()) {
+            as = safeAnyCast<astNode*>(visit(ctx->sequence()));
+        }
+        std::vector<symNodePair*>* abnl = nullptr;
+        if (ctx->argsByNameList()) {
+            abnl = safeAnyCast<std::vector<symNodePair*>*>(visit(ctx->argsByNameList()));
+        }
+        astNode *r;
+        switch(ctx->kind->getType()) {
+            case bellParser::DO: r = new astForLoop<E_LOOP_DO>(fal, nullptr, as, abnl, l, params->owner); break;
+            case bellParser::COLLECT: r = new astForLoop<E_LOOP_COLLECT>(fal, nullptr, as, abnl, l, params->owner); break;
+            default: r = nullptr; break;
+        }
+        return r;
+    }
+    
+    antlrcpp::Any visitSimpleFuncall(bellParser::SimpleFuncallContext *ctx) override {
+        auto *fn = safeAnyCast<astNode*>(visit(ctx->children[0]));
+        if (!fn)
+            return nullptr;
+        std::vector<astNode*>* abpl = nullptr;
+        std::vector<symNodePair*>* abnl = nullptr;
+        if (ctx->argsByPositionList())
+            abpl = safeAnyCast<std::vector<astNode*>*>(visit(ctx->argsByPositionList()));
+        if (ctx->argsByNameList())
+            abnl = safeAnyCast<std::vector<symNodePair*>*>(visit(ctx->argsByNameList()));
+        astNode* n = new astFunctionCall(fn, abpl, abnl, params->owner);
+        return n;
+    }
+    
+    antlrcpp::Any visitLvalueSpecsUItem(bellParser::LvalueSpecsUItemContext *ctx) override {
+        return visit(ctx->children[0]);
+    }
+    
+    antlrcpp::Any visitLvalueSpecsItem(bellParser::LvalueSpecsItemContext *ctx) override {
+        if (ctx->UMINUS().size() % 2 == 0) {
+            return visit(ctx->lvalueSpecsUItem());
+        } else {
+            auto u = safeAnyCast<astNode*>(visit(ctx->lvalueSpecsUItem()));
+            astNode* r = new astOperatorUMinus(u, params->owner);
+            return r;
+        }
+        
+    }
+
+    antlrcpp::Any visitFuncallSimple(bellParser::FuncallSimpleContext *context) override {
+        return visit(context->simpleFuncall());
+    }
+    
+    antlrcpp::Any visitDataflowHeadSimple(bellParser::DataflowHeadSimpleContext *context) override {
+        return visit(context->children[0]);
+    }
+    
+    antlrcpp::Any visitDataflowHeadLvalue(bellParser::DataflowHeadLvalueContext *context) override {
+        auto *v = safeAnyCast<astNode*>(visit(context->var()));
+        /*astNode *n = v->getVar();
+        lvalueSpecs *s = v->getSpecs();
+        if fa(s)
+            n = s->toReadNode(n, params->owner);*/
+        return v;
+    }
+    
+    antlrcpp::Any visitFuncallDataflow(bellParser::FuncallDataflowContext *context) override {
+        auto x = safeAnyCast<astNode*>(visit(context->dataflowHead()));
+        astFunctionCall* y;
+        for (auto p: context->simpleFuncall()) {
+            y = dynamic_cast<astFunctionCall*>(safeAnyCast<astNode*>(visit(p)));
+            y->addDataflowStyleArg(x);
+            x = y;
+        }
+        return static_cast<astNode*>(y);
+    }
+
+    antlrcpp::Any visitFunargVar(bellParser::FunargVarContext *context) override {
+        auto txt = context->LOCALVAR()->getText();
+        auto s = gensym(txt.c_str() + 1);
+        (**(params->localVariablesAuxMapStack))[s] = 1;
+        funArg *r;
+        if (context->list()) {
+            *++(params->localVariablesStackV) = new std::vector<t_localVar>;
+            *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
+            auto l = safeAnyCast<astNode*>(visit(context->list()));
+            r = new funArg(s, l, *(params->localVariablesStackV));
+            delete *(params->localVariablesAuxMapStack);
+            *(params->localVariablesAuxMapStack--) = nullptr;
+            delete *(params->localVariablesStackV);
+            *(params->localVariablesStackV--) = nullptr;
+        } else {
+            r = new funArg(s);
+        }
+        return r;
+    }
+    
+    antlrcpp::Any visitFunargEllipsis(bellParser::FunargEllipsisContext *context) override {
+        return new funArg(gensym("<...>"));
+    }
+    
+    antlrcpp::Any visitFunargList(bellParser::FunargListContext *context) override {
+        *++(params->localVariablesStackV) = new std::vector<t_localVar>;
+        *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
+        auto v = new std::vector<funArg*>;
+        for (auto p : context->funarg()) {
+            auto a = safeAnyCast<funArg*>(visit(p));
+            v->push_back(a);
+        }
+        return v;
+    }
+    
+    antlrcpp::Any visitLiftedargList(bellParser::LiftedargListContext *context) override {
+        auto v = new std::vector<t_localVar*>;
+        for (auto p : context->LOCALVAR()) {
+            auto t = p->getText();
+            auto s = gensym(t.c_str() + 1);
+            auto l = new t_localVar(s);
+            v->push_back(l);
+        }
+        return v;
+    }
+    
+    antlrcpp::Any visitFundef(bellParser::FundefContext *context) override {
+        std::vector<funArg*>* fal = nullptr;
+        if (context->funargList()) {
+            fal = safeAnyCast<std::vector<funArg*>*>(visit(context->funargList()));
+        }
+        
+        params->fnDepth++;
+        *++(params->liftedVariablesStack) = new std::unordered_set<t_symbol *>;
+
+        if (context->liftedargList()) {
+            auto lal = safeAnyCast<std::vector<t_localVar*>*>(visit(context->liftedargList()));
+            for (auto v : *lal) {
+                (*(params->liftedVariablesStack))->insert(v->getName());
+            }
+        }
+        
+        *++(params->argumentsStackV) = fal;
+
+        auto l = safeAnyCast<astNode*>(visit(context->list()));
+        auto fn = new t_userFunction(*(params->argumentsStackV),
+                                       *(params->localVariablesStackV),
+                                       l, params->owner);
+        params->funcs->insert(fn);
+        astNode* r = new astConst(fn, params->owner);
+        *(params->localVariablesStackV--) = nullptr;
+        --(params->fnDepth);
+        delete *(params->localVariablesAuxMapStack);
+        *(params->localVariablesAuxMapStack--) = nullptr;
+        delete *(params->liftedVariablesStack);
+        *(params->liftedVariablesStack--) = nullptr;
+        --(params->argumentsStackV);
+        return r;
+    }
+    
+    antlrcpp::Any visitItemUint(bellParser::ItemUintContext *context) override {
+        long v = stol(context->UINT()->getText());
+        astNode* r = new astConst(v, params->owner);
+        return r;
+    }
+
+    antlrcpp::Any visitItemUfloat(bellParser::ItemUfloatContext *context) override {
+        double v = stod(context->UFLOAT()->getText());
+        astNode* r = new astConst(v, params->owner);
+        return r;
+    }
+    
+    antlrcpp::Any visitItemETPitch(bellParser::ItemETPitchContext *context) override {
+        std::string pString = context->ETPITCHBASE()->getText();
+        const char *pTxt = pString.c_str();
+        const char *next;
+        t_pitch p = t_parser::eatPitchETBaseComp(pTxt, &next);
+        astNode *r = new astConst(p, params->owner);
+        return r;
+    }
+    
+    antlrcpp::Any visitItemJIPitch(bellParser::ItemJIPitchContext *context) override {
+        std::string pString = context->children[0]->getText();
+        const char *pTxt = pString.c_str();
+        const char *next;
+        t_pitch p = t_parser::eatPitchJIBaseComp(pTxt, &next);
+        astNode *r = new astConst(p, params->owner);
+        return r;
+    }
+    
+    antlrcpp::Any visitItemPi(bellParser::ItemPiContext *context) override {
+        astNode *r = new astConst(M_PI, params->owner);
+        return r;
+    }
+    
+    
+    antlrcpp::Any visitItemBtSymbol(bellParser::ItemBtSymbolContext *context) override {
+        auto txt = context->BTSYMBOL()->getText();
+        const char *cstr = txt.c_str() + 1;
+        astNode* r = new astConst(gensym(cstr), params->owner);
+        return r;
+    }
+    
+    antlrcpp::Any visitItemQSymbol(bellParser::ItemQSymbolContext *context) override {
+        auto txt = context->children[0]->getText();
+        char cstr[MAX_SYM_LENGTH];
+        const char *inPtr = txt.c_str() + 1;
+        char *outPtr = cstr;
+        int n = 0;
+        while (*inPtr && n < MAX_SYM_LENGTH) {
+            switch (*inPtr) {
+                case 1:
+                    *outPtr++ = ' ';
+                    (*params->codeac)++;
+                    inPtr++;
+                    break;
+                case '\\':
+                    inPtr++;
+                default:
+                    *outPtr++ = *inPtr++;
+                    break;
+            }
+            n++;
+        }
+        *(outPtr - 1) = 0;
+        astNode *r = new astConst(gensym(cstr), params->owner);
+        return r;
+    }
+    
+    antlrcpp::Any visitItemEmptySymbol(bellParser::ItemEmptySymbolContext *context) override {
+        astNode* r = new astConst(gensym(""), params->owner);
+        return r;
+    }
+    
+    antlrcpp::Any visitItemInlet(bellParser::ItemInletContext *context) override {
+        auto txt = context->children[0]->getText();
+        const char *cstr = txt.c_str();
+        int i = atoi(cstr + (txt[0] == '\\' ? 3 : 2));
+        if (params->dataInlets && params->fnDepth == 0 && i > *params->dataInlets)
+            *params->dataInlets = i;
+        astNode* r;
+        switch(context->type->getType()) {
+            case bellParser::INLET: r = new astInlet(i, params->owner); break;
+            case bellParser::INTINLET: r = new astConvInlet<hatom_fn_int>(i, params->owner); break;
+            case bellParser::FLOATINLET: r = new astConvInlet<hatom_fn_float>(i, params->owner); break;
+            case bellParser::RATINLET: r = new astConvInlet<hatom_fn_rat>(i, params->owner); break;
+            case bellParser::PITCHINLET: r = new astConvInlet<hatom_fn_pitch>(i, params->owner); break;
+            default: r = nullptr;
+        }
+        return r;
+    }
+    
+    antlrcpp::Any visitItemBIF(bellParser::ItemBIFContext *context) override {
+        std::string name = context->BIF()->getText();
+        t_function *fn = (*params->bifs)[name];
+        astNode *r = new astConst(fn, params->owner);
+        return r;
+    }
+    
+    antlrcpp::Any visitItemOF(bellParser::ItemOFContext *context) override {
+        std::string name = context->OF()->getText();
+        t_function *fn = (*params->ofTable)[name];
+        astNode *r = new astConst(fn, params->owner);
+        return r;
+    }
+    
+    antlrcpp::Any visitItemMaxFunction(bellParser::ItemMaxFunctionContext *context) override {
+        auto t = context->MAXFUNCTION()->getText();
+        t.pop_back();
+        t.pop_back();
+        t.pop_back();
+        char cstr[MAX_SYM_LENGTH];
+        const char *inPtr = t.c_str() + 3;
+        char *outPtr = cstr;
+        int n = 0;
+        while (*inPtr && n < MAX_SYM_LENGTH - 1) {
+            switch (*inPtr) {
+                case 1:
+                    *outPtr++ = ' ';
+                    (*params->codeac)++;
+                    inPtr++;
+                    break;
+                case '\\':
+                    inPtr++;
+                default:
+                    *outPtr++ = *inPtr++;
+                    break;
+            }
+            n++;
+        }
+        *outPtr = 0;
+        auto *fn = new t_maxFunction(cstr);
+        params->funcs->insert(fn);
+        astNode *r = new astConst(fn, params->owner);
+        return r;
+    }
+    
+    antlrcpp::Any visitItemDirInlet(bellParser::ItemDirInletContext *context) override {
+        auto txt = context->DIRINLET()->getText();
+        const char *cstr = txt.c_str();
+        long i = atol(cstr + (txt[0] == '\\' ? 4 : 3));
+        if (params->directInlets && params->fnDepth == 0 && i > *params->directInlets)
+            *params->directInlets = i;
+        auto fnConst = new astConst((*(params->ofTable))["directin"], params->owner);
+        auto numConst = new astConst(i, params->owner);
+        auto v = new std::vector<astNode*>;
+        v->push_back(numConst);
+        astNode *r = new astFunctionCall(fnConst, v, nullptr, params->owner);
+        return r;
+    }
+    
+    antlrcpp::Any visitItemArgcount(bellParser::ItemArgcountContext *context) override {
+        auto fnConst = new astConst((*(params->bifs))["$argcount"], params->owner);
+        astNode* r = new astFunctionCall(fnConst, params->owner);
+        return r;
+    }
+
+    antlrcpp::Any visitItemNull(bellParser::ItemNullContext *context) override {
+        astNode *r = new astConst(llll_get(), params->owner);
+        return r;
+    }
+    
+    antlrcpp::Any visitItemNil(bellParser::ItemNilContext *context) override {
+        t_llll *ll = llll_get();
+        llll_appendllll(ll, llll_get());
+        astNode *r = new astConst(ll, params->owner);
+        return r;
+    }
+    
+    antlrcpp::Any visitItemSequence(bellParser::ItemSequenceContext *context) override {
+        astNode* r = safeAnyCast<astNode*>(visit(context->sequence()));
+        return r;
+    }
+    
+    antlrcpp::Any visitItemSublist(bellParser::ItemSublistContext *context) override {
+        astNode* s = safeAnyCast<astNode*>(visit(context->sequence()));
+        astNode* r = new astWrap(s, params->owner);
+        return r;
+    }
+    
+    antlrcpp::Any visitVarLocal(bellParser::VarLocalContext *ctx) override {
+        std::string name = ctx->LOCALVAR()->getText();
+        t_symbol *s = gensym(name.c_str() + (name[0] == '\\' ? 2 : 1));
+        astVar* v;
+        if (ctx->KEEP())
+            v = new astKeep(s, params->owner);
+        else if (ctx->UNKEEP())
+            v = new astUnkeep(s, params->owner);
+        else
+            v = new astLocalVar(s, params->owner);
+        addVariableToScope<e_antlr4>(params, s);
+        return static_cast<astNode*>(v);
+    }
+    
+    antlrcpp::Any visitVarPatcher(bellParser::VarPatcherContext *ctx) override {
+        std::string name = ctx->PATCHERVAR()->getText();
+        t_symbol *s = gensym(name.c_str() + (name[0] == '\\' ? 2 : 1));
+        astPatcherVar* v = new astPatcherVar(s, params->owner);
+        (*params->name2patcherVars)[s].insert(v);
+        return static_cast<astNode*>(v);
+    }
+    
+    antlrcpp::Any visitVarGlobal(bellParser::VarGlobalContext *ctx) override {
+        std::string name = ctx->GLOBALVAR()->getText();
+        t_symbol *s = gensym(name.c_str());
+        astGlobalVar *v = new astGlobalVar(params->gvt, s, params->owner);
+        params->globalVariables->insert(v->getVar());
+        return static_cast<astNode*>(v);
+    }
+    
+    antlrcpp::Any visitLvalueSpecs(bellParser::LvalueSpecsContext *ctx) override {
+        auto specs = new lvalueSpecs;
+        for (auto i = ctx->children.begin(); i != ctx->children.end(); ) {
+            char op = (*i++)->getText()[0];
+            astNode* n = safeAnyCast<astNode*>(visit(*i++));
+            auto step = new lvalueStep(op == ':' ? lvalueStep::E_LV_NTH : lvalueStep::E_LV_KEY, n);
+            specs->addStep(step);
+        }
+        return specs;
+    }
+    
+    antlrcpp::Any visitLvalue(bellParser::LvalueContext *context) override {
+        astVar* v = dynamic_cast<astVar*>(safeAnyCast<astNode*>(visit(context->var())));
+        if (context->lvalueSpecs()) {
+            auto s = safeAnyCast<lvalueSpecs*>(visit(context->lvalueSpecs()));
+            auto l = new lvalue(v, s);
+            return l;
+        } else {
+            auto l = new lvalue(v, nullptr);
+            return l;
+        }
+    }
+    
+    antlrcpp::Any visitFakeLvalue(bellParser::FakeLvalueContext *context) override {
+        auto v = safeAnyCast<astNode*>(visit(context->children[0]));
+        auto s = safeAnyCast<lvalueSpecs*>(visit(context->lvalueSpecs()));
+        auto l = new fakeLvalue(v, s);
+        return l;
+    }
+    
+    antlrcpp::Any visitExprSimple(bellParser::ExprSimpleContext *context) override {
+        return visit(context->children[0]);
+    }
+    
+    antlrcpp::Any visitExprLvalue(bellParser::ExprLvalueContext *context) override {
+        lvalue *v = safeAnyCast<lvalue*>(visit(context->lvalue()));
+        astNode *n = v->getVar();
+        lvalueSpecs *s = v->getSpecs();
+        if (s)
+            n = s->toReadNode(n, params->owner);
+        return n;
+    }
+    
+    antlrcpp::Any visitExprFakeLvalue(bellParser::ExprFakeLvalueContext *context) override {
+        fakeLvalue *v = safeAnyCast<fakeLvalue*>(visit(context->fakeLvalue()));
+        astNode *n = v->getNode();
+        lvalueSpecs *s = v->getSpecs();
+        n = s->toReadNode(n, params->owner);
+        return n;
+    }
+    
+    antlrcpp::Any visitExprBinary(bellParser::ExprBinaryContext *context) override {
+        astNode *n1 = safeAnyCast<astNode*>(visit(context->children[0]));
+        if (!n1)
+            return nullptr;
+        astNode *n2 = safeAnyCast<astNode*>(visit(context->children[2]));
+        if (!n2) {
+            delete n1;
+            return nullptr;
+        }
+        astNode *r;
+        switch(context->op->getType()) {
+            case bellParser::PICK: r = new astPickOp(n1, n2, params->owner); break;
+            case bellParser::POW: r = new astOperatorPow(n1, n2, params->owner); break;
+            case bellParser::PLUS: r = new astOperatorPlus(n1, n2, params->owner); break;
+            case bellParser::MINUS: r = new astOperatorMinus(n1, n2, params->owner); break;
+            case bellParser::TIMES: r = new astOperatorTimes(n1, n2, params->owner); break;
+            case bellParser::DIV: r = new astOperatorDiv(n1, n2, params->owner); break;
+            case bellParser::DIVDIV: r = new astOperatorDivdiv(n1, n2, params->owner); break;
+            case bellParser::REM: r = new astOperatorRemainder(n1, n2, params->owner); break;
+            case bellParser::LSHIFT: r = new astOperatorLShift(n1, n2, params->owner); break;
+            case bellParser::RSHIFT: r = new astOperatorDiv(n1, n2, params->owner); break;
+            case bellParser::RANGE: r = new astRangeOp(n1, n2, params->owner); break;
+            case bellParser::REPEAT: r = new astRepeatOp(n1, n2, params->owner); break;
+            case bellParser::EQUAL: r = new astComparatorEq(n1, n2, params->owner); break;
+            case bellParser::NEQ: r = new astComparatorNeq(n1, n2, params->owner); break;
+            case bellParser::LT: r = new astComparatorLt(n1, n2, params->owner); break;
+            case bellParser::LEQ: r = new astComparatorLeq(n1, n2, params->owner); break;
+            case bellParser::GT: r = new astComparatorGt(n1, n2, params->owner); break;
+            case bellParser::GEQ: r = new astComparatorGeq(n1, n2, params->owner); break;
+            case bellParser::BITAND: r = new astOperatorBitAnd(n1, n2, params->owner); break;
+            case bellParser::BITOR: r = new astOperatorBitOr(n1, n2, params->owner); break;
+            case bellParser::BITXOR: r = new astOperatorBitXor(n1, n2, params->owner); break;
+            case bellParser::LOGAND: r = new astSCAnd(n1, n2, params->owner); break;
+            case bellParser::LOGOR: r = new astSCOr(n1, n2, params->owner); break;
+            case bellParser::LOGXOR: r = new astLogXor(n1, n2, params->owner); break;
+            case bellParser::LOGANDEXT: r = new astSCAndExt(n1, n2, params->owner); break;
+            case bellParser::LOGOREXT: r = new astSCOrExt(n1, n2, params->owner); break;
+            default: r = nullptr; break;
+        }
+        return r;
+    }
+    
+    antlrcpp::Any visitExprUPlusMinus(bellParser::ExprUPlusMinusContext *context) override {
+        astNode *n = safeAnyCast<astNode*>(visit(context->expr()));
+        if (n && context->UMINUS().size() % 2)
+            n = new astOperatorUMinus(n, params->owner);
+        return n;
+    }
+
+    antlrcpp::Any visitExprTR(bellParser::ExprTRContext *context) override {
+        astNode *n = safeAnyCast<astNode*>(visit(context->expr()));
+        astNode *r;
+        switch(context->op->getType()) {
+            case bellParser::T: r = new astOperatorT(n, params->owner); break;
+            case bellParser::R: r = new astOperatorR(n, params->owner); break;
+        }
+        return r;
+    }
+    
+    antlrcpp::Any visitExprNot(bellParser::ExprNotContext *context) override {
+        astNode *n = safeAnyCast<astNode*>(visit(context->children.back()));
+        if (!n) {
+            return nullptr;
+        }
+        astNode *r;
+        switch(context->op->getType()) {
+            case bellParser::LOGNOT: r = new astLogNot(n, params->owner); break;
+            case bellParser::BITNOT: r = new astOperatorBitNot(n, params->owner); break;
+        }
+        return r;
+    }
+    
+    antlrcpp::Any visitInitAssignment(bellParser::InitAssignmentContext *context) override {
+        std::string name = context->LOCALVAR()->getText();
+        t_symbol *s = gensym(name.c_str() + (name[0] == '\\' ? 2 : 1));
+        addVariableToScope<e_antlr4>(params, s);
+        astNode *rv = safeAnyCast<astNode*>(visit(context->list()));
+        astNode *r = new astInit(s, rv, params->owner);
+        return r;
+    }
+    
+    antlrcpp::Any visitTrueAssignment(bellParser::TrueAssignmentContext *context) override {
+        lvalue *lv = safeAnyCast<lvalue*>(visit(context->lvalue()));
+        astNode *rv = safeAnyCast<astNode*>(visit(context->list()));
+        if (auto s = lv->getSpecs(); s == nullptr) {
+            astNode *n;
+            switch(context->op->getType()) {
+                case bellParser::ASSIGN: n = new astAssign(lv->getVar(), rv, params->owner); break;
+                case bellParser::APOW: n = new astOperatorAPow(lv->getVar(), rv, params->owner); break;
+                case bellParser::ATIMES: n = new astOperatorATimes(lv->getVar(), rv, params->owner); break;
+                case bellParser::ADIVDIV: n = new astOperatorADivdiv(lv->getVar(), rv, params->owner); break;
+                case bellParser::ADIV: n = new astOperatorADiv(lv->getVar(), rv, params->owner); break;
+                case bellParser::AREM: n = new astOperatorARemainder(lv->getVar(), rv, params->owner); break;
+                case bellParser::APLUS: n = new astOperatorAPlus(lv->getVar(), rv, params->owner); break;
+                case bellParser::AMINUS: n = new astOperatorAMinus(lv->getVar(), rv, params->owner); break;
+                case bellParser::ALOGAND: n = new astSCAAnd(lv->getVar(), rv, params->owner); break;
+                case bellParser::ALOGANDEXT: n = new astSCAAndExt(lv->getVar(), rv, params->owner); break;
+                case bellParser::ALOGXOR: n = new astLogAXor(lv->getVar(), rv, params->owner); break;
+                case bellParser::ALOGOR: n = new astSCAOr(lv->getVar(), rv, params->owner); break;
+                case bellParser::ALOGOREXT: n = new astSCAOrExt(lv->getVar(), rv, params->owner); break;
+                case bellParser::ABITAND: n = new astOperatorABitAnd(lv->getVar(), rv, params->owner); break;
+                case bellParser::ABITXOR: n = new astOperatorABitXor(lv->getVar(), rv, params->owner); break;
+                case bellParser::ABITOR: n = new astOperatorABitOr(lv->getVar(), rv, params->owner); break;
+                case bellParser::ALSHIFT: n = new astOperatorALShift(lv->getVar(), rv, params->owner); break;
+                case bellParser::ARSHIFT: n = new astOperatorARShift(lv->getVar(), rv, params->owner); break;
+                case bellParser::ANTH: n = new astNthAssignOp(lv->getVar(), rv, params->owner); break;
+                case bellParser::ACONCAT: n = new astConcatAssignOp(lv->getVar(), rv, params->owner); break;
+                case bellParser::ARCONCAT: n = new astRevConcatAssignOp(lv->getVar(), rv, params->owner); break;
+                default: n = nullptr; break;
+            }
+            return n;
+        } else {
+            astNode *n;
+            switch(context->op->getType()) {
+                case bellParser::ASSIGN: n = new astRichAssignment<E_RA_STANDARD>(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::ATIMES: n = new astOperatorRATimes(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::APOW: n = new astOperatorRAPow(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::ADIVDIV: n = new astOperatorRADivdiv(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::ADIV: n = new astOperatorRADiv(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::AREM: n = new astOperatorRARemainder(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::APLUS: n = new astOperatorRAPlus(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::AMINUS: n = new astOperatorRAMinus(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::ALOGAND: n = new astLogRASCAnd(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::ALOGANDEXT: n = new astLogRASCAndExt(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::ALOGXOR: n = new astLogRAXor(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::ALOGOR: n = new astLogRASCOr(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::ALOGOREXT: n = new astLogRASCOrExt(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::ABITAND: n = new astOperatorRABitAnd(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::ABITXOR: n = new astOperatorRABitXor(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::ABITOR: n = new astOperatorRABitOr(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::ALSHIFT: n = new astOperatorRALShift(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::ARSHIFT: n = new astOperatorRARShift(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::ACONCAT: n = new astRAConcat(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::ARCONCAT: n = new astRARConcat(lv->getVar(), rv, s, params->owner); break;
+
+            }
+            return n;
+        }
+    }
+    
+    antlrcpp::Any visitFakeAssignment(bellParser::FakeAssignmentContext *context) override {
+        fakeLvalue *lv = safeAnyCast<fakeLvalue*>(visit(context->fakeLvalue()));
+        astNode *rv = safeAnyCast<astNode*>(visit(context->list()));
+        auto s = lv->getSpecs();
+        astNode* n;
+        switch(context->op->getType()) {
+            case bellParser::ASSIGN: n = new astRichEdit<E_RA_STANDARD>(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::ATIMES: n = new astOperatorRETimes(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::APOW: n = new astOperatorREPow(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::ADIVDIV: n = new astOperatorREDivdiv(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::ADIV: n = new astOperatorREDiv(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::AREM: n = new astOperatorRERemainder(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::APLUS: n = new astOperatorREPlus(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::AMINUS: n = new astOperatorREMinus(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::ALOGAND: n = new astLogRESCAnd(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::ALOGANDEXT: n = new astLogRESCAndExt(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::ALOGXOR: n = new astLogREXor(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::ALOGOR: n = new astLogRESCOr(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::ALOGOREXT: n = new astLogRESCOrExt(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::ABITAND: n = new astOperatorREBitAnd(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::ABITXOR: n = new astOperatorREBitXor(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::ABITOR: n = new astOperatorREBitOr(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::ALSHIFT: n = new astOperatorRELShift(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::ARSHIFT: n = new astOperatorRERShift(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::ACONCAT: n = new astREConcat(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::ARCONCAT: n = new astRERConcat(lv->getNode(), rv, s, params->owner); break;
+        }
+        return n;
+    }
+    
+    antlrcpp::Any visitTrueAApply(bellParser::TrueAApplyContext *ctx) override {
+        auto lv = safeAnyCast<lvalue*>(visit(ctx->lvalue()));
+        auto v = lv->getVar();
+        astFunctionCall *rv = dynamic_cast<astFunctionCall*>(safeAnyCast<astNode*>(visit(ctx->funcall())));
+        if (auto s = lv->getSpecs(); s == nullptr) {
+            rv->addDataflowStyleArg(v);
+            astNode *r = new astAssign(v, rv, params->owner);
+            return r;
+        } else {
+            rv->addDataflowStyleArg(new astConst(params->owner));
+            astNode *r = new astRichAccessApplyOp<astRichAssignment<E_RA_SHORTCIRCUIT>>(v, rv, s, params->owner);
+            return r;
+        }
+    }
+    
+    antlrcpp::Any visitFakeAApply(bellParser::FakeAApplyContext *ctx) override {
+        auto lv = safeAnyCast<fakeLvalue*>(visit(ctx->fakeLvalue()));
+        auto n = lv->getNode();
+        astFunctionCall *rv = dynamic_cast<astFunctionCall*>(safeAnyCast<astNode*>(visit(ctx->funcall())));
+        auto s = lv->getSpecs();
+        rv->addDataflowStyleArg(new astConst(params->owner));
+        astNode *r = new astRichAccessApplyOp<astRichEdit<E_RA_SHORTCIRCUIT>>(n, rv, s, params->owner);
+        return r;
+    }
+    
+    antlrcpp::Any visitOutletAssignment(bellParser::OutletAssignmentContext *ctx) override {
+        auto l = safeAnyCast<astNode*>(visit(ctx->list()));
+        if (!l)
+            return nullptr;
+        auto txt = ctx->OUTLET()->getText();
+        const char *cstr = txt.c_str();
+        long i = atol(cstr + (txt[0] == '\\' ? 3 : 2));
+        if (params->dataOutlets && i > *(params->dataOutlets))
+            *(params->dataOutlets) = i;
+        auto fnConst = new astConst((*(params->bifs))["outlet"], params->owner);
+        auto numConst = new astConst(i, params->owner);
+        auto v = new std::vector<astNode*>;
+        v->push_back(numConst);
+        v->push_back(l);
+        astNode *r = new astFunctionCall(fnConst, v, nullptr, params->owner);
+        return r;
+    }
+    
+    antlrcpp::Any visitDirOutletAssignment(bellParser::DirOutletAssignmentContext *ctx) override {
+        auto l = safeAnyCast<astNode*>(visit(ctx->list()));
+        if (!l)
+            return nullptr;
+        auto txt = ctx->DIROUTLET()->getText();
+        const char *cstr = txt.c_str();
+        long i = atol(cstr + (txt[0] == '\\' ? 4 : 3));
+        if (params->directOutlets && i > *(params->directOutlets))
+            *(params->directOutlets) = i;
+        auto fnConst = new astConst((*(params->ofTable))["directout"], params->owner);
+        auto numConst = new astConst(i, params->owner);
+        auto v = new std::vector<astNode*>;
+        v->push_back(numConst);
+        v->push_back(l);
+        astNode *r = new astFunctionCall(fnConst, v, nullptr, params->owner);
+        return r;
+    }
+
+    antlrcpp::Any visitIfthen(bellParser::IfthenContext *ctx) override {
+        auto i = safeAnyCast<astNode*>(visit(ctx->sequence()));
+        auto t = safeAnyCast<astNode*>(visit(ctx->list()));
+        astNode* n = new astIfThenElse(i, t, nullptr, params->owner);
+        return n;
+    }
+    
+    antlrcpp::Any visitIfthenelse(bellParser::IfthenelseContext *ctx) override {
+        auto i = safeAnyCast<astNode*>(visit(ctx->sequence(0)));
+        auto t = safeAnyCast<astNode*>(visit(ctx->sequence(1)));
+        auto e = safeAnyCast<astNode*>(visit(ctx->list()));
+        astNode* n = new astIfThenElse(i, t, e, params->owner);
+        return n;
+    }
+
+    antlrcpp::Any visitListEnd(bellParser::ListEndContext *ctx) override {
+        return visit(ctx->children[0]);
+    }
+    
+    antlrcpp::Any visitList(bellParser::ListContext *ctx) override {
+        if (ctx->children.size() == 1)
+            return visit(ctx->children[0]);
+        auto v = new std::vector<astNode*>;
+        for (auto child : ctx->children) {
+            astNode* n = safeAnyCast<astNode*>(visit(child));
+            v->push_back(n);
+        }
+        astNode* r = new astConcat(v, params->owner);
+        return r;
+    }
+    
+};
+
+
+class codeVisitor: public preprocBaseVisitor {
+        
+public:
+    //std::string output;
+
+};
+
+t_mainFunction *codableobj_parse_buffer_antlr(t_codableobj *x, long *codeac, t_atom_long *dataInlets, t_atom_long *dataOutlets, t_atom_long *directInlets, t_atom_long *directOutlets) {
+    std::string pgm;
+    
+    t_parseParams params;
+    params.ast = NULL;
+    params.fnDepth = 0;
+    params.localVariablesStack = params.localVariablesStackBase;
+    params.localVariablesStackBase[0] = nullptr;
+    params.localVariablesStackBaseV[0] = new std::vector<t_localVar>;
+    params.localVariablesStackV = params.localVariablesStackBaseV;
+    params.localVariablesAuxMapStack = params.localVariablesAuxMapStackBase;
+    params.localVariablesAuxMapStack[0] = new std::unordered_map<t_symbol *, int>;
+    params.liftedVariablesStack = params.liftedVariablesStackBase;
+    params.argumentsStack = params.argumentsStackBase;
+    params.argumentsStackBase[0] = nullptr;
+    params.argumentsStackBaseV[0] = new std::vector<funArg*>;
+    params.argumentsStackV = params.argumentsStackBaseV;
+    params.gvt = bach->b_gvt;
+    params.bifs = bach->b_bifTable;
+    params.codeac = codeac;
+    *params.codeac = 0;
+    params.dataInlets = dataInlets;
+    params.dataOutlets = dataOutlets;
+    params.directInlets = directInlets;
+    params.directOutlets = directOutlets;
+    params.owner = x;
+    params.ofTable = x->c_ofTable;
+    params.name2patcherVars = new pvMap;
+    params.globalVariables = new std::unordered_set<t_globalVariable*>;
+    params.funcs = new std::unordered_set<t_function*>;
+    
+    std::string code = x->c_text;
+    bool included = false;
+    
+    do {
+        ANTLRInputStream preprocInput(code);
+        preprocLexer pplexer(&preprocInput);
+        CommonTokenStream preprocTokens(&pplexer);
+        preproc pp(&preprocTokens);
+        //preprocParser.removeErrorListeners();
+        //parser.addErrorListener(new bellErrorListener());
+        preproc::CodeContext* pptree = pp.code();
+        codeVisitor ppvisitor;
+        ppvisitor.visit(pptree);
+        
+        code = pp.output;
+        included = pp.included;
+        //post(code.c_str());
+    } while (included);
+    
+    ANTLRInputStream input(code);
+    bellLexer lexer(&input);
+    lexer.setCodeac(params.codeac);
+    CommonTokenStream tokens(&lexer);
+    bellParser parser(&tokens);
+    parser.setTrace(true);
+    parser.setProfile(true);
+    parser.removeErrorListeners();
+    parser.addErrorListener(new bellErrorListener());
+        
+    bellParser::ProgramContext* tree = parser.program();
+        
+    everythingVisitor visitor(&params);
+    auto r = safeAnyCast<astNode*>(visitor.visit(tree));
+    
+    if (r) {
+        t_mainFunction *mainFunction = new t_mainFunction(
+            r,
+            params.localVariablesStackBaseV[0],
+            params.globalVariables,
+            params.name2patcherVars,
+            params.funcs,
+            x
+        );
+        codableobj_clear_included_filewatchers(x);
+        //codableobj_add_included_filewatchers(x, &lexparams.files);
+        return mainFunction;
+    } else {
+        object_error((t_object *) x, "Syntax errors present — couldn't parse code");
+        delete params.name2patcherVars;
+        delete params.globalVariables;
+        for (t_function* f: *params.funcs)
+            f->decrease();
+        delete params.funcs;
+        return nullptr;
+    }
+    
+}
+

@@ -230,7 +230,7 @@
 					"patching_rect" : [ 228.5, 73.0, 239.0, 55.0 ],
 					"style" : "",
 					"text" : "Select a grace note and press V to dump it from the playout (off-line play)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

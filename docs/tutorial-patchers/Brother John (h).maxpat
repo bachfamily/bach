@@ -495,7 +495,7 @@
 					"patching_rect" : [ 429.0, 481.0, 154.0, 33.0 ],
 					"style" : "",
 					"text" : "Ouch... all this effort just to play some midi???",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

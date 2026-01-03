@@ -733,7 +733,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 475.0, 539.0, 229.0, 20.0 ],
 					"text" : "...yzarc teg thgim I gnihtyreve esrever I fI",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

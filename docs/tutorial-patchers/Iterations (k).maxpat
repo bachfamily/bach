@@ -418,7 +418,7 @@
 					"patching_rect" : [ 233.0, 399.0, 202.0, 20.0 ],
 					"style" : "",
 					"text" : "What if I just wanted a single chord?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

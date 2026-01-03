@@ -2,7 +2,7 @@
     /*
      *  stringparser.l
      *
-     * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+     * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
      *
      * This program is free software: you can redistribute it and/or modify it
      * under the terms of the GNU General Public License
@@ -64,8 +64,8 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
     
     #include "parsers/bach_parser.hpp"
     #include "bell/ast.hpp"
-    #include "stringparser.h"
-    
+    #include "bell/bellparser_commons.h"
+
     #include "stringparser_tab_nolines.h"
     
     #define YY_DECL int yylex \
@@ -287,7 +287,7 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
 }
 
 "~" {
-    code_dev_post("lex: OPERATOR !\n");
+    code_dev_post("lex: OPERATOR ~\n");
     BEGIN lexparams->setState(UNARY_NOARGS);
     return BITNOT;
 }

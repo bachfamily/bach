@@ -1,7 +1,7 @@
 /*
  *  notation_maxinterface.c
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -22,17 +22,45 @@
 #include "notation/notation_attrs.h"
 #include "notation/notation_undo.h"
 #include "notation/notation_markers.h"
+#include "parsers/pitchparser/pitchparser.h"
 
 DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_notation_obj, constraint_pitches_when_editing, notationobj_getattr_pitcheditrange);
 DEFINE_LLLL_ATTR_DEFAULT_SETTER(t_notation_obj, constraint_pitches_when_editing, notationobj_setattr_pitcheditrange);
 DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_notation_obj, default_noteslots, notationobj_getattr_defaultnoteslots)
 DEFINE_LLLL_ATTR_DEFAULT_SETTER(t_notation_obj, default_noteslots, notationobj_setattr_defaultnoteslots);
 
+DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_notation_obj, voicegroups_as_llll, notationobj_getattr_voicegroups);
+DEFINE_LLLL_ATTR_DEFAULT_SETTER(t_notation_obj, voicegroups_as_llll, notationobj_setattr_voicegroups);
+
+DEFINE_PITCH_ATTR_DEFAULT_GETTER(t_notation_obj, ji_base_for_ratios, notationobj_getattr_jibase);
+
 DEFINE_NOTATIONOBJ_LONGPTR_GETTER(midichannels_as_longlist, num_voices)
+DEFINE_NOTATIONOBJ_SYMPTR_GETTER(notationstyles_as_symlist, num_voices)
 DEFINE_NOTATIONOBJ_ATOMPTR_GETTER(prevent_editing_atom, num_prevent_editing_elems)
 DEFINE_NOTATIONOBJ_LONGPTR_GETTER(background_slots, num_background_slots)
 DEFINE_NOTATIONOBJ_LONGPTR_GETTER(popup_menu_slots, num_popup_menu_slots)
 
+
+t_max_err notationobj_setattr_jibase(t_notation_obj *x, t_object *attr, long ac, t_atom *av)
+{
+    t_symbol *pitchSym;
+    if (ac == 1 && (pitchSym = atom_getsym(av)) != nullptr) {
+        t_pitch p;
+        t_pitchParser parser;
+        p = parser.parse(pitchSym->s_name);
+        if (p != t_pitch::NaP) {
+            if (!p.isPureJI()) {
+                // gotta make it pure JI to compute JIratios properly...
+                const std::vector<t_int8> HEJIcommas(BACH_PRIMES_JI_SIZE-2, 0);
+                t_pitch q = t_pitch(p.getPlofET(), HEJIcommas, p.getOctave());
+                x->ji_base_for_ratios = q;
+            } else {
+                x->ji_base_for_ratios = p;
+            }
+        }
+    }
+    return MAX_ERR_NONE;
+}
 
 
 
@@ -121,8 +149,8 @@ void send_voicepixelpos(t_notation_obj *r_ob, char obj_type, long num_voices, vo
     lock_general_mutex(r_ob);
     for (i = 0; i < num_voices; i++){
         t_llll *inner_llll = llll_get();
-        double staff_top = get_staff_top_y(r_ob, (t_voice *) curr_voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
-        double staff_bottom = get_staff_bottom_y(r_ob, (t_voice *) curr_voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
+        double staff_top = voice_get_staff_top_y(r_ob, (t_voice *) curr_voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
+        double staff_bottom = voice_get_staff_bottom_y(r_ob, (t_voice *) curr_voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
         llll_appenddouble(inner_llll, ((t_voice *) curr_voice)->middleC_y, 0, WHITENULL_llll);
         llll_appenddouble(inner_llll, staff_bottom, 0, WHITENULL_llll);
         llll_appenddouble(inner_llll, staff_top, 0, WHITENULL_llll);
@@ -416,14 +444,14 @@ t_llll *chord_get_as_llll_for_sending(t_notation_obj *r_ob, t_chord *chord, e_da
 
 		if (!chord->firstnote) { // rest
 			t_llll* out_llll = llll_get();
-            llll_appendsym(out_llll, ((command_number < 0) || (command_number >= CONST_MAX_COMMANDS)) ? handle_router(_llllobj_sym_rest, forced_routers) : r_ob->commands[command_number].command_rest, 0, WHITENULL_llll);
+            llll_appendsym(out_llll, ((command_number < 0) || (command_number >= CONST_MAX_COMMANDS)) ? handle_router(_llllobj_sym_rest, forced_routers) : r_ob->commands[command_number].command_rest);
 			append_voice_or_full_path_to_playout_syntax(r_ob, out_llll, (t_notation_item *)chord, mode);
-			llll_appendlong(out_llll, chord->parent->voiceparent->v_ob.midichannel, 0, WHITENULL_llll);
+			llll_appendlong(out_llll, chord->parent->voiceparent->v_ob.midichannel);
 			llll_appendllll(out_llll, get_scorechord_values_as_llll(r_ob, chord, mode, true));
-			llll_appendobj(all_notes_llll, out_llll, 0, WHITENULL_llll);
+			llll_appendobj(all_notes_llll, out_llll);
 
 			if (references)
-				llll_appendobj(*references, chord, 0, WHITENULL_llll);
+				llll_appendobj(*references, chord);
 		} else {
 
 			t_note *note;
@@ -435,14 +463,14 @@ t_llll *chord_get_as_llll_for_sending(t_notation_obj *r_ob, t_chord *chord, e_da
                     } else {
                         t_llll* out_llll = llll_get();
 
-                        llll_appendsym(out_llll, ((command_number < 0) || (command_number >= CONST_MAX_COMMANDS)) ? handle_router(_llllobj_sym_note, forced_routers) : r_ob->commands[command_number].command_note, 0, WHITENULL_llll);
+                        llll_appendsym(out_llll, ((command_number < 0) || (command_number >= CONST_MAX_COMMANDS)) ? handle_router(_llllobj_sym_note, forced_routers) : r_ob->commands[command_number].command_note);
                         append_voice_or_full_path_to_playout_syntax(r_ob, out_llll, (t_notation_item *)note, mode);
-                        llll_appendlong(out_llll, chord->parent->voiceparent->v_ob.midichannel, 0, WHITENULL_llll);
-                        llll_appendllll(out_llll, get_single_scorenote_values_as_llll(r_ob, note, mode), 0, WHITENULL_llll);
-                        llll_appendobj(all_notes_llll, out_llll, 0, WHITENULL_llll);
+                        llll_appendlong(out_llll, chord->parent->voiceparent->v_ob.midichannel);
+                        llll_appendllll(out_llll, get_single_scorenote_values_as_llll(r_ob, note, mode));
+                        llll_appendobj(all_notes_llll, out_llll);
 
                         if (references)
-                            llll_appendobj(*references, note, 0, WHITENULL_llll);
+                            llll_appendobj(*references, note);
                     }
                 }
             }
@@ -464,15 +492,15 @@ t_llll *chord_get_as_llll_for_sending(t_notation_obj *r_ob, t_chord *chord, e_da
                     continue;
 
 				t_llll* out_llll = llll_get();
-				llll_appendsym(out_llll, ((command_number < 0) || (command_number >= CONST_MAX_COMMANDS)) ? handle_router(_llllobj_sym_note, forced_routers) : r_ob->commands[command_number].command_note, 0, WHITENULL_llll);
+				llll_appendsym(out_llll, ((command_number < 0) || (command_number >= CONST_MAX_COMMANDS)) ? handle_router(_llllobj_sym_note, forced_routers) : r_ob->commands[command_number].command_note);
 				append_voice_or_full_path_to_playout_syntax(r_ob, out_llll, (t_notation_item *)note, mode);
-				llll_appendlong(out_llll, chord->voiceparent->v_ob.midichannel, 0, WHITENULL_llll);
-				llll_appendllll(out_llll, get_single_rollnote_values_as_llll(r_ob, note, mode), 0, WHITENULL_llll);
+				llll_appendlong(out_llll, chord->voiceparent->v_ob.midichannel);
+				llll_appendllll(out_llll, get_single_rollnote_values_as_llll(r_ob, note, mode));
 
-				llll_appendobj(all_notes_llll, out_llll, 0, WHITENULL_llll);
+				llll_appendobj(all_notes_llll, out_llll);
 
 				if (references)
-					llll_appendobj(*references, note, 0, WHITENULL_llll);
+					llll_appendobj(*references, note);
 			}
 		}
 
@@ -748,6 +776,9 @@ void build_popup_barline_menu(t_notation_obj *r_ob, t_measure *measure)
     jpopupmenu_additem(r_ob->popup_barline, 1207, "Solid (s)", NULL, measure->end_barline->barline_type == k_BARLINE_SOLID, 0, NULL);
     jpopupmenu_additem(r_ob->popup_barline, 1208, "Tick (k)", NULL, measure->end_barline->barline_type == k_BARLINE_TICK, 0, NULL);
     jpopupmenu_additem(r_ob->popup_barline, 1209, "Intervoices (i)", NULL, measure->end_barline->barline_type == k_BARLINE_INTERVOICES, 0, NULL);
+    jpopupmenu_additem(r_ob->popup_barline, 1210, "Repeat Start (rs)", NULL, measure->end_barline->barline_type == k_BARLINE_INTERVOICES, 0, NULL);
+    jpopupmenu_additem(r_ob->popup_barline, 1211, "Repeat End (re)", NULL, measure->end_barline->barline_type == k_BARLINE_INTERVOICES, 0, NULL);
+    jpopupmenu_additem(r_ob->popup_barline, 1212, "Repeat End And Start (res)", NULL, measure->end_barline->barline_type == k_BARLINE_INTERVOICES, 0, NULL);
 
     jpopupmenu_setfont(r_ob->popup_barline, r_ob->popup_main_font);
 }
@@ -859,6 +890,12 @@ void build_popup_note_menu(t_notation_obj *r_ob, t_note *note, e_element_types c
         jpopupmenu_destroy(r_ob->popup_note);
     if (r_ob->popup_note_enharmonicity)
         jpopupmenu_destroy(r_ob->popup_note_enharmonicity);
+    if (r_ob->popup_note_approximate)
+        jpopupmenu_destroy(r_ob->popup_note_approximate);
+    if (r_ob->popup_note_approximate_et)
+        jpopupmenu_destroy(r_ob->popup_note_approximate_et);
+    if (r_ob->popup_note_approximate_ji)
+        jpopupmenu_destroy(r_ob->popup_note_approximate_ji);
     if (r_ob->popup_note_slots)
         jpopupmenu_destroy(r_ob->popup_note_slots);
     if (r_ob->popup_note_paste)
@@ -872,6 +909,9 @@ void build_popup_note_menu(t_notation_obj *r_ob, t_note *note, e_element_types c
 
     r_ob->popup_note = jpopupmenu_create();
     r_ob->popup_note_enharmonicity = jpopupmenu_create();
+    r_ob->popup_note_approximate = jpopupmenu_create();
+    r_ob->popup_note_approximate_et = jpopupmenu_create();
+    r_ob->popup_note_approximate_ji = jpopupmenu_create();
     r_ob->popup_note_slots = jpopupmenu_create();
     r_ob->popup_note_copy = jpopupmenu_create();
     r_ob->popup_note_copy_slot = jpopupmenu_create();
@@ -917,16 +957,91 @@ void build_popup_note_menu(t_notation_obj *r_ob, t_note *note, e_element_types c
     jpopupmenu_addseperator(r_ob->popup_note);
 
     // enharmonicity (400)
-    if (note) {
-        note_get_enharmonic_possibilities(r_ob, note, &curr_idx);
+    if (note && note->pitch_displayed.isPureET()) {
+        note_get_ET_enharmonic_possibilities(r_ob, note, &curr_idx);
+        jpopupmenu_additem(r_ob->popup_note_enharmonicity, 472, "Auto", NULL, 0, 0, NULL);
         for (i = 0; i < CONST_MAX_ENHARMONICITY_OPTIONS; i++) {
             char *outname = NULL;
-            midicents2notename(r_ob->middleC_octave, r_ob->current_enharmonic_list_screenmc[i], r_ob->current_enharmonic_list_screenacc[i], r_ob->note_names_style, true, &outname);
+            midicents2notename(r_ob->middleC_octave, r_ob->current_enharmonic_list_display_mc[i], r_ob->current_enharmonic_list_display_alter_ET[i], r_ob->note_names_style, true, &outname);
             jpopupmenu_additem(r_ob->popup_note_enharmonicity, 400 + i + 1, outname, NULL, i == curr_idx, 0, NULL);
             bach_freeptr(outname);
         }
     }
-    jpopupmenu_addsubmenu(r_ob->popup_note, "Enharmonicity", r_ob->popup_note_enharmonicity, 0);
+    jpopupmenu_addsubmenu(r_ob->popup_note, "Enharmonicity", r_ob->popup_note_enharmonicity, !note->pitch_displayed.isPureET());
+
+    
+    // approximate (700)
+    char buf[100];
+    if (note) {
+        t_voice *voice = chord_get_voice(r_ob, note->parent);
+        if (voice && voice->notation_style == k_VOICE_NOTATION_STYLE_JI) {
+            snprintf_zero(buf, 100, "To Current JI Limit (%ld)", r_ob->ji_limit);
+            jpopupmenu_additem(r_ob->popup_note_approximate, 702, buf, NULL, 0, 0, NULL);
+        } else {
+            snprintf_zero(buf, 100, "To Current Tone Division (%ld-EDO)", r_ob->tone_division * 6);
+            jpopupmenu_additem(r_ob->popup_note_approximate, 701, buf, NULL, 0, 0, NULL);
+        }
+        
+        jpopupmenu_additem(r_ob->popup_note_approximate_et, 711, "To Semitones (12-EDO)", NULL, 0, 0, NULL);
+        jpopupmenu_additem(r_ob->popup_note_approximate_et, 712, "To Third-tones (18-EDO)", NULL, 0, 0, NULL);
+        jpopupmenu_additem(r_ob->popup_note_approximate_et, 713, "To Quarter-tones (24-EDO)", NULL, 0, 0, NULL);
+        jpopupmenu_additem(r_ob->popup_note_approximate_et, 714, "To Sixth-tones (36-EDO)", NULL, 0, 0, NULL);
+        jpopupmenu_additem(r_ob->popup_note_approximate_et, 715, "To Eighth-tones (48-EDO)", NULL, 0, 0, NULL);
+        jpopupmenu_additem(r_ob->popup_note_approximate_et, 716, "To Cents (200-EDO)", NULL, 0, 0, NULL);
+        
+//        for (i = 0; i < CONST_MAX_ENHARMONICITY_OPTIONS; i++) {
+//            char *outname = NULL;
+//            midicents2notename(r_ob->middleC_octave, r_ob->current_enharmonic_list_display_mc[i], r_ob->current_enharmonic_list_display_alter_ET[i], r_ob->note_names_style, true, &outname);
+//            jpopupmenu_additem(r_ob->popup_note_enharmonicity, 400 + i + 1, outname, NULL, i == curr_idx, 0, NULL);
+//            bach_freeptr(outname);
+//        }
+        
+        // JI approximations
+        const std::vector<int> allowed_primes = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47};
+        const double err_thresh_mc = 66.66667;
+        const long maxden = 10000;
+        const double bestErrorRelativeTolerance = 1.2;
+        const double tenneyHeightFactor = 50;
+        const double tenneyHeightExp = 0.2;
+        const double howManyConvergents = 10;
+        std::vector<t_rational> approxs = get_convergents(notationobj_cents_to_freqratio(r_ob, note->midicents), howManyConvergents, true, err_thresh_mc, true, true, allowed_primes); // all primes allowed
+//        std::vector<t_rational> approxs = rational_approximation_with_primes(pow(2., note->midicents/1200.), allowed_primes, err_thresh_mc, true, maxden);
+        
+        if (r_ob->current_ji_approximation_ratio_list)
+            bach_freeptr(r_ob->current_ji_approximation_ratio_list);
+        
+        // num approxs must be < 25
+        const long MAX_APPROXS = 20;
+        
+        long num_approxs = approxs.size();
+        r_ob->current_ji_approximation_ratio_list_size = MIN(MAX_APPROXS, num_approxs);
+        if (num_approxs >= 1) {
+            r_ob->current_ji_approximation_ratio_list = (t_rational *)bach_newptr(num_approxs * sizeof(t_rational));
+            
+            for (long i = 0; i < approxs.size() && i < MAX_APPROXS; i++) {
+                t_rational r = approxs[i];
+                r_ob->current_ji_approximation_ratio_list[i] = r;
+                long limit = rational_get_jilimit(r);
+                double err = notationobj_freqratio_to_cents(r_ob, r) - note->midicents;
+                double abs_err = fabs(err);
+                if (abs_err == 0)
+                    snprintf_zero(buf, 100, "%ld/%ld (%ld-limit, no error)", r.num(), r.den(), limit, r_ob->cents_symbol ? r_ob->cents_symbol->s_name : "");
+                else if (abs_err > 5)
+                    snprintf_zero(buf, 100, "%ld/%ld (%ld-limit, error = %ld%s)", r.num(), r.den(), limit, (long)round(err), r_ob->cents_symbol ? r_ob->cents_symbol->s_name : "");
+                else if (abs_err > 1)
+                    snprintf_zero(buf, 100, "%ld/%ld (%ld-limit, error = %.1f%s)", r.num(), r.den(), limit, err, r_ob->cents_symbol ? r_ob->cents_symbol->s_name : "");
+                else if (abs_err > 0.1)
+                    snprintf_zero(buf, 100, "%ld/%ld (%ld-limit, error = %.2f%s)", r.num(), r.den(), limit, err, r_ob->cents_symbol ? r_ob->cents_symbol->s_name : "");
+                else
+                    snprintf_zero(buf, 100, "%ld/%ld (%ld-limit, error = %.3f%s)", r.num(), r.den(), limit, err, r_ob->cents_symbol ? r_ob->cents_symbol->s_name : "");
+                jpopupmenu_additem(r_ob->popup_note_approximate_ji, 750 + i + 1, buf, NULL, note->pitch_displayed.isPureJI() && note->pitch_displayed.getJIRatio()/r_ob->ji_base_for_ratios.getJIRatio() == r, 0, NULL);
+            }
+        }
+    }
+    jpopupmenu_addsubmenu(r_ob->popup_note_approximate, "Equal Temperament", r_ob->popup_note_approximate_et, 0);
+    snprintf_zero(buf, 100, "Just Intonation (ratios w.r.t. %s)", r_ob->ji_base_for_ratios.toString().c_str());
+    jpopupmenu_addsubmenu(r_ob->popup_note_approximate, buf, r_ob->popup_note_approximate_ji, 0);
+    jpopupmenu_addsubmenu(r_ob->popup_note, "Approximate", r_ob->popup_note_approximate, 0);
 
 
     // slots (300)
@@ -966,8 +1081,8 @@ void build_popup_note_menu(t_notation_obj *r_ob, t_note *note, e_element_types c
 
     // various (470)
     jpopupmenu_addseperator(r_ob->popup_note);
-    jpopupmenu_additem(r_ob->popup_note, 471, "Snap Pitch To Grid", NULL, 0, 0, NULL);
-    jpopupmenu_additem(r_ob->popup_note, 472, "Retranscribe Pitches", NULL, 0, 0, NULL);
+//    jpopupmenu_additem(r_ob->popup_note, 471, "Snap Pitch To Grid", NULL, 0, 0, NULL);
+//    jpopupmenu_additem(r_ob->popup_note, 472, "Retranscribe Pitches", NULL, 0, 0, NULL);
     if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
         jpopupmenu_additem(r_ob->popup_note, 473, "Align In Time", NULL, 0, 0, NULL);
         jpopupmenu_additem(r_ob->popup_note, 474, "Evenly Distribute In Time", NULL, 0, 0, NULL);
@@ -1304,11 +1419,13 @@ void notationobj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_di
     long ac_backgroundslots, ac_mainstavescolor, ac_auxiliarystavescolor;
     t_atom *av_backgroundslots = NULL, *av_mainstavescolor = NULL, *av_auxiliarystavescolor = NULL;
     t_atom_long *av_long = NULL;
-    long has_backgroundslots = 0, has_slotsbgalpha = 0, has_backgroundslotfontsize = 0, has_velocityhandling = 0, has_notificationsformessages = 0, has_showtempointerpline = 0, has_continuousbang = 0;
+    long has_backgroundslots = 0, has_slotsbgalpha = 0, has_backgroundslotfontsize = 0, has_velocityhandling = 0, has_notificationsformessages = 0, has_showtempointerpline = 0, has_continuousbang = 0, has_additionalstartpad = 0, has_annotationfontsize = 0, has_annotationalignment = 0, has_showpartbrackets = 0;
     t_atom_long dblclicksendsvalues = 0;
-    double slotbgalpha = 0, backgroundslotfontsize = 0;
+    double slotbgalpha = 0, backgroundslotfontsize = 0, additionalstartpad = 0;
     t_atom_long velocityhandling = -1, notificationsformessages = -1, showtempointerpline = 0, continuousbang = -1;
     char brand_new_creation = 0;
+    double annotationfontsize = 0;
+    t_atom_long annotationalignment = 0, showpartbrackets = 0;
 
 
     long num_voices_from_argument = -1; // = no need to set num voices
@@ -1364,6 +1481,9 @@ void notationobj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_di
     if ((has_slotsbgalpha = dictionary_hasentry(d, gensym("slotsbgalpha"))))
         dictionary_getfloat(d, gensym("slotsbgalpha"), &slotbgalpha);
 
+    if ((has_additionalstartpad = dictionary_hasentry(d, gensym("additionalstartpad"))))
+        dictionary_getfloat(d, gensym("additionalstartpad"), &additionalstartpad);
+    
     if ((has_backgroundslotfontsize = dictionary_hasentry(d, gensym("backgroundslotfontsize"))))
         dictionary_getfloat(d, gensym("backgroundslotfontsize"), &backgroundslotfontsize);
 
@@ -1375,9 +1495,19 @@ void notationobj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_di
 
     if ((has_showtempointerpline = dictionary_hasentry(d, gensym("showtempointerpline"))))
         dictionary_getlong(d, gensym("showtempointerpline"), &showtempointerpline);
-    
+
+    if ((has_annotationfontsize = dictionary_hasentry(d, gensym("annotationfontsize"))))
+        dictionary_getfloat(d, gensym("annotationfontsize"), &annotationfontsize);
+
+    if ((has_annotationalignment = dictionary_hasentry(d, gensym("annotationalignment"))))
+        dictionary_getlong(d, gensym("annotationalignment"), &annotationalignment);
+
+    if ((has_showpartbrackets = dictionary_hasentry(d, gensym("showpartbrackets"))))
+        dictionary_getlong(d, gensym("showpartbrackets"), &showpartbrackets);
+
     if ((has_continuousbang = dictionary_hasentry(d, gensym("continuousbang"))))
         dictionary_getlong(d, gensym("continuousbang"), &continuousbang);
+    
     else if ((has_continuousbang = dictionary_hasentry(d, gensym("continuouslyoutputbangifchanged"))))
         dictionary_getlong(d, gensym("continuouslyoutputbangifchanged"), &continuousbang);
 
@@ -1439,6 +1569,22 @@ void notationobj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_di
     if (has_continuousbang)
         object_attr_setchar(x, gensym("notifycontinuously"), continuousbang);
 
+    if (has_additionalstartpad)
+        object_attr_setfloat(x, gensym("padafterclef"), additionalstartpad);
+
+    if (has_annotationfontsize)
+        object_attr_setfloat(x, gensym("annotationsfontsize"), annotationfontsize);
+
+    if (has_annotationalignment)
+        object_attr_setlong(x, gensym("annotationsalign"), annotationalignment);
+
+    if (has_showpartbrackets) {
+        if (showpartbrackets == 0)
+            object_attr_setsym(x, gensym("partsaccollatura"), _llllobj_sym_none);
+        else
+            object_attr_setsym(x, gensym("partsaccollatura"), gensym("bracket"));
+    }
+
     if (dblclicksendsvalues) {
         r_ob->play_offline_bitfield[k_PLAYOFFLINE_KEY_DOUBLECLICK] = 1;
     }
@@ -1470,6 +1616,7 @@ void notation_class_add_notation_attributes(t_class *c, char obj_type){
 	notation_class_add_showhide_attributes(c, obj_type);
 	notation_class_add_font_attributes(c, obj_type);
 	notation_class_add_settings_attributes(c, obj_type);
+    notation_class_add_ji_attributes(c, obj_type);
 	notation_class_add_slots_attributes(c, obj_type);
 	notation_class_add_play_attributes(c, obj_type);
 	notation_class_add_color_attributes(c, obj_type);
@@ -1814,7 +1961,6 @@ void notation_class_add_color_attributes(t_class *c, char obj_type)
         // @exclude bach.slot
         // @description Sets the color of the key signature, in RGBA format.
 
-
         CLASS_ATTR_RGBA(c,"notecolor", 0, t_notation_obj, j_note_rgba);
         CLASS_ATTR_STYLE_LABEL(c, "notecolor",0,"rgba","Note Color");
         CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"notecolor",0,"0. 0. 0. 1.");
@@ -1851,7 +1997,39 @@ void notation_class_add_color_attributes(t_class *c, char obj_type)
         // @exclude bach.slot
         // @description Sets the color of dynamics, in RGBA format.
 
+        CLASS_ATTR_RGBA(c,"pianorolllightcolor", 0, t_notation_obj, j_pianoroll_light_rgba);
+        CLASS_ATTR_STYLE_LABEL(c, "pianorolllightcolor",0,"rgba","Piano Roll Light Color");
+        CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"pianorolllightcolor",0,"0. 0. 0. 0.1");
+        // @exclude bach.slot
+        // @description Sets the color of light piano roll background, in RGBA format.
+
+        CLASS_ATTR_RGBA(c,"pianorolldarkcolor", 0, t_notation_obj, j_pianoroll_dark_rgba);
+        CLASS_ATTR_STYLE_LABEL(c, "pianorolldarkcolor",0,"rgba","Piano Roll Dark Color");
+        CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"pianorolldarkcolor",0,"0. 0. 0. 0.3");
+        // @exclude bach.slot
+        // @description Sets the color of dark piano roll background, in RGBA format.
+
+
         if (obj_type == k_NOTATION_OBJECT_SCORE) {
+            
+            CLASS_ATTR_RGBA(c,"timesigcolor", 0, t_notation_obj, j_timesig_rgba);
+            CLASS_ATTR_STYLE_LABEL(c, "timesigcolor",0,"rgba","Time Signature Color");
+            CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"timesigcolor",0,"0. 0. 0. 1.");
+            // @exclude bach.slot, bach.roll
+            // @description Sets the color of the time signature, in RGBA format.
+
+            CLASS_ATTR_RGBA(c,"barlinecolor", 0, t_notation_obj, j_barline_rgba);
+            CLASS_ATTR_STYLE_LABEL(c, "barlinecolor",0,"rgba","Barline Color");
+            CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"barlinecolor",0,"0. 0. 0. 1.");
+            // @exclude bach.slot, bach.roll
+            // @description Sets the color of the barline, in RGBA format.
+
+            CLASS_ATTR_RGBA(c,"measurenumbercolor", 0, t_notation_obj, j_measnum_rgba);
+            CLASS_ATTR_STYLE_LABEL(c, "measurenumbercolor",0,"rgba","Measure Number Color");
+            CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"measurenumbercolor",0,"0. 0. 0. 1.");
+            // @exclude bach.slot, bach.roll
+            // @description Sets the color of the measure numbers, in RGBA format.
+            
             CLASS_ATTR_RGBA(c,"beamcolor", 0, t_notation_obj, j_beam_rgba);
             CLASS_ATTR_STYLE_LABEL(c, "beamcolor",0,"rgba","Beam Color");
             CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"beamcolor",0,"0. 0. 0. 1.");
@@ -1992,16 +2170,73 @@ void notation_class_add_color_attributes(t_class *c, char obj_type)
 void notation_class_add_appearance_attributes(t_class *c, char obj_type){
 	CLASS_STICKY_ATTR(c,"category",0,"Appearance");
 
+    CLASS_ATTR_CHAR(c,"pianorolltype",0, t_notation_obj, pianoroll_display_type);
+    CLASS_ATTR_STYLE_LABEL(c,"pianorolltype",0,"enumindex","Piano Roll Display Type");
+    CLASS_ATTR_ENUMINDEX(c,"pianorolltype", 0, "Background Stripes White-Key Lines Black-Key Lines C-Lines");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"pianorolltype",0,"0");
+    // @exclude bach.slot
+    // Sets the type of piano roll display for voices whose notation style is set to "linear".
+    
+    CLASS_ATTR_CHAR(c,"pianorollkeyboardtype",0, t_notation_obj, pianoroll_keyboard_type);
+    CLASS_ATTR_STYLE_LABEL(c,"pianorollkeyboardtype",0,"enumindex","Piano Roll Keyboard Type");
+    CLASS_ATTR_ENUMINDEX(c,"pianorollkeyboardtype", 0, "Classic Uniform");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"pianorollkeyboardtype",0,"0");
+    // @exclude bach.slot
+    // Sets the type of piano roll keyboard for voices whose notation style is set to "linear".
+    
+    CLASS_ATTR_DOUBLE(c, "markerwidth", 0, t_notation_obj, markers_line_width);
+    CLASS_ATTR_STYLE_LABEL(c,"markerwidth",0,"text","Marker Line Width");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"markerwidth",0,"1.5");
+    // @exclude bach.slot
+    // Sets the line width for markers.
+
+    CLASS_ATTR_DOUBLE(c, "stafflineswidth", 0, t_notation_obj, stafflines_width);
+    CLASS_ATTR_STYLE_LABEL(c,"stafflineswidth",0,"text","Staff Lines Width");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"stafflineswidth",0,"1.");
+    // @exclude bach.slot
+    // Sets the line width for staff lines. By default this width is fixed, meaning
+    // that it does not scale with <m>vzoom</m>. You can tie the width to <m>vzoom</m>
+
+    CLASS_ATTR_CHAR(c, "scalablestafflineswidth", 0, t_notation_obj, stafflines_width_scales_with_zoom);
+    CLASS_ATTR_STYLE_LABEL(c,"scalablestafflineswidth",0,"onoff","Staff Lines Scale With Vertical Zoom");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"scalablestafflineswidth",0,"0");
+    // @exclude bach.slot
+    // Toggles the ability to scale staff line width for staff lines with vertical zoom. By default it is off.
+
+    CLASS_ATTR_CHAR(c, "markerspan", 0, t_notation_obj, markers_span);
+    CLASS_ATTR_STYLE_LABEL(c,"markerspan",0,"enumindex","Marker Vertical Span");
+    CLASS_ATTR_ENUMINDEX(c,"markerspan", 0, "PlayHead Above First Staff Till Last Staff Between Staves");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"markerspan",0,"0");
+    // @exclude bach.slot
+    // Sets the type of vertical span of markers: <br />
+    // - Playhead (0): like the playhead cursor (default)
+    // - Above First Staff (1): only above first staff
+    // - Till Last Staff (2): only clip to first staff
+    // - Between Staves (3): only between staves, like a barline
+
+    
+    if (obj_type == k_NOTATION_OBJECT_SCORE) {
+        CLASS_ATTR_CHAR(c,"shiftunisons",0, t_notation_obj, shift_voiceensemble_unisons);
+        CLASS_ATTR_STYLE_LABEL(c,"shiftunisons",0,"enumindex","Shift Unisons in Different Parts");
+        CLASS_ATTR_ENUMINDEX(c,"shiftunisons", 0, "Never Only With Equal Notehead Always");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"shiftunisons",0,"1");
+        // @exclude bach.slot, bach.roll
+        // Handles the way unisons are adjusted when in different parts: 0 = don't adjust; 1 = shift notes when
+        // they have equal notehead; 2 = always shift notes.
+    }
+    
     CLASS_ATTR_CHAR(c,"slursavoidchords",0, t_notation_obj, slurs_avoid_chords);
     CLASS_ATTR_STYLE_LABEL(c,"slursavoidchords",0,"onoff","Slurs Avoid Chords");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"slursavoidchords",0,"1");
     // @exclude bach.slot
+    // Toggles the ability for slurs to avoid chords.
 
     CLASS_ATTR_CHAR(c,"slursavoidaccidentals",0, t_notation_obj, slurs_avoid_accidentals);
     CLASS_ATTR_STYLE_LABEL(c,"slursavoidaccidentals",0,"onoff","Slurs Avoid Accidentals");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"slursavoidaccidentals",0,"1");
     // @exclude bach.slot
-    
+    // Toggles the ability for slurs to avoid accidentals.
+
 	CLASS_ATTR_DOUBLE(c, "rounded", 0, t_notation_obj, corner_roundness); 
 	CLASS_ATTR_STYLE_LABEL(c,"rounded",0,"text","Roundness of Box Corners");
 	CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"rounded",0,"0."); // default SHOULD BE: "6.", but only when corner clipping will perfectly work!
@@ -2057,14 +2292,21 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type){
         // (also see <m>highlightdomain</m>).
 
 
-        CLASS_ATTR_DOUBLE(c, "additionalstartpad", 0, t_notation_obj, additional_ux_start_pad);
-        CLASS_ATTR_STYLE_LABEL(c,"additionalstartpad",0,"text","Additional Start Pad");
-        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"additionalstartpad",0,"0.");
+        // this used to be called "additionalstartpad"
+        CLASS_ATTR_DOUBLE(c, "padafterclef", 0, t_notation_obj, additional_ux_start_pad_after_clef);
+        CLASS_ATTR_STYLE_LABEL(c,"padafterclef",0,"text","Pad After Clef");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"padafterclef",0,"0.");
         // @exclude bach.slot
-        // @description Sets an additional left pad to the domain display start, in pixels (rescaled according to the <m>vzoom</m>),
+        // @description Shifts the beginning of the musical content after the clefs (and key signatures), in pixels
+        // (rescaled according to the <m>vzoom</m>),
         // This pad is located right after each clef, before the music content starts.
         // @copyif bach.roll BACH_DOC_ROLL_START_PAD
 
+        CLASS_ATTR_DOUBLE(c, "padbeforeclef", 0, t_notation_obj, additional_ux_start_pad_before_clef);
+        CLASS_ATTR_STYLE_LABEL(c,"padbeforeclef",0,"text","Pad Before Clef");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"padbeforeclef",0,"0.");
+        // @exclude bach.slot
+        // @description Sets an additional left pad before the clef, in pixels (rescaled according to the <m>vzoom</m>).
 
         CLASS_ATTR_DOUBLE(c, "playheadwidth", 0, t_notation_obj, playhead_width);
         CLASS_ATTR_STYLE_LABEL(c,"playheadwidth",0,"text","Playhead Width");
@@ -2125,7 +2367,7 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type){
         CLASS_ATTR_CHAR(c,"breakpointshavenoteheads",0, t_notation_obj, breakpoints_have_noteheads);
         CLASS_ATTR_STYLE_LABEL(c,"breakpointshavenoteheads",0,"enumindex","Breakpoints Have Noteheads");
         CLASS_ATTR_ENUMINDEX(c,"breakpointshavenoteheads", 0, "None All Internal Only");
-         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"breakpointshavenoteheads",0,"0");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"breakpointshavenoteheads",0,"0");
         // @exclude bach.slot
         // @description Toggles the ability to display pitch breakpoints as real notes (possibly with accidentals).
         // The options are: no noteheads (0, default); all noteheads, tails included (1); noteheads only
@@ -2164,9 +2406,71 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type){
             // @exclude bach.slot, bach.roll
             // @description Toggles the ability to end staff lines with the last measure barline.
         }
+        
+        CLASS_ATTR_SYM(c,"partsaccollatura",0, t_notation_obj, parts_accollatura);
+        CLASS_ATTR_STYLE_LABEL(c,"partsaccollatura",0,"enum","Accollatura Type for Parts");
+        CLASS_ATTR_ENUM(c,"partsaccollatura", 0, "none rule thinbracket bracket brace");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"partsaccollatura",0,"bracket");
+        // @exclude bach.slot
+        // @description Chooses the type of accollatura display for voice ensembles.
+
+        CLASS_ATTR_SYM(c,"multistaffaccollatura",0, t_notation_obj, multistaff_accollatura);
+        CLASS_ATTR_STYLE_LABEL(c,"multistaffaccollatura",0,"enum","Accollatura Type for Multi-Staff Voices");
+        CLASS_ATTR_ENUM(c,"multistaffaccollatura", 0, "none rule thinbracket bracket brace");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"multistaffaccollatura",0,"rule");
+        // @exclude bach.slot
+        // @description Chooses the type of accollatura display for voice displayed with more than one staff.
+
+        
     }
 
     CLASS_STICKY_ATTR_CLEAR(c, "category");
+}
+
+void notation_class_add_ji_attributes(t_class *c, char obj_type) 
+{
+    CLASS_STICKY_ATTR(c,"category",0,"Just Intonation");
+    
+    if (obj_type == k_NOTATION_OBJECT_ROLL || obj_type == k_NOTATION_OBJECT_SCORE) {
+        CLASS_ATTR_LONG(c, "jilimit", 0, t_notation_obj, ji_limit);
+        CLASS_ATTR_STYLE_LABEL(c,"jilimit",0,"text","JI Harmonic Limit");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"jilimit",0,"5");
+        CLASS_ATTR_BASIC(c,"jilimit", 0);
+        CLASS_ATTR_ACCESSORS(c, "jilimit", (method)NULL, (method)notationobj_setattr_jilimit);
+        // @exclude bach.slot
+        // @description Sets the just intonation harmonic limit for the score display.
+        // This is the analogous, for just intonation, of the <m>tonedivision</m> attribute, in that
+        // it doesn't change the profound nature of the pitch (which can very well be in a higher limit)
+        // but it only trims its display to the selected harmonic prime number, and adjusts the interface
+        // accordingly
+        
+        CLASS_ATTR_PITCH(c, "jibase", 0, t_notation_obj, ji_base_for_ratios, notationobj_getattr_jibase, notationobj_setattr_jibase);
+        CLASS_ATTR_STYLE_LABEL(c,"jibase",0,"text","Reference Diatonic Pitch for JI Ratios");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"jibase",0,"C5");
+        CLASS_ATTR_BASIC(c,"jibase", 0);
+        // @exclude bach.slot
+        // @description Sets the reference diatonic pitch for just intonation ratios.
+        
+        CLASS_ATTR_CHAR(c, "jialwaysshowpythacc", 0, t_notation_obj, ji_always_show_pythagorean_accidentals);
+        CLASS_ATTR_STYLE_LABEL(c,"jialwaysshowpythacc",0,"onoff","Always Show JI Pythagorean Accidentals");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"jialwaysshowpythacc",0,"0");
+        CLASS_ATTR_ACCESSORS(c, "jialwaysshowpythacc", (method)NULL, (method)notationobj_setattr_jialwaysshowpythacc);
+        // @exclude bach.slot
+        // @description Toggles the ability to always display accidentals for Pythagorean diatonic pitches in jusst intonation.
+        
+        CLASS_ATTR_CHAR(c, "jishowetoffset", 0, t_notation_obj, ji_show_et_offsets);
+        CLASS_ATTR_STYLE_LABEL(c,"jishowetoffset",0,"onoff","Show Equal-Tempered Offset for Mixed Pitches");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"jishowetoffset",0,"0");
+        // @exclude bach.slot
+        // @description Toggles the ability to display the equal-tempered offsets for mixed pitches (including
+        // both an equal-tempered offset and a non-trivial just intonation portion).
+        
+        CLASS_ATTR_DOUBLE(c, "jiapproxthresh", 0, t_notation_obj, ji_limit_approx_mcthresh);
+        CLASS_ATTR_STYLE_LABEL(c,"jiapproxthresh",0,"text","JI Approximation Threshold (Cents)");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"jiapproxthresh",0,"67");
+        // @exclude bach.slot
+        // @description Sets the approximation threshold for automatically converting cents into just intonation.
+    }
 }
 
 void notation_class_add_settings_attributes(t_class *c, char obj_type){
@@ -2248,6 +2552,21 @@ void notation_class_add_settings_attributes(t_class *c, char obj_type){
         // @exclude bach.slot
         // @description Sets the MIDI channels, which are a property of voices: a list with one integer for each voice is expected.
 
+        CLASS_ATTR_NOTATIONOBJ_SYMPTR(c, "notationstyles", 0, notationstyles_as_symlist, CONST_MAX_VOICES, notationobj_setattr_notationstyles);
+        CLASS_ATTR_STYLE_LABEL(c,"notationstyles",0,"text","Notation Styles");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"notationstyles",0,"et");
+        // @exclude bach.slot
+        // @description Sets the notation styles, which are a property of voices: a list with one symbol per voice is expected.
+        // Symbols can be one of the following: "et" (equal temperament), "ji" (just intonation, displayed via the
+        // Helmholtz-Ellis Just Intonation system, version 2.0), "linpitch" (continuous linear pitch),
+        // "linfreq" (continuous linear frequency).
+
+        CLASS_ATTR_LLLL(c, "voicegroups", 0, t_notation_obj, voicegroups_as_llll, notationobj_getattr_voicegroups, notationobj_setattr_voicegroups);
+        CLASS_ATTR_STYLE_LABEL(c,"voicegroups",0,"text_large","Voice Groups");
+        CLASS_ATTR_SAVE(c, "voicegroups", 0);
+        CLASS_ATTR_PAINT(c, "voicegroups", 0);
+        // @description @copy BACH_DOC_VOICEGROUPS
+
         CLASS_ATTR_DOUBLE(c,"gridperiodms",0, t_notation_obj, grid_step_ms);
         CLASS_ATTR_STYLE_LABEL(c,"gridperiodms",0,"text","Ruler/Grid Period (ms)");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"gridperiodms",0,"1000");
@@ -2270,6 +2589,14 @@ void notation_class_add_settings_attributes(t_class *c, char obj_type){
         // lyrics display. 0 will set the lyrics top line coinciding with the bottommost staff line.
         // The default is -16.
 
+        CLASS_ATTR_DOUBLE(c,"annotationsvadj",0, t_notation_obj, annotation_uy_shift);
+        CLASS_ATTR_STYLE_LABEL(c,"annotationsvadj",0,"text","Annotations Vertical Adjustment");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"annotationsvadj",0,"0");
+        // @exclude bach.slot
+        // @description Sets a vertical shift (in pixels, rescaled depending on the <m>vzoom</m>) of the
+        // annotations display.
+
+        
         CLASS_ATTR_DOUBLE(c,"dynamicsvadj",0, t_notation_obj, dynamics_uy_pos);
         CLASS_ATTR_STYLE_LABEL(c,"dynamicsvadj",0,"text","Dynamics Vertical Adjustment");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"dynamicsvadj",0,"-20");
@@ -2288,11 +2615,11 @@ void notation_class_add_settings_attributes(t_class *c, char obj_type){
         // Possibilities are: "Auto", "Left", "Center", "Right". Currently "Auto" completely coincides with "Center",
         // but it might be improved in a future version.
 
-        CLASS_ATTR_CHAR(c,"annotationalignment",0, t_notation_obj, annotation_alignment);
-        CLASS_ATTR_STYLE_LABEL(c,"annotationalignment",0,"enumindex","Annotation Alignment");
-        CLASS_ATTR_ENUMINDEX(c,"annotationalignment", 0, "Auto Left Center Right");
-        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"annotationalignment", 0, "0");
-        CLASS_ATTR_ACCESSORS(c, "annotationalignment", (method)NULL, (method)notationobj_setattr_annotation_alignment);
+        CLASS_ATTR_CHAR(c,"annotationsalign",0, t_notation_obj, annotation_alignment);
+        CLASS_ATTR_STYLE_LABEL(c,"annotationsalign",0,"enumindex","Annotation Alignment");
+        CLASS_ATTR_ENUMINDEX(c,"annotationsalign", 0, "Auto Left Center Right");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"annotationsalign", 0, "0");
+        CLASS_ATTR_ACCESSORS(c, "annotationsalign", (method)NULL, (method)notationobj_setattr_annotation_alignment);
         // @exclude bach.slot
         // @description Sets how the annotation must be aligned with respect to the note to which they refer.
         // Possibilities are: "Auto", "Left", "Center", "Right". Currently "Auto" completely coincides with "Left".
@@ -2374,12 +2701,29 @@ void notation_class_add_play_attributes(t_class *c, char obj_type){
 
 
         CLASS_ATTR_CHAR(c,"catchplay", 0, t_notation_obj, catch_playhead);
-        CLASS_ATTR_STYLE_LABEL(c,"catchplay",0,"onoff","Catch Play Head");
+        CLASS_ATTR_STYLE_LABEL(c,"catchplay",0,"enumindex","Catch Playhead");
+        CLASS_ATTR_ENUMINDEX(c,"catchplay", 0, "Don't ChangePage FixedPlayhead");
+        CLASS_ATTR_ACCESSORS(c, "catchplay", (method)NULL, (method)notationobj_setattr_catchplay);
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"catchplay", 0, "1");
         // @exclude bach.slot
-        // @description Toggles the ability to follow the playhead in the domain during playback.
+        // @description Handles how the playhead moves during playback, and how its moving modifies the domain of the object. <br />
+        // 0 = Don't: playhead moves, but domain stays the same; <br />
+        // 1 = ChangePage: playhead moves, and domain changes once playhead gets to the end of the line; <br />
+        // 2 = FixedPlayhead: playhead remains fixed at a specific position, set by the attribute <m>playheadfixedpos</m>; <br />
 
+        CLASS_ATTR_DOUBLE(c,"playheadfixedpos", 0, t_notation_obj, playhead_fixed_pos);
+        CLASS_ATTR_STYLE_LABEL(c,"playheadfixedpos",0,"text","Playhead Fixed Position");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"playheadfixedpos", 0, "0");
+        CLASS_ATTR_FILTER_CLIP(c, "playheadfixedpos", 0., 1.);
+        // @exclude bach.slot
+        // @description Fixed position of the playhead, only used if <m>catch_playhead</m> is set to 2 (FixedPlayhead).
 
+        CLASS_ATTR_CHAR(c,"playheadnotify", 0, t_notation_obj, playhead_notify_during_playback);
+        CLASS_ATTR_STYLE_LABEL(c,"playheadnotify",0,"onoff","Notify Playhead Position During Playback");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"playheadnotify", 0, "0");
+        // @exclude bach.slot
+        // @description Constantly notify playhead position during playback.
+        
         CLASS_ATTR_CHAR(c,"playmode", 0, t_notation_obj, play_mode);
         CLASS_ATTR_STYLE_LABEL(c,"playmode",0,"enumindex","Playout Mode");
         CLASS_ATTR_ENUMINDEX(c,"playmode", 0, "Chordwise Notewise");
@@ -2425,7 +2769,21 @@ void notation_class_add_play_attributes(t_class *c, char obj_type){
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"playmarkers", 0, "1");
         // @exclude bach.slot
         // @description Toggle the ability to also send the marker information through the playout during the playback.
-        // By default this is 1.
+        // By default this is on (1).
+
+        CLASS_ATTR_CHAR(c,"playslurs",0, t_notation_obj, play_slurs);
+        CLASS_ATTR_STYLE_LABEL(c,"playslurs",0,"onoff","Play Slurs");
+        CLASS_ATTR_ENUMINDEX(c,"playslurs", 0, "Don't Chordwise Only Also Notewise (Highest) Also Notewise (Lowest) Also Notewise (Any))");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"playslurs", 0, "1");
+        // @exclude bach.slot
+        // @description Toggle the ability to also send the slur information through the playout during the playback.
+        // There are several options: <br />
+        // 0 (Don't): don't send out slurs information; <br />
+        // 1 (Chordwise Only, default): send out slur information only with chordwise <m>playmode</m>; <br />
+        // 2 (Also Notewise [Highest]): also send out slur information with notewise <m>playmode</m>, and
+        // assign the slur to the highest note of a chord; <br />
+        // 3 (Also Notewise [Lowest]): the same, with the lowest note of a chord; <br />
+        // 4 (Also Notewise [Any]): the same, with the any note of a chord. <br />
 
         CLASS_ATTR_CHAR(c,"useloop",0, t_notation_obj, use_loop_region);
         CLASS_ATTR_STYLE_LABEL(c,"useloop",0,"onoff","Activate Loop Region (When Shown)");
@@ -2894,7 +3252,7 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type)
 	if (obj_type != k_NOTATION_OBJECT_SLOT) {
 		CLASS_ATTR_CHAR(c, "showvelocity", 0, t_notation_obj, velocity_handling);
 		CLASS_ATTR_STYLE_LABEL(c,"showvelocity",0,"enumindex","Show Velocity");
-		CLASS_ATTR_ENUMINDEX(c,"showvelocity", 0, "None Colorscale Colorspectrum Alpha Duration Line Width Note Size");
+		CLASS_ATTR_ENUMINDEX(c,"showvelocity", 0, "None Colorscale Colorspectrum Alpha Duration Line Width Notehead Size Note Size");
 		CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showvelocity",0,"0");
 		CLASS_ATTR_ACCESSORS(c, "showvelocity", (method)NULL, (method)notationobj_setattr_showvelocity);
 		CLASS_ATTR_BASIC(c,"showvelocity", 0);
@@ -2907,13 +3265,22 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type)
 		// - Duration Line Width: velocities are mapped on the width of the duration line, from almost 0 (velocity = 1, extremely thin) to the width defined 
 		// via the attribute <m>durationlinewidth</m> (velocity = 127, maximum thickness). <br />
 		// - Notehead Size: velocities are mapped on the size of the notehead and accidentals, from the smallest size (velocity = 1) to the ordinary size (velocity = 127).
-		
+        // - Note Size: both Duration Line Width and Notehead Size are combined
+
 		CLASS_ATTR_CHAR(c,"showdurations",0, t_notation_obj, show_durations);
 		CLASS_ATTR_STYLE_LABEL(c,"showdurations",0,"onoff","Show Duration Lines");
 		CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showdurations",0, obj_type == k_NOTATION_OBJECT_ROLL ? "1" : "0");
         CLASS_ATTR_BASIC(c,"showdurations", 0);
 		// @exclude bach.slot
 		// @description Toggles the display of the duration lines.
+
+        CLASS_ATTR_CHAR(c,"shownoteheads",0, t_notation_obj, show_noteheads);
+        CLASS_ATTR_STYLE_LABEL(c,"shownoteheads",0,"onoff","Show Noteheads");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"shownoteheads",0,"1");
+        // @exclude bach.slot
+        // @description Toggles the display of noteheads. When noteheads are not displayed,
+        // the notation object will override the <m>align</m> attribute and align
+        // every chord with respect to its stem.
 
 		CLASS_ATTR_CHAR(c,"showtails",0, t_notation_obj, show_tails);
 		CLASS_ATTR_STYLE_LABEL(c,"showtails",0,"onoff","Show Note Tails");
@@ -3161,11 +3528,11 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type)
         // @exclude bach.slot
         // @description Toggles the display of different voice parts (see the <m>parts</m> attribute) with different colors.
 
-        CLASS_ATTR_CHAR(c,"showpartbrackets",0, t_notation_obj, show_accollatura);
-        CLASS_ATTR_STYLE_LABEL(c,"showpartbrackets",0,"onoff","Show Part Brackets");
-        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showpartbrackets",0,"1");
+        CLASS_ATTR_CHAR(c,"showaccollature",0, t_notation_obj, show_accollature);
+        CLASS_ATTR_STYLE_LABEL(c,"showaccollature",0,"onoff","Show Accollature");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showaccollature",0,"1");
         // @exclude bach.slot
-        // @description Toggles the display of brackets in voice ensembles.
+        // @description Toggles the display of accollature for voice groups and voice ensembles.
 
         CLASS_ATTR_CHAR(c,"showinitialrule",0, t_notation_obj, show_initial_rule);
         CLASS_ATTR_STYLE_LABEL(c,"showinitialrule",0,"enumindex","Show Initial Rule");
@@ -3174,12 +3541,14 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type)
         // @exclude bach.slot
         // @description Toggles the display of the initial vertical line running through all the staves.
 
-        CLASS_ATTR_CHAR(c, "showcentsdiff", 0, t_notation_obj, show_cents_differences);
-        CLASS_ATTR_STYLE_LABEL(c,"showcentsdiff",0,"onoff","Show Cents Differences");
-        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showcentsdiff",0,"0");
-        CLASS_ATTR_ACCESSORS(c, "showcentsdiff", (method)NULL, (method)notationobj_setattr_showcentsdiff);
-        // @description Toggles the display of cents differences above the accidentals
-        
+        CLASS_ATTR_CHAR(c, "showcents", 0, t_notation_obj, show_cents_differences);
+        CLASS_ATTR_STYLE_LABEL(c,"showcents",0,"enumindex","Show Cents");
+        CLASS_ATTR_ENUMINDEX(c,"showcents", 0, "Don't DifferenceWithDisplay Accidental");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showcents",0,"0");
+        CLASS_ATTR_ACCESSORS(c, "showcents", (method)NULL, (method)notationobj_setattr_showcents);
+        // @description Toggles the display of cents differences above the accidentals, either detailing
+        // the difference between the actual note and the displayed one (1) or detailing the
+        // contribution of the displayed accidental in cents (2).
     }
 
     CLASS_STICKY_ATTR_CLEAR(c, "category");
@@ -3301,19 +3670,27 @@ void notation_class_add_font_attributes(t_class *c, char obj_type){
         // @exclude bach.slot
         // @description Sets the font size of mouseover and selection legends (rescaled according to the <m>vzoom</m>).
 
-        CLASS_ATTR_DOUBLE(c,"annotationfontsize",0, t_notation_obj, annotation_font_size);
-        CLASS_ATTR_STYLE_LABEL(c,"annotationfontsize",0,"text","Annotation Font Size");
-        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"annotationfontsize", 0, "10");
-        CLASS_ATTR_ACCESSORS(c, "annotationfontsize", (method)NULL, (method)notationobj_setattr_annotation_font_size);
+        CLASS_ATTR_DOUBLE(c,"annotationsfontsize",0, t_notation_obj, annotation_font_size);
+        CLASS_ATTR_STYLE_LABEL(c,"annotationsfontsize",0,"text","Annotation Font Size");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"annotationsfontsize", 0, "10");
+        CLASS_ATTR_ACCESSORS(c, "annotationsfontsize", (method)NULL, (method)notationobj_setattr_annotation_font_size);
         // @exclude bach.slot
         // @description Sets the font size for textual annotations over the staff (handled via slot linkage).
 
+        CLASS_ATTR_SYM(c,"centsdifffont", 0, t_notation_obj, cents_differences_font);
+        CLASS_ATTR_STYLE_LABEL(c, "centsdifffont", 0, "font", "Cents Differences Font");
+        CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"centsdifffont", 0, "Arial");
+        CLASS_ATTR_ACCESSORS(c, "centsdifffont", (method)NULL, (method)notationobj_setattr_centsdiff_font);
+        // @exclude bach.slot
+        // @description Sets the font for cents difference display.
+
+        
         CLASS_ATTR_DOUBLE(c,"centsdifffontsize",0, t_notation_obj, cents_differences_font_size);
         CLASS_ATTR_STYLE_LABEL(c,"centsdifffontsize",0,"text","Cents Differences Font Size");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"centsdifffontsize",0,"8");
         CLASS_ATTR_FILTER_MIN(c, "rulerlabelsfontsize", 1.);
         // @exclude bach.slot
-        // @description Sets the font size of cents differences display
+        // @description Sets the font size of cents differences display.
 
 
     }
@@ -3363,7 +3740,8 @@ t_max_err notationobj_setattr_showvelocity(t_notation_obj *r_ob, t_object *attr,
     if (ac && av) {
         long prev_vel_handling = r_ob->velocity_handling;
         r_ob->velocity_handling = atom_getlong(av);
-        if (r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE || prev_vel_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE)
+        if (r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE || prev_vel_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE ||
+            r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTESIZE || prev_vel_handling == k_VELOCITY_HANDLING_NOTESIZE)
             quick_notationobj_recompute_all_chord_parameters(r_ob);
         notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
     }
@@ -3755,6 +4133,16 @@ t_max_err notationobj_setattr_preventedit(t_notation_obj *r_ob, t_object *attr, 
 }
 
 
+t_max_err notationobj_setattr_catchplay(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+    if (ac && av) {
+        long mode = atom_getlong(av);
+        r_ob->catch_playhead = mode;
+        object_attr_setdisabled((t_object *)r_ob, gensym("playheadfixedpos"), mode != k_PLAYHEAD_DOMAINCHANGE_FIXPOS);
+    }
+    
+    return MAX_ERR_NONE;
+}
+
 t_max_err notationobj_setattr_rulermode(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
 	if (ac && av) {
 		long mode = atom_getlong(av);
@@ -3868,6 +4256,13 @@ t_max_err notationobj_setattr_midichannels(t_notation_obj *r_ob, t_object *attr,
     return MAX_ERR_NONE;
 }
 
+t_max_err notationobj_setattr_notationstyles(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+    t_llll *notationstyles_as_llll = llllobj_parse_llll((t_object *) r_ob, LLLL_OBJ_UI, NULL, ac, av, LLLL_PARSE_CLONE);
+    set_notationstyles_from_llll(r_ob, notationstyles_as_llll);
+    llll_free(notationstyles_as_llll);
+    return MAX_ERR_NONE;
+}
+
 
 t_max_err notationobj_setattr_show_voicenames(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && is_atom_number(av))
@@ -3932,6 +4327,15 @@ t_max_err notationobj_setattr_slot_labels_font(t_notation_obj *r_ob, t_object *a
     return MAX_ERR_NONE;
 }
 
+t_max_err notationobj_setattr_centsdiff_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+{
+    if (ac && atom_gettype(av) == A_SYM)
+        r_ob->cents_differences_font = atom_getsym(av);
+    notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+    return MAX_ERR_NONE;
+}
+
+
 t_max_err notationobj_setattr_slot_labels_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
 {
     if (ac && is_atom_number(av))
@@ -3941,7 +4345,8 @@ t_max_err notationobj_setattr_slot_labels_font_size(t_notation_obj *r_ob, t_obje
 }
 
 
-void implicitely_recalculate_all(t_notation_obj *r_ob, char also_recompute_beamings){
+void implicitely_recalculate_all(t_notation_obj *r_ob, char also_recompute_beamings)
+{
     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
         t_scorevoice *voice;
         t_measure *meas;
@@ -4351,11 +4756,12 @@ long handle_note_popup(t_notation_obj *r_ob, t_note *note, long modifiers, e_ele
     if (chosenelem > 400 && chosenelem <= 400 + CONST_MAX_ENHARMONICITY_OPTIONS){
         long chosen_idx = chosenelem - 401;
         undo_tick_create_for_notation_item(r_ob, (t_notation_item *)note->parent, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-        enharmonically_retranscribe_note(r_ob, note, false, r_ob->current_enharmonic_list_screenmc[chosen_idx], r_ob->current_enharmonic_list_screenacc[chosen_idx]);
+        note_retranscribe_enharmonically_ET(r_ob, note, false, r_ob->current_enharmonic_list_display_mc[chosen_idx], r_ob->current_enharmonic_list_display_alter_ET[chosen_idx]);
         notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
         handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ENHARMONICALLY_RESPELL_NOTE);
         return k_CHANGED_SEND_BANG;
     }
+
 
     if (chosenelem == 451) {
         res = lock_selection(r_ob, false);
@@ -4389,10 +4795,28 @@ long handle_note_popup(t_notation_obj *r_ob, t_note *note, long modifiers, e_ele
         res = no_muted(r_ob);
         handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NO_MUTES);
         return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
-    } else if (chosenelem == 471) {
-        res = snap_pitch_to_grid_for_selection(r_ob);
-        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SNAP_PITCH_TO_GRID_FOR_SELECTION);
+    } else if (chosenelem == 701) { // approximation to display
+        res = snap_pitch_to_current_display_for_selection(r_ob);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SNAP_PITCH_TO_CURRENT_DISPLAY_FOR_SELECTION);
         return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
+    } else if (chosenelem == 702) { // approximation to current ji limit
+        res = snap_pitch_to_current_ji_limit_for_selection(r_ob);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SNAP_PITCH_TO_JI_LIMIT_FOR_SELECTION);
+        return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
+    } else if (chosenelem >= 711 && chosenelem <= 716) { // et approximation
+        std::vector<int> tonedivisions = {2, 3, 4, 6, 8, 100};
+        res = snap_pitch_to_et_tonedivision_for_selection(r_ob, tonedivisions[chosenelem-711]);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SNAP_PITCH_TO_ET_GRID_FOR_SELECTION);
+        return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
+    } else if (chosenelem >= 751 && chosenelem <= 781) { // ji approximation
+        long chosen_idx = chosenelem - 751;
+        if (chosen_idx >= 0 && chosen_idx < r_ob->current_ji_approximation_ratio_list_size) {
+            undo_tick_create_for_notation_item(r_ob, (t_notation_item *)note->parent, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+            note_retranscribe_as_JI_ratio(r_ob, note, r_ob->current_ji_approximation_ratio_list[chosen_idx]);
+            notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+            handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_APPROXIMATE_TO_JI_RATIO);
+            return k_CHANGED_SEND_BANG;
+        }
     } else if (chosenelem == 472) {
         res = reset_selection_enharmonicity(r_ob);
         handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_RESET_ENHARMONICITY_FOR_SELECTION);
@@ -4536,6 +4960,22 @@ char get_all_tuttipoint_barlines(t_notation_obj *r_ob, t_measure_end_barline *re
         return 0;
 }
 
+void synchronize_repeats_across_voices(t_notation_obj *r_ob, t_measure *measure)
+{
+    t_measure_end_barline *barline_across[CONST_MAX_VOICES];
+    if (r_ob->draw_barlines_across_staves && is_barline_tuttipoint(r_ob, measure->end_barline)) {
+        long i;
+        get_all_tuttipoint_barlines(r_ob, measure->end_barline, barline_across);
+        for (i = 0; i < r_ob->num_voices; i++) {
+            undo_tick_create_for_notation_item(r_ob, (t_notation_item *)barline_across[i]->owner, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+            barline_across[i]->barline_type = measure->end_barline->barline_type;
+            recompute_all_for_measure(r_ob, barline_across[i]->owner, false);
+            if (barline_across[i]->owner->next)
+                recompute_all_for_measure(r_ob, barline_across[i]->owner->next, false);
+        }
+    }
+}
+
 long handle_barline_popup(t_notation_obj *r_ob, t_measure *measure, long modifiers){
     int screen_x, screen_y;
     t_pt screen;
@@ -4586,6 +5026,15 @@ long handle_barline_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
         case 1209:
             new_barline = k_BARLINE_INTERVOICES;
             break;
+        case 1210:
+            new_barline = k_BARLINE_REPEAT_START;
+            break;
+        case 1211:
+            new_barline = k_BARLINE_REPEAT_END;
+            break;
+        case 1212:
+            new_barline = k_BARLINE_REPEAT_END_AND_START;
+            break;
     }
 
     if (new_barline >= 0) {
@@ -4597,11 +5046,15 @@ long handle_barline_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
                 undo_tick_create_for_notation_item(r_ob, (t_notation_item *)barline_across[i]->owner, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                 barline_across[i]->barline_type = new_barline;
                 recompute_all_for_measure(r_ob, barline_across[i]->owner, false);
+                if (barline_across[i]->owner->next)
+                    recompute_all_for_measure(r_ob, barline_across[i]->owner->next, false);
             }
         } else {
             undo_tick_create_for_notation_item(r_ob, (t_notation_item *)measure, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
             measure->end_barline->barline_type = new_barline;
             recompute_all_for_measure(r_ob, measure, false);
+            if (measure->next)
+                recompute_all_for_measure(r_ob, measure->next, false);
         }
 
         handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_BARLINE_TYPE);
@@ -4994,8 +5447,8 @@ void start_editing_voicename(t_notation_obj *r_ob, t_object *patcherview, t_voic
 
     r_ob->is_editing_type = k_VOICENAME;
     r_ob->is_editing_voice_name = voice->number;
-    top = get_staff_top_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
-    bottom = get_staff_bottom_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
+    top = voice_get_staff_top_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
+    bottom = voice_get_staff_bottom_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
 
     object_attr_setlong(r_ob, gensym("fontface"), 0);
 
@@ -5067,7 +5520,7 @@ void start_editing_lyrics(t_notation_obj *r_ob, t_object *patcherview, t_chord *
     r_ob->is_editing_chord = chord;
     r_ob->is_editing_slot_number = r_ob->link_lyrics_to_slot - 1;
 
-    top = get_staff_bottom_y(r_ob, (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *) chord->voiceparent : (t_voice *) chord->parent->voiceparent), k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY) - r_ob->lyrics_uy_pos * r_ob->zoom_y;
+    top = voice_get_staff_bottom_y(r_ob, (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *) chord->voiceparent : (t_voice *) chord->parent->voiceparent), k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY) - r_ob->lyrics_uy_pos * r_ob->zoom_y;
     left = (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? onset_to_xposition_roll(r_ob, chord->onset, NULL) : unscaled_xposition_to_xposition(r_ob, chord_get_alignment_ux(r_ob, chord)))
     + chord->lyrics->lyrics_ux_shift * r_ob->zoom_y;
     if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
@@ -5114,7 +5567,7 @@ void start_editing_dynamics(t_notation_obj *r_ob, t_object *patcherview, t_chord
     r_ob->is_editing_chord = chord;
     r_ob->is_editing_slot_number = r_ob->link_dynamics_to_slot - 1;
 
-    top = get_staff_bottom_y(r_ob, (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *) chord->voiceparent : (t_voice *) chord->parent->voiceparent), k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY) - r_ob->dynamics_uy_pos * r_ob->zoom_y - 8 * r_ob->zoom_y;
+    top = voice_get_staff_bottom_y(r_ob, (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *) chord->voiceparent : (t_voice *) chord->parent->voiceparent), k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY) - r_ob->dynamics_uy_pos * r_ob->zoom_y - 8 * r_ob->zoom_y;
     left = chord_get_alignment_x(r_ob, chord) - get_principal_notehead_uwidth(r_ob, chord) * r_ob->zoom_y;
 
     textfield_set_wordwrap(textfield, 0);
@@ -5400,6 +5853,7 @@ void notationobj_free(t_notation_obj *r_ob)
     bach_freeptr(r_ob->keys_as_symlist);
     bach_freeptr(r_ob->hidevoices_as_charlist);
     bach_freeptr(r_ob->midichannels_as_longlist);
+    bach_freeptr(r_ob->notationstyles_as_symlist);
     bach_freeptr(r_ob->voiceuspacing_as_floatlist);
     bach_freeptr(r_ob->show_measure_numbers);
     bach_freeptr(r_ob->full_acc_repr);
@@ -5408,6 +5862,9 @@ void notationobj_free(t_notation_obj *r_ob)
     bach_freeptr(r_ob->measure_play_cursor);
     bach_freeptr(r_ob->voice_part);
 
+    if (r_ob->current_ji_approximation_ratio_list)
+        bach_freeptr(r_ob->current_ji_approximation_ratio_list);
+    
     // Slot-related stuff
     bach_freeptr(r_ob->background_slots);
     bach_freeptr(r_ob->popup_menu_slots);
@@ -5602,6 +6059,19 @@ long chord_get_position(t_notation_obj *r_ob, t_chord *chord){
     return 0;
 }
 
+// returns the 1-based (!!!)position of the chord in the parent: either rollvoice or measure (0 if chord is NOT in the voice)
+long chord_get_position_in_selection(t_notation_obj *r_ob, t_chord *chord){
+    t_chord *ch;
+    long i;
+    for (i = 1, ch = (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? chord->voiceparent->firstchord : chord->parent->firstchord); ch; ch = ch->next){
+        if (ch == chord)
+            return i;
+        if (notation_item_is_selected(r_ob, (t_notation_item *)ch))
+            i++;
+    }
+    return 0;
+}
+
 
 
 void append_voice_to_path(t_notation_obj *r_ob, t_voice *voice, t_llll *path, char attach_voicename_to_voice)
@@ -5626,6 +6096,23 @@ t_llll *chord_get_path_in_notationobj(t_notation_obj *r_ob, t_chord *chord, char
     } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE){
         long measure = chord->parent->measure_number + 1;
         long chord_position = chord_get_position(r_ob, chord);
+        append_voice_to_path(r_ob, (t_voice *)chord->parent->voiceparent, out, attach_voicename_to_voice);
+        llll_appendlong(out, measure, 0, WHITENULL_llll);
+        llll_appendlong(out, chord_position, 0, WHITENULL_llll);
+    }
+    return out;
+}
+
+t_llll *chord_get_path_in_notationobj_selectiononly(t_notation_obj *r_ob, t_chord *chord, char attach_voicename_to_voice)
+{
+    t_llll *out = llll_get();
+    if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL){
+        long chord_position = chord_get_position_in_selection(r_ob, chord);
+        append_voice_to_path(r_ob, (t_voice *)chord->voiceparent, out, attach_voicename_to_voice);
+        llll_appendlong(out, chord_position, 0, WHITENULL_llll);
+    } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE){
+        long measure = chord->parent->measure_number + 1;
+        long chord_position = chord_get_position_in_selection(r_ob, chord);
         append_voice_to_path(r_ob, (t_voice *)chord->parent->voiceparent, out, attach_voicename_to_voice);
         llll_appendlong(out, measure, 0, WHITENULL_llll);
         llll_appendlong(out, chord_position, 0, WHITENULL_llll);
@@ -5751,7 +6238,7 @@ t_llll *get_rests_sequence_path_in_notationobj(t_notation_obj *r_ob, t_chord *ch
 
 
 // if mode = 1 it's clipped between start_ms and end_ms
-t_llll *get_groups_for_dump_as_llll(t_notation_obj *r_ob, char mode, double start_ms, double end_ms){
+t_llll *get_groups_for_dump_as_llll(t_notation_obj *r_ob, char mode, double start_ms, double end_ms, bool selection_only){
     t_llll *outlist = llll_get();
     t_group *gr;
     llll_appendsym(outlist, _llllobj_sym_groups, 0, WHITENULL_llll);
@@ -5760,8 +6247,14 @@ t_llll *get_groups_for_dump_as_llll(t_notation_obj *r_ob, char mode, double star
         t_notation_item *el;
         for (el = gr->firstelem; el; el = el->next_group_item)
             if (el->type == k_CHORD)
-                if (mode != 1 || (((t_chord *)el)->onset >= start_ms && ((t_chord *)el)->onset <= end_ms))
-                    llll_appendllll(thisgroup, chord_get_path_in_notationobj(r_ob, (t_chord *)el, false), 0, WHITENULL_llll);
+                if (mode != 1 || (((t_chord *)el)->onset >= start_ms && ((t_chord *)el)->onset <= end_ms)) {
+                    if (selection_only) {
+                        if (notation_item_is_selected(r_ob, el))
+                            llll_appendllll(thisgroup, chord_get_path_in_notationobj_selectiononly(r_ob, (t_chord *)el, false));
+                    } else {
+                        llll_appendllll(thisgroup, chord_get_path_in_notationobj(r_ob, (t_chord *)el, false));
+                    }
+                }
         if (thisgroup->l_size <= 1)    // doesn't form a group
             llll_free(thisgroup);
         else
@@ -5979,14 +6472,14 @@ t_llll *get_clefs_as_llll(t_notation_obj *r_ob, char prepend_router){
         llll_appendsym(outlist, r_ob->clefs_as_symlist[v], 0, WHITENULL_llll);
     return outlist;
 }
-
+    
 t_llll *get_keys_as_llll(t_notation_obj *r_ob, char prepend_router){
     t_llll *outlist = llll_get();
     long v;
     if (prepend_router)
-        llll_appendsym(outlist, _llllobj_sym_keys, 0, WHITENULL_llll);
+        llll_appendsym(outlist, _llllobj_sym_keys);
     for (v = 0; v < r_ob->num_voices; v++)
-        llll_appendsym(outlist, r_ob->keys_as_symlist[v], 0, WHITENULL_llll);
+        llll_appendsym(outlist, r_ob->keys_as_symlist[v]);
     return outlist;
 }
 
@@ -5996,10 +6489,62 @@ t_llll *get_midichannels_as_llll(t_notation_obj *r_ob, char prepend_router)
     long v = 0;
     t_voice *voice;
     if (prepend_router)
-        llll_appendsym(outlist, _llllobj_sym_midichannels, 0, WHITENULL_llll);
+        llll_appendsym(outlist, _llllobj_sym_midichannels);
     voice = r_ob->firstvoice;
     for (v = 0; v < r_ob->num_voices; v++) {
-        llll_appendlong(outlist, voice->midichannel, 0, WHITENULL_llll);
+        llll_appendlong(outlist, voice->midichannel);
+        voice = voice_get_next(r_ob, voice);
+    }
+    return outlist;
+}
+
+long notationstyle_from_symbol(t_symbol *s)
+{
+    if (s == gensym("ji") || s == gensym("just") || s == gensym("justintonation") || s == gensym("just intonation") || s == gensym("Just Intonation"))
+        return k_VOICE_NOTATION_STYLE_JI;
+    else if (s == gensym("continuous") || s == gensym("linear") || s == gensym("linpitch") || s == gensym("continuous linear pitch") || s == gensym("Continuous Linear Pitch"))
+        return k_VOICE_NOTATION_STYLE_LINEAR_PITCH;
+//    else if (s == gensym("linfreq") || s == gensym("continuous linear frequency") || s == gensym("Continuous Linear Frequency"))
+//        return k_VOICE_NOTATION_STYLE_CONTINUOUS_LINEAR_FREQ;
+    else
+        return k_VOICE_NOTATION_STYLE_ET;
+}
+
+t_symbol *notationstyle_to_symbol(e_voice_notation_style s)
+{
+    switch (s) {
+        case k_VOICE_NOTATION_STYLE_ET:
+            return _llllobj_sym_et;
+            break;
+
+        case k_VOICE_NOTATION_STYLE_JI:
+            return _llllobj_sym_ji;
+            break;
+
+        case k_VOICE_NOTATION_STYLE_LINEAR_PITCH:
+            return _llllobj_sym_linpitch;
+            break;
+
+        case k_VOICE_NOTATION_STYLE_LINEAR_FREQ:
+            return _llllobj_sym_linfreq;
+            break;
+
+        default:
+            return _llllobj_sym_unknown;
+            break;
+    }
+}
+
+t_llll *get_notationstyles_as_llll(t_notation_obj *r_ob, char prepend_router)
+{
+    t_llll *outlist = llll_get();
+    long v = 0;
+    t_voice *voice;
+    if (prepend_router)
+        llll_appendsym(outlist, _llllobj_sym_notationstyles);
+    voice = r_ob->firstvoice;
+    for (v = 0; v < r_ob->num_voices; v++) {
+        llll_appendsym(outlist, notationstyle_to_symbol((e_voice_notation_style)voice->notation_style));
         voice = voice_get_next(r_ob, voice);
     }
     return outlist;
@@ -6266,12 +6811,12 @@ void notationobj_handle_change_cursors_on_mousemove(t_notation_obj *r_ob, t_obje
                     if (ux >= 0) {
                         long voicenum = yposition_to_voicenumber(r_ob, pt.y, NULL, k_VOICEENSEMBLE_INTERFACE_FIRST);
                         t_voice *voice = voice_get_nth_safe(r_ob, voicenum);
-                        if (voice) {
+                        if (voice && voice->notation_style != k_VOICE_NOTATION_STYLE_LINEAR_PITCH) {
                             double mc = yposition_to_mc(r_ob, pt.y, NULL, NULL);
                             long screen_mc;
                             t_rational screen_acc;
                             constraint_midicents_depending_on_editing_ranges(r_ob, &mc, voice->number);
-                            mc_to_screen_approximations(r_ob, mc, &screen_mc, &screen_acc, voice->acc_pattern, voice->full_repr);
+                            mc_to_display_approximation_ET(r_ob, mc, &screen_mc, &screen_acc, voice->acc_pattern, voice->full_repr);
                             if (screen_acc.r_num > 0) cursor = BACH_CURSOR_NOTE_SHARP;
                             else if (screen_acc.r_num < 0) cursor = BACH_CURSOR_NOTE_FLAT;
 
@@ -6468,6 +7013,26 @@ t_max_err notationobj_handle_attr_modified_notify(t_notation_obj *r_ob, t_symbol
             else if (attrname == gensym("linkdlcolortoslot"))
                 change_linkto_slot_flag(r_ob, r_ob->link_dlcolor_to_slot - 1, k_SLOT_LINKAGE_DURATIONLINE_COLOR);
         }
+        
+        if (attrname == gensym("shownoteheads")) {
+            object_attr_setdisabled((t_object *)r_ob, gensym("align"), r_ob->show_noteheads ? 0 : 1);
+        }
+        
+        if (attrname == gensym("slursavoidaccidentals") || attrname == gensym("slursavoidchords")) {
+            notationobj_reset_all_slurs_position(r_ob);
+        }
+        
+        if (attrname == gensym("spaceafterbarline") || attrname == gensym("spacebetweenbarlineandts") || attrname == gensym("spaceafterts") || attrname == gensym("shiftunisons")) {
+            implicitely_recalculate_all(r_ob, false);
+        }
+        
+        
+/*        if (attrname == gensym("temp")) {
+//            load_noteheads_typo_preferences(r_ob, r_ob->noteheads_font);
+            load_notation_typo_preferences(r_ob, r_ob->noteheads_font);
+//            load_articulations_typo_preferences(r_ob, &r_ob->articulations_typo_preferences, r_ob->articulations_font);
+        }*/
+         
 
         notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
     }

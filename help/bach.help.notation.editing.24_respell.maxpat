@@ -70,7 +70,7 @@
 					"patching_rect" : [ 61.5, 89.0, 292.0, 84.0 ],
 					"style" : "",
 					"text" : "Select some items and press Cmd+R (mac) or Ctrl+R (win) to automatically respell selected notes, resetting their enharmonicity to the automatic one.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

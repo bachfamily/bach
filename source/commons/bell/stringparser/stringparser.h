@@ -18,12 +18,18 @@ typedef struct _parseParams {
     t_globalVariableTable *gvt;
     countedList<t_localVar> *localVariablesStackBase[256] { };
     countedList<t_localVar> **localVariablesStack;
+    std::vector<t_localVar> *localVariablesStackBaseV[256] { };
+    std::vector<t_localVar> **localVariablesStackV;
+    
     std::unordered_map<t_symbol *, int> *localVariablesAuxMapStackBase[256] { };
     std::unordered_map<t_symbol *, int> **localVariablesAuxMapStack;
     std::unordered_set<t_symbol *> *liftedVariablesStackBase[256] { };
     std::unordered_set<t_symbol *> **liftedVariablesStack;
     countedList<class funArg *> *argumentsStackBase[256] { };
     countedList<class funArg *> **argumentsStack;
+    std::vector<class funArg*> *argumentsStackBaseV[256] { };
+    std::vector<class funArg*> **argumentsStackV;
+
     
     std::unordered_map<t_symbol*, std::unordered_set<astPatcherVar*>>* name2patcherVars;
     std::unordered_set<t_globalVariable*> *globalVariables;
@@ -175,4 +181,39 @@ static t_tokenNames tokenNames[] = {
     "term", "var", "globalVar", "patcherVar", "localVar"*/
 };
 
+typedef enum {
+    e_flexBison,
+    e_antlr4
+} e_currentParser;
+
+template <e_currentParser parser>
+void addVariableToScope(t_parseParams *params, t_symbol *name)
+{
+    auto known = (*(params->localVariablesAuxMapStack))->find(name);
+    if (known == (*(params->localVariablesAuxMapStack))->end()) { // yet unknown
+        (**(params->localVariablesAuxMapStack))[name] = 1;
+        
+        if (params->fnDepth == 0) {
+            if constexpr (parser == e_flexBison) {
+                *(params->localVariablesStack) = new countedList<t_localVar> (t_localVar(name, true), *(params->localVariablesStack)); // if we're at the main function level, then everything is lifted (as it can be set from the outside)
+            } else {
+                (*params->localVariablesStackV)->push_back(t_localVar(name, true));
+            }
+        } else {
+            t_bool lifted = (*(params->liftedVariablesStack))->find(name) != (*(params->liftedVariablesStack))->end();
+            if constexpr (parser == e_flexBison) {
+                *(params->localVariablesStack) = new countedList<t_localVar> (t_localVar(name, lifted), *(params->localVariablesStack));
+            } else {
+                (*params->localVariablesStackV)->push_back(t_localVar(name, lifted));
+            }
+            /*
+            if (lifted == (*(params->liftedVariablesStack))->end()) { // not lifted
+                *(params->argumentsStack) = new countedList<funArg *>(new funArg(name), *(params->argumentsStack));
+            } else { // old behavior: lifted
+                *(params->localVariablesStack) = new countedList<t_symbol *> (name, *(params->localVariablesStack));
+            }
+             */
+        }
+    }
+}
 #endif /* stringparser_h */

@@ -1,7 +1,7 @@
 /*
  *  llll_commons.h
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -21,8 +21,6 @@
 #define _LLLL_COMMONS_H_
 
 // very private! don't ever change these!!!
-#define LLLL_PRIMES_TABLE_MAX 46337        // the greatest prime <= sqrt(MAXLONG) (it's the last of our prime table)
-#define LLLL_PRIMES_TABLE_SIZE 4792        // how many primes do we have in our table?
 #define LLLL_STACK_SIZESTEP 64            // the dynamic allocation step used by llll_stack
 #define LLLL_BUF_SIZE_STEP 16384        // the dynamic allocation step for text buffers
 #define LLLL_IDX2PTR_SLOTS    1048576        // the number of slots for the llll_phonebook p_idx2ptr hash table (the hash function is just a modulo, so a power of 2 is fine)
@@ -38,7 +36,6 @@
 #define LLLL_POP_CSTR "]"
 #define LLLL_PUSH_ALL_CHARS "[("
 #define LLLL_POP_ALL_CHARS "])"
-
 
 #define TEXT_LIST_MAX_LENGTH        65536
 #define ATOM_LIST_LENGTH_STEP        (4096*64)
@@ -342,7 +339,7 @@ typedef struct _bach {
     t_object            *b_initpargs; // the initpargs singleton object, which can call the "dopargs" method of all the registered bach.portal objects
     t_hashtab           *b_portalpatchers; // a table of all the patchers containing bach.portal objects, associated to lllls of the objects themselves
     
-    long                *b_primes;
+//    long                *b_primes;
     t_hashtab            *b_memmap;
     t_hashtab            *b_poolmap;
     t_systhread_mutex    b_memmap_lock;
@@ -358,6 +355,7 @@ typedef struct _bach {
     t_object             *b_ss;
     t_bool               b_no_ss;
     t_bool              b_nonative;
+    t_atom_long         b_defaultbellversion;
     
     class pvManager     *b_thePvManager;
     
@@ -958,7 +956,7 @@ void llll_insert_llll_at_address(t_llll *ll, t_llll *address, t_llll *subs_model
 // flatten ll between mindepth and maxdepth
 // spikemode 1 makes a () appear in place of a )(
 // freething sets whether and how the l_thing field of lllls must be freed
-void llll_flat(t_llll *ll, t_atom_long minlevel, t_atom_long maxlevel, long spikemode = 0, e_freething_modes freething = LLLL_FREETHING_DONT);
+void llll_flat(t_llll *ll, t_atom_long minlevel = 1, t_atom_long maxlevel = -1, long spikemode = 0, e_freething_modes freething = LLLL_FREETHING_DONT);
 
 // ---DESTRUCTIVE - inplace
 // flatten ll up to maxdepth
@@ -1011,7 +1009,8 @@ t_llll *llll_lace(t_llll **lists, t_atom_long count, long iterationmode);
 
 // ---DESTRUCTIVE on ll
 // impose the structure of modelll upon inll
-void llll_reshape(t_llll *ll, t_llll *modelll, llll_clone_fn fn = NULL);
+void llll_reshape_old(t_llll *ll, t_llll *modelll, llll_clone_fn fn);
+void llll_reshape_new(t_llll *ll, const t_llll *modelll, const llll_clone_fn fn = NULL); // BEWARE: THIS ONE HAS AN ISSUE IN LISTS ASSEMBLY AND SHOULD NOT BE USED FOR NOW!
 
 /*
  ---DESTRUCTIVE on ll (inplace)
@@ -1063,6 +1062,9 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
 // return a geometric series (see bach.arithmser)
 t_llll *llll_geomser(t_object *x, t_hatom start_hatom, t_hatom end_hatom, t_hatom factor_hatom, t_atom_long maxcount, long *err);
 
+// farey sequence of a given order
+std::vector<t_rational> get_farey_sequence(long order, t_rational offset, long max_limit);
+t_llll *llll_farey(long order, t_rational offset, long max_limit);
 
 
 

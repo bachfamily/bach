@@ -2,48 +2,23 @@
 	"patcher" : 	{
 		"fileversion" : 1,
 		"appversion" : 		{
-			"major" : 8,
+			"major" : 9,
 			"minor" : 0,
-			"revision" : 2,
+			"revision" : 0,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
 		"classnamespace" : "box",
 		"rect" : [ 83.0, 107.0, 617.0, 539.0 ],
-		"bglocked" : 0,
-		"openinpresentation" : 0,
-		"default_fontsize" : 13.0,
-		"default_fontface" : 0,
-		"default_fontname" : "Arial",
-		"gridonopen" : 1,
 		"gridsize" : [ 15.0, 15.0 ],
-		"gridsnaponopen" : 1,
-		"objectsnaponopen" : 1,
-		"statusbarvisible" : 2,
-		"toolbarvisible" : 1,
-		"lefttoolbarpinned" : 0,
-		"toptoolbarpinned" : 0,
-		"righttoolbarpinned" : 0,
-		"bottomtoolbarpinned" : 0,
-		"toolbars_unpinned_last_save" : 0,
-		"tallnewobj" : 0,
-		"boxanimatetime" : 200,
-		"enablehscroll" : 1,
-		"enablevscroll" : 1,
-		"devicewidth" : 0.0,
-		"description" : "",
-		"digest" : "",
-		"tags" : "",
-		"style" : "",
-		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
 					"id" : "obj-15",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 135.0, 446.0, 121.0, 23.0 ],
+					"patching_rect" : [ 135.0, 446.0, 113.0, 22.0 ],
 					"text" : "print two @popup 1"
 				}
 
@@ -54,7 +29,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 259.0, 446.0, 133.0, 23.0 ],
+					"patching_rect" : [ 259.0, 446.0, 123.0, 22.0 ],
 					"text" : "print result @popup 1"
 				}
 
@@ -77,7 +52,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 11.0, 446.0, 123.0, 23.0 ],
+					"patching_rect" : [ 11.0, 446.0, 114.0, 22.0 ],
 					"text" : "print one @popup 1"
 				}
 
@@ -107,8 +82,9 @@
 					"numinlets" : 1,
 					"numoutlets" : 3,
 					"outlettype" : [ "", "", "" ],
-					"patching_rect" : [ 11.0, 400.0, 267.0, 39.0 ],
+					"patching_rect" : [ 11.0, 400.0, 267.0, 35.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -122,7 +98,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 135.0, 346.0, 121.0, 23.0 ],
+					"patching_rect" : [ 135.0, 336.0, 113.0, 22.0 ],
 					"text" : "print two @popup 1"
 				}
 
@@ -133,7 +109,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 259.0, 346.0, 133.0, 23.0 ],
+					"patching_rect" : [ 259.0, 336.0, 123.0, 22.0 ],
 					"text" : "print result @popup 1"
 				}
 
@@ -156,7 +132,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 11.0, 346.0, 123.0, 23.0 ],
+					"patching_rect" : [ 11.0, 336.0, 114.0, 22.0 ],
 					"text" : "print one @popup 1"
 				}
 
@@ -185,8 +161,9 @@
 					"numinlets" : 1,
 					"numoutlets" : 3,
 					"outlettype" : [ "", "", "" ],
-					"patching_rect" : [ 11.0, 288.0, 267.0, 38.0 ],
+					"patching_rect" : [ 11.0, 288.0, 267.0, 35.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -200,7 +177,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 171.0, 227.5, 133.0, 23.0 ],
+					"patching_rect" : [ 171.0, 227.5, 133.0, 22.0 ],
 					"text" : "print result @popup 1"
 				}
 
@@ -223,7 +200,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 11.0, 227.5, 119.0, 23.0 ],
+					"patching_rect" : [ 11.0, 227.5, 119.0, 22.0 ],
 					"text" : "print left @popup 1"
 				}
 
@@ -238,7 +215,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 35.0, 588.0, 108.0 ],
-					"text" : "bach.code can output data from multiple outlets at the end of the evaluation. There are two syntaxes for achieving this: the \"outlet\" function or the outlet pseudovariables ($o1 ... $o<n>).\nIn both cases, it is possible to output data independently from the actual result of the computation, that will be output anyway from a separate outlet.\nbach.eval can have an arbitrary number of outlets in addition to its main outlet returning the final result of the evaluation. These extra outlets are always on the left of the main outlet, and the data are output in right-to-left order, regardless of the order in which they appear in the code.",
+					"text" : "bach.eval can output data from multiple outlets at the end of the evaluation. There are two syntaxes for achieving this: the \"outlet\" function or the outlet pseudovariables ($o1 ... $o<n>).\nIn both cases, it is possible to output data independently from the actual result of the computation, that will be output anyway from a separate outlet.\nbach.eval can have an arbitrary number of outlets in addition to its main outlet returning the final result of the evaluation. These extra outlets are always on the left of the main outlet, and the data are output in right-to-left order, regardless of the order in which they appear in the code.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -267,8 +244,9 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 11.0, 179.0, 179.0, 38.0 ],
+					"patching_rect" : [ 11.0, 179.0, 181.0, 35.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -415,6 +393,7 @@
 
 			}
  ],
+		"originid" : "pat-448",
 		"dependency_cache" : [ 			{
 				"name" : "bach.eval.mxo",
 				"type" : "iLaX"

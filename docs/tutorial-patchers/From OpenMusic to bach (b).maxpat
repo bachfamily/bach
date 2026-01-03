@@ -428,7 +428,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 396.5, 490.0, 278.0, 36.0 ],
 					"text" : "Don't even show those color to any graphic or designer. Ever heard of Adobe's kuler? Use it!",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

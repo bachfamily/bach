@@ -557,7 +557,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 532.0, 460.0, 271.0, 33.0 ],
 					"text" : "Uhm. Some middle C's appear - unwanted! Looks like the rest handling is not correct...",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

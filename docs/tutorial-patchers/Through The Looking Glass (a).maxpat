@@ -222,7 +222,7 @@
 					"patching_rect" : [ 391.0, 469.5, 289.0, 33.0 ],
 					"style" : "",
 					"text" : "Ok, you convinced me. So, is there anything QUICK and IMPORTANT that I should know about the lllls?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

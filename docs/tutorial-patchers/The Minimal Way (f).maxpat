@@ -6595,7 +6595,7 @@
 					"patching_rect" : [ 443.0, 510.0, 286.0, 47.0 ],
 					"style" : "",
 					"text" : "One last thing. I usually transpose by \"minor thirds\", \"major seconds\", \"perfect fourths\"... not by 400! \nLet me work with my old nice diatonic intervals!",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

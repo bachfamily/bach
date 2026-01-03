@@ -536,7 +536,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 323.0, 514.0, 245.0, 33.0 ],
 					"text" : "This length and depth thing is complicate... llll tree-structure is complicate!!!",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

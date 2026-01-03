@@ -289,7 +289,7 @@ t_llllelem *undo_redo_step_marker_create(t_notation_obj *r_ob, char what, char f
                     qsort(helper, M, sizeof(t_reordering_helper), reordering_comparator);
                     
                     // now modify positions
-                    char done[N];
+                    char *done = (char *)sysmem_newptr(M * sizeof(char));
                     for (long i = 0; i < M; i++)
                         done[i] = 0;
                     for (long i = 0; i < M; i++) {
@@ -311,6 +311,8 @@ t_llllelem *undo_redo_step_marker_create(t_notation_obj *r_ob, char what, char f
                             done[i] = true;
                         }
                     }
+                    
+                    sysmem_freeptr(done);
                     
                     // finally, plug everything back
                     for (long i = 0; i < M; i++) {
@@ -600,6 +602,9 @@ void undo_op_to_string(long undo_op, char *buf)
         case k_UNDO_OP_DELETE_SELECTION:
             sprintf(buf, "Delete Selection");
             break;
+        case k_UNDO_OP_DELETE_SELECTED_MEASURES_CONTENT:
+            sprintf(buf, "Delete Selected Measures' Content");
+            break;
         case k_UNDO_OP_RIPPLE_DELETE_SELECTION:
             sprintf(buf, "Ripple Delete Selection");
             break;
@@ -621,8 +626,14 @@ void undo_op_to_string(long undo_op, char *buf)
         case k_UNDO_OP_CLEAR_SLURS:
             sprintf(buf, "Clear Slurs");
             break;
-        case k_UNDO_OP_SNAP_PITCH_TO_GRID_FOR_SELECTION:
-            sprintf(buf, "Snap Pitch To Grid");
+        case k_UNDO_OP_SNAP_PITCH_TO_CURRENT_DISPLAY_FOR_SELECTION:
+            sprintf(buf, "Snap Pitch To Current Display");
+            break;
+        case k_UNDO_OP_SNAP_PITCH_TO_ET_GRID_FOR_SELECTION:
+            sprintf(buf, "Snap Pitch To Equal-Tempered Grid");
+            break;
+        case k_UNDO_OP_SNAP_PITCH_TO_JI_LIMIT_FOR_SELECTION:
+            sprintf(buf, "Snap Pitch To Just Intonation Limit");
             break;
         case k_UNDO_OP_SNAP_ONSET_TO_GRID_FOR_SELECTION:
             sprintf(buf, "Snap Onset To Grid");
@@ -653,6 +664,9 @@ void undo_op_to_string(long undo_op, char *buf)
             break;
         case k_UNDO_OP_CHANGE_PITCH_FOR_SELECTION:
             sprintf(buf, "Change Pitch");
+            break;
+        case k_UNDO_OP_SET_PITCH_RATIO_FOR_SELECTION:
+            sprintf(buf, "Set Pitch Ratio");
             break;
         case k_UNDO_OP_CHANGE_POC_FOR_SELECTION:
             sprintf(buf, "Change Pitch Or Cents");
@@ -1049,6 +1063,9 @@ void undo_op_to_string(long undo_op, char *buf)
             break;
         case k_UNDO_OP_ENHARMONICALLY_RESPELL_NOTE:
             sprintf(buf, "Enharmonically Respell Note");
+            break;
+        case k_UNDO_OP_APPROXIMATE_TO_JI_RATIO:
+            sprintf(buf, "Approximate to JI Ratio");
             break;
         case k_UNDO_OP_CHANGE_BARLINE_TYPE:
             sprintf(buf, "Change Barline");
@@ -1593,7 +1610,7 @@ t_undo_redo_information *undo_redo_information_reverse(t_notation_obj *r_ob, t_u
         newcontent = get_names_as_llll(item, false);
         reverse_information = undo_redo_information_create(ID, type, k_UNDO_MODIFICATION_TYPE_CHANGE, param, path_after, path_before, k_HEADER_NONE, newcontent);
 
-    } else if (param == _llllobj_sym_slur) {
+    } else if (param == _llllobj_sym_slurs) {
         newcontent = chord_get_slurs_as_llll(item->type == k_CHORD ? (t_chord *) item : NULL, false);
         reverse_information = undo_redo_information_create(ID, type, k_UNDO_MODIFICATION_TYPE_CHANGE, param, path_after, path_before, k_HEADER_NONE, newcontent);
 
@@ -1697,6 +1714,7 @@ long undo_redo_information_apply(t_notation_obj *r_ob, t_undo_redo_information *
                 char need_update_solos = false;
                 clear_measure(r_ob, meas, true, false, true);
                 notation_item_get_ID_from_llll(content); // if there's an ID in the measure, we ignore it.
+                
                 if (r_ob->setmeasurefromllll)
                     (r_ob->setmeasurefromllll)((t_object *)r_ob, meas, content, true, false, &need_update_solos);
                 meas->beaming_calculation_flags = (is_measure_single_whole_rest(r_ob, meas) && r_ob->tree_handling != k_RHYTHMIC_TREE_HANDLING_TAKE_FOR_GRANTED) ? k_BEAMING_CALCULATION_DO : k_BEAMING_CALCULATION_DONT_CHANGE_ANYTHING;
@@ -1735,7 +1753,7 @@ long undo_redo_information_apply(t_notation_obj *r_ob, t_undo_redo_information *
             if (modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE || modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE_CHECK_ORDER) {
                 if (obj_is_score) {
                     set_scorechord_values_from_llll(r_ob, (t_chord *)item, content, true, false);
-                    compute_note_approximations_for_chord(r_ob, (t_chord *)item, true);
+                    chord_compute_note_approximations(r_ob, (t_chord *)item, true);
                     if (is_solo_with_progeny(r_ob, item)) update_solos(r_ob);
                     recompute_all_for_measure(r_ob, ((t_chord *)item)->parent, false);
                 } else {
@@ -1754,6 +1772,7 @@ long undo_redo_information_apply(t_notation_obj *r_ob, t_undo_redo_information *
                 t_chord *newch = NULL;
                 if (r_ob->addchordfromllll)
                     (r_ob->addchordfromllll)((t_object *)r_ob, content, (t_rollvoice *)voice_get_nth_safe(r_ob, this_information->n_it_path_after.voice_num), false, true);
+                notationobj_make_temporary_slurs_permanent(r_ob);
                 if (newch)
                     chord_set_recompute_parameters_flag(r_ob, newch);
             }
@@ -1810,6 +1829,24 @@ long undo_redo_information_apply(t_notation_obj *r_ob, t_undo_redo_information *
 }
 
 
+bool check_slurs(t_notation_obj *r_ob)
+{
+    long tot_slurs_from = 0;
+    long tot_slurs_to = 0;
+
+    for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
+        for (t_chord *ch = voice_get_first_chord(r_ob, voice); ch; ch = chord_get_next(ch)) {
+            tot_slurs_from += ch->num_slurs_from;
+            tot_slurs_to += ch->num_slurs_to;
+        }
+    }
+    
+    if (tot_slurs_from == tot_slurs_to && tot_slurs_from == r_ob->slurs->l_size) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 
 // what = -1 -> undo, what = 1 -> redo
@@ -2151,14 +2188,39 @@ void undo_tick_fix_path_for_onset_change(t_notation_obj *r_ob, t_undo_redo_infor
 }
  */
 
-t_undo_redo_information *undo_tick_create_for_notation_item(t_notation_obj *r_ob, t_notation_item *item, e_undo_modification_types modif_type, t_symbol *param)
+void possibly_add_undo_ticks_for_slurs_from(t_notation_obj *r_ob, t_notation_item *item)
+{
+    // ADDING INFORMATION FOR SLURS
+    if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && item->type == k_MEASURE) {
+        // special case: if a chord inside a measure ends a slur, we need to create an undo tick for the chord that STARTED the slur
+        for (t_chord *ch = ((t_measure *)item)->firstchord; ch; ch = ch->next) {
+            for (long i = 0; i < ch->num_slurs_from; i++) {
+                if (!notation_item_is_under_undo_tick(r_ob, (t_notation_item *)ch->slur_from[i]->start_chord) &&
+                    !notation_item_is_under_undo_tick(r_ob, (t_notation_item *)ch->slur_from[i]->start_chord->parent))
+                    undo_tick_create_for_notation_item(r_ob, (t_notation_item *)ch->slur_from[i]->start_chord, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state, false);
+            }
+        }
+    } else if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL && item->type == k_CHORD) {
+        t_chord *ch = ((t_chord *)item);
+        for (long i = 0; i < ch->num_slurs_from; i++) {
+            if (!notation_item_is_under_undo_tick(r_ob, (t_notation_item *)ch->slur_from[i]->start_chord) &&
+                !notation_item_is_under_undo_tick(r_ob, (t_notation_item *)ch->slur_from[i]->start_chord->parent))
+                undo_tick_create_for_notation_item(r_ob, (t_notation_item *)ch->slur_from[i]->start_chord, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state, false);
+        }
+    }
+}
+
+t_undo_redo_information *undo_tick_create_for_notation_item(t_notation_obj *r_ob, t_notation_item *item, e_undo_modification_types modif_type, t_symbol *param, bool automatically_add_undo_ticks_for_slurs_from)
 {
     t_undo_redo_information *operation;
     t_llll *content = NULL;
     t_notation_item_path path;
     t_notation_item_path *path_before, *path_after;
     t_llllelem *tick_el = NULL;
-
+    
+    if (automatically_add_undo_ticks_for_slurs_from)
+        possibly_add_undo_ticks_for_slurs_from(r_ob, item);
+    
     notation_item_get_path(r_ob, item, &path);
     
     path_before = (modif_type == k_UNDO_MODIFICATION_TYPE_INSERT) ? NULL : &path;
@@ -2195,7 +2257,7 @@ t_undo_redo_information *undo_tick_create_for_notation_item(t_notation_obj *r_ob
         content = get_multiple_flags_for_undo(r_ob, item);
     else if (param == _llllobj_sym_name)
         content = get_names_as_llll(item, false);
-    else if (param == _llllobj_sym_slur)
+    else if (param == _llllobj_sym_slurs)
         content = chord_get_slurs_as_llll(item->type == k_CHORD ? (t_chord *)item : NULL, false);
     else if (modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE || modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE_CHECK_ORDER || modif_type == k_UNDO_MODIFICATION_TYPE_INSERT)
         content = notation_item_get_values_as_llll_for_undo(r_ob, item);
@@ -2267,7 +2329,7 @@ t_undo_redo_information *undo_tick_create_for_notation_item(t_notation_obj *r_ob
     return operation;
 }
 
-void undo_tick_create_for_selected_notation_item(t_notation_obj *r_ob, t_notation_item *item, e_element_types smallest_undoable_element, e_undo_modification_types modif_type, t_symbol *param){
+void undo_tick_create_for_selected_notation_item(t_notation_obj *r_ob, t_notation_item *item, e_element_types smallest_undoable_element, e_undo_modification_types modif_type, t_symbol *param, bool automatically_add_undo_ticks_for_slurs_from){
     t_notation_item *undo_item;
     
     if (r_ob->obj_type == k_NOTATION_OBJECT_SLOT)
@@ -2282,25 +2344,25 @@ void undo_tick_create_for_selected_notation_item(t_notation_obj *r_ob, t_notatio
 
     
     if (modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE && param == _llllobj_sym_name && !(undo_item->flags & k_FLAG_MODIF_NAME_UNDO)){
-        undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, param);
+        undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, param, automatically_add_undo_ticks_for_slurs_from);
         undo_item->flags = (e_bach_internal_notation_flags) (undo_item->flags | k_FLAG_MODIF_NAME_UNDO);
         
     } else if (modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE && param == _llllobj_sym_flag && !(undo_item->flags & k_FLAG_MODIF_FLAG_UNDO)){
-        undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, param);
+        undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, param, automatically_add_undo_ticks_for_slurs_from);
         undo_item->flags = (e_bach_internal_notation_flags) (undo_item->flags | k_FLAG_MODIF_FLAG_UNDO);
         
     } else if (modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE_CHECK_ORDER && !(undo_item->flags & k_FLAG_MODIF_CHECK_ORDER_UNDO)){
-        undo_tick_create_for_notation_item(r_ob, undo_item, modif_type, param);
+        undo_tick_create_for_notation_item(r_ob, undo_item, modif_type, param, automatically_add_undo_ticks_for_slurs_from);
         undo_item->flags = (e_bach_internal_notation_flags) (undo_item->flags | k_FLAG_MODIF_CHECK_ORDER_UNDO);
         
     } else if (!(modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE && param == _llllobj_sym_flag) && modif_type != k_UNDO_MODIFICATION_TYPE_CHANGE_CHECK_ORDER &&
                (modif_type == k_UNDO_MODIFICATION_TYPE_INSERT || modif_type == k_UNDO_MODIFICATION_TYPE_REMOVE || !(undo_item->flags & k_FLAG_MODIF_UNDO_WITH_OR_WO_CHECK_ORDER))){
-        undo_tick_create_for_notation_item(r_ob, undo_item, modif_type, param);
+        undo_tick_create_for_notation_item(r_ob, undo_item, modif_type, param, automatically_add_undo_ticks_for_slurs_from);
         undo_item->flags = (e_bach_internal_notation_flags) (undo_item->flags | k_FLAG_MODIF_UNDO);
     }
 }
 
-void undo_ticks_create_for_multiple_notation_items(t_notation_obj *r_ob, long num_items, t_notation_item **item, e_undo_modification_types modif_type, t_symbol *param, long *undo_op){
+void undo_ticks_create_for_multiple_notation_items(t_notation_obj *r_ob, long num_items, t_notation_item **item, e_undo_modification_types modif_type, t_symbol *param, long *undo_op, bool automatically_add_undo_ticks_for_slurs_from){
     long i;
     
     if (r_ob->inhibited_undo)
@@ -2340,6 +2402,9 @@ void undo_ticks_create_for_multiple_notation_items(t_notation_obj *r_ob, long nu
         else
             content = llll_get();
         
+        if (automatically_add_undo_ticks_for_slurs_from)
+            possibly_add_undo_ticks_for_slurs_from(r_ob, item[i]);
+
         notation_item_get_path(r_ob, item[i], &path);
         path_before = (modif_type == k_UNDO_MODIFICATION_TYPE_INSERT) ? NULL : &path;
         path_after = (modif_type == k_UNDO_MODIFICATION_TYPE_REMOVE) ? NULL : &path;

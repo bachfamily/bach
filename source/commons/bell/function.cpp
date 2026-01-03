@@ -1,7 +1,7 @@
 /*
  *  function.cpp
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -143,7 +143,7 @@ t_userFunction::t_userFunction(countedList<funArg *> *argumentsList, countedList
     
     // put all the local variables in the array of local variable names (for faster access at function call)
     if (localVariablesList) {
-        localVariablesList->copyIntoNullTerminatedArray(&localVariables);
+        copyIntoNullTerminatedArray<t_localVar>(localVariablesList, &localVariables);
         delete localVariablesList->getHead();
     } else {
         localVariables = new t_localVar [1] { (nullptr) };
@@ -185,6 +185,54 @@ t_userFunction::t_userFunction(countedList<funArg *> *argumentsList, countedList
 
     delete argumentsList;
 }
+
+t_userFunction::t_userFunction(std::vector<funArg *> *argumentsList, std::vector<t_localVar> *localVariablesList, astNode *ast, t_codableobj *culprit) : ast(ast)
+{
+    
+    // put all the local variables in the array of local variable names (for faster access at function call)
+    if (localVariablesList) {
+        copyIntoNullTerminatedArray<t_localVar>(localVariablesList, &localVariables);
+        delete localVariablesList;
+    } else {
+        localVariables = new t_localVar [1] { (nullptr) };
+    }
+    
+    variadic = false;
+    //namedArgumentsCount = namedArgumentsCountAfterEllipsis = 0;
+    // fill the double table of argument names and defaults
+    if (argumentsList) {
+        for (auto item: *argumentsList) {
+            t_symbol *name = item->getSym();
+            if (name == gensym("<...>")) {
+                if (variadic) {
+                    object_error((t_object *) culprit, "<...> can only appear once in a function definition");
+                } else {
+                    variadic = true;
+                }
+            } else if (argName2idx.find(name) == argName2idx.end()) {
+                item->conform();
+                if (!variadic) {
+                    idx2argNameAndDefault[++namedArgumentsCount] = item;
+                    argName2idx[name] = namedArgumentsCount;
+                } else {
+                    idx2argNameAndDefault[--namedArgumentsCountAfterEllipsis] = item;
+                    argName2idx[name] = namedArgumentsCountAfterEllipsis;
+                }
+            } else {
+                delete item;
+                object_error((t_object *) culprit, "Duplicate argument name");
+
+            }
+        }
+        //idx2argNameAndDefault[namedArgumentsCount + 1] = nullptr;
+        //idx2argNameAndDefault[namedArgumentsCountAfterEllipsis - 1] = nullptr;
+    }
+    
+    //idx2argNameAndDefault[0] = nullptr;
+
+    delete argumentsList;
+}
+
 
 t_llll* t_userFunction::call(const t_execEnv &context) {
     t_llll *result = ast->eval(context);
@@ -282,14 +330,14 @@ t_llll* t_maxFunction::call(t_execEnv const &context) {
         object_attr_setsym(in_obj, _llllobj_sym_out, out);
     }
     if (order->l_size == 0) {
-        for (int i = context.argc; i > 0; i--) {
+        for (long i = context.argc; i > 0; i--) {
             object_method(in_obj, gensym("pass"), i - 1, context.argv[i]);
         }
     } else {
         t_llllelem *el;
         int i;
         for (el = order->l_tail, i = order->l_size; el; el = el->l_prev, i--) {
-            int n = hatom_getlong(&el->l_hatom);
+            long n = hatom_getlong(&el->l_hatom);
             if (n > 0 && n <= nInlets) {
                 if (t_llll *passed = context.argv[i]; passed) {
                     object_method(in_obj, gensym("pass"), n - 1, passed);
@@ -327,6 +375,36 @@ inlet(0), name2astVars(name2astVars), globalVars(globalVariables), functions(fun
         }
         localVariables[i] = t_localVar();
         delete localVariablesList->getHead();
+    } else {
+        localVariables = new t_localVar[1] { };
+    }
+    
+    variadic = true;
+    
+    namedArgumentsCount = 0;
+    name = gensym("main");
+    outlets = 0;
+}
+
+t_mainFunction::t_mainFunction(astNode *mainAst,
+                               std::vector<t_localVar> *localVariablesList,
+                               std::unordered_set<t_globalVariable*> *globalVariables,
+                               pvMap *name2astVars,
+                               std::unordered_set<t_function*> *funcs,
+                               t_codableobj *caller) :
+inlet(0), name2astVars(name2astVars), globalVars(globalVariables), functions(funcs), owner(caller)
+{
+    ast = mainAst;
+    if (!ast)
+        return;
+    if (localVariablesList) {
+        localVariables = new t_localVar[localVariablesList->size() + 1];
+        int i = 0;
+        for (auto v : *localVariablesList) {
+            localVariables[i++] = v;
+        }
+        localVariables[i] = t_localVar();
+        delete localVariablesList;
     } else {
         localVariables = new t_localVar[1] { };
     }
@@ -431,7 +509,7 @@ void t_mainFunction::removeFromGlobalVarsClients() {
 ///////////////////////
 
 
-astFunctionCall::astFunctionCall(astNode *functionNode, countedList<astNode *> *argsByPositionList, countedList<symNodePair *> *argsByNameList, t_codableobj *owner) : astNode(owner), functionNode(functionNode), OopStyleCall(false) {
+astFunctionCall::astFunctionCall(astNode *functionNode, countedList<astNode *> *argsByPositionList, countedList<symNodePair *> *argsByNameList, t_codableobj *owner) : astNode(owner), functionNode(functionNode), DataflowStyleCall(false) {
     
     if (argsByPositionList) {
         argsByPositionCount = argsByPositionList->getCount();
@@ -466,21 +544,64 @@ astFunctionCall::astFunctionCall(astNode *functionNode, countedList<astNode *> *
     }
 }
 
+astFunctionCall::astFunctionCall(astNode *functionNode, std::vector<astNode *> *argsByPositionList, std::vector<symNodePair *> *argsByNameList, t_codableobj *owner) : astNode(owner), functionNode(functionNode), DataflowStyleCall(false) {
+    
+    if (argsByPositionList) {
+        argsByPositionCount = argsByPositionList->size();
+        argsByPosition = new astNode* [argsByPositionCount + 1];
+        argsByPosition += 1;
+        int i = 0;
+        for (auto a : *argsByPositionList) {
+            argsByPosition[i] = a;
+            i++;
+        }
+    } else {
+        argsByPositionCount = 0;
+        argsByPosition = nullptr;
+    }
+    
+    if (argsByNameList) {
+        argsByNameCount = argsByNameList->size();
+        argsByName = new astNode* [argsByNameCount];
+        argsNames = new t_symbol* [argsByNameCount];
+        countedList<symNodePair *> *thisABNL;
+        int i = 0;
+        for (auto a : *argsByNameList) {
+            argsByName[i] = a->getNode();
+            argsNames[i] = a->getSym();
+            delete a;
+            i++;
+        }
+    } else {
+        argsByNameCount = 0;
+        argsByName = nullptr;
+        argsNames = nullptr;
+    }
+}
+
+astFunctionCall::astFunctionCall(astNode *functionNode, t_codableobj *owner) : astNode(owner), functionNode(functionNode), DataflowStyleCall(false) {
+    argsByPositionCount = 0;
+    argsByPosition = nullptr;
+    argsByNameCount = 0;
+    argsByName = nullptr;
+    argsNames = nullptr;
+}
+
 astFunctionCall::~astFunctionCall() {
     delete functionNode;
     for (int i = 0; i < argsByPositionCount; i++)
         delete argsByPosition[i];
     if (argsByPosition)
-        delete (OopStyleCall ? argsByPosition : argsByPosition - 1);
+        delete (DataflowStyleCall ? argsByPosition : argsByPosition - 1);
     for (int i = 0; i < argsByNameCount; i++)
         delete argsByName[i];
     delete argsByName;
     delete argsNames;
 }
 
-void astFunctionCall::addOopStyleArg(astNode *arg) {
-    if (!OopStyleCall) {
-        OopStyleCall = true;
+void astFunctionCall::addDataflowStyleArg(astNode *arg) {
+    if (!DataflowStyleCall) {
+        DataflowStyleCall = true;
         argsByPositionCount++;
         if (!argsByPosition) {
             argsByPosition = new astNode* [1];
@@ -597,7 +718,7 @@ t_llll* astFunctionCall::eval(t_execEnv const &context)
     return resultLl;
 }
 
-void astFunctionCall::setOopStyleArgValue(t_llll *ll) {
+void astFunctionCall::setDataflowStyleArgValue(t_llll *ll) {
     astConst* k = dynamic_cast<astConst*>(argsByPosition[0]);
     k->set(ll);
 }

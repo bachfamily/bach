@@ -20,6 +20,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\commons\bell\astNode.cpp" />
+    <ClCompile Include="..\..\commons\bell\bisonparserV3\bisonparserV3_nolines.c" />
+    <ClCompile Include="..\..\commons\bell\bisonparserV3\bisonparserV3_tab_nolines.c" />
     <ClCompile Include="..\..\commons\bell\builtInFunction.cpp" />
     <ClCompile Include="..\..\commons\bell\builtInFunctionWithFindFn.cpp" />
     <ClCompile Include="..\..\commons\bell\builtInFunctionWithSortFn.cpp" />
@@ -53,10 +55,9 @@
     <ClCompile Include="..\..\commons\foundation\llll_sort.cpp" />
     <ClCompile Include="..\..\commons\graphics\bach_cursors.c" />
     <ClCompile Include="..\..\commons\graphics\bach_graphics.c" />
-    <ClCompile Include="..\..\commons\graphics\bach_inspector.c" />
     <ClCompile Include="..\..\commons\graphics\bach_jit.c" />
-    <ClCompile Include="..\..\commons\graphics\bach_slots.c" />
     <ClCompile Include="..\..\commons\graphics\llll_modifiers.c" />
+    <ClCompile Include="..\..\commons\libraries\MTS-ESP-main\Master\libMTSMaster.cpp" />
     <ClCompile Include="..\..\commons\libraries\SDIF-3.11.4-src\sdif\SdifCheck.c" />
     <ClCompile Include="..\..\commons\libraries\SDIF-3.11.4-src\sdif\SdifConvToText.c" />
     <ClCompile Include="..\..\commons\libraries\SDIF-3.11.4-src\sdif\SdifErrMess.c" />
@@ -107,13 +108,19 @@
     <ClCompile Include="..\..\commons\math\llll_settheory.c" />
     <ClCompile Include="..\..\commons\math\rational.c" />
     <ClCompile Include="..\..\commons\math\spectral.c" />
+    <ClCompile Include="..\..\commons\notation\bach_inspector.c" />
+    <ClCompile Include="..\..\commons\notation\bach_slots.c" />
+    <ClCompile Include="..\..\commons\notation\notation_accidentals.c" />
     <ClCompile Include="..\..\commons\notation\notation_commons.c" />
     <ClCompile Include="..\..\commons\notation\notation_dynamics.c" />
     <ClCompile Include="..\..\commons\notation\notation_export.c" />
     <ClCompile Include="..\..\commons\notation\notation_files.c" />
     <ClCompile Include="..\..\commons\notation\notation_goto.c" />
+    <ClCompile Include="..\..\commons\notation\notation_markers.c" />
     <ClCompile Include="..\..\commons\notation\notation_maxinterface.c" />
     <ClCompile Include="..\..\commons\notation\notation_pitches.c" />
+    <ClCompile Include="..\..\commons\notation\notation_slurs.c" />
+    <ClCompile Include="..\..\commons\notation\notation_undo.c" />
     <ClCompile Include="..\..\commons\parsers\alterparser\bach_alterparser.c" />
     <ClCompile Include="..\..\commons\parsers\chkparser\bach_chkparser.c" />
     <ClCompile Include="..\..\commons\parsers\exprparser\bach_exprparser.c" />
@@ -127,6 +134,9 @@
     <ClInclude Include="..\..\commons\bell\ast.hpp" />
     <ClInclude Include="..\..\commons\bell\astNode.hpp" />
     <ClInclude Include="..\..\commons\bell\bach_codableobj.hpp" />
+    <ClInclude Include="..\..\commons\bell\bellparser_commons.h" />
+    <ClInclude Include="..\..\commons\bell\bisonparserV3\bisonparserV3_lex_nolines.h" />
+    <ClInclude Include="..\..\commons\bell\bisonparserV3\bisonparserV3_tab_nolines.h" />
     <ClInclude Include="..\..\commons\bell\builtInFunction.hpp" />
     <ClInclude Include="..\..\commons\bell\builtInFunctionWithFindFn.hpp" />
     <ClInclude Include="..\..\commons\bell\builtInFunctionWithSortFn.hpp" />
@@ -167,6 +177,7 @@
     <ClInclude Include="..\..\commons\graphics\llll_modifiers.h" />
     <ClInclude Include="..\..\commons\kiss_fft\_kiss_fft_guts.h" />
     <ClInclude Include="..\..\commons\kiss_fft\kiss_fft.h" />
+    <ClInclude Include="..\..\commons\libraries\MTS-ESP-main\Master\libMTSMaster.h" />
     <ClInclude Include="..\..\commons\libraries\SDIF-3.11.4-src\include\sdif.h" />
     <ClInclude Include="..\..\commons\libraries\SDIF-3.11.4-src\include\sdif_version.h" />
     <ClInclude Include="..\..\commons\libraries\SDIF-3.11.4-src\sdif\SdifErrMess.h" />
@@ -207,10 +218,14 @@
     <ClInclude Include="..\..\commons\math\llll_settheory.h" />
     <ClInclude Include="..\..\commons\math\rational.h" />
     <ClInclude Include="..\..\commons\math\spectral.h" />
+    <ClInclude Include="..\..\commons\notation\bach_accidentals.hpp" />
     <ClInclude Include="..\..\commons\notation\notation.h" />
     <ClInclude Include="..\..\commons\notation\notation_attrs.h" />
     <ClInclude Include="..\..\commons\notation\notation_files.h" />
     <ClInclude Include="..\..\commons\notation\notation_goto.h" />
+    <ClInclude Include="..\..\commons\notation\notation_markers.h" />
+    <ClInclude Include="..\..\commons\notation\notation_slurs.h" />
+    <ClInclude Include="..\..\commons\notation\notation_undo.h" />
     <ClInclude Include="..\..\commons\parsers\alterparser\alterparser.h" />
     <ClInclude Include="..\..\commons\parsers\bach_parser.hpp" />
     <ClInclude Include="..\..\commons\parsers\chkparser\chkparser.h" />

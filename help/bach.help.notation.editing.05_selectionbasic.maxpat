@@ -58,7 +58,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 270.0, 152.0, 332.0, 112.0 ],
 					"text" : "2. Click outside the staff (for bach.roll also inside the staff is allowed), on the background, avoiding all elements, and then drag: a selection rectangle appears, allowing you to select all elements inside it.\nIf you keep Shift pressed, you can draw another rectangle, which will add content to the selection, or which will remove if (if it was already selected)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -77,7 +77,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 285.0, 251.666656, 317.0, 55.0 ],
 					"text" : "This also applies to markers, provided that the selection rectangle reaches the top of the object box",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -96,7 +96,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 14.0, 385.5, 206.0, 84.0 ],
 					"text" : "Double clicking on a measure to select it together with all corresponding measures in all voices",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -116,7 +116,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 236.0, 366.5, 370.0, 98.0 ],
 					"text" : "To copy a measure, click within the voice staff (or staves), but avoiding all all elements: the measure background, when selected, becomes by default pinky. Hold Shift pressed, and click on another measure (not necessarily nearby) to extend the range of the selected measures.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -134,7 +134,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 270.0, 69.0, 328.0, 83.0 ],
 					"text" : "1. You can click on a notehead to select the corresponding note. Hold the Shift key pressed, and click on other noteheads to add notes to the selection. If you click on a selected notehead (while holding Shift), it will be de-selected.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

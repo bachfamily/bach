@@ -1,7 +1,7 @@
 /*
  *  eval.c
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -194,7 +194,6 @@ void C74_EXPORT ext_main(void *moduleRef)
 
     CLASS_ATTR_LLLL(c, "triggers", 0, t_eval, n_triggers, eval_getattr_triggers, eval_setattr_triggers);
     CLASS_ATTR_LABEL(c, "triggers", 0, "Triggers");
-    CLASS_ATTR_STYLE(c, "triggers", 0, "onoff");
     // @description An llll setting which data inlets are "hot" (i.e., which will will trigger the result)
     // and which global and patcher variables must cause
     // the re-evaluation of the program when assigned a new value.
@@ -479,7 +478,7 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av)
 
     if ((x = (t_eval *) object_alloc_debug(eval_class))) {
         // @arg 0 @name expression @optional 1 @type anything @digest Expression to evaluate
-        // @description The syntax of the expression is based upon <o>bach.expr</o>'s,
+        // @description The syntax of the expression is based upon that of <o>bach.expr</o>,
         // but it can contain branching and loop statements, and user-defined variables and functions.
         // For a complete description of the expression syntax, please refer to the help file.
         
@@ -503,6 +502,7 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av)
             (atom_gettype(av) != A_SYM || *atom_getsym(av)->s_name != '@')) {
             // we build the ast from the text with the atom separators,
             // as this allows us to figure out where the object attributes begin
+            codableobj_fetch_bellversion((t_codableobj *) x, ac, av);
             codableobj_getCodeFromAtomsWithSeparators((t_codableobj *) x, ac, av);
             err = codableobj_buildAst((t_codableobj *) x, &codeac, &dataInlets, &dataOutlets, &directInlets, &directOutlets);
             

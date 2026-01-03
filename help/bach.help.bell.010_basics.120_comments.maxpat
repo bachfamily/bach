@@ -2,41 +2,16 @@
 	"patcher" : 	{
 		"fileversion" : 1,
 		"appversion" : 		{
-			"major" : 8,
+			"major" : 9,
 			"minor" : 0,
-			"revision" : 6,
+			"revision" : 3,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
 		"classnamespace" : "box",
 		"rect" : [ 70.0, 201.0, 617.0, 539.0 ],
-		"bglocked" : 0,
-		"openinpresentation" : 0,
-		"default_fontsize" : 13.0,
-		"default_fontface" : 0,
-		"default_fontname" : "Arial",
-		"gridonopen" : 1,
 		"gridsize" : [ 15.0, 15.0 ],
-		"gridsnaponopen" : 1,
-		"objectsnaponopen" : 1,
-		"statusbarvisible" : 2,
-		"toolbarvisible" : 1,
-		"lefttoolbarpinned" : 0,
-		"toptoolbarpinned" : 0,
-		"righttoolbarpinned" : 0,
-		"bottomtoolbarpinned" : 0,
-		"toolbars_unpinned_last_save" : 0,
-		"tallnewobj" : 0,
-		"boxanimatetime" : 200,
-		"enablehscroll" : 1,
-		"enablevscroll" : 1,
-		"devicewidth" : 0.0,
-		"description" : "",
-		"digest" : "",
-		"tags" : "",
-		"style" : "",
-		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
 					"id" : "obj-22",
@@ -233,7 +208,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "## A comment: everything in this line following the ## marker is not evaluated\r\n1 2 3 ## This is why it's called an end-of line comment\r\n##\r\n## (yes, you can have empty end-of-line comments)\r\n##\r\n4 5 ## Always leave a space before ##\r\n## unless the comment takes the whole line! \r\n\r\n##############\r\n##          ##\r\n## ##    ## ##\r\n##          ##\r\n##    ##    ##\r\n##          ##\r\n## #      # ##\r\n##  ######  ##\r\n##          ##\r\n##############\r\n\r\n## (yes, you can do nice decorations with end-of-line comments)\r\n\r\n##############\r\n\r\n\r\n#! This is another way to introduce an end-of-line comment,\r\n#! but the ## form should be preferred \r\n#! unless, for some reason, you need a shebang.\r\n#! If \"shebang\" means nothing to you, just stick to ##\r\n",
+					"code" : "## A comment: everything in this line following the ## marker is not evaluated\n1 2 3 ## This is why it's called an end-of line comment\n##\n## (yes, you can have empty end-of-line comments)\n##\n4 5 ## Always leave a space before ##\n## unless the comment takes the whole line! \n\n##############\n##          ##\n## ##    ## ##\n##          ##\n##    ##    ##\n##          ##\n## #      # ##\n##  ######  ##\n##          ##\n##############\n\n## (yes, you can do nice decorations with end-of-line comments)\n",
 					"fontname" : "Arial",
 					"id" : "obj-4",
 					"maxclass" : "newobj",
@@ -334,8 +309,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 32.0, 445.0, 65.0 ],
-					"text" : "Comments are pieces of text in the code that don't get evaluated, but are used for documenting the code itself.\nThere are two comment styles in bell: end-of-line comments, introduced by #! or ##, and block comments, delimited by #( and )#.",
+					"patching_rect" : [ 6.0, 32.0, 465.0, 65.0 ],
+					"text" : "Comments are pieces of text in the code that don't get evaluated, but are used for documenting the code itself.\nThere are two comment styles in bell: end-of-line comments, introduced by ##, and block comments, delimited by #( and )#.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -400,6 +375,7 @@
 
 			}
  ],
+		"originid" : "pat-177",
 		"dependency_cache" : [ 			{
 				"name" : "bach.eval.mxo",
 				"type" : "iLaX"

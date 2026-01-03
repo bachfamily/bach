@@ -1,7 +1,7 @@
 /*
  *  operator.hpp
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -99,6 +99,8 @@ public:
 
 typedef astUnaryOperator<hatom_op_uminus> astOperatorUMinus;
 typedef astUnaryOperator<hatom_op_bitnot> astOperatorBitNot;
+typedef astUnaryOperator<hatom_op_t> astOperatorT;
+typedef astUnaryOperator<hatom_op_r> astOperatorR;
 
 typedef astBinaryOperator<hatom_op_plus_with_symbols> astOperatorPlus;
 typedef astBinaryOperator<hatom_op_minus> astOperatorMinus;
@@ -142,6 +144,13 @@ public:
                              lvalueStepList *lvalueStepList,
                              t_codableobj *owner) :
         BASE(lNode, rNode, lvalueStepList, owner),
+        llllIterator<2>((method) FN) { };
+    
+    astRichAccessOperator(typename BASE::firstType *lNode,
+                             astNode *rNode,
+                             lvalueSpecs *lvalueSpecs,
+                             t_codableobj *owner) :
+        BASE(lNode, rNode, lvalueSpecs, owner),
         llllIterator<2>((method) FN) { };
     
     ~astRichAccessOperator() { };

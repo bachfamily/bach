@@ -1,0 +1,232 @@
+
+// Generated from preprocLexer.g4 by ANTLR 4.10.1
+
+
+#include "preprocLexer.h"
+
+
+using namespace antlr4;
+
+
+
+using namespace antlr4;
+
+namespace {
+
+struct PreprocLexerStaticData final {
+  PreprocLexerStaticData(std::vector<std::string> ruleNames,
+                          std::vector<std::string> channelNames,
+                          std::vector<std::string> modeNames,
+                          std::vector<std::string> literalNames,
+                          std::vector<std::string> symbolicNames)
+      : ruleNames(std::move(ruleNames)), channelNames(std::move(channelNames)),
+        modeNames(std::move(modeNames)), literalNames(std::move(literalNames)),
+        symbolicNames(std::move(symbolicNames)),
+        vocabulary(this->literalNames, this->symbolicNames) {}
+
+  PreprocLexerStaticData(const PreprocLexerStaticData&) = delete;
+  PreprocLexerStaticData(PreprocLexerStaticData&&) = delete;
+  PreprocLexerStaticData& operator=(const PreprocLexerStaticData&) = delete;
+  PreprocLexerStaticData& operator=(PreprocLexerStaticData&&) = delete;
+
+  std::vector<antlr4::dfa::DFA> decisionToDFA;
+  antlr4::atn::PredictionContextCache sharedContextCache;
+  const std::vector<std::string> ruleNames;
+  const std::vector<std::string> channelNames;
+  const std::vector<std::string> modeNames;
+  const std::vector<std::string> literalNames;
+  const std::vector<std::string> symbolicNames;
+  const antlr4::dfa::Vocabulary vocabulary;
+  antlr4::atn::SerializedATNView serializedATN;
+  std::unique_ptr<antlr4::atn::ATN> atn;
+};
+
+std::once_flag preproclexerLexerOnceFlag;
+PreprocLexerStaticData *preproclexerLexerStaticData = nullptr;
+
+void preproclexerLexerInitialize() {
+  assert(preproclexerLexerStaticData == nullptr);
+  auto staticData = std::make_unique<PreprocLexerStaticData>(
+    std::vector<std::string>{
+      "DONTLOOKHERE", "WHITESPACE", "INCLUDE", "ANY", "CLOSE", "FILENAME"
+    },
+    std::vector<std::string>{
+      "DEFAULT_TOKEN_CHANNEL", "HIDDEN"
+    },
+    std::vector<std::string>{
+      "DEFAULT_MODE", "INCLUDE_MODE"
+    },
+    std::vector<std::string>{
+    },
+    std::vector<std::string>{
+      "", "DONTLOOKHERE", "WHITESPACE", "INCLUDE", "ANY", "CLOSE", "FILENAME"
+    }
+  );
+  static const int32_t serializedATNSegment[] = {
+  	4,0,6,119,6,-1,6,-1,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,1,
+  	0,1,0,1,0,1,0,5,0,19,8,0,10,0,12,0,22,9,0,1,0,1,0,1,0,1,0,1,0,1,0,5,0,
+  	30,8,0,10,0,12,0,33,9,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,5,0,45,
+  	8,0,10,0,12,0,48,9,0,1,0,1,0,1,0,1,0,1,0,1,0,3,0,56,8,0,1,0,5,0,59,8,
+  	0,10,0,12,0,62,9,0,1,0,3,0,65,8,0,3,0,67,8,0,1,0,1,0,1,1,4,1,72,8,1,11,
+  	1,12,1,73,1,1,1,1,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,5,2,88,8,2,
+  	10,2,12,2,91,9,2,1,2,1,2,1,2,1,2,1,3,4,3,98,8,3,11,3,12,3,99,1,3,1,3,
+  	1,4,5,4,105,8,4,10,4,12,4,108,9,4,1,4,1,4,1,4,1,4,1,4,1,5,4,5,116,8,5,
+  	11,5,12,5,117,3,46,60,99,0,6,2,1,4,2,6,3,8,4,10,5,12,6,2,0,1,7,1,0,34,
+  	34,1,0,92,92,1,0,39,39,1,1,10,10,4,0,1,1,9,10,13,13,32,32,3,0,1,1,9,9,
+  	32,32,1,0,41,41,134,0,2,1,0,0,0,0,4,1,0,0,0,0,6,1,0,0,0,0,8,1,0,0,0,1,
+  	10,1,0,0,0,1,12,1,0,0,0,2,66,1,0,0,0,4,71,1,0,0,0,6,77,1,0,0,0,8,97,1,
+  	0,0,0,10,106,1,0,0,0,12,115,1,0,0,0,14,20,5,34,0,0,15,16,5,92,0,0,16,
+  	19,5,34,0,0,17,19,8,0,0,0,18,15,1,0,0,0,18,17,1,0,0,0,19,22,1,0,0,0,20,
+  	18,1,0,0,0,20,21,1,0,0,0,21,23,1,0,0,0,22,20,1,0,0,0,23,24,8,1,0,0,24,
+  	67,5,34,0,0,25,31,5,39,0,0,26,27,5,92,0,0,27,30,5,39,0,0,28,30,8,2,0,
+  	0,29,26,1,0,0,0,29,28,1,0,0,0,30,33,1,0,0,0,31,29,1,0,0,0,31,32,1,0,0,
+  	0,32,34,1,0,0,0,33,31,1,0,0,0,34,35,8,1,0,0,35,67,5,39,0,0,36,37,5,34,
+  	0,0,37,67,5,34,0,0,38,39,5,39,0,0,39,67,5,39,0,0,40,41,5,35,0,0,41,42,
+  	5,40,0,0,42,46,1,0,0,0,43,45,9,0,0,0,44,43,1,0,0,0,45,48,1,0,0,0,46,47,
+  	1,0,0,0,46,44,1,0,0,0,47,49,1,0,0,0,48,46,1,0,0,0,49,50,5,41,0,0,50,67,
+  	5,35,0,0,51,52,5,35,0,0,52,56,5,35,0,0,53,54,5,35,0,0,54,56,5,33,0,0,
+  	55,51,1,0,0,0,55,53,1,0,0,0,56,60,1,0,0,0,57,59,9,0,0,0,58,57,1,0,0,0,
+  	59,62,1,0,0,0,60,61,1,0,0,0,60,58,1,0,0,0,61,64,1,0,0,0,62,60,1,0,0,0,
+  	63,65,7,3,0,0,64,63,1,0,0,0,65,67,1,0,0,0,66,14,1,0,0,0,66,25,1,0,0,0,
+  	66,36,1,0,0,0,66,38,1,0,0,0,66,40,1,0,0,0,66,55,1,0,0,0,67,68,1,0,0,0,
+  	68,69,6,0,0,0,69,3,1,0,0,0,70,72,7,4,0,0,71,70,1,0,0,0,72,73,1,0,0,0,
+  	73,71,1,0,0,0,73,74,1,0,0,0,74,75,1,0,0,0,75,76,6,1,1,0,76,5,1,0,0,0,
+  	77,78,4,2,0,0,78,79,5,105,0,0,79,80,5,110,0,0,80,81,5,99,0,0,81,82,5,
+  	108,0,0,82,83,5,117,0,0,83,84,5,100,0,0,84,85,5,101,0,0,85,89,1,0,0,0,
+  	86,88,7,5,0,0,87,86,1,0,0,0,88,91,1,0,0,0,89,87,1,0,0,0,89,90,1,0,0,0,
+  	90,92,1,0,0,0,91,89,1,0,0,0,92,93,5,40,0,0,93,94,1,0,0,0,94,95,6,2,2,
+  	0,95,7,1,0,0,0,96,98,9,0,0,0,97,96,1,0,0,0,98,99,1,0,0,0,99,100,1,0,0,
+  	0,99,97,1,0,0,0,100,101,1,0,0,0,101,102,6,3,3,0,102,9,1,0,0,0,103,105,
+  	7,5,0,0,104,103,1,0,0,0,105,108,1,0,0,0,106,104,1,0,0,0,106,107,1,0,0,
+  	0,107,109,1,0,0,0,108,106,1,0,0,0,109,110,5,41,0,0,110,111,6,4,4,0,111,
+  	112,1,0,0,0,112,113,6,4,5,0,113,11,1,0,0,0,114,116,8,6,0,0,115,114,1,
+  	0,0,0,116,117,1,0,0,0,117,115,1,0,0,0,117,118,1,0,0,0,118,13,1,0,0,0,
+  	16,0,1,18,20,29,31,46,55,60,64,66,73,89,99,106,117,6,1,0,0,1,1,1,2,1,
+  	0,1,3,2,1,4,3,2,0,0
+  };
+  staticData->serializedATN = antlr4::atn::SerializedATNView(serializedATNSegment, sizeof(serializedATNSegment) / sizeof(serializedATNSegment[0]));
+
+  antlr4::atn::ATNDeserializer deserializer;
+  staticData->atn = deserializer.deserialize(staticData->serializedATN);
+
+  const size_t count = staticData->atn->getNumberOfDecisions();
+  staticData->decisionToDFA.reserve(count);
+  for (size_t i = 0; i < count; i++) { 
+    staticData->decisionToDFA.emplace_back(staticData->atn->getDecisionState(i), i);
+  }
+  preproclexerLexerStaticData = staticData.release();
+}
+
+}
+
+preprocLexer::preprocLexer(CharStream *input) : Lexer(input) {
+  preprocLexer::initialize();
+  _interpreter = new atn::LexerATNSimulator(this, *preproclexerLexerStaticData->atn, preproclexerLexerStaticData->decisionToDFA, preproclexerLexerStaticData->sharedContextCache);
+}
+
+preprocLexer::~preprocLexer() {
+  delete _interpreter;
+}
+
+std::string preprocLexer::getGrammarFileName() const {
+  return "preprocLexer.g4";
+}
+
+const std::vector<std::string>& preprocLexer::getRuleNames() const {
+  return preproclexerLexerStaticData->ruleNames;
+}
+
+const std::vector<std::string>& preprocLexer::getChannelNames() const {
+  return preproclexerLexerStaticData->channelNames;
+}
+
+const std::vector<std::string>& preprocLexer::getModeNames() const {
+  return preproclexerLexerStaticData->modeNames;
+}
+
+const dfa::Vocabulary& preprocLexer::getVocabulary() const {
+  return preproclexerLexerStaticData->vocabulary;
+}
+
+antlr4::atn::SerializedATNView preprocLexer::getSerializedATN() const {
+  return preproclexerLexerStaticData->serializedATN;
+}
+
+const atn::ATN& preprocLexer::getATN() const {
+  return *preproclexerLexerStaticData->atn;
+}
+
+
+void preprocLexer::action(RuleContext *context, size_t ruleIndex, size_t actionIndex) {
+  switch (ruleIndex) {
+    case 0: DONTLOOKHEREAction(antlrcpp::downCast<antlr4::RuleContext *>(context), actionIndex); break;
+    case 1: WHITESPACEAction(antlrcpp::downCast<antlr4::RuleContext *>(context), actionIndex); break;
+    case 3: ANYAction(antlrcpp::downCast<antlr4::RuleContext *>(context), actionIndex); break;
+    case 4: CLOSEAction(antlrcpp::downCast<antlr4::RuleContext *>(context), actionIndex); break;
+
+  default:
+    break;
+  }
+}
+
+bool preprocLexer::sempred(RuleContext *context, size_t ruleIndex, size_t predicateIndex) {
+  switch (ruleIndex) {
+    case 2: return INCLUDESempred(antlrcpp::downCast<antlr4::RuleContext *>(context), predicateIndex);
+
+  default:
+    break;
+  }
+  return true;
+}
+
+void preprocLexer::DONTLOOKHEREAction(antlr4::RuleContext *context, size_t actionIndex) {
+  switch (actionIndex) {
+    case 0:  noInclude = true;  break;
+
+  default:
+    break;
+  }
+}
+
+void preprocLexer::WHITESPACEAction(antlr4::RuleContext *context, size_t actionIndex) {
+  switch (actionIndex) {
+    case 1:  noInclude = false;  break;
+
+  default:
+    break;
+  }
+}
+
+void preprocLexer::ANYAction(antlr4::RuleContext *context, size_t actionIndex) {
+  switch (actionIndex) {
+    case 2:  noInclude = true;  break;
+
+  default:
+    break;
+  }
+}
+
+void preprocLexer::CLOSEAction(antlr4::RuleContext *context, size_t actionIndex) {
+  switch (actionIndex) {
+    case 3:  noInclude = true;  break;
+
+  default:
+    break;
+  }
+}
+
+
+bool preprocLexer::INCLUDESempred(antlr4::RuleContext *_localctx, size_t predicateIndex) {
+  switch (predicateIndex) {
+    case 0: return  !noInclude ;
+
+  default:
+    break;
+  }
+  return true;
+}
+
+
+void preprocLexer::initialize() {
+  std::call_once(preproclexerLexerOnceFlag, preproclexerLexerInitialize);
+}

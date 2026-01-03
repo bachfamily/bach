@@ -1,7 +1,7 @@
 /*
  *  builtInFunction.cpp
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -505,12 +505,12 @@ t_fnMinimum::t_fnMinimum() : t_builtInFunction("minimum")
 t_llll *t_fnMinimum::call(const t_execEnv &context)
 {
     t_llll *ll = context.argv[1];
-    t_atom_long mindepth, maxdepth;
-    getDepthsFromArguments(context.argv[2], context.argv[3], context.argv[4], &mindepth, &maxdepth);
-    t_hatom *min;
-    llll_minmax(ll, &min, nullptr, nullptr, nullptr, mindepth, maxdepth);
     t_llll *res = llll_get();
-    if (min->h_type != H_NOTHING) {
+    if (ll->l_size) {
+        t_atom_long mindepth, maxdepth;
+        getDepthsFromArguments(context.argv[2], context.argv[3], context.argv[4], &mindepth, &maxdepth);
+        t_hatom *min;
+        llll_minmax(ll, &min, nullptr, nullptr, nullptr, mindepth, maxdepth);
         llll_appendhatom_clone(res, min);
     }
     return res;
@@ -520,7 +520,7 @@ t_llll *t_fnMinimum::call(const t_execEnv &context)
 ///////////////
 
 
-t_fnMaximum::t_fnMaximum() : t_builtInFunction("minimum")
+t_fnMaximum::t_fnMaximum() : t_builtInFunction("maximum")
 {
     setArgument("llll");
     setArgument("depth");
@@ -531,13 +531,13 @@ t_fnMaximum::t_fnMaximum() : t_builtInFunction("minimum")
 t_llll *t_fnMaximum::call(const t_execEnv &context)
 {
     t_llll *ll = context.argv[1];
-    t_atom_long mindepth, maxdepth;
-    getDepthsFromArguments(context.argv[2], context.argv[3], context.argv[4], &mindepth, &maxdepth);
-    t_hatom *max;
-    llll_minmax(ll, nullptr, &max, nullptr, nullptr, mindepth, maxdepth);
     t_llll *res = llll_get();
-    if (max->h_type != H_NOTHING) {
-        llll_appendhatom_clone(res, max);
+    if (ll->l_size) {
+        t_atom_long mindepth, maxdepth;
+        getDepthsFromArguments(context.argv[2], context.argv[3], context.argv[4], &mindepth, &maxdepth);
+        t_hatom *max;
+        llll_minmax(ll, nullptr, &max, nullptr, nullptr, mindepth, maxdepth);
+            llll_appendhatom_clone(res, max);
     }
     return res;
 }
@@ -772,6 +772,26 @@ t_llll* t_fnGeomser::call(const t_execEnv &context) {
 
 ///////////////
 
+
+t_fnFareyser::t_fnFareyser() : t_builtInFunction("fareyser") {
+    setArgument("order", 0L);
+    setArgument("offset", new astConst(t_rational({0, 1})));
+    setArgument("maxlimit", 0L);
+}
+
+t_llll* t_fnFareyser::call(const t_execEnv &context) {
+    long order = context.argv[1]->l_size ? hatom_getlong(&context.argv[1]->l_head->l_hatom) : 0;
+    t_rational offset = context.argv[2]->l_size ? hatom_getrational(&context.argv[2]->l_head->l_hatom) : t_rational({0, 1});
+    long max_limit = context.argv[3]->l_size ? hatom_getlong(&context.argv[3]->l_head->l_hatom) : 0;
+    
+    t_llll *ll = llll_farey(order, offset, max_limit);
+        
+    return ll;
+}
+
+
+///////////////
+
 t_fnSum::t_fnSum() : t_builtInFunction("sum")
 {
     setArgument("llll");
@@ -817,12 +837,12 @@ t_llll* t_fnProd::call(const t_execEnv &context)
     if (prod_hatom.h_type == H_NOTHING)
         hatom_setlong(&prod_hatom, 0);
     llll_release(ll);
+    llll_appendhatom(prod_ll, &prod_hatom);
     return prod_ll;
 }
 
 
 ///////////////
-
 
 
 t_fnMc2f::t_fnMc2f() : t_builtInFunction("mc2f") {
@@ -861,4 +881,103 @@ t_llll* t_fnF2mc::call(const t_execEnv &context) {
     t_llll *ll = llll_f2mc(f, basefreq, basepitch);
     //llll_free(f);
     return ll;
+}
+
+
+///////////////
+
+
+t_fnJicommas::t_fnJicommas() : t_builtInFunction("jicommas") {
+    setArgument("x", llll_get());
+}
+
+t_llll* t_fnJicommas::call(const t_execEnv &context)
+{
+    t_llllelem *h = context.argv[1]->l_head;
+    if (!h)
+        return llll_get();
+    t_pitch p = hatom_getpitch(&h->l_hatom);
+    return getHEJICommas(p);
+}
+
+
+///////////////
+
+
+t_fnJiexps::t_fnJiexps() : t_builtInFunction("jiexps") {
+    setArgument("x", llll_get());
+}
+
+t_llll* t_fnJiexps::call(const t_execEnv &context)
+{
+    t_llllelem *h = context.argv[1]->l_head;
+    if (!h)
+        return llll_get();
+    t_pitch p = hatom_getpitch(&h->l_hatom);
+    return getJiexps(p);
+}
+
+
+///////////////
+
+
+t_fnPitchkeys::t_fnPitchkeys() : t_builtInFunction("pitchkeys") {
+    setArgument("x", llll_get());
+}
+
+t_llll* t_fnPitchkeys::call(const t_execEnv &context)
+{
+    t_llllelem *h = context.argv[1]->l_head;
+    if (!h)
+        return llll_get();
+    t_pitch p = hatom_getpitch(&h->l_hatom);
+    
+    t_llll *res = llll_get();
+    
+    t_llll *etwkll = llll_get();
+    llll_appendsym(etwkll, gensym("etwhitekey"));
+    llll_appendlong(etwkll, p.getWhiteKeyET());
+    llll_appendllll(res, etwkll);
+    
+    t_llll *etalterll = llll_get();
+    llll_appendsym(etalterll, gensym("etalter"));
+    llll_appendrat(etalterll, p.getAlterET());
+    llll_appendllll(res, etalterll);
+    
+    t_llll *octavell = llll_get();
+    llll_appendsym(octavell, gensym("octave"));
+    llll_appendlong(octavell, p.getOctave());
+    llll_appendllll(res, octavell);
+    
+    t_llll *jiwhitekeyll = llll_get();
+    llll_appendsym(jiwhitekeyll, gensym("jiwhitekey"));
+    llll_appendlong(jiwhitekeyll, p.getWhiteKeyJI());
+    llll_appendllll(res, jiwhitekeyll);
+    
+    t_llll *jisharpsll = llll_get();
+    llll_appendsym(jisharpsll, gensym("jisharps"));
+    llll_appendlong(jisharpsll, p.getSharpsJI());
+    llll_appendllll(res, jisharpsll);
+    
+    t_llll *jiplofll = llll_get();
+    llll_appendsym(jiplofll, gensym("jiplof"));
+    llll_appendlong(jiplofll, p.getPlofJI());
+    llll_appendllll(res, jiplofll);
+    
+    t_llll *commasll = llll_get();
+    llll_appendsym(commasll, gensym("commas"));
+    llll_chain(commasll, getHEJICommas(p));
+    llll_appendllll(res, commasll);
+    
+    t_llll *jiratioll = llll_get();
+    llll_appendsym(jiratioll, gensym("jiratio"));
+    llll_appendrat(jiratioll, p.getJIRatio());
+    llll_appendllll(res, jiratioll);
+    
+    t_llll *jiexpsll = llll_get();
+    llll_appendsym(jiexpsll, gensym("jiexps"));
+    llll_chain(jiexpsll, getJiexps(p));
+    llll_appendllll(res, jiexpsll);
+    
+    return res;
 }

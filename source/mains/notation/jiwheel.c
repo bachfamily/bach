@@ -1,7 +1,7 @@
 /*
  *  jiwheel.c
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -56,7 +56,7 @@
     bach, bach objects, bach just intonation, bach interface
 
     @seealso
-    bach.primeform, bach.pcsetinfo, bach.mod+, bach.mod-, bach.modtimes, bach.compl
+    bach.jilimit, bach.fareyser
     
     @owner
     Daniele Ghisi
@@ -75,6 +75,7 @@
 #include "ext_critical.h"
 #include "ext_strings.h"
 #include "ext_boxstyle.h"
+#include "math/bach_pitch.hpp"
 
 #define PITCHWHEEL_MAX_ZOOM 10000000
 #define PITCHWHEEL_LIMIT_RADIUS_FOR_LINE 30000
@@ -84,9 +85,8 @@
 #define MAX_ALLOWED_LIMITS 200
 #define MAX_ALLOWED_PRIMES 200
 
-const long commalimits[] = {5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47};
-t_rational *commas = NULL;
-long numcommas = 0;
+//const long commalimits[] = {5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47};
+long numcommas = BACH_PRIMES_JI_SIZE - 2;
 //const t_rational commas[] = {genrat(81, 80), genrat(64, 63), genrat(32, 33), genrat(27, 26), genrat(2187, 2176), genrat(512, 513), genrat(729,736), genrat(256,261), genrat(32,31), genrat(36,37), genrat(81, 82), genrat(128,129), genrat(729,752)};
 //const long numcommas = 13;
 
@@ -131,8 +131,9 @@ enum {
 };
 
 enum {
-    BACH_PITCHWHEEL_DISPLAY_RATIO = 0,
-    BACH_PITCHWHEEL_DISPLAY_ACCIDENTALS = 1,
+    BACH_PITCHWHEEL_DISPLAY_NONE = 0,
+    BACH_PITCHWHEEL_DISPLAY_RATIO = 1,
+    BACH_PITCHWHEEL_DISPLAY_ACCIDENTALS = 2,
 };
 
 enum {
@@ -163,7 +164,8 @@ typedef struct _jiwheel // [bach.jiwheel] structure
     t_rational              rotation_ratio_intwheel;
     double                  zoom;
     double                  zoom_angle;
-    long                    formaloctave; // by default it's 2, use 3 for bohlen pierce
+    t_rational              formaloctave; // by default it's 2, use 3 for bohlen pierce
+    t_llll                  *formaloctave_ll;
 
     char                    mode; // 0 = up to a maxterm; 1 = JI limits combination;
     t_atom                  maxterm; // fixed integer for a maxterm (in mode = 0), "auto" symbol for automatic zooming (then tailor #auto_density)
@@ -173,8 +175,7 @@ typedef struct _jiwheel // [bach.jiwheel] structure
     double                  density; // density factor used while using automatic zooming
     double                  density_intwheel; // similar, but for the integers wheel
     bool                    auto_zooming; // 1 if the object needs auto-zooming (and hence rebuilding of pitches)
-    t_atom                  allowed_limits[MAX_ALLOWED_LIMITS]; // list of allowed limits (or <= for less-than as first element), or "any" to leave it open
-    long                    allowed_limits_count; // length of allowed_limits array (for real)
+    long                    jilimit;
     t_atom                  allowed_primes[MAX_ALLOWED_PRIMES]; // list of allowed primes (or <= for less-than as first element), or "any" to leave it open
     long                    allowed_primes_count; // length of allowed_primes array (for real)
 
@@ -211,7 +212,6 @@ typedef struct _jiwheel // [bach.jiwheel] structure
     // show/hide
     char                    show_ticks;
     char                    extend_ticks_to_integers;
-    char                    show_ratios;
     char                    show_et_wheel;
     char                    show_integers_wheel;
     char                    show_circles;
@@ -223,7 +223,7 @@ typedef struct _jiwheel // [bach.jiwheel] structure
     double                  minfactor;
     
     char                    auto_move_intwheel;
-    char                    output_selection;
+    char                    output_type;
     
     char                    rebuild;
 
@@ -264,6 +264,8 @@ typedef struct _jiwheel // [bach.jiwheel] structure
 
     t_symbol                *accidentals_font;
     double                  accidentals_font_size;
+    
+    long                    output_octave;
 
 //    t_symbol                *textfont;
 //    double                    textsize;
@@ -312,36 +314,45 @@ void jiwheel_clear_selection(t_jiwheel *x);
 
 t_llll *jiwheel_get_wheelpitch_as_llll(t_jiwheel *x, t_wheelpitch *p, bool as_interval);
 void jiwheel_output_selection(t_jiwheel *x);
-void ensure_ratio_is_between_1_and_formaloctave(t_rational *r, long formaloctave);
+void ensure_ratio_is_between_1_and_formaloctave(t_rational *r, t_rational formaloctave);
 t_llll *jiwheel_get_wheelpitch_as_llll(t_jiwheel *x, t_wheelpitch *p, bool as_interval);
+
+void jiwheel_set_pitch(t_jiwheel *x, t_pitch p);
+void jiwheel_set_interval(t_jiwheel *x, t_pitch p1, t_pitch p2);
 
 
 DEFINE_LLLL_ATTR_DEFAULT_GETTER_AND_SETTER(t_jiwheel, allowed_commas, jiwheel_getattr_commas, jiwheel_setattr_commas);
+DEFINE_LLLL_ATTR_DEFAULT_GETTER_AND_SETTER(t_jiwheel, formaloctave_ll, jiwheel_getattr_formaloctave, jiwheel_setattr_formaloctave);
 
 // or pseudo octaves!
-void remove_octaves(long formaloctave, t_rational *r)
+void remove_octaves(t_rational formaloctave, t_rational *r)
 {
-    if (formaloctave >= 2) {
-        while (r->r_num != 0 && r->r_num % formaloctave == 0)
-            r->r_num /= formaloctave;
-        while (r->r_den != 0 && r->r_den % formaloctave == 0)
-            r->r_den /= formaloctave;
+    if (*r > 0) {
+        while (*r >= formaloctave) {
+            *r /= formaloctave;
+
+            if (r->r_num < 0 || r->r_den <= 0) {
+                return; // something is wrong! overflow/underflow?
+            }
+        }
+        
+        while (*r < 1) {
+            *r *= formaloctave;
+
+            if (r->r_num < 0 || r->r_den <= 0) {
+                return; // something is wrong! overflow/underflow?
+            }
+        }
     }
 }
 
 void remove_octaves(t_jiwheel *x, t_rational *r)
 {
-    long octave = x->formaloctave;
-    if (octave >= 2) {
-        while (r->r_num != 0 && r->r_num % octave == 0)
-            r->r_num /= octave;
-        while (r->r_den != 0 && r->r_den % octave == 0)
-            r->r_den /= octave;
-    }
+    remove_octaves(x->formaloctave, r);
 }
 
 
-
+/*
 void build_commas()
 {
     if (commas != NULL)
@@ -423,7 +434,7 @@ void build_commas()
 // why 2187/2176 instead of 4096/4131?
 //   3^7*2^-7*17^-1 instead of 2^12*3^-5*17^-1
 }
-
+*/
 
 
 const char *jiwheel_ratio_to_common_interval_name(t_rational r, long *num_octaves)
@@ -431,7 +442,7 @@ const char *jiwheel_ratio_to_common_interval_name(t_rational r, long *num_octave
     if (num_octaves) {
         if (rat_rat_cmp(r, long2rat(2)) > 0) {
             *num_octaves = (long)floor(rat2double(r)/2);
-            ensure_ratio_is_between_1_and_formaloctave(&r, 2);
+            ensure_ratio_is_between_1_and_formaloctave(&r, long2rat(2));
         }
     }
     
@@ -475,9 +486,9 @@ const char *jiwheel_ratio_to_common_interval_name(t_rational r, long *num_octave
             break;
         case 7:
             switch (r.den()) {
-                case 4: return "septimal minor seventh";
-                case 5: return "septimal tritone";
-                case 6: return "septimal minor third";
+                case 4: return "harmonic seventh";
+                case 5: return "lesser septimal tritone";
+                case 6: return "septimal subminor third";
                 default: break;
             }
             break;
@@ -490,342 +501,343 @@ const char *jiwheel_ratio_to_common_interval_name(t_rational r, long *num_octave
             break;
         case 9:
             switch (r.den()) {
-                case 5: return "classic minor seventh";
-                case 7: return "septimal major third";
+                case 5: return "just minor seventh";
+                case 7: return "septimal supermajor third";
                 case 8: return "Pythagorean whole tone";
                 default: break;
             }
             break;
         case 10:
             switch (r.den()) {
-                case 7: return "superaugmented fourth";
-                case 9: return "classic whole tone";
+                case 7: return "greater septimal tritone";
+                case 9: return "just whole tone";
                 default: break;
             }
             break;
         case 11:
             switch (r.den()) {
                 case 6: return "undecimal neutral seventh";
-                case 7: return "undecimal augmented fifth";
-                case 8: return "undecimal semi-augmented fourth";
-                case 9: return "undecimal neutral third";
-                case 10: return "undecimal submajor second";
+                case 7: return "undecimal minor sixth";
+                case 8: return "11-limit semiaugmented fourth";
+                case 9: return "11-limit neutral third";
+                case 10: return "11-limit submajor second";
                 default: break;
             }
             break;
         case 12:
             switch (r.den()) {
                 case 7: return "septimal major sixth";
-                case 11: return "small undecimal neutral second";
+                case 11: return "11-limit neutral second";
                 default: break;
             }
             break;
         case 13:
             switch (r.den()) {
-                case 7: return "tridecimal submajor seventh";
-                case 8: return "lesser tridecimal neutral sixth";
-                case 9: return "tridecimal diminished fifth";
-                case 10: return "tridecimal semisixth";
-                case 11: return "tridecimal minor third";
-                case 12: return "tridecimal neutral second";
+                case 7: return "13-limit submajor seventh";
+                case 8: return "13-limit neutral sixth";
+                case 9: return "13-limit diminished fifth";
+                case 10: return "13-limit semidiminished fourth";
+                case 11: return "13-limit minor third";
+                case 12: return "13-limit neutral second";
                 default: break;
             }
             break;
         case 14:
             switch (r.den()) {
-                case 9: return "subminor sixth";
-                case 11: return "undecimal major third";
-                case 13: return "tridecimal supraminor second";
+                case 9: return "septimal subminor sixth";
+                case 11: return "11-limit major third";
+                case 13: return "13-limit supraminor second";
                 default: break;
             }
             break;
         case 15:
             switch (r.den()) {
-                case 8: return "classic major seventh";
-                case 11: return "undecimal augmented fourth";
-                case 13: return "tridecimal semifourth";
-                case 14: return "septimal diatonic semitone";
+                case 8: return "just major seventh";
+                case 11: return "11-limit semiaugmented fourth";
+                case 13: return "13-limit semidiminished third";
+                case 14: return "greater septimal semitone";
                 default: break;
             }
             break;
         case 16:
             switch (r.den()) {
                 case 9: return "Pythagorean minor seventh";
-                case 11: return "Sub-fifth";
-                case 13: return "greater tridecimal neutral third";
-                case 15: return "classic minor second";
+                case 11: return "11-limit semidiminished fifth";
+                case 13: return "13-limit neutral third";
+                case 15: return "just minor second";
                 default: break;
             }
             break;
         case 17:
             switch (r.den()) {
-                case 9: return "septendecimal major seventh";
-                case 10: return "septendecimal diminished seventh";
-                case 11: return "septendecimal subminor sixth";
-                case 12: return "larger septendecimal tritone";
-                case 13: return "septendecimal sub-fourth";
-                case 14: return "septendecimal supraminor third";
-                case 15: return "septendecimal whole tone";
-                case 16: return "large septendecimal semitone";
+                case 9: return "greater 17-limit major seventh";
+                case 10: return "17-limit diminished seventh";
+                case 11: return "17-limit semiagumented fifth";
+                case 12: return "greater 17-limit tritone";
+                case 13: return "17-limit semidiminished fourth";
+                case 14: return "17-limit supraminor third";
+                case 15: return "17-limit whole tone";
+                case 16: return "large 17-limit semitone";
                 default: break;
             }
             break;
         case 18:
             switch (r.den()) {
-                case 11: return "undecimal neutral sixth";
-                case 13: return "tridecimal augmented fourth";
-                case 17: return "small septendecimal semitone";
+                case 11: return "11-limit neutral sixth";
+                case 13: return "13-limit augmented fourth";
+                case 17: return "17-limit quasi-equal semitone";
                 default: break;
             }
             break;
         case 19:
             switch (r.den()) {
-                case 10: return "undevicesimal diminished octave";
-                case 11: return "undevicesimal semitwelfth";
-                case 14: return "hendrix fourth";
-                case 15: return "Eratosthenes' major third";
-                case 16: return "otonal minor third";
-                case 17: return "quasi-meantone";
-                case 18: return "septimal minor semitone";
+                case 10: return "19-limit diminished octave";
+                case 11: return "19-limit semidiminished seventh";
+                case 14: return "19-limit acute fourth";
+                case 15: return "greater 19-limit major third";
+                case 17: return "19-limit quasi-meantone";
+                case 16: return "19-limit minor third";
+                case 18: return "greater 19-limit semitone";
                 default: break;
             }
             break;
         case 20:
             switch (r.den()) {
-                case 11: return "small undecimal neutral seventh";
-                case 13: return "tridecimal semitenth";
-                case 17: return "septendecimal augmented second";
-                case 19: return "small undevicesimal semitone";
+                case 11: return "11-limit supraminor seventh";
+                case 13: return "13-limit semiaugmented fifth";
+                case 17: return "17-limit augmented second";
+                case 19: return "lesser 19-limit semitone";
                 default: break;
             }
             break;
         case 21:
             switch (r.den()) {
-                case 13: return "tridecimal supraminor sixth";
-                case 16: return "narrow fourth";
-                case 17: return "septendecimal submajor third";
-                case 20: return "minor semitone";
+                case 13: return "13-limit supraminor sixth";
+                case 16: return "septimal fourth";
+                case 17: return "17-limit submajor third";
+                case 20: return "lesser septimal semitone";
                 default: break;
             }
             break;
         case 22:
             switch (r.den()) {
-                case 13: return "tridecimal major sixth";
-                case 15: return "undecimal diminished fifth";
-                case 17: return "septendecimal supermajor third";
-                case 19: return "undevicesimal semifourth";
-                case 21: return "undecimal minor semitone";
+                case 13: return "13-limit major sixth";
+                case 15: return "11-limit semi  diminished fifth";
+                case 17: return "17-limit semidiminished fourth";
+                case 19: return "19-limit semidiminished third";
+                case 21: return "11-limit minor semitone";
                 default: break;
             }
             break;
         case 23:
             switch (r.den()) {
-                case 16: return "vicesimotertial superaugmented fourth";
-                case 18: return "vicesimotertial diminished fourth";
-                case 19: return "vicesimotertial supraminor third";
+                case 16: return "23-limit diminished fifth";
+                case 18: return "23-limit diminished fourth";
+                case 19: return "23-limit supraminor third";
+                case 22: return "greater 23-limit semitone";
                 default: break;
             }
             break;
         case 24:
             switch (r.den()) {
-                case 13: return "tridecimal neutral seventh";
-                case 17: return "smaller septendecimal tritone";
-                case 19: return "Boethius' major third";
-                case 23: return "lesser vicesimotertial semitone";
+                case 13: return "13-limit neutral seventh";
+                case 17: return "lesser 17-limit tritone";
+                case 19: return "lesser 19-limit major third";
+                case 23: return "lesser 23-limit semitone";
                 default: break;
             }
             break;
         case 25:
             switch (r.den()) {
-                case 14: return "middle minor seventh";
-                case 16: return "pental augmented fifth";
-                case 18: return "classic augmented fourth";
-                case 21: return "quasi-tempered minor third";
-                case 24: return "classic chromatic semitone";
+                case 14: return "septimal middle minor seventh";
+                case 16: return "just augmented fifth";
+                case 18: return "just augmented fourth";
+                case 21: return "septimal quasi-equal minor third";
+                case 24: return "just chromatic semitone";
                 default: break;
             }
             break;
-        case 26:
+        case 26: // TILl HERE
             switch (r.den()) {
-                case 15: return "tridecimal semitwelfth";
-                case 17: return "septendecimal super-fifth";
-                case 25: return "large tridecimal third tone";
+                case 15: return "13-limit semidiminished seventh";
+                case 17: return "17-limit acute fifth";
+                case 25: return "greater 13-limit third-tone";
                 default: break;
             }
             break;
         case 27:
             switch (r.den()) {
-                case 14: return "septimal major seventh";
+                case 14: return "septimal supermajor seventh";
                 case 16: return "Pythagorean major sixth";
-                case 20: return "acute fourth";
-                case 22: return "rastmic neutral third";
-                case 25: return "large limma";
-                case 26: return "small tridecimal third tone";
+                case 20: return "just acute fourth";
+//                case 22: return "rastmic neutral third";
+                case 25: return "just acute minor second";
+                case 26: return "lesser 13-limit third-tone";
                 default: break;
             }
             break;
         case 28:
             switch (r.den()) {
-                case 15: return "grave major seventh";
-                case 17: return "septendecimal submajor sixth";
-                case 19: return "hendrix fifth";
-                case 25: return "middle major second";
-                case 27: return "septimal third-tone";
+                case 15: return "lesser septimal major seventh";
+                case 17: return "17-limit submajor sixth";
+                case 19: return "19-limit grave fifth";
+                case 25: return "septimal middle whole tone";
+                case 27: return "septimal large quartertone";
                 default: break;
             }
             break;
         case 29:
             switch (r.den()) {
-                case 16: return "vicesimononal supraminor seventh";
+                case 16: return "29-limit supraminor seventh";
                 default: break;
             }
             break;
         case 30:
             switch (r.den()) {
-                case 17: return "septendecimal minor seventh";
+                case 17: return "17-limit minor seventh";
                 default: break;
             }
             break;
         case 31:
             switch (r.den()) {
-                case 16: return "tricesimoprimal semidiminished octave";
-                case 24: return "sensi supermajor third";
+                case 16: return "23-limit semidiminished octave";
+//                case 24: return "sensi supermajor third";
                 default: break;
             }
             break;
         case 32:
             switch (r.den()) {
-                case 17: return "septendecimal diminished octave";
-                case 19: return "utonal major sixth";
-                case 21: return "super-fifth, wide fifth";
-                case 25: return "classic diminished fourth";
+                case 17: return "lesser 17-limit major seventh";
+//                case 19: return "utonal major sixth";
+                case 21: return "septimal acute fifth";
+                case 25: return "just diminished fourth";
                 case 27: return "Pythagorean minor third";
                 default: break;
             }
             break;
         case 33:
             switch (r.den()) {
-                case 25: return "5EDO-esque fourth";
-                case 26: return "tridecimal major third";
-                case 32: return "undecimal diesis";
+                case 25: return "11-limit 5-EDO-esque fourth";
+                case 26: return "13-limit major third";
+                case 32: return "11-limit quartertone";
                 default: break;
             }
             break;
         case 34:
             switch (r.den()) {
-                case 19: return "quasi-meantone minor seventh";
+                case 19: return "19-limit quasi-meantone minor seventh";
                 default: break;
             }
             break;
         case 35:
             switch (r.den()) {
                 case 18: return "septimal semidiminished octave";
-                case 24: return "septimal sub-fifth";
-                case 26: return "animist fourth";
+                case 24: return "septimal semidiminished fifth";
+//                case 26: return "animist fourth";
                 case 27: return "septimal semidiminished fourth";
-                case 29: return "doublewide minor third";
+//                case 29: return "doublewide minor third";
                 case 32: return "septimal neutral second";
                 default: break;
             }
             break;
         case 36:
             switch (r.den()) {
-                case 19: return "undevicesimal major seventh";
-                case 23: return "vicesimotertial augmented fifth";
-                case 25: return "pental diminished fifth";
-                case 35: return "septimal quarter tone";
+                case 19: return "19-limit major seventh";
+                case 23: return "23-limit augmented fifth";
+                case 25: return "just diminished fifth";
+                case 35: return "septimal quartertone";
                 default: break;
             }
             break;
         case 38:
             switch (r.den()) {
-                case 23: return "vicesimotertial submajor sixth";
+                case 23: return "23-limit submajor sixth";
                 default: break;
             }
             break;
         case 39:
             switch (r.den()) {
-                case 32: return "lesser tridecimal neutral third";
+                case 32: return "lesser 13-limit neutral third";
                 default: break;
             }
             break;
         case 40:
             switch (r.den()) {
-                case 21: return "septimal acute major seventh";
+                case 21: return "greater septimal major seventh";
                 case 27: return "grave fifth";
                 default: break;
             }
             break;
         case 42:
             switch (r.den()) {
-                case 25: return "quasi-tempered major sixth";
+                case 25: return "septimal quasi-equal major sixth";
                 default: break;
             }
             break;
         case 45:
             switch (r.den()) {
-                case 32: return "smaller pental tritone";
-                case 44: return "undecimal diesis";
+                case 32: return "lesser just tritone";
+                case 44: return "11-limit fifth-tone";
                 default: break;
             }
             break;
         case 48:
             switch (r.den()) {
-                case 25: return "classic diminished octave";
-                case 35: return "septimal super-fourth";
+                case 25: return "just diminished octave";
+                case 35: return "septimal semiaugmented fourth";
                 default: break;
             }
             break;
         case 49:
             switch (r.den()) {
                 case 25: return "Bohlen-Pierce eighth";
-                case 32: return "superduper fifth";
-                case 36: return "Arabic lute acute fourth";
+//                case 32: return "superduper fifth";
+//                case 36: return "Arabic lute acute fourth";
                 case 40: return "larger septimal neutral third";
-                case 44: return "mothwellsmic major second";
-                case 45: return "swetismic neutral second";
-                case 48: return "slendro diesis";
+//                case 44: return "mothwellsmic major second";
+//                case 45: return "swetismic neutral second";
+//                case 48: return "slendro diesis";
                 default: break;
             }
             break;
         case 50:
             switch (r.den()) {
-                case 33: return "5EDO-esque fifth";
-                case 49: return "tritonic diesis";
+                case 33: return "11-limit 5-EDO-esque fifth";
+                case 49: return "septimal sixth-tone";
                 default: break;
             }
             break;
         case 51:
             switch (r.den()) {
-                case 41: return "maja third";
+//                case 41: return "maja third";
                 default: break;
             }
             break;
         case 52:
             switch (r.den()) {
-                case 33: return "tridecimal minor sixth";
-                case 35: return "animist fifth";
+                case 33: return "13-limit minor sixth";
+//                case 35: return "animist fifth";
                 default: break;
             }
             break;
         case 54:
             switch (r.den()) {
-                case 49: return "Zalzal's mujannab";
+//                case 49: return "Zalzal's mujannab";
                 default: break;
             }
             break;
         case 55:
             switch (r.den()) {
-                case 32: return "keenanismic supermajor sixth";
-                case 39: return "smaller gassormic tritone";
-                case 48: return "keenanismic supermajor second";
-                case 49: return "werckismic tone";
+//                case 32: return "keenanismic supermajor sixth";
+//                case 39: return "smaller gassormic tritone";
+//                case 48: return "keenanismic supermajor second";
+//                case 49: return "werckismic tone";
                 default: break;
             }
             break;
         case 56:
             switch (r.den()) {
-                case 45: return "narrow perde segah";
+//                case 45: return "marvelous major third";
                 default: break;
             }
             break;
@@ -837,220 +849,228 @@ const char *jiwheel_ratio_to_common_interval_name(t_rational r, long *num_octave
             break;
         case 61:
             switch (r.den()) {
-                case 32: return "octave-reduced 61st harmonic";
-                case 51: return "myna third";
+//                case 32: return "octave-reduced 61st harmonic";
+//                case 51: return "myna third";
                 default: break;
             }
             break;
         case 62:
             switch (r.den()) {
-                case 53: return "orwell subminor third";
+//                case 53: return "orwell subminor third";
                 default: break;
             }
             break;
         case 63:
             switch (r.den()) {
-                case 40: return "narrow minor sixth";
-                case 50: return "quasi-tempered major third";
-                case 55: return "werckismic supermajor second";
+//                case 40: return "narrow minor sixth";
+//                case 50: return "quasi-tempered major third";
+//                case 55: return "werckismic supermajor second";
                 default: break;
             }
             break;
         case 64:
             switch (r.den()) {
-                case 33: return "undecimal semidiminished octave";
+                case 33: return "11-limit semidiminished octave";
                 case 35: return "septimal neutral seventh";
-                case 45: return "larger pental tritone";
-                case 49: return "septatonic major third";
+                case 45: return "greater just tritone";
+                case 49: return "septimal narrow fourth";
                 case 55: return "keenanismic subminor third";
-                case 57: return "quasi-tempered whole tone";
-                case 61: return "harry minor semitone";
+//                case 57: return "quasi-tempered whole tone";
+//                case 61: return "harry minor semitone";
                 case 63: return "septimal comma";
                 default: break;
             }
             break;
         case 65:
             switch (r.den()) {
-                case 64: return "wilsorma";
+//                case 64: return "wilsorma";
                 default: break;
             }
             break;
         case 66:
             switch (r.den()) {
-                case 65: return "winmeanma";
+//                case 65: return "winmeanma";
                 default: break;
             }
             break;
         case 68:
             switch (r.den()) {
-                case 65: return "valentine semitone";
+//                case 65: return "valentine semitone";
                 default: break;
             }
             break;
         case 71:
             switch (r.den()) {
-                case 40: return "harmonic/just minor seventh meantone";
-                case 57: return "witchcraft major third";
+//                case 40: return "harmonic/just minor seventh meantone";
+//                case 57: return "witchcraft major third";
                 default: break;
             }
             break;
         case 72:
             switch (r.den()) {
-                case 49: return "septimal catafifth";
+//                case 49: return "septimal catafifth";
                 default: break;
             }
             break;
         case 73:
             switch (r.den()) {
-                case 60: return "amity supraminor third";
+//                case 60: return "amity supraminor third";
                 default: break;
             }
             break;
         case 75:
             switch (r.den()) {
-                case 56: return "marvelous fourth";
-                case 64: return "classic augmented second";
+//                case 56: return "marvelous fourth";
+                case 64: return "just augmented second";
                 default: break;
             }
             break;
         case 76:
             switch (r.den()) {
-                case 61: return "magic major third";
+//                case 61: return "magic major third";
                 default: break;
             }
             break;
         case 77:
             switch (r.den()) {
-                case 60: return "swetismic supermajor third";
-                case 64: return "keenanismic minor third";
-                case 72: return "undecimal secor";
+//                case 60: return "swetismic supermajor third";
+//                case 64: return "keenanismic minor third";
+//                case 72: return "undecimal secor";
                 default: break;
             }
             break;
         case 78:
             switch (r.den()) {
-                case 55: return "larger gassormic tritone";
-                case 71: return "porcupine neutral second";
+//                case 55: return "larger gassormic tritone";
+//                case 71: return "porcupine neutral second";
                 default: break;
             }
             break;
         case 80:
             switch (r.den()) {
-                case 63: return "5/7-kleismic major third";
+//                case 63: return "5/7-kleismic major third";
                 default: break;
             }
             break;
         case 81:
             switch (r.den()) {
-                case 55: return "undecimal catafifth";
+//                case 55: return "undecimal catafifth";
                 case 64: return "Pythagorean major third";
-                case 70: return "septimal semi-augmented second";
+//                case 70: return "septimal semi-augmented second";
                 case 80: return "syntonic comma";
                 default: break;
             }
             break;
         case 88:
             switch (r.den()) {
-                case 63: return "pentacircle diminished fifth";
-                case 81: return "undecimal subtone";
+//                case 63: return "pentacircle diminished fifth";
+//                case 81: return "undecimal subtone";
                 default: break;
             }
             break;
         case 90:
             switch (r.den()) {
-                case 77: return "swetismic subminor third";
+//                case 77: return "swetismic subminor third";
                 default: break;
             }
             break;
         case 91:
             switch (r.den()) {
-                case 64: return "larger huntmic tritone";
+//                case 64: return "larger huntmic tritone";
                 default: break;
             }
             break;
         case 96:
             switch (r.den()) {
-                case 77: return "undecimal perde segah";
+//                case 77: return "undecimal perde segah";
                 default: break;
             }
             break;
         case 97:
             switch (r.den()) {
-                case 56: return "homothetic semitwelth";
-                case 84: return "homothetic semifourth";
+//                case 56: return "homothetic semidiminished seventh";
+//                case 84: return "homothetic semidiminished third";
                 default: break;
             }
             break;
         case 99:
             switch (r.den()) {
-                case 70: return "homothetic quasi-tempered tritone";
-                case 98: return "mothwellsma";
+//                case 70: return "homothetic quasi-tempered tritone";
+//                case 98: return "mothwellsma";
                 default: break;
             }
             break;
         case 100:
             switch (r.den()) {
-                case 97: return "shrutar quarter tone";
-                case 99: return "ptolemisma";
+//                case 97: return "shrutar quarter tone";
+//                case 99: return "ptolemisma";
                 default: break;
             }
             break;
         case 105:
             switch (r.den()) {
-                case 64: return "quasi-tempered 5/7-octave";
+//                case 64: return "quasi-tempered 5/7-octave";
                 default: break;
             }
             break;
         case 108:
             switch (r.den()) {
-                case 77: return "swetismic augmented fourth";
+//                case 77: return "swetismic augmented fourth";
                 default: break;
             }
             break;
         case 112:
             switch (r.den()) {
-                case 75: return "marvelous fifth";
+//                case 75: return "marvelous fifth";
                 default: break;
             }
             break;
         case 117:
             switch (r.den()) {
-                case 88: return "minthmic fourth";
+//                case 88: return "minthmic fourth";
                 default: break;
             }
             break;
         case 121:
             switch (r.den()) {
-                case 80: return "wide biyatismic fifth";
-                case 90: return "wide biyatismic fourth";
+//                case 80: return "wide biyatismic fifth";
+//                case 90: return "wide biyatismic fourth";
+                default: break;
+            }
+            break;
+        case 125:
+            switch (r.den()) {
+                case 64: return "just augmented seventh";
+                case 72: return "just augmented sixth";
                 default: break;
             }
             break;
         case 126:
             switch (r.den()) {
-                case 125: return "starling comma";
+//                case 125: return "starling comma";
                 default: break;
             }
             break;
         case 127:
             switch (r.den()) {
-                case 72: return "harmonic/Pythagorean minor seventh meantone";
+//                case 72: return "harmonic/Pythagorean minor seventh meantone";
                 default: break;
             }
             break;
         case 128:
             switch (r.den()) {
+                case 75: return "cassic diminished seventh";
                 case 81: return "Pythagorean minor sixth";
-                case 91: return "smaller huntmic tritone";
-                case 105: return "quasi-tempered 2/7-octave";
-                case 125: return "minor diesis";
+//                case 91: return "smaller huntmic tritone";
+//                case 105: return "quasi-tempered 2/7-octave";
+                case 125: return "just diminished second";
                 default: break;
             }
             break;
         case 135:
             switch (r.den()) {
-                case 112: return "large septimal minor third";
-                case 128: return "major limma";
+                case 112: return "septimal supraminor third";
+//                case 128: return "major limma";
                 default: break;
             }
             break;
@@ -1060,108 +1080,114 @@ const char *jiwheel_ratio_to_common_interval_name(t_rational r, long *num_octave
                 default: break;
             }
             break;
+        case 144:
+            switch (r.den()) {
+                case 125: return "just diminished third";
+                default: break;
+            }
+            break;
         case 160:
             switch (r.den()) {
                 case 81: return "octave minus syntonic comma";
-                case 121: return "narrow biyatismic fourth";
+//                case 121: return "narrow biyatismic fourth";
                 default: break;
             }
             break;
         case 161:
             switch (r.den()) {
-                case 128: return "just/Pythagorean major third meantone";
+                case 128: return "just-Pythagorean mean major third";
                 default: break;
             }
             break;
         case 176:
             switch (r.den()) {
-                case 117: return "minthmic fifth";
+//                case 117: return "minthmic fifth";
                 default: break;
             }
             break;
         case 180:
             switch (r.den()) {
-                case 121: return "narrow biyatismic fifth";
+//                case 121: return "narrow biyatismic fifth";
                 default: break;
             }
             break;
         case 182:
             switch (r.den()) {
-                case 121: return "tridecimal gentle fifth";
+//                case 121: return "13-limit gentle fifth";
                 default: break;
             }
             break;
         case 224:
             switch (r.den()) {
-                case 195: return "quasi-tempered 1/5-octave";
+//                case 195: return "quasi-tempered 1/5-octave";
                 default: break;
             }
             break;
         case 225:
             switch (r.den()) {
-                case 128: return "marvel five-limit harmonic seventh";
-                case 224: return "marvel comma";
+                case 128: return "5-limit harmonic seventh";
+//                case 224: return "marvel comma";
                 default: break;
             }
             break;
         case 243:
             switch (r.den()) {
                 case 128: return "Pythagorean major seventh";
-                case 224: return "septimal subtone";
+//                case 224: return "septimal subtone";
                 default: break;
             }
             break;
         case 250:
             switch (r.den()) {
-                case 243: return "porcupine comma";
+//                case 243: return "porcupine comma";
                 default: break;
             }
             break;
         case 256:
             switch (r.den()) {
-                case 243: return "Pythagorean limma";
+                case 243: return "Pythagorean minor second";
                 default: break;
             }
             break;
         case 525:
             switch (r.den()) {
-                case 512: return "avicennma";
+//                case 512: return "avicennma";
                 default: break;
             }
             break;
         case 625:
             switch (r.den()) {
-                case 512: return "pental neutral third";
+                case 512: return "5-limit neutral third";
                 default: break;
             }
             break;
         case 648:
             switch (r.den()) {
-                case 625: return "major diesis";
+//                case 625: return "major diesis";
                 default: break;
             }
             break;
         case 729:
             switch (r.den()) {
-                case 490: return "septimal sesquiaugmented acute fourth";
+//                case 490: return "septimal grave fifth";
                 default: break;
             }
             break;
         case 959:
             switch (r.den()) {
-                case 540: return "harmonic/Pythagorean/just minor seventh meantone";
+//                case 540: return "harmonic/Pythagorean/just minor seventh meantone";
                 default: break;
             }
             break;
         case 980:
             switch (r.den()) {
-                case 729: return "septimal sesquidiminished grave fifth";
+//                case 729: return "septimal sesquidiminished grave fifth";
                 default: break;
             }
             break;
         case 1053:
             switch (r.den()) {
-                case 1024: return "tridecimal quartertone";
+                case 1024: return "13-limit quartertone";
                 default: break;
             }
             break;
@@ -1179,19 +1205,19 @@ const char *jiwheel_ratio_to_common_interval_name(t_rational r, long *num_octave
             break;
         case 3125:
             switch (r.den()) {
-                case 3072: return "small diesis";
+//                case 3072: return "small diesis";
                 default: break;
             }
             break;
         case 6272:
             switch (r.den()) {
-                case 5625: return "double marvelous second";
+//                case 5625: return "double marvelous second";
                 default: break;
             }
             break;
         case 16384:
             switch (r.den()) {
-                case 10935: return "12EDO-esque fifth";
+//                case 10935: return "12EDO-esque fifth";
                 default: break;
             }
             break;
@@ -1203,7 +1229,7 @@ const char *jiwheel_ratio_to_common_interval_name(t_rational r, long *num_octave
             break;
         case 59049:
             switch (r.den()) {
-                case 57344: return "Harrison's comma";
+//                case 57344: return "Harrison's comma";
                 default: break;
             }
             break;
@@ -1256,20 +1282,16 @@ t_jrgba jiwheel_long_to_color(t_jiwheel *x, long value)
     return x->j_textcolor;
 }
 
-
+/*
 long num_to_prime_idx(long num)
 {
     // slow... to be optimized with a table
-    for (long i = 0; i < LLLL_PRIMES_TABLE_SIZE; i++)
+    for (long i = 0; i < BACH_PRIMES_TABLE_SIZE; i++)
         if (bach->b_primes[i] == num)
             return i;
-    
-/*    for (long i = 0; i < num_ezprimes; i++)
-        if (ezprimes[i] == num)
-            return i;
-*/
     return -1;
 }
+*/
 
 void jiwheel_bang(t_jiwheel *x)
 {
@@ -1341,13 +1363,6 @@ void C74_EXPORT ext_main(void *moduleRef)
 
     class_addmethod(c, (method) jiwheel_anything, "anything", A_GIMME, 0);
     class_addmethod(c, (method) jiwheel_anything, "list", A_GIMME, 0);
-
-    // @method dump @digest Output all pitches
-    // @description Outputs the information about all pitches from the first outlet. If the "visible" symbol is given as first argument, only visible pitches
-    // are output; otherwise, the ones that have been hidden to avoid collisions are also output (default behavior).
-    // @marg 0 @name visible @optional 1 @type symbol
-    // @example dump @caption output all pitches
-    // @example dump visible @caption output visible pitches only
     class_addmethod(c, (method) jiwheel_dump, "dump", A_GIMME, 0);
 
 
@@ -1390,9 +1405,9 @@ void C74_EXPORT ext_main(void *moduleRef)
 
     CLASS_ATTR_DEFAULT(c, "fontsize", 0, "24"); // new font size
     // @exclude bach.jiwheel
-    CLASS_ATTR_DEFAULT(c, "patching_rect", 0, "0 0 850 600"); // new dimensions
+    CLASS_ATTR_DEFAULT(c, "patching_rect", 0, "0 0 600 400"); // new dimensions
     // @exclude bach.jiwheel
-    CLASS_ATTR_DEFAULT(c, "presentation_rect", 0, "0 0 850 600"); // new dimensions
+    CLASS_ATTR_DEFAULT(c, "presentation_rect", 0, "0 0 600 400"); // new dimensions
     // @exclude bach.jiwheel
     CLASS_ATTR_DEFAULT(c, "fontname", 0, "Times New Roman"); // new dimensions
     // @exclude bach.jiwheel
@@ -1490,42 +1505,48 @@ void C74_EXPORT ext_main(void *moduleRef)
 
     CLASS_STICKY_ATTR(c, "category", 0, "Behavior");
 
-        CLASS_ATTR_CHAR(c, "outputsel", 0, t_jiwheel, output_selection);
-        CLASS_ATTR_STYLE_LABEL(c,"outputsel",0,"onoff","Output Selection");
-        CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"outputsel", 0, "1");
-        // @description Toggles the ability to output the selection
+        CLASS_ATTR_CHAR(c, "outputmode", 0, t_jiwheel, output_type);
+        CLASS_ATTR_STYLE_LABEL(c,"outputmode",0,"enumindex","Output Mode");
+        CLASS_ATTR_ENUMINDEX(c,"outputmode", 0, "None Pitches Pitches And Details");
+        CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"outputmode", 0, "2");
+        // @description Sets the output mode: none (0), pitches from the first outlet (1),
+        // pitches from the first outlet along with details on the second outlet (2)
 
     CLASS_STICKY_ATTR_CLEAR(c, "category");
 
 
     CLASS_STICKY_ATTR(c, "category", 0, "Settings");
-
-        CLASS_ATTR_LONG(c, "formaloctave", 0, t_jiwheel, formaloctave);
-        CLASS_ATTR_STYLE_LABEL(c,"formaloctave",0,"text","Formal Octave Harmonic");
+        CLASS_ATTR_LONG(c, "outputoctave", 0, t_jiwheel, output_octave);
+        CLASS_ATTR_STYLE_LABEL(c,"outputoctave",0,"text","Output Octave");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"outputoctave",0,"5");
+        // @description Sets the output octave
+    
+        CLASS_ATTR_LLLL(c, "formaloctave", 0, t_jiwheel, formaloctave_ll, jiwheel_getattr_formaloctave, jiwheel_setattr_formaloctave);
+        CLASS_ATTR_STYLE_LABEL(c,"formaloctave",0,"text","Formal Octave Ratio");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"formaloctave",0,"2");
         CLASS_ATTR_FILTER_MIN(c, "formaloctave", 2)
-        // @description Sets the harmonic number corresponding to the formal octave (defaults to 2: actual octave)
+        // @description Sets the harmonic ratio corresponding to the formal octave (defaults to 2: actual octave)
     
-        CLASS_ATTR_SYM(c, "basis", 0, t_jiwheel, base_diatonic_pitch);
-        CLASS_ATTR_STYLE_LABEL(c,"basis",0,"text","Basis Diatonic Pitch");
-        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"basis",0,"A");
-        CLASS_ATTR_BASIC(c,"basis",0);
+        CLASS_ATTR_SYM(c, "jibase", 0, t_jiwheel, base_diatonic_pitch);
+        CLASS_ATTR_STYLE_LABEL(c,"jibase",0,"text","Reference Diatonic Pitch Class");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"jibase",0,"C");
+        CLASS_ATTR_BASIC(c,"jibase",0);
         // @description Sets the diatonic pitch corresponding to the 1/1 ratio (as one of the letters A through G).
 
         CLASS_ATTR_CHAR(c, "display", 0, t_jiwheel, display_what);
         CLASS_ATTR_STYLE_LABEL(c,"display",0,"enumindex","Display");
-        CLASS_ATTR_ENUMINDEX(c,"display", 0, "Ratios Accidentals");
-        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"display",0,"1");
+        CLASS_ATTR_ENUMINDEX(c,"display", 0, "None Ratios Accidentals");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"display",0,"2");
         CLASS_ATTR_BASIC(c,"display",0);
-        // @description Decides what to display: 0 (Ratios) or 1 (Accidentals).
+        // @description Decides what to display: 0 (None), 1 (Ratios) or 2 (Accidentals).
 
         CLASS_ATTR_CHAR(c, "mode", 0, t_jiwheel, mode);
         CLASS_ATTR_STYLE_LABEL(c,"mode",0,"enumindex","Mode");
-        CLASS_ATTR_ENUMINDEX(c,"mode", 0, "Maximum Term Prime Limits");
+        CLASS_ATTR_ENUMINDEX(c,"mode", 0, "Maximum Term Combine Commas");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"mode",0,"0");
         CLASS_ATTR_BASIC(c,"mode",0);
-        // @description Sets the representation mode: either up to a maximum term for numerator/denominator (0) or using prime limits,
-        // by combining just intonation commas (1). In the first case, see <m>maxterm</m>. In the second, see <m>fifthext</m> and <m>commas</m>.
+        // @description Sets the representation mode: either up to a maximum term for numerator/denominator (0) or by combining
+        // just intonation commas (1). In the first case, see <m>maxterm</m>. In the second, see <m>fifthext</m> and <m>commas</m>.
 
         CLASS_ATTR_ATOM(c, "maxterm", 0, t_jiwheel, maxterm);
         CLASS_ATTR_STYLE_LABEL(c,"maxterm",0,"text","Maximum Term");
@@ -1547,12 +1568,12 @@ void C74_EXPORT ext_main(void *moduleRef)
         // @description Sets the number of Pythagorean fifths calculated at every side of the basis pitch,
         // used if <m>mode</m> is 1. Leave this to "auto" for automatic zooming.
 
-        CLASS_ATTR_LLLL(c, "commas", 0, t_jiwheel, allowed_commas, jiwheel_getattr_commas, jiwheel_setattr_commas);
-        CLASS_ATTR_STYLE_LABEL(c,"commas",0,"text_large","Allowed Commas");
-        CLASS_ATTR_SAVE(c, "commas", 0);
-        CLASS_ATTR_PAINT(c, "commas", 0);
-        CLASS_ATTR_BASIC(c, "commas", 0);
-        // @description Sets the commas used if <m>mode</m> is 1. Leave this to "auto" for automatic zooming
+        CLASS_ATTR_LLLL(c, "jicommas", 0, t_jiwheel, allowed_commas, jiwheel_getattr_commas, jiwheel_setattr_commas);
+        CLASS_ATTR_STYLE_LABEL(c,"jicommas",0,"text_large","Allowed Commas");
+        CLASS_ATTR_SAVE(c, "jicommas", 0);
+        CLASS_ATTR_PAINT(c, "jicommas", 0);
+        CLASS_ATTR_BASIC(c, "jicommas", 0);
+        // @description Sets the Just Intonation commas used if <m>mode</m> is 1. Leave this to "auto" for automatic zooming
         // (and tailor the <m>density</m> attribute in this case).
 
         CLASS_ATTR_DOUBLE(c, "density", 0, t_jiwheel, density);
@@ -1567,19 +1588,19 @@ void C74_EXPORT ext_main(void *moduleRef)
         CLASS_ATTR_BASIC(c,"intwheeldensity",0);
         // @description Sets the density of integers in the integers wheel, used when display is in automatic zooming.
 
-        CLASS_ATTR_ATOM_VARSIZE(c, "limits", 0, t_jiwheel, allowed_limits, allowed_limits_count, MAX_ALLOWED_LIMITS);
-        CLASS_ATTR_STYLE_LABEL(c,"limits",0,"text","Allowed Limits");
-        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"limits",0,"any");
-        CLASS_ATTR_BASIC(c,"limits",0);
-        // @description Sets the allowed limits for the displayed pitches. Leave "any" to unconstrain.
-        // Use "<=" as first element to choose limits less or equal to a certain number.
+        CLASS_ATTR_LONG(c, "jilimit",  0, t_jiwheel, jilimit);
+        CLASS_ATTR_LABEL(c, "jilimit", 0, "JI Limit");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"jilimit",0,"0");
+        CLASS_ATTR_BASIC(c,"jilimit",0);
+        // @description The <m>jilimit</m> attributes allows you to set a maximum just intonation limit
+        // for an interval (as frequency ratio) showing up in the output. (0 means: any, which is the default.)
 
-        CLASS_ATTR_ATOM_VARSIZE(c, "primes", 0, t_jiwheel, allowed_primes, allowed_primes_count, MAX_ALLOWED_PRIMES);
-        CLASS_ATTR_STYLE_LABEL(c,"primes",0,"text","Allowed Primes");
-        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"primes",0,"any");
-        CLASS_ATTR_BASIC(c,"primes",0);
+        CLASS_ATTR_ATOM_VARSIZE(c, "jiprimes", 0, t_jiwheel, allowed_primes, allowed_primes_count, MAX_ALLOWED_PRIMES);
+        CLASS_ATTR_STYLE_LABEL(c,"jiprimes",0,"text","Allowed Primes");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"jiprimes",0,"any");
+        CLASS_ATTR_BASIC(c,"jiprimes",0);
         // @description Sets the allowed primes for the displayed pitches. Leave "any" to unconstrain.
-        // Use "<=" as first element to choose limits less or equal to a certain number.
+        // Use the less or equal sign as first symbol to select limits less or equal to a certain number.
         // Notice that this is slightly different than <m>limits</m>: when using <m>limits</m> one
         // is constraining the highest prime appearing in the ratio, while when using <m>primes</m>
         // one is constraining _all_ the primes appearing in the ratio.
@@ -1663,11 +1684,6 @@ void C74_EXPORT ext_main(void *moduleRef)
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showticks",0,"1");
         // @description Toggles the display of the ticks
 
-        CLASS_ATTR_CHAR(c, "showfractions", 0, t_jiwheel, show_ratios);
-        CLASS_ATTR_STYLE_LABEL(c,"showfractions",0,"onoff","Show Fractions");
-        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showfractions",0,"1");
-        // @description Toggles the display of the fractions
-
     CLASS_STICKY_ATTR_CLEAR(c, "category");
     
     
@@ -1725,6 +1741,7 @@ void C74_EXPORT ext_main(void *moduleRef)
         CLASS_ATTR_DOUBLE(c,"zoom",0, t_jiwheel, zoom);
         CLASS_ATTR_STYLE_LABEL(c,"zoom",0,"text","Zoom");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"zoom",0,"100.");
+        CLASS_ATTR_FILTER_MIN(c, "zoom", 100)
         // @description Zoom percentage.
 
         CLASS_ATTR_DOUBLE(c,"zoomangle",0, t_jiwheel, zoom_angle);
@@ -1795,8 +1812,6 @@ void C74_EXPORT ext_main(void *moduleRef)
     s_jiwheel_class = c;
     class_register(CLASS_BOX, s_jiwheel_class);
     
-    build_commas();
-
     dev_post("bach.jiwheel compiled %s %s", __DATE__, __TIME__);
     return;
 }
@@ -1834,14 +1849,24 @@ t_max_err jiwheel_notify(t_jiwheel *x, t_symbol *s, t_symbol *msg, void *sender,
 {
     if (msg == gensym("attr_modified")) {
         t_symbol *attrname = (t_symbol *)object_method((t_object *)data, _sym_getname);
-        if (attrname == gensym("limits") || attrname == gensym("primes") || attrname == gensym("formaloctave")) {
+        if (attrname == gensym("jilimit") || attrname == gensym("jiprimes") || attrname == gensym("formaloctave")) {
             x->rebuild = true;
             jiwheel_clear_selection(x);
-        } else if (attrname == gensym("mode") || attrname == gensym("commas") || attrname == gensym("maxterm") || attrname == gensym("maxfifths") || attrname == gensym("density") || attrname == gensym("display") || attrname == gensym("basis") || attrname == gensym("alwayswhitekeys") || attrname == gensym("mapping")) {
+        } else if (attrname == gensym("mode") || attrname == gensym("jicommas") || attrname == gensym("maxterm") || attrname == gensym("maxfifths") || attrname == gensym("density") || attrname == gensym("display") || attrname == gensym("basis") || attrname == gensym("alwayswhitekeys") || attrname == gensym("mapping") || attrname == gensym("fifthext") || attrname == gensym("boostpythagorean") || gensym("boostwhitekeys") || gensym("intwheelpitchestofront")) {
             x->rebuild = true;
         } else if (attrname == gensym("zoom") || attrname == gensym("zoomangle")){
             if (x->auto_zooming)
                 x->rebuild = true;
+        }
+        
+        if (attrname == gensym("formaloctave")) {
+            if (x->formaloctave_ll && x->formaloctave_ll->l_head) {
+                x->formaloctave = hatom_getrational(&x->formaloctave_ll->l_head->l_hatom);
+                if (x->formaloctave <= 1) {
+                    object_error((t_object *)x, "Formal octave cannot be less or equal to 1. Defaulting to 2.");
+                    x->formaloctave = long2rat(2);
+                }
+            }
         }
     }
     
@@ -1858,10 +1883,10 @@ void jiwheel_assist(t_jiwheel *x, void *b, long m, long a, char *s){
     } else {
         char *type = NULL;
         llllobj_get_llll_outlet_type_as_string((t_object *) x, LLLL_OBJ_UI, a, &type);
-        if (a == 0) // @out 0 @type llll @digest Dump Outlet
-            sprintf(s, "llll (%s): Dump Outlet", type);
-        else if (a == 1) // @out 1 @type llll @digest Notifications
-            sprintf(s, "llll (%s): Notifications", type);
+        if (a == 0) // @out 0 @type llll @digest Pitches
+            sprintf(s, "llll (%s): Pitches", type);
+        else if (a == 1) // @out 1 @type llll @digest Selection Details
+            sprintf(s, "llll (%s): Selection Details", type);
     }
 }
 
@@ -1903,9 +1928,50 @@ void jiwheel_dump(t_jiwheel *x, t_symbol *s, long argc, t_atom *argv){
     llll_free(ll);
 }
 
+t_pitch jiwheel_incoming_hatom_to_pitch(t_jiwheel *x, t_hatom *h)
+{
+    t_pitch p = t_pitch::C0;
+    switch (hatom_gettype(h)) {
+        case H_PITCH:
+            p = hatom_getpitch(h);
+            break;
+
+        case H_LONG:
+            p = t_pitch(genrat(hatom_getlong(h), 1));
+            break;
+
+        case H_RAT:
+        {
+            t_rational r = hatom_getrational(h);
+            if (r.r_den != 0)
+                p = t_pitch(r);
+            else {
+                object_error((t_object *)x, "Wrong input pitch or rational. Defaulting to C0.");
+            }
+        }
+            break;
+
+        default:
+            object_error((t_object *)x, "Wrong input pitch or rational. Defaulting to C0.");
+            break;
+    }
+    return p;
+}
 
 void jiwheel_anything(t_jiwheel *x, t_symbol *s, long argc, t_atom *argv)
 {
+    t_llll *inllll = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, s, argc, argv, LLLL_PARSE_CLONE);
+    
+    if (inllll->l_size == 1) {
+        jiwheel_set_pitch(x, jiwheel_incoming_hatom_to_pitch(x, &inllll->l_head->l_hatom));
+    } else if (inllll->l_size == 2) {
+        jiwheel_set_interval(x, jiwheel_incoming_hatom_to_pitch(x, &inllll->l_head->l_hatom),
+                             jiwheel_incoming_hatom_to_pitch(x, &inllll->l_head->l_next->l_hatom));
+    }
+    
+    llll_free(inllll);
+
+    
 /*
     long inlet = proxy_getinlet((t_object *) x);
     
@@ -2051,17 +2117,19 @@ t_jiwheel* jiwheel_new(t_symbol *s, long argc, t_atom *argv)
     x->n_importance_lexpr = NULL;
     x->show_focus = 1;
     x->j_has_focus = 0;
-    x->formaloctave = 2;
+    x->formaloctave_ll = llll_from_text_buf("2");
+    x->formaloctave = long2rat(2);
     x->allowed_commas = llll_from_text_buf("auto");
-    atom_setsym(x->allowed_limits, gensym("any"));
+    x->jilimit = 0; // means: none;
     atom_setsym(x->allowed_primes, gensym("any"));
-    x->allowed_limits_count = x->allowed_primes_count = 1;
+    x->allowed_primes_count = 1;
     x->sel1_ratio = x->sel2_ratio = x->mouseover_ratio = genrat(0, 1);
     x->curr_interval.ratio = genrat(0, 1);
     x->rotation_angle = x->rotation_angle_intwheel = 0;
     x->rotation_ratio_intwheel = long2rat(1);
     x->auto_move_intwheel = true;
     x->boost_et = true;
+    x->output_type = 2;
         
     x->curr_pitches = NULL;
     x->num_pitches = 0;
@@ -2103,6 +2171,9 @@ void jiwheel_free(t_jiwheel *x){
     if (x->n_importance_lexpr)
         lexpr_free(x->n_importance_lexpr);
     llll_free(x->allowed_commas);
+    
+    if (x->formaloctave_ll)
+        llll_free(x->formaloctave_ll);
 
     for (i = 1; i < 3; i++)
         object_free_debug(x->n_proxy[i]);
@@ -2126,24 +2197,15 @@ double ratio_to_cents(t_rational r)
     return 1200 * log2(rat2double(r));
 }
 
-long rational_to_limit(t_rational r)
+long num_to_prime_idx(long num)
 {
-    long lim = 2;
-    t_llll *factors = llll_factorize_rational(r);
-    for (t_llllelem *el = factors->l_head; el; el = el->l_next) {
-        if (hatom_gettype(&el->l_hatom) == H_LLLL) {
-            t_llll *ll = hatom_getllll(&el->l_hatom);
-            if (ll->l_head && ll->l_head->l_next && hatom_gettype(&ll->l_head->l_hatom) == H_LONG) {
-                long l = hatom_getlong(&ll->l_head->l_hatom);
-                lim = MAX(lim, l);
-            }
-        }
-    }
-    llll_free(factors);
-    return lim;
+    if (num >= 51)
+        return -1;
+    
+    return t_pitch::primes_locate[num];
 }
 
-void rational_to_wheelpitch(t_rational r, char base_diatonic_pitch, long formaloctave, bool frequential_mapping, t_wheelpitch *wp)
+void rational_to_wheelpitch(t_rational r, char base_diatonic_pitch, t_rational formaloctave, bool frequential_mapping, t_wheelpitch *wp)
 {
     long mp = 0;
     long numacc = 0;
@@ -2160,9 +2222,9 @@ void rational_to_wheelpitch(t_rational r, char base_diatonic_pitch, long formalo
     // filling angle
     double val = rat2double(r);
     if (!frequential_mapping) { // linear pitch
-        wp->angle = PIOVERTWO - TWOPI * log(val)/log(formaloctave);
+        wp->angle = PIOVERTWO - TWOPI * log(val)/log(rat2double(formaloctave));
     } else { // linear frequency
-        wp->angle = PIOVERTWO - TWOPI * (val - 1) / (formaloctave - 1);
+        wp->angle = PIOVERTWO - TWOPI * (val - 1) / (rat2double(formaloctave) - 1);
     }
     
     
@@ -2227,9 +2289,9 @@ void rational_to_wheelpitch(t_rational r, char base_diatonic_pitch, long formalo
                         } else {
                             for (long pc = 0; pc < p_abs; pc++) {
                                 if (p > 0)
-                                    temp = temp * commas[li];
+                                    temp = temp * t_pitch::HEJIcommasRatios[li];
                                 else
-                                    temp = temp / commas[li];
+                                    temp = temp / t_pitch::HEJIcommasRatios[li];
                             }
                             switch (l) {
                                 case 5:
@@ -2585,12 +2647,12 @@ t_llll *get_default_commamix(t_jiwheel *x, t_object *view)
     return commamix;
 }
 
-void ensure_ratio_is_between_1_and_formaloctave(t_rational *r, long formaloctave)
+void ensure_ratio_is_between_1_and_formaloctave(t_rational *r, t_rational formaloctave)
 {
     while (rat_long_cmp(*r, 1) < 0 && r->num() != 0 && r->den() != 0)
-        *r = rat_long_prod(*r, formaloctave);
+        *r = rat_rat_prod(*r, formaloctave);
     while (rat_long_cmp(*r, formaloctave) > 0 && r->num() != 0 && r->den() != 0)
-        *r = rat_long_div(*r, formaloctave);
+        *r = rat_rat_div(*r, formaloctave);
 }
 
 void jiwheel_build_pitches(t_jiwheel *x, t_object *view)
@@ -2599,8 +2661,7 @@ void jiwheel_build_pitches(t_jiwheel *x, t_object *view)
     t_llll *curr_pitches_ll = llll_get();
     
     // building mask for limits
-    bool *limit_is_ok = (bool *)bach_newptrclear(LLLL_PRIMES_TABLE_SIZE * sizeof(bool));
-    bool *prime_is_ok = (bool *)bach_newptrclear(LLLL_PRIMES_TABLE_SIZE * sizeof(bool));
+    bool *prime_is_ok = (bool *)bach_newptrclear(BACH_PRIMES_TABLE_SIZE * sizeof(bool));
     long only_limits_up_to_this_number_are_ok = -1, only_primes_up_to_this_number_are_ok = -1;
 
     if (x->allowed_primes_count == 1) {
@@ -2609,9 +2670,9 @@ void jiwheel_build_pitches(t_jiwheel *x, t_object *view)
             if (i >= 0)
                 prime_is_ok[i] = 1;
         } else {
-            for (long i = 0; i < LLLL_PRIMES_TABLE_SIZE; i++)
+            for (long i = 0; i < BACH_PRIMES_TABLE_SIZE; i++)
                 prime_is_ok[i] = 1;
-            only_primes_up_to_this_number_are_ok = LLLL_PRIMES_TABLE_MAX;
+            only_primes_up_to_this_number_are_ok = BACH_PRIMES_TABLE_MAX;
         }
     } else if (x->allowed_primes_count >= 2) {
         if (atom_gettype(x->allowed_primes) == A_SYM && atom_getsym(x->allowed_primes) == gensym("<=")) {
@@ -2641,52 +2702,9 @@ void jiwheel_build_pitches(t_jiwheel *x, t_object *view)
         }
     } else {
         object_warn((t_object *)x, "No primes defined. Defaulting to 'any'.");
-        for (long i = 0; i < LLLL_PRIMES_TABLE_SIZE; i++)
+        for (long i = 0; i < BACH_PRIMES_TABLE_SIZE; i++)
             prime_is_ok[i] = 1;
-        only_primes_up_to_this_number_are_ok = LLLL_PRIMES_TABLE_MAX;
-    }
-    
-    if (x->allowed_limits_count == 1) {
-        if (atom_gettype(x->allowed_limits) == A_LONG) {
-            long i = num_to_prime_idx(atom_getlong(x->allowed_limits));
-            if (i >= 0)
-                limit_is_ok[i] = 1;
-        } else {
-            for (long i = 0; i < LLLL_PRIMES_TABLE_SIZE; i++)
-                limit_is_ok[i] = 1;
-            only_limits_up_to_this_number_are_ok = LLLL_PRIMES_TABLE_MAX;
-        }
-    } else if (x->allowed_limits_count >= 2) {
-        if (atom_gettype(x->allowed_limits) == A_SYM && atom_getsym(x->allowed_limits) == gensym("<=")) {
-            long n = atom_getlong(x->allowed_limits+1);
-            long i = num_to_prime_idx(n);
-            if (i >= 0) {
-                for (long j = 0; j <= i; j++)
-                    limit_is_ok[j] = 1;
-            }
-            only_limits_up_to_this_number_are_ok = n;
-        } else if (atom_gettype(x->allowed_limits) == A_SYM && atom_getsym(x->allowed_limits) == gensym("<")) {
-            long n = atom_getlong(x->allowed_limits+1);
-            long i = num_to_prime_idx(n);
-            if (i >= 0) {
-                for (long j = 0; j < i; j++)
-                    limit_is_ok[j] = 1;
-            }
-            only_limits_up_to_this_number_are_ok = n-1;
-        } else {
-            for (long i = 0; i < x->allowed_limits_count; i++) {
-                if (atom_gettype(x->allowed_limits+i) == A_LONG) {
-                    long j = num_to_prime_idx(atom_getlong(x->allowed_limits+i));
-                    if (j >= 0)
-                        limit_is_ok[j] = 1;
-                }
-            }
-        }
-    } else {
-        object_warn((t_object *)x, "No limits defined. Defaulting to 'any'.");
-        for (long i = 0; i < LLLL_PRIMES_TABLE_SIZE; i++)
-            limit_is_ok[i] = 1;
-        only_limits_up_to_this_number_are_ok = LLLL_PRIMES_TABLE_MAX;
+        only_primes_up_to_this_number_are_ok = BACH_PRIMES_TABLE_MAX;
     }
     
     // always display selected ratios
@@ -2697,10 +2715,15 @@ void jiwheel_build_pitches(t_jiwheel *x, t_object *view)
     if (x->mouseover_ratio.r_num != 0)
         llll_appendrat(curr_pitches_ll, x->mouseover_ratio);
     
-    // formal octave must always be admitted:
-    prime_is_ok[x->formaloctave] = true;
+    // formal octave must always be admitted, at least if integer:
+    if (x->formaloctave.r_den == 1) {
+        long foj = num_to_prime_idx(x->formaloctave.r_num);
+        if (foj >= 0) {
+            prime_is_ok[foj] = true;
+        }
+    }
 
-    if (x->always_display_whitekeys && x->formaloctave == 2 && limit_is_ok[1] && prime_is_ok[0] && prime_is_ok[1]) {
+    if (x->always_display_whitekeys && x->formaloctave == 2 && (x->jilimit == 0 || x->jilimit >= 2) && prime_is_ok[0] && prime_is_ok[1]) {
         // adding Pythagorean whitekeys
         char base_diatonic_pitch = x->base_diatonic_pitch ? x->base_diatonic_pitch->s_name[0] : 'A';
         long start = 0;
@@ -2732,28 +2755,30 @@ void jiwheel_build_pitches(t_jiwheel *x, t_object *view)
         for (long n = 1; n <= ji_maxterm; n++) {
             for (long m = n; m <= ji_maxterm; m++) {
                 t_rational r = genrat(m, n);
-                if (rat_long_cmp(r, x->formaloctave) < 0) {
-                    if (only_limits_up_to_this_number_are_ok == LLLL_PRIMES_TABLE_MAX && only_primes_up_to_this_number_are_ok == LLLL_PRIMES_TABLE_MAX) {
+                if (rat_rat_cmp(r, x->formaloctave) < 0) {
+                    if (only_limits_up_to_this_number_are_ok == BACH_PRIMES_TABLE_MAX && only_primes_up_to_this_number_are_ok == BACH_PRIMES_TABLE_MAX) {
                         llll_appendrat(curr_pitches_ll, r);
                     } else {
-                        long limit = rational_to_limit(r);
-                        if ((only_limits_up_to_this_number_are_ok == LLLL_PRIMES_TABLE_MAX || (only_limits_up_to_this_number_are_ok > 0 && limit <= only_limits_up_to_this_number_are_ok)) &&
-                            (only_primes_up_to_this_number_are_ok == LLLL_PRIMES_TABLE_MAX || (only_primes_up_to_this_number_are_ok > 0 && limit <= only_primes_up_to_this_number_are_ok))) {
+                        long limit = rational_get_jilimit(r);
+                        if ((only_limits_up_to_this_number_are_ok == BACH_PRIMES_TABLE_MAX || (only_limits_up_to_this_number_are_ok > 0 && limit <= only_limits_up_to_this_number_are_ok)) &&
+                            (only_primes_up_to_this_number_are_ok == BACH_PRIMES_TABLE_MAX || (only_primes_up_to_this_number_are_ok > 0 && limit <= only_primes_up_to_this_number_are_ok))) {
                             llll_appendrat(curr_pitches_ll, r);
                         } else {
                             bool must_append = true;
-                            // must check limit and every prime
-                            long idx = num_to_prime_idx(limit);
-                            if (idx < 0 || !limit_is_ok[idx]) {
-                                must_append = false;
-                            }
-                            t_llll *factors = llll_factorize_rational(r);
-                            for (t_llllelem *el = factors->l_head; el; el = el->l_next) {
-                                long f = hatom_getlong(&hatom_getllll(&el->l_hatom)->l_head->l_hatom);
-                                long fidx = num_to_prime_idx(f);
-                                if (fidx < 0 || !prime_is_ok[fidx]) {
+                            if (r != 1) {
+                                // must check limit and every prime
+                                long idx = num_to_prime_idx(limit);
+                                if (idx < 0 || (x->jilimit != 0 && limit > x->jilimit)) {
                                     must_append = false;
-                                    break;
+                                }
+                                t_llll *factors = llll_factorize_rational(r);
+                                for (t_llllelem *el = factors->l_head; el; el = el->l_next) {
+                                    long f = hatom_getlong(&hatom_getllll(&el->l_hatom)->l_head->l_hatom);
+                                    long fidx = num_to_prime_idx(f);
+                                    if (fidx < 0 || !prime_is_ok[fidx]) {
+                                        must_append = false;
+                                        break;
+                                    }
                                 }
                             }
                             if (must_append)
@@ -2773,7 +2798,38 @@ void jiwheel_build_pitches(t_jiwheel *x, t_object *view)
             x->auto_zooming = true;
             commamix = get_default_commamix(x, view);
         } else {
-            commamix = llll_clone(x->allowed_commas);
+            if (x->allowed_commas) {
+                commamix = llll_get();
+
+                llll_appendllll(commamix, repeat_long(0, numcommas));
+
+                for (t_llllelem* el = x->allowed_commas->l_head; el; el = el->l_next) {
+                    if (hatom_gettype(&el->l_hatom) == H_LLLL) {
+                        t_llll *this_ll = hatom_getllll(&el->l_hatom);
+                        if (this_ll) {
+                            long cc[BACH_PRIMES_JI_SIZE];
+                            for (long j = 0; j < numcommas; j++)
+                                cc[j] = 0;
+                            for (t_llllelem *pel = this_ll->l_head; pel; pel = pel->l_next) {
+                                if (hatom_gettype(&pel->l_hatom) == H_LONG) {
+                                    long l = hatom_getlong(&pel->l_hatom);
+                                    long li = num_to_prime_idx(abs(l));
+                                    if (li < BACH_PRIMES_JI_SIZE && li > 1) { // exclude 2 and 3
+                                        cc[li-2] += (l < 0 ? -1 : 1);
+                                    }
+                                }
+                            }
+                            t_llll *subll = llll_get();
+                            for (long j = 0; j < numcommas; j++) {
+                                llll_appendlong(subll, cc[j]);
+                            }
+                            llll_appendllll(commamix, subll);
+                        }
+                    }
+                }
+            } else {
+                commamix = get_default_commamix(x, view);
+            }
         }
         if (atom_gettype(&x->maxfifths) == A_LONG) {
             fifthsext = atom_getlong(&x->maxfifths);
@@ -2782,8 +2838,10 @@ void jiwheel_build_pitches(t_jiwheel *x, t_object *view)
             fifthsext = get_default_fifthsext(x, view);
         }
         
-        if (limit_is_ok[1] == false)
+        if (x->jilimit < 3 && x->jilimit != 0)
             fifthsext = 0;
+        
+//        llll_print(commamix);
         
         for (long n = -fifthsext; n <= fifthsext; n++) {
             t_rational baseratio = rat_long_pow(genrat(3, 2), n);
@@ -2792,20 +2850,22 @@ void jiwheel_build_pitches(t_jiwheel *x, t_object *view)
                     t_rational ratio = baseratio;
                     long c = 0;
                     bool accept = true;
-                    for (t_llllelem *c_el = hatom_getllll(&el->l_hatom)->l_head; c_el && c < numcommas; c_el = c_el->l_next, c++) {
-                        long e = hatom_getlong(&c_el->l_hatom);
-                        if (e != 0) {
-                            if (limit_is_ok[c+2] == false || prime_is_ok[c+2] == false) {
-                                accept = false;
-                                break;
+                    if (hatom_gettype(&el->l_hatom) == H_LLLL) {
+                        for (t_llllelem *c_el = hatom_getllll(&el->l_hatom)->l_head; c_el && c < numcommas; c_el = c_el->l_next, c++) {
+                            long e = hatom_getlong(&c_el->l_hatom);
+                            if (e != 0) {
+                                if ((x->jilimit > 0 && c+2 < BACH_PRIMES_JI_SIZE && primes[c+2] > x->jilimit) || prime_is_ok[c+2] == false) {
+                                    accept = false;
+                                    break;
+                                }
+                                ratio = rat_rat_prod(ratio, rat_long_pow(t_pitch::HEJIcommasRatios[c], e));
                             }
-                            ratio = rat_rat_prod(ratio, rat_long_pow(commas[c], e));
                         }
-                    }
-                    if (accept) {
-                        ensure_ratio_is_between_1_and_formaloctave(&ratio, x->formaloctave);
-                        if (ratio.num() != 0 && ratio.den() != 0) {
-                            llll_appendrat(curr_pitches_ll, ratio);
+                        if (accept) {
+                            ensure_ratio_is_between_1_and_formaloctave(&ratio, x->formaloctave);
+                            if (ratio.num() != 0 && ratio.den() != 0) {
+                                llll_appendrat(curr_pitches_ll, ratio);
+                            }
                         }
                     }
                 }
@@ -2871,7 +2931,6 @@ void jiwheel_build_pitches(t_jiwheel *x, t_object *view)
     
     llll_free(curr_pitches_ll);
     systhread_mutex_unlock(x->c_mutex);
-    bach_freeptr(limit_is_ok);
     bach_freeptr(prime_is_ok);
 }
 
@@ -2977,7 +3036,10 @@ void jiwheel_get_label_specs(t_jiwheel *x, t_wheelpitch *p, t_pt center, double 
             break;
 
         default:
-            // TO DO!
+            *fontsize = jbox_get_fontsize((t_object *) x);
+            *font = jfont_create_debug(jbox_get_fontname((t_object *) x)->s_name, (t_jgraphics_font_slant)jbox_get_font_slant((t_object *) x), (t_jgraphics_font_weight)jbox_get_font_weight((t_object *) x), *fontsize);
+            *number_txt = (char *)bach_newptr(2 * sizeof(char));
+            (*number_txt)[0] = 0;
             break;
     }
 
@@ -3263,9 +3325,9 @@ double jiwheel_integer_to_theta(t_jiwheel *x, long i)
 {
     double theta = 0;
     if (x->display_mapping == 0) { // linear pitch
-        theta = (fmod(log(i)/log(x->formaloctave), 1.)) * TWOPI - x->rotation_angle + x->rotation_angle_intwheel;
+        theta = (fmod(log(i)/log(rat2double(x->formaloctave)), 1.)) * TWOPI - x->rotation_angle + x->rotation_angle_intwheel;
     } else { // linear frequency
-        theta = TWOPI * ((i * 1. / (ipow(x->formaloctave, floor(log(i)/log(x->formaloctave))))) / (x->formaloctave - 1)) - x->rotation_angle + x->rotation_angle_intwheel;
+        theta = TWOPI * ((i * 1. / (ipow(x->formaloctave, floor(log(i)/log(rat2double(x->formaloctave)))))) / (rat2double(x->formaloctave) - 1)) - x->rotation_angle + x->rotation_angle_intwheel;
     }
     theta = PIOVERTWO - theta;
     theta = positive_fmod(theta, TWOPI);
@@ -3369,7 +3431,7 @@ void jiwheel_paint(t_jiwheel *x, t_object *view)
             t_jrgba etwheel_color = x->etwheel_color;
 //            paint_arc_stroken(g, black, center_x, center_y, radius + x->et_wheel_size, 2, anglemin_for_stroken, anglemax_for_stroken);
             double r_avg = radius - x->et_wheel_size/2.;
-            double octave_interval_cents = ratio_to_cents(genrat(x->formaloctave, 1));
+            double octave_interval_cents = ratio_to_cents(x->formaloctave);
             for (long i = 0; i < octave_interval_cents; i++) {
                 double et_importance = 0;
                 if (i % 100 == 0) et_importance = 1.;
@@ -3401,9 +3463,9 @@ void jiwheel_paint(t_jiwheel *x, t_object *view)
 
             }
             if (x->display_mapping == 1) // frequency mapping
-                max_int_integers_wheel = ipow(x->formaloctave, (long)ceil(log(max_int_integers_wheel)/log(x->formaloctave)));
+                max_int_integers_wheel = ipow(x->formaloctave, (long)ceil(log(max_int_integers_wheel)/log(rat2double(x->formaloctave))));
             for (long i = 1; i < max_int_integers_wheel; i++) {
-                if (i % x->formaloctave == 0)
+                if (rat_rat_mod(long2rat(i), x->formaloctave, true) == 0)
                     continue;
                 double int_importance = 1./i;
                 double theta = jiwheel_integer_to_theta(x, i);
@@ -3622,7 +3684,7 @@ void jiwheel_paint(t_jiwheel *x, t_object *view)
             
             
             // write number?
-            if (x->show_ratios) {
+            if (x->display_what > 0) {
                 t_jtextlayout *jtl = jtextlayout_create();
                 char *number_txt = NULL;
                 t_jfont *font = NULL;
@@ -3695,7 +3757,7 @@ void jiwheel_paint(t_jiwheel *x, t_object *view)
         if (sel1_idx >= 0 && sel2_idx >= 0) {
             double a1 = -x->curr_pitches[sel1_idx].angle - x->rotation_angle;
             double a2 = -x->curr_pitches[sel2_idx].angle - x->rotation_angle;
-            if (a2 < a1)
+            while (a2 < a1)
                 a2 += TWOPI;
             paint_arc_stroken(g, black, center_x, center_y, radius, 4, a1, a2);
             
@@ -3985,6 +4047,7 @@ void jiwheel_mousedrag(t_jiwheel *x, t_object *patcherview, t_pt pt, long modifi
 {
     t_pt center;
     double radius;
+    bool changed = false;
     get_radius_and_center(x, patcherview, &radius, &center.x, &center.y);
 
     x->mouse_is_dragging = true;
@@ -4000,16 +4063,20 @@ void jiwheel_mousedrag(t_jiwheel *x, t_object *patcherview, t_pt pt, long modifi
         if (x->sel1_ratio.r_num != 0) {
             long sel_pitch_idx = pt_to_wheelpitch_idx(x, patcherview, pt);
             if (sel_pitch_idx >= 0 && sel_pitch_idx < x->num_pitches) {
-                x->sel2_ratio = x->curr_pitches[sel_pitch_idx].ratio;
-                jiwheel_sync_interval(x);
-                if (x->auto_move_intwheel)
-                    jiwheel_set_intwheel_from_selection(x);
+                if (x->curr_pitches[sel_pitch_idx].ratio != x->sel2_ratio) {
+                    x->sel2_ratio = x->curr_pitches[sel_pitch_idx].ratio;
+                    changed = true;
+                    jiwheel_sync_interval(x);
+                    if (x->auto_move_intwheel)
+                        jiwheel_set_intwheel_from_selection(x);
+                }
             }
         }
     }
     systhread_mutex_unlock(x->c_mutex);
     
-    jiwheel_output_selection(x);
+    if (changed)
+        jiwheel_output_selection(x);
     
     jbox_redraw((t_jbox *)x);
     
@@ -4134,15 +4201,22 @@ long jiwheel_key(t_jiwheel *x, t_object *patcherview, long keycode, long modifie
 }
 
 
+t_pitch jiwheel_get_wheelpitch_as_pitch(t_jiwheel *x, t_wheelpitch *wp)
+{
+    t_pitch p = t_pitch(wp->ratio);
+    p.setOctave(x->output_octave);
+    return p;
+}
+
 t_llll *jiwheel_get_wheelpitch_as_llll(t_jiwheel *x, t_wheelpitch *p, bool as_interval)
 {
     
     t_llll *out = llll_get();
-    // TODO: aggiungere pitch!
+    llll_appendllll(out, symbol_and_pitch_to_llll(gensym("pitch"), jiwheel_get_wheelpitch_as_pitch(x, p)));
     llll_appendllll(out, symbol_and_rational_to_llll(gensym("ratio"), p->ratio));
     llll_appendllll(out, symbol_and_rational_to_llll(gensym("condensedratio"), p->ratio_without_octaves));
     llll_appendllll(out, symbol_and_double_to_llll(gensym("cents"), p->cents));
-    llll_appendllll(out, symbol_and_long_to_llll(gensym("limit"), p->limit));
+    llll_appendllll(out, symbol_and_long_to_llll(gensym("jilimit"), p->limit));
     llll_appendllll(out, symbol_and_long_to_llll(gensym("maxexp"), p->maxexp));
     llll_appendllll(out, symbol_and_double_to_llll(gensym("angle"), positive_fmod(PIOVERTWO - p->angle, TWOPI)));
     /*
@@ -4168,7 +4242,7 @@ t_llll *jiwheel_get_wheelpitch_as_llll(t_jiwheel *x, t_wheelpitch *p, bool as_in
         llll_appendllll(out, factors); // prime commas
     }
 
-    llll_appendllll(out, symbol_and_long_to_llll(gensym("pythstep"), p->pythagorean_index)); // pythagorean position in the circle of fiths
+    llll_appendllll(out, symbol_and_long_to_llll(gensym("pyth"), p->pythagorean_index)); // pythagorean position in the circle of fiths
     llll_appendllll(out, symbol_and_long_to_llll(gensym("whitekey"), p->pyth_diatonic_step));
     if (as_interval) {
         long numoctaves = 0;
@@ -4185,11 +4259,52 @@ t_llll *jiwheel_get_wheelpitch_as_llll(t_jiwheel *x, t_wheelpitch *p, bool as_in
     return out;
 }
 
+void jiwheel_set_pitch(t_jiwheel *x, t_pitch p)
+{
+    t_pitch q = p; //p % t_pitch(genrat(2, 1));
+    jiwheel_clear_selection(x);
+    x->sel1_ratio = q.getJIRatio();
+    x->sel2_ratio = genrat(0, 1);
+//    jiwheel_sync_interval(x);
+//    jiwheel_set_intwheel_from_selection(x);
+
+    t_object *patcherparent;
+    object_obex_lookup(x, gensym("#P"), &patcherparent);
+    jiwheel_build_pitches(x, jpatcher_get_firstview(patcherparent));
+
+    jiwheel_output_selection(x);
+    jbox_redraw((t_jbox *)x);
+}
+
+void jiwheel_set_interval(t_jiwheel *x, t_pitch p1, t_pitch p2)
+{
+    t_pitch q1 = p1 % t_pitch(genrat(2, 1));
+    t_pitch q2 = p2 % t_pitch(genrat(2, 1));
+    if (q1.getJIRatio() > q2.getJIRatio()) {
+        t_pitch temp = q2;
+        q2 = q1;
+        q1 = temp;
+    }
+    x->sel1_ratio = q1.getJIRatio();
+    x->sel2_ratio = q2.getJIRatio();
+    
+    t_object *patcherparent;
+    object_obex_lookup(x, gensym("#P"), &patcherparent);
+    jiwheel_build_pitches(x, jpatcher_get_firstview(patcherparent));
+
+    jiwheel_sync_interval(x);
+    jiwheel_set_intwheel_from_selection(x);
+
+    jiwheel_output_selection(x);
+    jbox_redraw((t_jbox *)x);
+}
+
 void jiwheel_output_selection(t_jiwheel *x)
 {
-    if (x->output_selection) {
-        long sel1_idx = (x->sel1_ratio.r_num != 0 ? jiwheel_ratio_to_index(x, x->sel1_ratio) : -1);
-        long sel2_idx = (x->sel2_ratio.r_num != 0 ? jiwheel_ratio_to_index(x, x->sel2_ratio) : -1);
+    long sel1_idx = (x->sel1_ratio.r_num != 0 ? jiwheel_ratio_to_index(x, x->sel1_ratio) : -1);
+    long sel2_idx = (x->sel2_ratio.r_num != 0 ? jiwheel_ratio_to_index(x, x->sel2_ratio) : -1);
+    
+    if (x->output_type >= 2) {
         if (sel1_idx >= 0 && sel2_idx >= 0) {
             t_llll *out = llll_get();
             
@@ -4226,6 +4341,27 @@ void jiwheel_output_selection(t_jiwheel *x)
             llllobj_outlet_llll((t_object *)x, LLLL_OBJ_UI, 1, out);
 
             llll_free(out);
+        }
+    }
+    
+    if (x->output_type >= 1) {
+        if (sel1_idx >= 0 && sel2_idx >= 0) {
+            t_llll *out = llll_get();
+            systhread_mutex_lock(x->c_mutex);
+            llll_appendpitch(out, jiwheel_get_wheelpitch_as_pitch(x, &x->curr_pitches[sel1_idx]));
+            llll_appendpitch(out, jiwheel_get_wheelpitch_as_pitch(x, &x->curr_pitches[sel2_idx]));
+            systhread_mutex_unlock(x->c_mutex);
+            llllobj_outlet_llll((t_object *)x, LLLL_OBJ_UI, 0, out);
+            llll_free(out);
+        } else if (sel1_idx >= 0) {
+            t_llll *out = llll_get();
+            systhread_mutex_lock(x->c_mutex);
+            llll_appendpitch(out, jiwheel_get_wheelpitch_as_pitch(x, &x->curr_pitches[sel1_idx]));
+            systhread_mutex_unlock(x->c_mutex);
+            llllobj_outlet_llll((t_object *)x, LLLL_OBJ_UI, 0, out);
+            llll_free(out);
+        } else {
+            // nothing to do
         }
     }
 }

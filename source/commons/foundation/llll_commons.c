@@ -1,7 +1,7 @@
 /*
  *  llll_commons.c
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -83,7 +83,7 @@ t_class *llll_class;
 t_class *llllelem_class;
 
 t_bach *bach;
-long *primes;
+//long *primes;
 t_hashtab *memmap;
 t_hashtab *poolmap;
 t_systhread_mutex memmap_lock;
@@ -114,7 +114,7 @@ long llll_sort_addresses_for_insert_b(void *dummy, t_llllelem *a, t_llllelem *b)
 void bach_setup(t_bach *x)
 {
     bach = x;
-    primes = bach->b_primes;
+//    primes = bach->b_primes;
     memmap = bach->b_memmap;
     poolmap = bach->b_poolmap;
     memmap_lock = bach->b_memmap_lock;
@@ -3726,7 +3726,7 @@ void llll_sum_one(t_hatom *sum, const t_hatom *a, const t_llll *address)
                     hatom_setdouble(sum, sum->h_w.w_long + a->h_w.w_double);
                     break;
                 case H_PITCH:
-                    sum->h_w.w_long += t_atom_long(a->h_w.w_pitch.toMC());
+                    sum->h_w.w_long += t_atom_long(a->h_w.w_pitch.toMCdouble());
                     break;
                 default:
                     break;
@@ -3744,7 +3744,7 @@ void llll_sum_one(t_hatom *sum, const t_hatom *a, const t_llll *address)
                     hatom_setdouble(sum, hatom_getdouble(sum) + a->h_w.w_double);
                     break;
                 case H_PITCH:
-                    sum->h_w.w_rat += a->h_w.w_pitch.toMC();
+                    sum->h_w.w_rat += a->h_w.w_pitch.toMCrat();
                 default:
                     break;
             }
@@ -3761,7 +3761,7 @@ void llll_sum_one(t_hatom *sum, const t_hatom *a, const t_llll *address)
                     sum->h_w.w_double += a->h_w.w_double;
                     break;
                 case H_PITCH:
-                    sum->h_w.w_double += double(a->h_w.w_pitch.toMC());
+                    sum->h_w.w_double += double(a->h_w.w_pitch.toMCdouble());
                 default:
                     break;
             }
@@ -3769,13 +3769,13 @@ void llll_sum_one(t_hatom *sum, const t_hatom *a, const t_llll *address)
         case H_PITCH:
             switch (a->h_type) {
                 case H_LONG:
-                    hatom_setlong(sum, a->h_w.w_long + t_atom_long(sum->h_w.w_pitch.toMC()));
+                    hatom_setlong(sum, a->h_w.w_long + t_atom_long(sum->h_w.w_pitch.toMCdouble()));
                     break;
                 case H_RAT:
-                    hatom_setrational(sum, a->h_w.w_rat + sum->h_w.w_pitch.toMC());
+                    hatom_setrational(sum, a->h_w.w_rat + sum->h_w.w_pitch.toMCrat());
                     break;
                 case H_DOUBLE:
-                    hatom_setdouble(sum, a->h_w.w_double + double(sum->h_w.w_pitch.toMC()));
+                    hatom_setdouble(sum, a->h_w.w_double + double(sum->h_w.w_pitch.toMCdouble()));
                     break;
                 case H_PITCH:
                     sum->h_w.w_pitch += a->h_w.w_pitch;
@@ -3817,7 +3817,7 @@ void llll_prod_one(t_hatom *prod, const t_hatom *a, const t_llll *address)
                     hatom_setdouble(prod, prod->h_w.w_long * a->h_w.w_double);
                     break;
                 case H_PITCH:
-                    prod->h_w.w_long *= t_atom_long(a->h_w.w_pitch.toMC());
+                    prod->h_w.w_long *= t_atom_long(a->h_w.w_pitch.toMCdouble());
                     break;
                 default:
                     break;
@@ -3835,7 +3835,7 @@ void llll_prod_one(t_hatom *prod, const t_hatom *a, const t_llll *address)
                     hatom_setdouble(prod, hatom_getdouble(prod) * a->h_w.w_double);
                     break;
                 case H_PITCH:
-                    prod->h_w.w_rat *= a->h_w.w_pitch.toMC();
+                    prod->h_w.w_rat *= a->h_w.w_pitch.toMCrat();
                 default:
                     break;
             }
@@ -3852,7 +3852,7 @@ void llll_prod_one(t_hatom *prod, const t_hatom *a, const t_llll *address)
                     prod->h_w.w_double *= a->h_w.w_double;
                     break;
                 case H_PITCH:
-                    prod->h_w.w_double *= double(a->h_w.w_pitch.toMC());
+                    prod->h_w.w_double *= double(a->h_w.w_pitch.toMCdouble());
                 default:
                     break;
             }
@@ -3860,17 +3860,17 @@ void llll_prod_one(t_hatom *prod, const t_hatom *a, const t_llll *address)
         case H_PITCH:
             switch (a->h_type) {
                 case H_LONG:
-                    hatom_setlong(prod, a->h_w.w_long * t_atom_long(prod->h_w.w_pitch.toMC()));
+                    hatom_setlong(prod, a->h_w.w_long * t_atom_long(prod->h_w.w_pitch.toMCdouble()));
                     break;
                 case H_RAT:
-                    hatom_setrational(prod, a->h_w.w_rat * prod->h_w.w_pitch.toMC());
+                    hatom_setrational(prod, a->h_w.w_rat * prod->h_w.w_pitch.toMCrat());
                     break;
                 case H_DOUBLE:
-                    hatom_setdouble(prod, a->h_w.w_double * double(prod->h_w.w_pitch.toMC()));
+                    hatom_setdouble(prod, a->h_w.w_double * double(prod->h_w.w_pitch.toMCdouble()));
                     break;
                 case H_PITCH:
 //                    hatom_setlong(prod, a->h_w.w_long * t_atom_long(prod->h_w.w_pitch.toMC()));
-                    hatom_setdouble(prod, double(a->h_w.w_pitch.toMC()) * t_atom_long(prod->h_w.w_pitch.toMC()));
+                    hatom_setdouble(prod, a->h_w.w_pitch.toMCdouble() * prod->h_w.w_pitch.toMCdouble());
                     break;
             }
         case H_NOTHING:
@@ -4833,7 +4833,7 @@ void llll_insert_llll_at_address(t_llll *ll, t_llll *address, t_llll *subs_model
 
 void llll_flatten(t_llll *ll, t_atom_long maxdepth, long spikemode)
 {
-    llll_flat(ll, 0, maxdepth, spikemode, LLLL_FREETHING_DONT);
+    llll_flat(ll, 1, maxdepth, spikemode, LLLL_FREETHING_DONT);
     pedantic_llll_check(ll);
 }
 
@@ -6429,7 +6429,7 @@ t_llll *llll_symdiff(t_llll *ll1, t_llll *ll2, sets_fn cmpfn, void *data)
 long llll_prime(long what)
 {
     long *center_elem, scope;
-    long *table_last = primes + LLLL_PRIMES_TABLE_SIZE - 1;
+    long *table_last = primes + BACH_PRIMES_TABLE_SIZE - 1;
     long *this_table;
     if (what < 0)
         what *= -1;
@@ -6439,8 +6439,8 @@ long llll_prime(long what)
         return 1;
     if (what % 6 != 1 && what % 6 != 5)
         return 0;
-    if (what <= LLLL_PRIMES_TABLE_MAX) {
-        scope = LLLL_PRIMES_TABLE_SIZE / 2;
+    if (what <= BACH_PRIMES_TABLE_MAX) {
+        scope = BACH_PRIMES_TABLE_SIZE / 2;
         center_elem = primes + scope;
         while (1) {
             if (*center_elem == what)
@@ -6474,7 +6474,7 @@ t_llll *llll_factorize(long what)
     t_llll *factors = llll_get();
     t_llll *this_factor;
     t_atom_long exponent;
-    long *table_last = primes + LLLL_PRIMES_TABLE_SIZE - 1;
+    long *table_last = primes + BACH_PRIMES_TABLE_SIZE - 1;
     long *this_table = primes;
     long this_prime;
     
@@ -6518,7 +6518,7 @@ t_llll *llll_factorize_rational(t_rational what)
     t_llll *factors = llll_get();
     t_llll *this_factor;
     t_atom_long exponent;
-    long *table_last = primes + LLLL_PRIMES_TABLE_SIZE - 1;
+    long *table_last = primes + BACH_PRIMES_TABLE_SIZE - 1;
     long *this_table = primes;
     long this_prime;
     
@@ -6576,7 +6576,7 @@ t_llll *llll_factorize_rational(t_rational what)
 
 t_llll *llll_primeser(long min, long max, long maxcount)
 {
-    long *table_last = primes + LLLL_PRIMES_TABLE_SIZE - 1;
+    long *table_last = primes + BACH_PRIMES_TABLE_SIZE - 1;
     long *center_elem = NULL, scope;
     t_llll *ser = llll_get();
 
@@ -6590,8 +6590,8 @@ t_llll *llll_primeser(long min, long max, long maxcount)
     if (min > max)
         return ser;
 
-    if (min > 2 && min <= LLLL_PRIMES_TABLE_MAX) {
-        scope = LLLL_PRIMES_TABLE_SIZE / 2;
+    if (min > 2 && min <= BACH_PRIMES_TABLE_MAX) {
+        scope = BACH_PRIMES_TABLE_SIZE / 2;
         center_elem = primes + scope;
         while (1) {
             if (*(center_elem - 1) < min && *center_elem >= min) {
@@ -6609,7 +6609,7 @@ t_llll *llll_primeser(long min, long max, long maxcount)
                     center_elem = primes;
             }
         }
-    } else if (min > LLLL_PRIMES_TABLE_MAX) {
+    } else if (min > BACH_PRIMES_TABLE_MAX) {
         switch (min % 6) {
             case 1:
             case 5:
@@ -6630,7 +6630,7 @@ t_llll *llll_primeser(long min, long max, long maxcount)
         llll_appendlong(ser, min, 0, WHITENULL_llll);
         if (--maxcount == 0)
             break;
-        if (min < LLLL_PRIMES_TABLE_MAX)
+        if (min < BACH_PRIMES_TABLE_MAX)
             min = *(++center_elem);
         else
             do { 
@@ -6847,7 +6847,7 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
         return outll;
         
     } else { // pitches
-        t_pitch start, end, step, v;
+        t_pitch start, end, step;
         t_atom_long count;
         step = hatom_getpitch(&step_hatom);
         
@@ -6900,8 +6900,10 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
         } else if (maxcount <= 0)
             maxcount = ATOM_LONG_MAX;
         
-        if ((step.degree() != 0 || step.octave() != 0) &&
-            (start.degree() != end.degree() || start.octave() != end.octave())) {
+        if ((step.isPureET() && start.isPureET() && end.isPureET()) &&
+            ((step.getWhiteKeyET() != 0 || step.getOctave() != 0) &&
+             (start.getWhiteKeyET() != end.getWhiteKeyET() || start.getOctave() != end.getOctave()))) {
+            t_pitch v;
             if (step > t_pitch::C0) {
                 for (v = start, count = 0; v <= end && count < maxcount; v += step, count++)
                     llll_appendpitch(outll, v, 0, WHITENULL_llll);
@@ -6909,13 +6911,27 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
                 for (v = start, count = 0; v >= end && count < maxcount; v += step, count++)
                     llll_appendpitch(outll, v, 0, WHITENULL_llll);
             }
-        } else {
-            object_warn((t_object *) culprit, "Also considering midicents");
-            if (step > t_pitch::C0) {
-                for (v = start, count = 0; v <= end && v.toMC() < end.toMC() && count < maxcount; v += step, count++)
+        } else if ((step.isPureJI() && start.isPureJI() && end.isPureJI())) {
+            t_rational stepRatio = step.getJIRatio();
+            t_rational startRatio = start.getJIRatio();
+            t_rational endRatio = end.getJIRatio();
+            t_rational v;
+            if (stepRatio.r_num > 0) {
+                for (v = startRatio, count = 0; v <= endRatio && count < maxcount; v += stepRatio, count++)
                     llll_appendpitch(outll, v, 0, WHITENULL_llll);
             } else {
-                for (v = start, count = 0; v >= end && count < maxcount; v += step, count++)
+                for (v = startRatio, count = 0; v >= endRatio && count < maxcount; v += stepRatio, count++)
+                    llll_appendpitch(outll, v, 0, WHITENULL_llll);
+            }
+            
+        } else {
+            object_warn((t_object *) culprit, "Also considering midicents");
+            t_pitch v;
+            if (step > t_pitch::C0) {
+                for (v = start, count = 0; v.toMCdouble() <= end.toMCdouble() && count < maxcount; v += step, count++)
+                    llll_appendpitch(outll, v, 0, WHITENULL_llll);
+            } else {
+                for (v = start, count = 0; v.toMCdouble() >= end.toMCdouble() && count < maxcount; v += step, count++)
                     llll_appendpitch(outll, v, 0, WHITENULL_llll);
             }
         }
@@ -7055,6 +7071,46 @@ t_llll *llll_geomser(t_object *x, t_hatom start_hatom, t_hatom end_hatom, t_hato
 
 
 
+std::vector<t_rational> get_farey_sequence(long order, t_rational offset, long max_limit)
+{
+    std::vector<t_rational> res;
+    
+    t_rational r1 = genrat(0, 1);
+    t_rational r2 = genrat(1, order);
+    t_rational r1o = r1 + offset;
+    t_rational r2o = r2 + offset;
+    t_rational t;
+    long k;
+    
+    if (max_limit == 0 || (rational_get_jilimit(r1o) <= max_limit))
+        res.push_back(r1o);
+
+    if (max_limit == 0 || (rational_get_jilimit(r2o) <= max_limit))
+        res.push_back(r2o);
+
+    // If ⁠a/b⁠ and ⁠c/d⁠ are the two consecutive entries, and ⁠p/q⁠ is the unknown next entry, then ⁠c/d⁠ = ⁠(a + p)/(b + q)⁠.
+    while (r2.den() > 1) {
+        k = (order + r1.den()) / r2.den();
+        t = r1;
+        r1 = r2;
+        r2 = genrat(r2.num() * k - t.num(), r2.den() * k - t.den());
+        t_rational ro = r2+offset;
+        if (max_limit == 0 || (rational_get_jilimit(ro) <= max_limit))
+            res.push_back(ro);
+    }
+    
+    return res;
+}
+
+t_llll *llll_farey(long order, t_rational offset, long max_limit)
+{
+    t_llll *res = llll_get();
+    std::vector<t_rational> farey = get_farey_sequence(order, offset, max_limit);
+    for (auto& r: farey)
+        llll_appendrat(res, r);
+    return res;
+}
+
 
 
 
@@ -7164,12 +7220,106 @@ void llll_fatten(t_llll *ll)
 /*
  impose the structure of modelll onto inll
  */
-void llll_reshape(t_llll *ll, t_llll *modelll, llll_clone_fn fn)
+void llll_reshape_new(t_llll *ll, const t_llll *modelll, const llll_clone_fn fn)
 {
+    
+    //t_llll *origLl = ll;
+    
+    if (!ll || !modelll || ll->l_size == 0 || modelll->l_size == 0)
+        return;
+    
+    if (modelll->l_thing.w_obj)
+        ll->l_thing.w_obj = fn ? (fn)(modelll->l_thing.w_obj) : modelll->l_thing.w_obj;
+
+    t_llll *basell = ll;
+    t_llll_stack *modelstack = llll_stack_new();
+    t_llllelem *elem = ll->l_head;
+    t_llllelem *prevelem = NULL;
+    const t_llllelem *modelelem = modelll->l_head;
+    ll->l_size = 0;
+    ll->l_depth = 1;
+    while (1) {
+        while (elem && modelelem) {
+            if (hatom_gettype(&modelelem->l_hatom) != H_LLLL) {
+                elem->l_parent = ll;
+                if (!prevelem) {
+                    elem->l_prev = NULL;
+                    ll->l_head = elem;
+                } else {
+                    prevelem->l_next = elem;
+                    elem->l_prev = prevelem;
+                }
+                if (hatom_gettype(&elem->l_hatom) == H_LLLL) {
+                    llll_upgrade_depth(elem->l_hatom.h_w.w_llll);
+                }
+                modelelem = modelelem->l_next;
+                ++ll->l_size;
+                prevelem = elem;
+                elem = elem->l_next;
+            } else {
+                t_llllelem *nilelem = llllelem_get();
+                t_llll *nullll = llll_get();
+                hatom_setllll(&nilelem->l_hatom, nullll);
+                nullll->l_owner = nilelem;
+                nilelem->l_parent = ll;
+                llll_stack_push(modelstack, (void*) modelelem);
+                if (prevelem) {
+                    prevelem->l_next = nilelem;
+                    nilelem->l_prev = prevelem;
+                } else {
+                    ll->l_head = nilelem;
+                }
+                ll->l_tail = nilelem;
+                if (ll->l_depth == 1) {
+                    llll_upgrade_depth(nullll);
+                }
+                prevelem = NULL;
+                ++ll->l_size;
+                ll = nullll;
+                modelelem = modelelem->l_hatom.h_w.w_llll->l_head;
+            }
+        }
+
+        // so if we're here we have no modelelem
+        if (prevelem) {
+            prevelem->l_next = NULL;
+            ll->l_tail = prevelem;
+        }
+        if (!elem)
+            break;
+        modelelem = (t_llllelem *) llll_stack_pop(modelstack);
+        if (!modelelem) {
+            t_llllelem *next;
+            for ( ; elem; elem = next) {
+                next = elem->l_next;
+                llllelem_free(elem);
+            }
+            break;
+        }
+        modelelem = modelelem->l_next;
+        ll = ll->l_owner->l_parent;
+        prevelem = ll->l_tail;
+    }
+    
+    //llll_check(origLl);
+    llll_stack_destroy(modelstack);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+/*
+ impose the structure of modelll onto inll
+ */
+void llll_reshape_old(t_llll *ll, t_llll *modelll, llll_clone_fn fn)
+{
+    return llll_reshape_new(ll, modelll, fn);
+    
+    // DG, 27 november 2025 – OLD CODE: used to work but superseded by llll_reshape_new which handled a case with empty lists better.
+    // Keeping the code for a while, in case there are issues with the new one.
+    /*
     t_llllelem *elem, *modelelem, *nextelem = NULL, *newelem = NULL, *prevelem = NULL, *nilelem = NULL;
     t_llll_stack *modelstack;
     t_llll *newll, *parent = NULL;
-    t_atom_long newdepth;
+    t_int32 newdepth;
     long downgrade = 0;
 
     if (!ll || !modelll || ll->l_size == 0 || modelll->l_size == 0)
@@ -7187,7 +7337,7 @@ void llll_reshape(t_llll *ll, t_llll *modelll, llll_clone_fn fn)
     ll->l_tail = NULL;
     while (1) {
         while (elem && modelelem) {
-            if (prevelem) { // prevelem is NULL, unless we come 
+            if (prevelem) { // prevelem is NULL, unless we come from a pop
                 elem->l_prev = prevelem;
                 prevelem->l_next = elem;
                 prevelem = NULL;
@@ -7214,10 +7364,12 @@ void llll_reshape(t_llll *ll, t_llll *modelll, llll_clone_fn fn)
                 }
                 ll->l_size++;    
                 if (modelll->l_size != 0) {
-                    elem->l_prev = NULL; 
-                    newelem = nilelem;
-                    nilelem = NULL;
-                    newll->l_head = elem;
+                    if (modelll->l_head->l_hatom.h_type != H_LLLL) {
+                        elem->l_prev = NULL;
+                        newelem = nilelem;
+                        nilelem = NULL;
+                        newll->l_head = elem;
+                    }
                     parent = ll;
                     ll = newll;
                     llll_stack_push(modelstack, modelelem->l_next);
@@ -7273,12 +7425,7 @@ void llll_reshape(t_llll *ll, t_llll *modelll, llll_clone_fn fn)
         ll = elem->l_parent;
         ll->l_tail = elem;
     }
-/*    
-    while (modelelem && modelelem->l_hatom.h_type == H_LLLL && modelelem->l_hatom.h_w.w_llll->l_size == 0) {
-        llll_appendllll(ll, llll_get(), 0, WHITENULL_llll);
-        modelelem = modelelem->l_next;
-    }
-*/    
+
     for (elem = nextelem; elem; elem = nextelem) {
         if (elem->l_hatom.h_type == H_LLLL)
             downgrade = 1;
@@ -7288,15 +7435,10 @@ void llll_reshape(t_llll *ll, t_llll *modelll, llll_clone_fn fn)
     
     if (downgrade)
         llll_downgrade_depth(ll);
-/*
-    if (elem != ll->l_tail) {
-        for ( ; elem; elem = nextelem) {
-            nextelem = elem->l_next;
-            llll_destroyelem(elem);
-        }
-    }*/
+    
     llll_stack_destroy(modelstack);
     pedantic_llll_check(ll);
+    */
 }
 
 /*

@@ -42,7 +42,7 @@
 					"patching_rect" : [ 204.5, 88.0, 341.0, 25.0 ],
 					"presentation_rect" : [ 209.5, 77.0, 0.0, 0.0 ],
 					"text" : "Cmd+click (mac) or Ctrl+click (win) on a file to delete it",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -62,7 +62,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 379.5, 227.0, 69.0 ],
 					"text" : "Ctrl+click (mac) or Shift+Ctrl+click (win) and drag on the main rectangle to change the alpha value",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -80,7 +80,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 247.0, 391.0, 344.0, 36.0 ],
 					"text" : "In both cases, adding Shift+Cmd (mac) or Shift+Ctrl (win) while dragging will allow the fine editing for the color",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -117,7 +117,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 247.0, 304.0, 192.0, 54.0 ],
 					"text" : "Click on the main rectangle, or drag the white circle, to select the color",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -137,7 +137,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 439.0, 203.0, 136.0, 69.0 ],
 					"text" : "Click on the side bar, or drag its handle, to change the hue",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -177,7 +177,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 127.0, 207.0, 84.0 ],
 					"text" : "Shift+click on any of the existing files to replace it with a new one, chosen from the dialog box which opens after the click.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -196,7 +196,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 136.5, 53.0, 193.0, 40.0 ],
 					"text" : "Click on any of the existing files to make it active",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -215,7 +215,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 62.5, 257.0, 242.0, 40.0 ],
 					"text" : "If no color is defined (slot is empty), doubleclick to start defining a color",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -234,7 +234,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 233.0, 112.0, 350.0, 40.0 ],
 					"text" : "Click on \"add file...\" to open a dialog box, allowing the choice of the new file to append at the end of the list",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

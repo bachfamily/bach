@@ -53,7 +53,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 277.5, 265.0, 300.0, 55.0 ],
 					"text" : "All the attachment information is also accessible from the marker's inspector (see #inspector)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -192,7 +192,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 191.0, 133.0, 127.0 ],
 					"text" : "Also you can Ctrl+click (mac) or Shift+Ctrl+click (win) and then drag up/down on the tempo value to change it directly",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

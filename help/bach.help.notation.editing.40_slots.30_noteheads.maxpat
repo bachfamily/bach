@@ -52,7 +52,7 @@
 					"patching_rect" : [ 131.0, 150.5, 179.0, 69.0 ],
 					"style" : "",
 					"text" : "Scroll horizontally with the mousewheel to see other noteheads, or resize window",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -70,7 +70,7 @@
 					"patching_rect" : [ 230.0, 123.5, 314.0, 40.0 ],
 					"style" : "",
 					"text" : "Cmd+click (mac) or Ctrl+click (win) to delete the notehead, i.e. to empty the slot",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -105,7 +105,7 @@
 					"patching_rect" : [ 219.5, 62.5, 273.0, 40.0 ],
 					"style" : "",
 					"text" : "For notehead slots, click on a notehead to select it (i.e. add it to the slot).",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

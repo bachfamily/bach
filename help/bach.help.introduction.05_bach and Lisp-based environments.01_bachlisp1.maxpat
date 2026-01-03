@@ -2,14 +2,15 @@
 	"patcher" : 	{
 		"fileversion" : 1,
 		"appversion" : 		{
-			"major" : 7,
-			"minor" : 3,
-			"revision" : 4,
+			"major" : 8,
+			"minor" : 6,
+			"revision" : 1,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 716.0, 79.0, 617.0, 539.0 ],
+		"classnamespace" : "box",
+		"rect" : [ 134.0, 172.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -36,6 +37,7 @@
 		"tags" : "",
 		"style" : "",
 		"subpatcher_template" : "",
+		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
 					"fontname" : "Arial",
@@ -46,9 +48,8 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 403.0, 585.0, 65.0 ],
-					"style" : "",
 					"text" : "Furthermore, using bach does not imply abandoning Lisp-based environments: the syntax of llll is a very close relative to the Lisp lists, which makes the communication between different pieces of software (like bach and OM, or bach and PWGL) extremely easy.\nHave a look at the tutorials \"The World Outside\" and \"From OpenMusic to bach\" to know more.",
-					"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
+					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
 			}
@@ -62,9 +63,8 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 322.0, 585.0, 79.0 ],
-					"style" : "",
 					"text" : "In some sense, we consider OM and PWGL to be powerful allied to accomplish very advenced research task which are not implemented in bach - and will probably not be implemented any time soon. Nonetheless, in bach you should be able to find all the tools to develop your musical thought, including some advanced tools such as fine quantization, or constraint programming, with the advantage of being inside a real-time environment.",
-					"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
+					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
 			}
@@ -93,9 +93,8 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 226.0, 587.0, 94.0 ],
-					"style" : "",
 					"text" : "Of course, not every OM or Lisp function has a corresponding object or abstraction in bach. In some cases, it might be very simple to obtain the desired functionality by patching together few objects (e.g. create-list). Or a single bach tool could replace several OM functions (e.g. bach.find for range-filter, band-filter, posn-filter). Moreover, we have deliberately chosen not to implement some advanced OM features, because we felt they didn't fit well with the real-time vocation of bach and Max. ",
-					"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
+					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
 			}
@@ -109,9 +108,8 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 131.0, 589.0, 94.0 ],
-					"style" : "",
 					"text" : "If you are used to OpenMusic, you might find yourself puzzled by bach at first sight. Most bach externals work at a lower level than OM functions. Because of the extremely easy encapsulation system provided by Max, we have chosen to implement as externals only a small set of primitive operations upon lists. Higher-level operations may be performed by patching together several externals, rather than placing a single, very powerful box. For this reason, we have provided a set of abstractions, mostly corresponding to individual OM functions.",
-					"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
+					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
 			}
@@ -125,9 +123,8 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 140.0, 35.0, 455.0, 79.0 ],
-					"style" : "",
 					"text" : "If you are interested in computer-aided composition, it is likely that you already know at least one of the excellent existing CAC environments, such as PatchWork, OpenMusic or PWGL. If this is the case, you might find useful to have a look in here - the information provided specifically refers to OM, but the general principles apply at least to all the Lisp-based environments.",
-					"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
+					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
 			}
@@ -140,7 +137,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"style" : "",
 					"text" : "See Also: ",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
@@ -156,7 +152,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 495.0, 585.0, 19.0 ],
-					"style" : "",
 					"text" : "Objects: all",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "objects"
@@ -173,7 +168,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 7.0, 344.0, 23.0 ],
-					"style" : "",
 					"text" : "From Lisp-based environments to bach",
 					"varname" : "title"
 				}
@@ -188,7 +182,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"style" : "",
 					"text" : "Tags: introduction, bach, lisp, open, music, openmusic, om, pwgl, common, patchwork, patch, work",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"

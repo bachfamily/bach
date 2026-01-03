@@ -299,13 +299,13 @@
 					"maxclass" : "comment",
 					"text" : "Too much math for my head... Can't I do it just with two [bach.score]s ?",
 					"linecount" : 2,
-					"frgb" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"frgb" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"fontface" : 2,
 					"fontsize" : 12.0,
 					"numinlets" : 1,
 					"patching_rect" : [ 284.0, 426.0, 218.0, 34.0 ],
 					"numoutlets" : 0,
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"id" : "obj-61",
 					"fontname" : "Arial"
 				}

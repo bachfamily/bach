@@ -1,7 +1,7 @@
 /*
  *  bach.c
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -50,7 +50,7 @@ HINSTANCE hinst;
 #include "bell/ast.hpp"
 #include "bell/pvManager.hpp"
 
-long *bach_gen_primes(void);
+// long *bach_gen_primes(void);
 
 t_class *bach_class = NULL;
 t_class *initpargs_class = NULL;
@@ -90,6 +90,7 @@ void bach_installatompackage(t_bach *x);
 void bach_clearatomcachefolder(t_bach *x);
 void bach_unlock(t_bach *x, t_atom_long l);
 void bach_nonative(t_bach *x, t_atom_long l);
+void bach_defaultbellversion(t_bach *x, t_atom_long l);
 void *bach_llll_from_phonenumber_and_retain(t_bach *x, t_atom_long l);
 void bach_init_print(t_bach *x, t_symbol *s, long ac, t_atom *av);
 char bach_load_default_font(void);
@@ -164,6 +165,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 
     class_addmethod(c, (method) bach_unlock, "unlock", A_LONG, 0);
     class_addmethod(c, (method) bach_nonative, "nonative", A_LONG, 0);
+    class_addmethod(c, (method) bach_defaultbellversion, "defaultbellversion", A_LONG, 0);
     class_addmethod(c, (method) bach_init_bifs, "initbifs", 0);
     class_addmethod(c, (method) bach_llll_from_phonenumber_and_retain, "llllfromphonenumberandretain", A_LONG, 0);
 
@@ -381,7 +383,7 @@ void bach_version(t_bach *x)
 {
     
     post("--- bach: automated composer's helper ---");
-    post("© 2010-2022 - Andrea Agostini and Daniele Ghisi");
+    post("© 2010-2025 - Andrea Agostini and Daniele Ghisi");
     if (x && x->b_no_ss) {
         post("♥ Thank you so much for supporting us on Patreon! ♥");
     } else {
@@ -584,6 +586,13 @@ void *bach_llll_from_phonenumber_and_retain(t_bach *x, t_atom_long l)
 }
 
 
+void bach_defaultbellversion(t_bach *x, t_atom_long l)
+{
+    if (l >= 1 && l <= 3)
+        x->b_defaultbellversion = l;
+    else
+        object_error((t_object *) x, "%ld is not a valid bell version");
+}
 
 long parse_version_string(char *str, long *major, long *minor, long *revision, long *maintenance)
 {
@@ -670,7 +679,7 @@ t_bach *bach_new(t_symbol *s, long ac, t_atom *av)
     }
 */
 
-    x->b_primes = bach_gen_primes();
+//    x->b_primes = bach_gen_primes();
     x->b_helppatches = hashtab_new(0);
     x->b_portalpatchers = hashtab_new(0);
     hashtab_flags(x->b_helppatches, OBJ_FLAG_REF);
@@ -714,6 +723,8 @@ t_bach *bach_new(t_symbol *s, long ac, t_atom *av)
     bach_setup(x);
     
     x->b_buildnumber_sym = get_buildnumber_sym();
+    
+    x->b_defaultbellversion = BACH_BELL_VERSION;
 
     
     // Filling version fields
@@ -814,6 +825,7 @@ void bach_init_print(t_bach *x, t_symbol *s, long ac, t_atom *av)
     object_free(printobj);
 }
 
+/*
 long *bach_gen_primes(void)
 {
     static long primes[] = {
@@ -1129,6 +1141,7 @@ long *bach_gen_primes(void)
     };
     return primes;
 }
+*/
 
 void initpargs_add(t_initpargs *x, t_symbol *msg, long ac, t_atom *av)
 {
@@ -1316,6 +1329,7 @@ void bach_init_bifs(t_bach *x)
     (*bifTable)["primeser"] = new t_fnPrimeser;
     (*bifTable)["arithmser"] = new t_fnArithmser;
     (*bifTable)["geomser"] = new t_fnGeomser;
+    (*bifTable)["fareyser"] = new t_fnFareyser;
     (*bifTable)["map"] = new t_fnMap;
     (*bifTable)["reduce"] = new t_fnReduce;
     (*bifTable)["apply"] = new t_fnApply;
@@ -1326,6 +1340,10 @@ void bach_init_bifs(t_bach *x)
     (*bifTable)["maximum"] = new t_fnMaximum;
     (*bifTable)["mc2f"] = new t_fnMc2f;
     (*bifTable)["f2mc"] = new t_fnF2mc;
+    (*bifTable)["jicommas"] = new t_fnJicommas;
+    (*bifTable)["jiexps"] = new t_fnJiexps;
+    (*bifTable)["pitchkeys"] = new t_fnPitchkeys;
+
     
     (*bifTable)["outlet"] = new t_fnOutlet;
     (*bifTable)["inlet"] = new t_fnInlet;
@@ -1370,19 +1388,34 @@ void bach_init_bifs(t_bach *x)
     (*bifTable)["octave"] = new t_mathUnaryFunctionAA<hatom_fn_octave>("octave");
     (*bifTable)["alter"] = new t_mathUnaryFunctionAA<hatom_fn_alter>("alter");
     (*bifTable)["cents"] = new t_mathUnaryFunctionAA<hatom_fn_cents>("cents");
+    (*bifTable)["etwhitekey"] = new t_mathUnaryFunctionAA<hatom_fn_etwhitekey>("etwhitekey");
+    (*bifTable)["jiwhitekey"] = new t_mathUnaryFunctionAA<hatom_fn_jiwhitekey>("jiwhitekey");
+    (*bifTable)["et"] = new t_mathUnaryFunctionAA<hatom_fn_et>("et");
+    (*bifTable)["ji"] = new t_mathUnaryFunctionAA<hatom_fn_ji>("ji");
+    (*bifTable)["jiratio"] = new t_mathUnaryFunctionAA<hatom_fn_jiratio>("jiratio");
+    (*bifTable)["jiplof"] = new t_mathUnaryFunctionAA<hatom_fn_jiplof>("jiplof");
+    (*bifTable)["etplof"] = new t_mathUnaryFunctionAA<hatom_fn_etplof>("etplof");
+    (*bifTable)["jisharps"] = new t_mathUnaryFunctionAA<hatom_fn_jisharps>("jisharps");
+    (*bifTable)["etsharps"] = new t_mathUnaryFunctionAA<hatom_fn_etsharps>("etsharps");
+    (*bifTable)["etalter"] = new t_mathUnaryFunctionAA<hatom_fn_etalter>("etalter");
+
+    (*bifTable)["foldratio"] = new t_mathBinaryFunctionAAA<hatom_fn_fold>("foldratio");
     
     (*bifTable)["pow"] = new t_mathBinaryFunctionAAA<hatom_op_pow>("pow", "base", "exponent");
     (*bifTable)["mod"] = new t_mathBinaryFunctionAAA<hatom_fn_mod>("mod", "x", "y");
     (*bifTable)["min"] = new t_mathBinaryFunctionAAA<hatom_fn_min>("min", "x", "y");
     (*bifTable)["max"] = new t_mathBinaryFunctionAAA<hatom_fn_max>("max", "x", "y");
     (*bifTable)["random"] = new t_mathBinaryFunctionAAA<hatom_fn_random>("random", "x", "y");
-    (*bifTable)["bessel"] = new t_mathBinaryFunctionAAA<hatom_fn_jn>("bessel", "x", "order");
+    //(*bifTable)["random"] = new t_fnRandom;
+    (*bifTable)["bessel"] = new t_mathBinaryFunctionAAA<hatom_fn_jn>("bessel", "order", "x");
     (*bifTable)["approx"] = new t_mathBinaryFunctionAAA<hatom_fn_approx>("approx", "pitch", "tonedivision");
-    (*bifTable)["enharm"] = new t_mathBinaryFunctionAAA<hatom_fn_enharm>("enharm", "x", "y");
+    (*bifTable)["enharm"] = new t_mathBinaryFunctionAAA<hatom_fn_enharm>("enharm", "x", "steps");
     (*bifTable)["makepitchsc"] = new t_mathBinaryFunctionAAA<hatom_fn_makepitchsc>("makepitchsc", "steps", "cents");
 
-    (*bifTable)["makepitch"] = new t_mathTernaryFunctionAAAA<hatom_fn_makepitch>("makepitch", "degree", "alter", "octave");
-    
+    //(*bifTable)["makepitch"] = new t_mathUnaryFunctionAA<hatom_fn_makepitch>("makepitch", "degree", "alter", "octave");
+    (*bifTable)["makepitch"] = new t_fnMakepitch;
+    (*bifTable)["makepitchji"] = new t_math4aryFunction<hatom_fn_makepitchji>("makepitchji", "jiwhitekey", "sharps", "octave", "ratio");
+
     (*bifTable)["#u-"] = new t_mathUnaryFunctionAA<hatom_op_uminus>("#u-");
     (*bifTable)["#!"] = new t_mathUnaryFunctionAA<hatom_op_lognot>("#!");
     (*bifTable)["#~"] = new t_mathUnaryFunctionAA<hatom_op_bitnot>("#~");
@@ -1405,6 +1438,7 @@ void bach_init_bifs(t_bach *x)
     (*bifTable)["#&&"] = new t_mathBinaryFunctionAAA<hatom_op_logand>("#&&");
     (*bifTable)["#^^"] = new t_mathBinaryFunctionAAA<hatom_op_logxor>("#^^");
     (*bifTable)["#||"] = new t_mathBinaryFunctionAAA<hatom_op_logor>("#||");
+    (*bifTable)["#!"] = new t_mathUnaryFunctionAA<hatom_op_lognot>("#!");
     //(*bifTable)["#&&&"] = new t_mathBinaryFunctionAAA<hatom_op_logand>("#&&&"); // TODO
     (*bifTable)["#|||"] = new t_mathBinaryFunctionAAA<hatom_op_logor>("#|||"); // TODO
     (*bifTable)["#<<"] = new t_mathBinaryFunctionAAA<hatom_op_lshift>("#<<");

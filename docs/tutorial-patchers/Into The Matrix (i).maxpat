@@ -380,7 +380,7 @@
 					"patching_rect" : [ 245.0, 447.0, 217.0, 33.0 ],
 					"style" : "",
 					"text" : "Ok. You spoke about \"singular\" matrix, and about determinant and rank...",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

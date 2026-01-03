@@ -3,14 +3,14 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 0,
-			"revision" : 2,
+			"minor" : 6,
+			"revision" : 3,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 84.0, 81.0, 617.0, 539.0 ],
+		"rect" : [ 720.0, 537.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -37,6 +37,7 @@
 		"tags" : "",
 		"style" : "",
 		"subpatcher_template" : "",
+		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
 					"id" : "obj-17",
@@ -102,19 +103,20 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$l1.sort(($x $y -> directout(2 1, $y $x) ; directin(1))) ",
+					"code" : "$l1.sort(($x, $y -> (directout(2 1, $y $x) ; directin(1)))) ",
 					"id" : "obj-14",
 					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 3,
 					"outlettype" : [ "", "", "" ],
-					"patching_rect" : [ 17.0, 185.0, 298.0, 38.0 ],
+					"patching_rect" : [ 17.0, 185.0, 309.5, 38.0 ],
 					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
+						"embed" : 1,
+						"versionnumber" : 80300
 					}
 ,
-					"text" : "bach.eval $l1.sort(($x $y -> directout(2 1\\, $y $x) \\; directin(1))) @directouts 2 @directins 1 @out mn"
+					"text" : "bach.eval $l1.sort(($x\\, $y -> (directout(2 1\\, $y $x) \\; directin(1)))) @directouts 2 @directins 1 @out mn"
 				}
 
 			}
@@ -240,7 +242,7 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-14", 1 ],
-					"midpoints" : [ 166.0, 292.0, 331.0, 292.0, 331.0, 170.0, 305.5, 170.0 ],
+					"midpoints" : [ 166.0, 292.0, 331.0, 292.0, 331.0, 170.0, 317.0, 170.0 ],
 					"source" : [ "obj-17", 0 ]
 				}
 
@@ -261,18 +263,15 @@
 			}
  ],
 		"dependency_cache" : [ 			{
-				"name" : "bach.remainder.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
-				"patcherrelativepath" : "../patchers",
-				"type" : "JSON",
-				"implicit" : 1
-			}
-, 			{
-				"name" : "bach.eval.mxo",
+				"name" : "bach.args.mxo",
 				"type" : "iLaX"
 			}
 , 			{
-				"name" : "bach.args.mxo",
+				"name" : "bach.eq.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.eval.mxo",
 				"type" : "iLaX"
 			}
 , 			{
@@ -284,8 +283,11 @@
 				"type" : "iLaX"
 			}
 , 			{
-				"name" : "bach.eq.mxo",
-				"type" : "iLaX"
+				"name" : "bach.remainder.maxpat",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/patchers",
+				"patcherrelativepath" : "../patchers",
+				"type" : "JSON",
+				"implicit" : 1
 			}
  ],
 		"autosave" : 0

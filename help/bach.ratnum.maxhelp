@@ -997,7 +997,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 110.0, 381.5, 418.0, 69.0 ],
 									"text" : "Click on the numerator and drag up/down to change it. You can do the same with the denominator, by clicking on it and dragging.\nOr you can click on the box and type the rational number directly, and then press Enter",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}

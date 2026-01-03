@@ -323,7 +323,7 @@
 					"patching_rect" : [ 387.0, 379.0, 240.0, 20.0 ],
 					"style" : "",
 					"text" : "This is at least tenfold better! And cleaner...",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

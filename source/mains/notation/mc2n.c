@@ -1,7 +1,7 @@
 /*
  *  mc2n.c
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -192,7 +192,7 @@ long substitute_mc_with_names_fn(void *data, t_hatom *a, const t_llll *address){
 		char *notename = NULL;
 		long screen_mc = 6000;
 		t_rational screen_acc = genrat(0, 1);
-		mc_to_screen_approximations_do(x->tone_division, x->accidentals_preferences, hatom_getdouble(a), &screen_mc, &screen_acc, NULL, NULL);
+		mc_to_display_approximation_ET_do(x->tone_division, x->accidentals_preferences, hatom_getdouble(a), &screen_mc, &screen_acc, NULL, NULL);
 		midicents2notename(x->middle_c_octave, screen_mc, screen_acc, x->note_names_style, x->print_octave, &notename);
 		hatom_setsym(a, notename ? gensym(notename) : _llllobj_sym_empty_symbol);
 		bach_freeptr(notename);

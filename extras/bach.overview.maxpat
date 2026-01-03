@@ -3,14 +3,14 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 5,
-			"revision" : 2,
+			"minor" : 6,
+			"revision" : 1,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 593.0, 100.0, 945.0, 639.0 ],
+		"rect" : [ 698.0, 111.0, 945.0, 639.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -297,7 +297,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 250.0, 9.0, 208.0, 19.0 ],
-					"text" : "v0.8.2.0 beta (build 20221227172152)",
+					"text" : "v0.8.9.0 beta (build 20250423165310)",
 					"textcolor" : [ 0.10980399698019, 0.10980399698019, 0.10980399698019, 1.0 ],
 					"varname" : "autohelp_top_digest[3]"
 				}
@@ -504,11 +504,18 @@
 					"presentation" : 1,
 					"presentation_rect" : [ 316.0, 203.0, 556.0, 226.0 ],
 					"rounded" : 0.0,
+					"saved_attribute_attributes" : 					{
+						"textcolor" : 						{
+							"expression" : "themecolor.theme_textcolor"
+						}
+
+					}
+,
 					"spacing_x" : 10.0,
 					"spacing_y" : 0.0,
 					"tabcolor" : [ 0.337255, 0.45098, 0.156863, 0.058824 ],
 					"tabs" : [ "Help Center", "What's new", "Explorer", "Tutorials", "Patreon", "Feedback", "Licence and credits" ],
-					"textcolor" : [ 0.2, 0.2, 0.2, 1.0 ],
+					"textcolor" : [ 0.129412, 0.129412, 0.129412, 1.0 ],
 					"valign" : 2
 				}
 
@@ -544,7 +551,7 @@
 , 			{
 				"box" : 				{
 					"bgcolor" : [ 0.94, 0.94, 0.94, 1.0 ],
-					"bgmode" : 2,
+					"bgmode" : 1,
 					"border" : 0,
 					"clickthrough" : 0,
 					"embed" : 1,
@@ -557,19 +564,19 @@
 					"name" : "bach.overviewswitch.maxpat",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"offset" : [ 0.0, 0.0 ],
+					"offset" : [ 0.0, -5381.0 ],
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 5,
-							"revision" : 2,
+							"minor" : 6,
+							"revision" : 1,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 51.0, 360.0, 1179.0, 624.0 ],
+						"rect" : [ 75.0, 214.0, 1179.0, 624.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 12.0,
@@ -599,6 +606,287 @@
 						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
 								"box" : 								{
+									"hidden" : 1,
+									"id" : "obj-389",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 646.0, 5812.0, 90.0, 22.0 ],
+									"text" : "Accollature"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"bubble" : 1,
+									"fontsize" : 12.0,
+									"id" : "obj-388",
+									"linecount" : 2,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 138.0, 5703.0, 172.0, 37.0 ],
+									"presentation_linecount" : 4,
+									"text" : "Real brackets, braces, etc., more tidily organized"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontsize" : 22.0,
+									"id" : "obj-387",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 16.0, 5705.0, 117.0, 33.0 ],
+									"text" : "Accollature"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"hidden" : 1,
+									"id" : "obj-386",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 920.0, 5770.0, 62.0, 22.0 ],
+									"text" : "PlayScroll"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"bubble" : 1,
+									"fontsize" : 12.0,
+									"id" : "obj-384",
+									"linecount" : 3,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 613.0, 5644.0, 169.0, 51.0 ],
+									"text" : "...and simple ways to handle different scrolling modes during playback"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontsize" : 22.0,
+									"id" : "obj-385",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 500.0, 5653.0, 109.0, 33.0 ],
+									"text" : "Play scroll"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"hidden" : 1,
+									"id" : "obj-382",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 711.0, 5804.0, 90.0, 22.0 ],
+									"text" : "MarkerRegions"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"bubble" : 1,
+									"fontsize" : 12.0,
+									"id" : "obj-380",
+									"linecount" : 2,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 368.0, 5651.0, 102.0, 37.0 ],
+									"text" : "...and marker regions..."
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontsize" : 22.0,
+									"id" : "obj-381",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 209.0, 5653.0, 155.0, 33.0 ],
+									"text" : "Marker regions"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"bubble" : 1,
+									"fontsize" : 12.0,
+									"id" : "obj-316",
+									"linecount" : 2,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 77.0, 5651.0, 102.0, 37.0 ],
+									"text" : "Finally, we have slurs..."
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontsize" : 22.0,
+									"id" : "obj-379",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 16.0, 5651.0, 59.0, 33.0 ],
+									"text" : "Slurs"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"hidden" : 1,
+									"id" : "obj-378",
+									"maxclass" : "newobj",
+									"numinlets" : 1,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 841.0, 5860.0, 185.0, 22.0 ],
+									"text" : "sprintf symout WhatsNew0.9_%s"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"hidden" : 1,
+									"id" : "obj-377",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 920.0, 5804.0, 99.0, 22.0 ],
+									"text" : "LinearPitchMode"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"bubble" : 1,
+									"fontsize" : 12.0,
+									"id" : "obj-376",
+									"linecount" : 3,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 209.0, 5580.0, 276.0, 51.0 ],
+									"text" : "Now you can show scores in linear pitch mode (where every semitone corresponds to the same vertical distance)"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontsize" : 22.0,
+									"id" : "obj-372",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 16.0, 5589.0, 186.0, 33.0 ],
+									"text" : "Linear Pitch Mode"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"hidden" : 1,
+									"id" : "obj-369",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 821.0, 5804.0, 83.0, 22.0 ],
+									"text" : "JustIntonation"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontsize" : 22.0,
+									"id" : "obj-329",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 16.0, 5526.0, 152.0, 33.0 ],
+									"text" : "Just Intonation"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontname" : "Arial",
+									"fontsize" : 15.0,
+									"id" : "obj-124",
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 16.0, 5761.0, 635.0, 23.0 ],
+									"saved_attribute_attributes" : 									{
+										"textcolor" : 										{
+											"expression" : "themecolor.theme_textcolor"
+										}
+
+									}
+,
+									"text" : "Here's also a few scrolldown primers for thestuff introduced in bach 0.8.1."
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontname" : "Arial",
+									"fontsize" : 12.0,
+									"hidden" : 1,
+									"id" : "obj-115",
+									"linecount" : 2,
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 28.0, 3648.0, 340.0, 35.0 ],
+									"text" : ";\rmax launchbrowser https://github.com/steinbergmedia/bravura"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontface" : 0,
+									"fontname" : "Arial",
+									"fontsize" : 14.0,
+									"id" : "obj-61",
+									"linkend" : [ "\u003b", "\u002c", "(", ")", "[", "]", "{", "}" ],
+									"linkstart" : [ "http" ],
+									"maxclass" : "bach.hypercomment",
+									"numinlets" : 1,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 73.0, 3558.0, 296.0, 22.0 ],
+									"text" : "https://github.com/steinbergmedia/bravura",
+									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+								}
+
+							}
+, 							{
+								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 14.0,
 									"id" : "obj-92",
@@ -607,8 +895,14 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 16.0, 6239.0, 641.0, 85.0 ],
-									"text" : "Our top-tier institutional supporters are, in alphabetical order:\n• Haute École de Musique de Genève - Centre de musique électroacoustique\n• IRCAM-Centre Pompidou (Paris).\n\n Click here for the full list:",
-									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
+									"saved_attribute_attributes" : 									{
+										"textcolor" : 										{
+											"expression" : "themecolor.theme_textcolor"
+										}
+
+									}
+,
+									"text" : "Our top-tier institutional supporters are, in alphabetical order:\n• Haute École de Musique de Genève - Centre de musique électroacoustique\n• IRCAM-Centre Pompidou (Paris).\n\n Click here for the full list:"
 								}
 
 							}
@@ -638,7 +932,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 600.0, 3580.0, 301.0, 35.0 ],
+									"patching_rect" : [ 600.0, 3648.0, 301.0, 35.0 ],
 									"text" : ";\rmax launchbrowser https://github.com/bachfamily/bach"
 								}
 
@@ -681,8 +975,14 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 2.0, 4223.0, 738.0, 38.0 ],
-									"text" : "On our Patreon channel we regularly publish video tutorials. A few are free, and cover some basic techniques. \nMore comprehensive tutorials are accessible to Patreon supporters from 4$/month, on top of many other benefits.",
-									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
+									"saved_attribute_attributes" : 									{
+										"textcolor" : 										{
+											"expression" : "themecolor.theme_textcolor"
+										}
+
+									}
+,
+									"text" : "On our Patreon channel we regularly publish video tutorials. A few are free, and cover some basic techniques. \nMore comprehensive tutorials are accessible to Patreon supporters from 4$/month, on top of many other benefits."
 								}
 
 							}
@@ -823,8 +1123,14 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 16.0, 6215.0, 641.0, 22.0 ],
-									"text" : "We would like to thank all our Patreon supporters and all the bach donors.",
-									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
+									"saved_attribute_attributes" : 									{
+										"textcolor" : 										{
+											"expression" : "themecolor.theme_textcolor"
+										}
+
+									}
+,
+									"text" : "We would like to thank all our Patreon supporters and all the bach donors."
 								}
 
 							}
@@ -838,8 +1144,14 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 16.0, 6006.0, 835.0, 116.0 ],
-									"text" : "Developing and maintaining bach is a lot of work. \n\nWe have decided to keep bach free and to embrace a business model based on Patreon: how much do you consider bach is valuable for you? If the answer is 0$, or if you cannot afford to pay any price, that's totally fine - we completely understand. \nBut if you can afford to pay us as little as a cup of coffee per month, that would really help. \n\nIn addition to keeping bach accessible for everybody, you'll also have exclusive access to prereleases, video tutorials, and more.",
-									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
+									"saved_attribute_attributes" : 									{
+										"textcolor" : 										{
+											"expression" : "themecolor.theme_textcolor"
+										}
+
+									}
+,
+									"text" : "Developing and maintaining bach is a lot of work. \n\nWe have decided to keep bach free and to embrace a business model based on Patreon: how much do you consider bach is valuable for you? If the answer is 0$, or if you cannot afford to pay any price, that's totally fine - we completely understand. \nBut if you can afford to pay us as little as a cup of coffee per month, that would really help. \n\nIn addition to keeping bach accessible for everybody, you'll also have exclusive access to prereleases, video tutorials, and more."
 								}
 
 							}
@@ -867,34 +1179,21 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 2.0, 5883.0, 184.0, 22.0 ],
+									"patching_rect" : [ 24.0, 5835.0, 184.0, 22.0 ],
 									"text" : "BachEvaluationLanguageForLllls"
 								}
 
 							}
 , 							{
 								"box" : 								{
-									"bubble" : 1,
-									"fontsize" : 12.0,
-									"id" : "obj-316",
-									"linecount" : 3,
-									"maxclass" : "comment",
-									"numinlets" : 1,
-									"numoutlets" : 0,
-									"patching_rect" : [ 453.0, 5566.0615234375, 233.0, 51.0 ],
-									"text" : "We have a scripting language now, meant to make the implementation of processes in bach easier!"
-								}
-
-							}
-, 							{
-								"box" : 								{
-									"fontsize" : 25.257102,
+									"fontsize" : 14.0,
 									"id" : "obj-315",
+									"linecount" : 2,
 									"maxclass" : "message",
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 24.0, 5572.60986328125, 427.0, 37.0 ],
+									"patching_rect" : [ 143.0, 5786.0, 140.0, 40.0 ],
 									"text" : "bell: bach evaluation language on lllls"
 								}
 
@@ -908,7 +1207,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 114.0, 5868.0, 54.0, 37.0 ],
+									"patching_rect" : [ 306.5, 5967.0, 54.0, 37.0 ],
 									"text" : "Lllls"
 								}
 
@@ -918,133 +1217,51 @@
 									"bubble" : 1,
 									"fontsize" : 12.0,
 									"id" : "obj-129",
-									"linecount" : 5,
+									"linecount" : 3,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 220.5, 5481.07861328125, 525.0, 78.0 ],
-									"text" : "Yes, we decided to switch to using square brackets by default, but don't worry! ALL backward compatibility is preserved, and you can still go on using round parentheses if you liked them so much – and you can always display round parentheses via bach.textout.\nAlso, our internal llll parsing has been completely rewritten. We have improved some important points, and if you ever are annoyed by backticks, you should definitely read this"
+									"patching_rect" : [ 171.0, 5517.0, 359.0, 51.0 ],
+									"text" : "Now just intonation is supported.\nThis also means that the default font has changed to Bravura, \nbut you can still use \"November for bach\" if you like"
 								}
 
 							}
 , 							{
 								"box" : 								{
-									"fontsize" : 25.257102,
+									"fontsize" : 14.0,
 									"id" : "obj-146",
 									"linecount" : 2,
 									"maxclass" : "message",
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 24.0, 5487.8232421875, 197.0, 65.0 ],
+									"patching_rect" : [ 16.0, 5786.0, 119.0, 40.0 ],
 									"text" : "Lllls have square brackets!"
 								}
 
 							}
 , 							{
 								"box" : 								{
-									"fontname" : "Arial",
-									"fontsize" : 15.0,
-									"id" : "obj-384",
-									"linecount" : 2,
-									"maxclass" : "comment",
-									"numinlets" : 1,
-									"numoutlets" : 0,
-									"patching_rect" : [ 16.0, 5814.0, 635.0, 40.0 ],
-									"text" : "...but this is just the tip of the iceberg. \nAs usual, have a look at the History.txt file to know what else has changed.",
-									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
-								}
-
-							}
-, 							{
-								"box" : 								{
-									"bubble" : 1,
-									"fontsize" : 12.0,
-									"id" : "obj-382",
-									"maxclass" : "comment",
-									"numinlets" : 1,
-									"numoutlets" : 0,
-									"patching_rect" : [ 102.0, 5739.314453125, 277.0, 24.0 ],
-									"text" : "Now voices can be displayed on the same staff"
-								}
-
-							}
-, 							{
-								"box" : 								{
-									"fontsize" : 25.257102,
+									"fontsize" : 14.0,
 									"id" : "obj-383",
 									"maxclass" : "message",
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 24.0, 5733.44677734375, 69.0, 37.0 ],
+									"patching_rect" : [ 356.0, 5811.0, 46.0, 24.0 ],
 									"text" : "Parts"
 								}
 
 							}
 , 							{
 								"box" : 								{
-									"bubble" : 1,
-									"fontsize" : 12.0,
-									"id" : "obj-381",
-									"maxclass" : "comment",
-									"numinlets" : 1,
-									"numoutlets" : 0,
-									"patching_rect" : [ 102.0, 5778.43212890625, 236.0, 24.0 ],
-									"text" : "A brand new system to navigate scores"
-								}
-
-							}
-, 							{
-								"box" : 								{
-									"bubble" : 1,
-									"fontsize" : 12.0,
-									"id" : "obj-379",
-									"linecount" : 3,
-									"maxclass" : "comment",
-									"numinlets" : 1,
-									"numoutlets" : 0,
-									"patching_rect" : [ 188.0, 5686.6748046875, 334.0, 51.0 ],
-									"text" : "Some modules have been deprecated in favour of new ones, and you'll need to change some of your habits! In exchange for that, your bach life will be easier ;-)"
-								}
-
-							}
-, 							{
-								"box" : 								{
-									"bubble" : 1,
-									"fontsize" : 12.0,
-									"id" : "obj-378",
-									"linecount" : 3,
-									"maxclass" : "comment",
-									"numinlets" : 1,
-									"numoutlets" : 0,
-									"patching_rect" : [ 102.0, 5645.20947265625, 363.0, 51.0 ],
-									"text" : "Slots have improved! They support dynamics, articulations, noteheads, lyrics. Also you can use temporal slots in the new \"milliseconds\" mode"
-								}
-
-							}
-, 							{
-								"box" : 								{
-									"bubble" : 1,
-									"fontsize" : 12.0,
-									"id" : "obj-377",
-									"maxclass" : "comment",
-									"numinlets" : 1,
-									"numoutlets" : 0,
-									"patching_rect" : [ 125.0, 5618.91064453125, 231.0, 24.0 ],
-									"text" : "Yes, we do have REAL pitches now :-)"
-								}
-
-							}
-, 							{
-								"box" : 								{
-									"fontsize" : 25.257102,
+									"fontsize" : 14.0,
 									"id" : "obj-375",
 									"maxclass" : "message",
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 24.0, 5692.93359375, 156.0, 37.0 ],
+									"patching_rect" : [ 356.0, 5785.0, 94.0, 24.0 ],
 									"text" : "NewModules"
 								}
 
@@ -1057,46 +1274,46 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 193.5, 5860.0, 198.0, 22.0 ],
+									"patching_rect" : [ 763.5, 5884.0, 198.0, 22.0 ],
 									"text" : "sprintf symout WhatsNew0.8.1_%s"
 								}
 
 							}
 , 							{
 								"box" : 								{
-									"fontsize" : 25.257102,
+									"fontsize" : 14.0,
 									"id" : "obj-373",
 									"maxclass" : "message",
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 24.0, 5653.033203125, 67.0, 37.0 ],
+									"patching_rect" : [ 288.0, 5811.0, 46.0, 24.0 ],
 									"text" : "Slots"
 								}
 
 							}
 , 							{
 								"box" : 								{
-									"fontsize" : 25.257102,
+									"fontsize" : 14.0,
 									"id" : "obj-371",
 									"maxclass" : "message",
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 24.0, 5613.1328125, 93.0, 37.0 ],
+									"patching_rect" : [ 288.0, 5785.0, 60.0, 24.0 ],
 									"text" : "Pitches"
 								}
 
 							}
 , 							{
 								"box" : 								{
-									"fontsize" : 25.257102,
+									"fontsize" : 14.0,
 									"id" : "obj-370",
 									"maxclass" : "message",
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 24.0, 5773.34716796875, 70.0, 37.0 ],
+									"patching_rect" : [ 459.0, 5786.0, 48.0, 24.0 ],
 									"text" : "GoTo"
 								}
 
@@ -1110,7 +1327,14 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 16.0, 5398.0, 525.0, 44.0 ],
-									"text" : "New stuff introduced in bach 0.8.1"
+									"saved_attribute_attributes" : 									{
+										"textcolor" : 										{
+											"expression" : "themecolor.theme_textcolor"
+										}
+
+									}
+,
+									"text" : "New stuff introduced in bach 0.9"
 								}
 
 							}
@@ -1119,13 +1343,19 @@
 									"fontname" : "Arial",
 									"fontsize" : 15.0,
 									"id" : "obj-368",
-									"linecount" : 2,
+									"linecount" : 3,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 16.0, 5442.0, 639.0, 40.0 ],
-									"text" : "Here's a collection of things that you need to know if you used bach before its 0.8.1 version.\nClick on each message to open the corresponding scrolldown primer!",
-									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
+									"patching_rect" : [ 16.0, 5442.0, 639.0, 57.0 ],
+									"saved_attribute_attributes" : 									{
+										"textcolor" : 										{
+											"expression" : "themecolor.theme_textcolor"
+										}
+
+									}
+,
+									"text" : "Here's a collection of things that you need to know if you used bach before its 0.9 version.\nClick on each message to open the corresponding scrolldown primer!\n(As usual, have a look at the History.txt file to know what else has changed.)"
 								}
 
 							}
@@ -1137,7 +1367,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 193.5, 5891.0, 81.0, 22.0 ],
+									"patching_rect" : [ 763.5, 5915.0, 81.0, 22.0 ],
 									"text" : "prepend load"
 								}
 
@@ -1150,7 +1380,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 193.5, 5923.0, 53.0, 22.0 ],
+									"patching_rect" : [ 763.5, 5947.0, 53.0, 22.0 ],
 									"text" : "pcontrol"
 								}
 
@@ -1213,26 +1443,8 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 376.0, 3615.0, 229.0, 35.0 ],
+									"patching_rect" : [ 373.0, 3671.0, 229.0, 35.0 ],
 									"text" : ";\rmax launchbrowser http://www.smufl.org/"
-								}
-
-							}
-, 							{
-								"box" : 								{
-									"fontface" : 0,
-									"fontname" : "Arial",
-									"fontsize" : 14.0,
-									"id" : "obj-61",
-									"linkend" : [ ":", "\u003b", "\u002c", "(", ")", "[", "]", "{", "}" ],
-									"linkstart" : [ "S" ],
-									"maxclass" : "bach.hypercomment",
-									"numinlets" : 1,
-									"numoutlets" : 1,
-									"outlettype" : [ "" ],
-									"patching_rect" : [ 99.0, 3606.0, 59.0, 22.0 ],
-									"text" : "SMUFL",
-									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
 
 							}
@@ -1247,7 +1459,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 276.5, 3608.0, 370.0, 35.0 ],
+									"patching_rect" : [ 277.0, 3648.0, 370.0, 35.0 ],
 									"text" : ";\rmax launchbrowser http://www.klemm-music.de/notation/november/"
 								}
 
@@ -1257,6 +1469,7 @@
 									"fontface" : 0,
 									"fontname" : "Arial",
 									"fontsize" : 14.0,
+									"hidden" : 1,
 									"id" : "obj-58",
 									"linkend" : [ ":", "\u003b", "\u002c", "(", ")", "[", "]", "{", "}" ],
 									"linkstart" : [ "w" ],
@@ -1264,7 +1477,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 481.0, 3606.0, 296.0, 22.0 ],
+									"patching_rect" : [ 394.0, 3606.0, 296.0, 22.0 ],
 									"text" : "www.klemm-music.de/notation/november/",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
@@ -1298,7 +1511,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 473.5, 3543.0, 198.0, 22.0 ],
+									"patching_rect" : [ 717.0, 3574.0, 198.0, 22.0 ],
 									"text" : "www.poeticprocessing.net",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
@@ -1426,8 +1639,14 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 303.0, 4047.063477000000148, 86.0, 20.0 ],
+									"saved_attribute_attributes" : 									{
+										"textcolor" : 										{
+											"expression" : "themecolor.theme_textcolor"
+										}
+
+									}
+,
 									"text" : "Sections:",
-									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ],
 									"textjustification" : 2
 								}
 
@@ -1545,8 +1764,14 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 303.0, 4067.063476999999693, 86.0, 20.0 ],
+									"saved_attribute_attributes" : 									{
+										"textcolor" : 										{
+											"expression" : "themecolor.theme_textcolor"
+										}
+
+									}
+,
 									"text" : "Topics:",
-									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ],
 									"textjustification" : 2
 								}
 
@@ -1609,8 +1834,8 @@
 										"fileversion" : 1,
 										"appversion" : 										{
 											"major" : 8,
-											"minor" : 5,
-											"revision" : 2,
+											"minor" : 6,
+											"revision" : 1,
 											"architecture" : "x64",
 											"modernui" : 1
 										}
@@ -1993,8 +2218,14 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 303.0, 4127.063476999999693, 86.0, 20.0 ],
+									"saved_attribute_attributes" : 									{
+										"textcolor" : 										{
+											"expression" : "themecolor.theme_textcolor"
+										}
+
+									}
+,
 									"text" : "Elements:",
-									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ],
 									"textjustification" : 2
 								}
 
@@ -2028,8 +2259,8 @@
 										"fileversion" : 1,
 										"appversion" : 										{
 											"major" : 8,
-											"minor" : 5,
-											"revision" : 2,
+											"minor" : 6,
+											"revision" : 1,
 											"architecture" : "x64",
 											"modernui" : 1
 										}
@@ -2502,8 +2733,14 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 389.0, 3839.0, 525.0, 23.0 ],
-									"text" : "First steps with the bach nested lists (lllls)",
-									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
+									"saved_attribute_attributes" : 									{
+										"textcolor" : 										{
+											"expression" : "themecolor.theme_textcolor"
+										}
+
+									}
+,
+									"text" : "First steps with the bach nested lists (lllls)"
 								}
 
 							}
@@ -2581,8 +2818,8 @@
 										"fileversion" : 1,
 										"appversion" : 										{
 											"major" : 8,
-											"minor" : 5,
-											"revision" : 2,
+											"minor" : 6,
+											"revision" : 1,
 											"architecture" : "x64",
 											"modernui" : 1
 										}
@@ -2648,11 +2885,12 @@
 													"id" : "obj-6",
 													"maxclass" : "newobj",
 													"numinlets" : 2,
-													"numoutlets" : 4,
-													"outlettype" : [ "dictionary", "", "", "" ],
+													"numoutlets" : 5,
+													"outlettype" : [ "dictionary", "", "", "", "" ],
 													"patching_rect" : [ 75.5, 92.125, 204.0, 20.0 ],
 													"saved_object_attributes" : 													{
 														"embed" : 0,
+														"legacy" : 1,
 														"parameter_enable" : 0,
 														"parameter_mappable" : 0
 													}
@@ -2743,8 +2981,8 @@
 										"fileversion" : 1,
 										"appversion" : 										{
 											"major" : 8,
-											"minor" : 5,
-											"revision" : 2,
+											"minor" : 6,
+											"revision" : 1,
 											"architecture" : "x64",
 											"modernui" : 1
 										}
@@ -5846,8 +6084,8 @@
 										"fileversion" : 1,
 										"appversion" : 										{
 											"major" : 8,
-											"minor" : 5,
-											"revision" : 2,
+											"minor" : 6,
+											"revision" : 1,
 											"architecture" : "x64",
 											"modernui" : 1
 										}
@@ -7318,13 +7556,19 @@
 									"fontname" : "Arial",
 									"fontsize" : 14.0,
 									"id" : "obj-48",
-									"linecount" : 22,
+									"linecount" : 21,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 7.0, 3277.0, 927.0, 366.0 ],
-									"text" : "bach is an independent project by composers Andrea Agostini and Daniele Ghisi, supported by generous on Patreon. \nOur top-tier institutional supporters are, in alphabetical order:\n• Haute École de Musique de Genève - Centre de musique électroacoustique\n• IRCAM-Centre Pompidou (Paris).\n\nClick here to check out the full list of supporters: \n\nbach is distributed under the terms of the GNU General Public License version 3 (GPL-v3.0). \nSee the License file in the package to know more.\nThe source code of bach can be obtained at the following URL:  \n\nbach includes:\n- A modified version of Simon Tatham's listsort, released under the terms of the MIT License.\n- A modified version of The Mini-XML library version 2.7, released under the terms of the GNU Lesser General Public License version 2 (LGPL-v2.0)\n- The Kiss FFT library, released under the terms of the BSD License.\n- A modified version of the IRCAM SDIF library, released under the terms of the GNU Lesser General Public License version 2 (LGPL-v2.0)\n\nThe official bach font is \"November for bach\", created by Robert Piéchaud (                                          ), released under the terms of the SIL Open Font License version 1.1 (OFL-1.1) and automatically loaded at bach startup. \"November for bach\" is a light version of the famous November font. The full November font covers a wide range of music symbols, from Renaissance to the XXI century, and gives a unique, warm and lively look to your music scores. It is fully compatible with Finale, Sibelius and other notation softwares, and, in addition, is the first commercial music font fully compliant with             . You can purchase November from this web address: \n",
-									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
+									"patching_rect" : [ 7.0, 3277.0, 926.0, 335.0 ],
+									"saved_attribute_attributes" : 									{
+										"textcolor" : 										{
+											"expression" : "themecolor.theme_textcolor"
+										}
+
+									}
+,
+									"text" : "bach is an independent project by composers Andrea Agostini and Daniele Ghisi, supported by generous on Patreon. \nOur top-tier institutional supporters are, in alphabetical order:\n• Haute École de Musique de Genève - Centre de musique électroacoustique\n• IRCAM-Centre Pompidou (Paris).\n\nClick here to check out the full list of supporters: \n\nbach is distributed under the terms of the GNU General Public License version 3 (GPL-v3.0). \nSee the License file in the package to know more.\nThe source code of bach can be obtained at the following URL:  \n\nbach includes:\n- A modified version of Simon Tatham's listsort, released under the terms of the MIT License.\n- A modified version of The Mini-XML library version 2.7, released under the terms of the GNU Lesser General Public License version 2 (LGPL-v2.0)\n- The Kiss FFT library, released under the terms of the BSD License.\n- A modified version of the IRCAM SDIF library, released under the terms of the GNU Lesser General Public License version 2 (LGPL-v2.0)\n\nThe default font for bach is now Bravura, automatically loaded at bach startup, released under the terms of the SIL Open Font License version 1.1 (OFL-1.1): \nThe bach package also includes the formerly official bach font: \"November for bach\", created by Robert Piéchaud (                                          ), released under the terms of the SIL Open Font License version 1.1 (OFL-1.1). \"November for bach\" is the light version of the November font."
 								}
 
 							}
@@ -7338,8 +7582,14 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 7.0, 2640.0, 925.0, 341.0 ],
-									"text" : "bach is an experimental project. It is very likely to contain minor and major bugs, and you are likely to find out that some basic feature is missing, or very uncomfortable to exploit.\n\nIf you use bach, you might find really useful to join the forum of our website                                   . In this community you can discuss topics concerning the bach environment and report bugs. This is the most appropriate context for all these things, since all users can benefit from everyone's experiences. Still, if you want to contact us privately, you can do it at                                             .\n\nThe ideal bug report should contain:\n- the sequence of operation after which the bug has happened - have you been able to reproduce the bug by repeating the same sequence?\n- the exact nature of the bug: what would have been the expected behaviour, and what you have obtained instead.\n- if there has been a crash, a copy of the contents of the crash report window - don't send it to Apple, it's our problem, not theirs.\n- if possible, a copy of the patch in which the bug has happened.\n- if possible, the exact input data that have caused the bug.\n\nPatreon supporters can submit feature requests: that this doesn't necessarily mean that all the features will be implemented. It can be technically impossible, it could require major changes to the overall architecture of the work, it could disrupt another functionality, it could be obtained by patching with some workaround, it could be to difficult for us to implement or we could simply not like it. But be assured that even the craziest feature request will be seriously considered and reflected upon!\n\nGeneral commentaries about the work are also welcome - especially if positive ;) - we need your advice to know in which direction the development should be pushed.\n\nThank you for your feedback!",
-									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
+									"saved_attribute_attributes" : 									{
+										"textcolor" : 										{
+											"expression" : "themecolor.theme_textcolor"
+										}
+
+									}
+,
+									"text" : "bach is an experimental project. It is very likely to contain minor and major bugs, and you are likely to find out that some basic feature is missing, or very uncomfortable to exploit.\n\nIf you use bach, you might find really useful to join the forum of our website                                   . In this community you can discuss topics concerning the bach environment and report bugs. This is the most appropriate context for all these things, since all users can benefit from everyone's experiences. Still, if you want to contact us privately, you can do it at                                             .\n\nThe ideal bug report should contain:\n- the sequence of operation after which the bug has happened - have you been able to reproduce the bug by repeating the same sequence?\n- the exact nature of the bug: what would have been the expected behaviour, and what you have obtained instead.\n- if there has been a crash, a copy of the contents of the crash report window - don't send it to Apple, it's our problem, not theirs.\n- if possible, a copy of the patch in which the bug has happened.\n- if possible, the exact input data that have caused the bug.\n\nPatreon supporters can submit feature requests: that this doesn't necessarily mean that all the features will be implemented. It can be technically impossible, it could require major changes to the overall architecture of the work, it could disrupt another functionality, it could be obtained by patching with some workaround, it could be to difficult for us to implement or we could simply not like it. But be assured that even the craziest feature request will be seriously considered and reflected upon!\n\nGeneral commentaries about the work are also welcome - especially if positive ;) - we need your advice to know in which direction the development should be pushed.\n\nThank you for your feedback!"
 								}
 
 							}
@@ -7405,14 +7655,18 @@
 							}
 , 							{
 								"box" : 								{
-									"bgcolor" : [ 0.98, 0.98, 0.98, 1.0 ],
-									"clickedstripcolor" : [ 0.640313, 0.730429, 0.465685, 1.0 ],
-									"clickedtextcolor" : [ 0.0, 0.0, 0.0, 1.0 ],
+									"alternatecolor" : [ 0.764705882352941, 0.764705882352941, 0.764705882352941, 1.0 ],
+									"bgcolor" : [ 0.898039, 0.898039, 0.898039, 1.0 ],
+									"bordercolor" : [ 0.129412, 0.129412, 0.129412, 1.0 ],
+									"clickedstripcolor" : [ 0.441, 0.612, 0.239, 1.0 ],
+									"clickedtextcolor" : [ 0.129412, 0.129412, 0.129412, 1.0 ],
 									"firsteleminllllisllllname" : 1,
 									"fontface" : 0,
 									"fontname" : "Arial",
 									"fontsize" : 15.0,
 									"hinset" : 0.0,
+									"hoverstripcolor" : [ 0.929412, 0.929412, 0.352941, 1.0 ],
+									"hovertextcolor" : [ 0.129412, 0.129412, 0.129412, 1.0 ],
 									"id" : "obj-3",
 									"maxclass" : "bach.tree",
 									"mode" : 1,
@@ -7423,10 +7677,46 @@
 									"outlettype" : [ "", "", "", "", "bang" ],
 									"patching_rect" : [ 2.0, 3818.0, 284.0, 385.600585999999566 ],
 									"preventedit" : 1,
-									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ],
+									"saved_attribute_attributes" : 									{
+										"alternatecolor" : 										{
+											"expression" : "themecolor.live_control_text_bg"
+										}
+,
+										"bgcolor" : 										{
+											"expression" : "themecolor.theme_locked_bgcolor"
+										}
+,
+										"bordercolor" : 										{
+											"expression" : "themecolor.theme_textcolor"
+										}
+,
+										"clickedtextcolor" : 										{
+											"expression" : "themecolor.theme_textcolor"
+										}
+,
+										"hoverstripcolor" : 										{
+											"expression" : "themecolor.theme_selectioncolor"
+										}
+,
+										"hovertextcolor" : 										{
+											"expression" : "themecolor.theme_textcolor"
+										}
+,
+										"textcolor" : 										{
+											"expression" : "themecolor.theme_textcolor"
+										}
+,
+										"tricolor" : 										{
+											"expression" : "themecolor.theme_textcolor"
+										}
+
+									}
+,
+									"textcolor" : [ 0.129412, 0.129412, 0.129412, 1.0 ],
 									"tree_openstate_data_0000000000" : [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
 									"tree_openstate_data_count" : [ 1 ],
-									"versionnumber" : 80200,
+									"tricolor" : [ 0.129412, 0.129412, 0.129412, 1.0 ],
+									"versionnumber" : 80900,
 									"vinset" : 0.0,
 									"whole_tree_data_0000000000" : [ "1 – Hello World", "2 – Brother John", "3 – Iterations", "4 – Through The Looking Glass", "5 – Slot Machines", "6 – The Gift Of Synthesis", "7 – Inspector As A Gadget", "8 – Real Time Stories", "9 – The Minimal Way", "10 – The World Outside", "11 – From OpenMusic to bach", "12 – Abstract Thinking", "13 – Beams Through The Trees", "14 – A Mazing Grace", "15 – God Solve The Queens", "16 – Into The Matrix", "17 – Lambda Scores", "18 – Graphical Synchronization", "19 – Filter Filter Little Star", "20 – Edit Path", "21 – Standalone Applications" ],
 									"whole_tree_data_count" : [ 1 ]
@@ -8664,6 +8954,14 @@
 							}
 , 							{
 								"patchline" : 								{
+									"destination" : [ "obj-369", 0 ],
+									"hidden" : 1,
+									"source" : [ "obj-329", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
 									"destination" : [ "obj-36", 0 ],
 									"hidden" : 1,
 									"source" : [ "obj-33", 0 ]
@@ -8832,6 +9130,14 @@
 							}
 , 							{
 								"patchline" : 								{
+									"destination" : [ "obj-378", 0 ],
+									"hidden" : 1,
+									"source" : [ "obj-369", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
 									"destination" : [ "obj-374", 0 ],
 									"hidden" : 1,
 									"source" : [ "obj-370", 0 ]
@@ -8843,6 +9149,14 @@
 									"destination" : [ "obj-374", 0 ],
 									"hidden" : 1,
 									"source" : [ "obj-371", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-377", 0 ],
+									"hidden" : 1,
+									"source" : [ "obj-372", 0 ]
 								}
 
 							}
@@ -8872,9 +9186,81 @@
 							}
 , 							{
 								"patchline" : 								{
+									"destination" : [ "obj-378", 0 ],
+									"hidden" : 1,
+									"source" : [ "obj-377", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-362", 0 ],
+									"hidden" : 1,
+									"source" : [ "obj-378", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-378", 0 ],
+									"hidden" : 1,
+									"source" : [ "obj-379", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-382", 0 ],
+									"hidden" : 1,
+									"source" : [ "obj-381", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-378", 0 ],
+									"hidden" : 1,
+									"source" : [ "obj-382", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
 									"destination" : [ "obj-374", 0 ],
 									"hidden" : 1,
 									"source" : [ "obj-383", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-386", 0 ],
+									"hidden" : 1,
+									"source" : [ "obj-385", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-378", 0 ],
+									"hidden" : 1,
+									"source" : [ "obj-386", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-389", 0 ],
+									"hidden" : 1,
+									"source" : [ "obj-387", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-378", 0 ],
+									"hidden" : 1,
+									"source" : [ "obj-389", 0 ]
 								}
 
 							}
@@ -9016,7 +9402,7 @@
 							}
 , 							{
 								"patchline" : 								{
-									"destination" : [ "obj-93", 0 ],
+									"destination" : [ "obj-115", 0 ],
 									"hidden" : 1,
 									"source" : [ "obj-61", 0 ]
 								}
@@ -9166,8 +9552,7 @@
 								}
 
 							}
- ],
-						"bgcolor" : [ 0.94, 0.94, 0.94, 1.0 ]
+ ]
 					}
 ,
 					"patching_rect" : [ 6.0, 138.0, 929.0, 476.0 ],
@@ -9738,8 +10123,7 @@
 				"implicit" : 1
 			}
  ],
-		"autosave" : 0,
-		"bgcolor" : [ 0.941176, 0.941176, 0.941176, 1.0 ]
+		"autosave" : 0
 	}
 
 }

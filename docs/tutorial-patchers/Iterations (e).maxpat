@@ -443,7 +443,7 @@
 					"patching_rect" : [ 248.0, 389.0, 254.0, 33.0 ],
 					"style" : "",
 					"text" : "Uhm... what if lists have different length, or depth? How do I iterate on them in parallel?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

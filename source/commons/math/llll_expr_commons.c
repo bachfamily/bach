@@ -1,7 +1,7 @@
 /*
  *  llll_expr_commons.c
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -96,7 +96,7 @@ t_max_err lexpr_init(t_lexpr *this_lexpr, short ac, t_atom *av, long subs_count,
 {
     t_lexpr_lexeme *this_lex, **lexstack_ptr;
     t_lexpr_lexeme *lexs, **lexstack;
-    t_lexpr_token *tokqueue, *tokqueue_ptr, *this_lex_token, *tokqueue_last, *nextarg, *nextarg2, *nextarg3, temp_tok;
+    t_lexpr_token *tokqueue, *tokqueue_ptr, *this_lex_token, *tokqueue_last, *nextarg, *nextarg2, *nextarg3, *nextarg4, temp_tok;
     int i, lexc = 0;
     long chk = 0;
     short numvars = 0;
@@ -355,7 +355,7 @@ t_max_err lexpr_init(t_lexpr *this_lexpr, short ac, t_atom *av, long subs_count,
                 switch(tokqueue_ptr->t_operands) {
                         
                     case 1:	// and it has one only operand
-                        err |= lexpr_eval_one(tokqueue_ptr, &nextarg->t_contents.c_hatom, NULL, NULL, &result_hatom); // then simply evaluate it
+                        err |= lexpr_eval_one(tokqueue_ptr, &nextarg->t_contents.c_hatom, NULL, NULL, NULL, &result_hatom); // then simply evaluate it
                         nextarg->t_type = TT_HATOM;
                         nextarg->t_contents.c_hatom = result_hatom;
                         sysmem_copyptr(tokqueue_ptr + 1, tokqueue_ptr, (tokqueue_last - tokqueue_ptr) * sizeof(t_lexpr_token)); // and substitute func/op and operand with the result
@@ -367,7 +367,7 @@ t_max_err lexpr_init(t_lexpr *this_lexpr, short ac, t_atom *av, long subs_count,
                     case 2:	// if it has two operands
                         nextarg2 = nextarg - 1;
                         if (nextarg2->t_type == TT_HATOM) { // both operands are atoms, as in 1 2 +
-                            err |= lexpr_eval_one(tokqueue_ptr, &nextarg2->t_contents.c_hatom, &nextarg->t_contents.c_hatom, NULL, &result_hatom); // evaluate
+                            err |= lexpr_eval_one(tokqueue_ptr, &nextarg2->t_contents.c_hatom, &nextarg->t_contents.c_hatom, NULL, NULL, &result_hatom); // evaluate
                             nextarg2->t_type = TT_HATOM;
                             nextarg2->t_contents.c_hatom = result_hatom;
                             sysmem_copyptr(tokqueue_ptr + 1, nextarg, (tokqueue_last - tokqueue_ptr) * sizeof(t_lexpr_token)); // and substitute func/op and operands with the result
@@ -403,11 +403,28 @@ t_max_err lexpr_init(t_lexpr *this_lexpr, short ac, t_atom *av, long subs_count,
                         nextarg2 = nextarg - 1;
                         nextarg3 = nextarg - 2;
                         if (nextarg2->t_type == TT_HATOM && nextarg3->t_type == TT_HATOM) { // all three operands are hatoms
-                            err |= lexpr_eval_one(tokqueue_ptr, &nextarg3->t_contents.c_hatom, &nextarg2->t_contents.c_hatom, &nextarg->t_contents.c_hatom, &result_hatom); // evaluate
+                            err |= lexpr_eval_one(tokqueue_ptr, &nextarg3->t_contents.c_hatom, &nextarg2->t_contents.c_hatom, &nextarg->t_contents.c_hatom, NULL, &result_hatom); // evaluate
                             nextarg3->t_type = TT_HATOM;
                             nextarg3->t_contents.c_hatom = result_hatom;
                             sysmem_copyptr(tokqueue_ptr + 1, nextarg, (tokqueue_last - tokqueue_ptr) * sizeof(t_lexpr_token)); // and substitute func/op and operands with the result
                             tokqueue_last -= 3;
+                            tokqueue_ptr = nextarg3 - 1;
+                            again = 1;
+                        } else
+                            tokqueue_ptr = nextarg - 1;
+                        break;
+                        
+                        
+                    case 4: // if it has four operands (the only case for now is makepitchji)
+                        nextarg2 = nextarg - 1;
+                        nextarg3 = nextarg - 2;
+                        nextarg4 = nextarg - 3;
+                        if (nextarg2->t_type == TT_HATOM && nextarg3->t_type == TT_HATOM && nextarg4->t_type == TT_HATOM) { // all three operands are hatoms
+                            err |= lexpr_eval_one(tokqueue_ptr, &nextarg4->t_contents.c_hatom, &nextarg3->t_contents.c_hatom, &nextarg2->t_contents.c_hatom, &nextarg->t_contents.c_hatom, &result_hatom); // evaluate
+                            nextarg4->t_type = TT_HATOM;
+                            nextarg4->t_contents.c_hatom = result_hatom;
+                            sysmem_copyptr(tokqueue_ptr + 1, nextarg, (tokqueue_last - tokqueue_ptr) * sizeof(t_lexpr_token)); // and substitute func/op and operands with the result
+                            tokqueue_last -= 4;
                             tokqueue_ptr = nextarg3 - 1;
                             again = 1;
                         } else
@@ -526,16 +543,21 @@ t_bool lexpr_eval_upon(t_lexpr *expr, t_hatom *vars, t_hatom *stack)
             case TT_FUNC:
                 switch (thistok->t_operands) {
                     case 1:
-                        lexpr_eval_one(thistok, thisstack - 1, NULL, NULL, thisstack - 1);
+                        lexpr_eval_one(thistok, thisstack - 1, NULL, NULL, NULL, thisstack - 1);
                         break;
                     case 2:
-                        lexpr_eval_one(thistok, thisstack - 2, thisstack - 1, NULL, thisstack - 2);
+                        lexpr_eval_one(thistok, thisstack - 2, thisstack - 1, NULL, NULL, thisstack - 2);
                         thisstack--;
                         break;
                     case 3:
-                        lexpr_eval_one(thistok, thisstack - 3, thisstack - 2, thisstack - 1, thisstack - 3);
+                        lexpr_eval_one(thistok, thisstack - 3, thisstack - 2, thisstack - 1, NULL, thisstack - 3);
                         thisstack -= 2;
                         break;
+                    case 4:
+                        lexpr_eval_one(thistok, thisstack - 4, thisstack - 3, thisstack - 2, thisstack - 1, thisstack - 4);
+                        thisstack -= 3;
+                        break;
+
                 }
                 break;
             default:
@@ -545,7 +567,7 @@ t_bool lexpr_eval_upon(t_lexpr *expr, t_hatom *vars, t_hatom *stack)
     return err;
 }
 
-long lexpr_eval_one(const t_lexpr_token *verb, t_hatom *h1, t_hatom *h2, t_hatom *h3, t_hatom *res)
+long lexpr_eval_one(const t_lexpr_token *verb, t_hatom *h1, t_hatom *h2, t_hatom *h3, t_hatom *h4, t_hatom *res)
 {
     if (verb->t_type == TT_FUNC) {
         if (!h2) {
@@ -566,7 +588,7 @@ long lexpr_eval_one(const t_lexpr_token *verb, t_hatom *h1, t_hatom *h2, t_hatom
                     case H_DOUBLE:	hatom_setdouble(res, (verb->t_contents.c_func.f_ptrs.p_dptr_dd)(hatom_getdouble(h1), hatom_getdouble(h2)));	break;
                     case H_ALL:		(verb->t_contents.c_func.f_ptrs.p_vptr_hhh)(h1, h2, res);	break;
                 }
-        } else {
+        } else if (!h4) {
             if (!(hatom_is_number(h1)))
                 *res = *h1;
             else if (!(hatom_is_number(h2)))
@@ -577,6 +599,20 @@ long lexpr_eval_one(const t_lexpr_token *verb, t_hatom *h1, t_hatom *h2, t_hatom
                 switch (verb->t_contents.c_func.f_type) {
                     case H_DOUBLE:	hatom_setdouble(res, (verb->t_contents.c_func.f_ptrs.p_dptr_ddd)(hatom_getdouble(h1), hatom_getdouble(h2), hatom_getdouble(h3)));	break;
                     case H_ALL:		(verb->t_contents.c_func.f_ptrs.p_vptr_hhhh)(h1, h2, h3, res);	break;
+                }
+        } else {
+            if (!(hatom_is_number(h1)))
+                *res = *h1;
+            else if (!(hatom_is_number(h2)))
+                *res = *h2;
+            else if (!(hatom_is_number(h3)))
+                *res = *h3;
+            else if (!(hatom_is_number(h4)))
+                *res = *h4;
+            else
+                switch (verb->t_contents.c_func.f_type) {
+                    case H_DOUBLE:    hatom_setdouble(res, (verb->t_contents.c_func.f_ptrs.p_dptr_dddd)(hatom_getdouble(h1), hatom_getdouble(h2), hatom_getdouble(h3), hatom_getdouble(h4)));    break;
+                    case H_ALL:        (verb->t_contents.c_func.f_ptrs.p_vptr_hhhhh)(h1, h2, h3, h4, res);    break;
                 }
         }
         return errno;
@@ -787,7 +823,7 @@ long lexpr_invert(t_lexpr_token *verb, t_lexpr_token *arg2)
                     arg2->t_contents.c_hatom.h_w.w_double = 1. / arg2->t_contents.c_hatom.h_w.w_double;
                     break;
                 case H_PITCH:
-                    hatom_setrational(&arg2->t_contents.c_hatom, arg2->t_contents.c_hatom.h_w.w_pitch.toMC().inv());
+                    hatom_setdouble(&arg2->t_contents.c_hatom, 1. / arg2->t_contents.c_hatom.h_w.w_pitch.toMCdouble());
             }
             break;	
     }
@@ -1307,6 +1343,16 @@ long lexpr_append_lexeme_FUNC_ternary_ALL(t_lexpr_lexeme *lex, void(*f)(t_hatom 
     return E_OK;
 }
 
+long lexpr_append_lexeme_FUNC_4ary_ALL(t_lexpr_lexeme *lex, void(*f)(t_hatom *a, t_hatom *b, t_hatom *c, t_hatom *d, t_hatom *r), const char *name)
+{
+    lex->l_type = L_TOKEN;
+    lex->l_token.t_type = TT_FUNC;
+    lex->l_token.t_operands = 4;
+    lex->l_token.t_contents.c_func.f_ptrs.p_vptr_hhhhh = f;
+    lex->l_token.t_contents.c_func.f_type = H_ALL;
+    lex->l_token.t_contents.c_func.f_name = name;
+    return E_OK;
+}
 
 
 

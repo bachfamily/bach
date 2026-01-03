@@ -2,7 +2,7 @@
     /*
      *  exprparser.l
      *
-     * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+     * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
      *
      * This program is free software: you can redistribute it and/or modify it
      * under the terms of the GNU General Public License
@@ -30,11 +30,16 @@
 
 SEPARATOR ([ \t\n\r\(\)\[\]\{\}])
 UINT ([0-9]+)
+INTEGER ([+-]?{UINT})
 UFLOAT (((([0-9]*\.[0-9]+)|([0-9]+\.))([eE][-+]?[0-9]+)?)|([0-9]+[eE][-+]?[0-9]+))
 URAT ({UINT}[/][+-]?{UINT})
 NOTENAME ([a-g]|[A-G])
 ACCIDENTAL ([#bxdq\^v]+)
 NO_SPACES ([^ \t\n\r\f\v\x01])
+
+ETPITCHBASE ({NOTENAME}(({ACCIDENTAL}?{INTEGER})|({INTEGER}{ACCIDENTAL})))
+JIPITCHCOMMAS (\{(({INTEGER}:)*{INTEGER})?\})
+JIPITCHBASE ({NOTENAME}[#xb]*{JIPITCHCOMMAS}{INTEGER})
 
 %{
     #ifndef BACH_MAX
@@ -353,24 +358,16 @@ NO_SPACES ([^ \t\n\r\f\v\x01])
     return lexpr_append_lexeme_SYMBOL(epd->lexeme, gensym(""));
 }
 
-{NOTENAME}{ACCIDENTAL}?[-+]?{UINT} {
+{ETPITCHBASE} {
     BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, t_parser::eatPitchAsNameAccInt(yytext));
+    const char *next;
+    return lexpr_append_lexeme_PITCH(epd->lexeme, t_parser::eatPitchETBaseComp(yytext, &next));
 }
 
-{NOTENAME}[-+]?{UINT}{ACCIDENTAL} {
+{JIPITCHBASE}|{JIPITCHCOMMAS} {
     BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, t_parser::eatPitchAsNameIntAcc(yytext));
-}
-
-{NOTENAME}{ACCIDENTAL}?[-+]?{UINT}[-+]{UINT}+t {
-    BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, t_parser::eatPitchAsNameAccIntIntT(yytext));
-}
-
-{NOTENAME}{ACCIDENTAL}?[-+]?{UINT}[-+]{UINT}[/][-+]?{UINT}t {
-    BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, t_parser::eatPitchAsNameAccIntRatT(yytext));
+    const char *next;
+    return lexpr_append_lexeme_PITCH(epd->lexeme, t_parser::eatPitchJIBaseComp(yytext, &next));
 }
 
 {UINT}t {
@@ -387,13 +384,31 @@ NO_SPACES ([^ \t\n\r\f\v\x01])
 
 {UFLOAT}t {
     BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(0, t_shortRational(atof(yytext)), 0));
+    return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(0, t_tinyRational(atof(yytext)), 0));
 }
 
 t {
     BEGIN BINARY;
     return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(0, t_pitch::dblsharp, 0));
 }
+
+{UINT}r {
+    t_shortRational ratio = t_rational(atoi(yytext), 1);
+    BEGIN BINARY;
+    return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(ratio));
+}
+
+{URAT}r {
+    char *textend;
+    BEGIN BINARY;
+    return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(t_parser::eatRational(yytext)));
+}
+
+{UFLOAT}r {
+    BEGIN BINARY;
+    return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(t_rational(atof(yytext))));
+}
+
 
 "pi"  { BEGIN BINARY; return lexpr_append_lexeme_FLOAT(epd->lexeme, M_PI); }
 
@@ -445,10 +460,21 @@ t {
 "alter" { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_alter, "alter"); }
 "cents" { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_cents, "cents"); }
 "makepitch" { BEGIN BINARY; return lexpr_append_lexeme_FUNC_ternary_ALL(epd->lexeme, hatom_fn_makepitch, "makepitch"); }
+"makepitchji" { BEGIN BINARY; return lexpr_append_lexeme_FUNC_4ary_ALL(epd->lexeme, hatom_fn_makepitchji, "makepitchji"); }
 "approx" { BEGIN BINARY; return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_approx, "approx"); }
 "enharm" { BEGIN BINARY; return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_enharm, "enharm"); }
 
-
+"etwhitekey" { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_etwhitekey, "etwhitekey"); }
+"jiwhitekey" { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_jiwhitekey, "jiwhitekey"); }
+"et" { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_et, "et"); }
+"ji" { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_ji, "ji"); }
+"jiratio" { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_jiratio, "jiratio"); }
+"jiplof" { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_jiplof, "jiplof"); }
+"etplof" { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_etplof, "etplof"); }
+"jisharps" { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_jisharps, "jisharps"); }
+"etsharps" { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_etsharps, "etsharps"); }
+"etalter" { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_etalter, "etalter"); }
+"foldratio" { BEGIN BINARY; return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_fold, "foldratio"); }
 
 ([A-Z]|[a-z]|_)+ {
     BEGIN BINARY;

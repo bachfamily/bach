@@ -493,7 +493,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 84.625, 471.0, 21.0 ],
 									"text" : "Use Cmd+Shift+D (mac) or Ctrl+Shift+D (win) to dump (as for \"dump\" message)",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -549,7 +549,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 417.0, 284.0, 267.0, 25.0 ],
 									"text" : "Cmd+D (mac) or Ctrl+D (win) to duplicate",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -565,7 +565,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 417.0, 263.0, 241.0, 25.0 ],
 									"text" : "Cmd+P (mac) or Ctrl+P (win) to wrap",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -583,7 +583,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 417.0, 454.5, 266.0, 40.0 ],
 									"text" : "Cmd+Shift+P (mac) or Ctrl+Shift+P (win) to remove the external parentheses",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -742,7 +742,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 417.0, 429.5, 246.0, 25.0 ],
 									"text" : "Cmd+I (mac) or Ctrl+I (win) to reverse",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -758,7 +758,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 417.0, 404.0, 276.0, 25.0 ],
 									"text" : "Cmd+Y (mac) or Ctrl+Y (win) to scramble",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -775,7 +775,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 417.0, 364.0, 276.0, 40.0 ],
 									"text" : "Cmd+T and Cmd+R (mac) or Ctrl+T and Ctrl+R (win) to rotate the llll level",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -805,7 +805,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 417.0, 303.0, 303.0, 40.0 ],
 									"text" : "Use Cmd+C, Cmd+X, Cmd+V (mac) or Ctrl+C, Ctrl+X, Ctrl+V (win) to copy, cut, paste.",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -821,7 +821,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 417.0, 242.0, 276.0, 25.0 ],
 									"text" : "Backspace on a selected node to delete it",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -867,7 +867,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 337.0, 193.0, 283.0, 40.0 ],
 									"text" : "Double-clicking on any node to edit the content",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -885,7 +885,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 417.0, 202.0, 239.0, 40.0 ],
 									"text" : "(Add parenthesis to create inner levels)",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -1349,7 +1349,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 16.0, 400.5, 165.0, 36.0 ],
 									"text" : "Interface commands work  as in the Node-Link mode",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -3577,7 +3577,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 417.0, 221.0, 188.0, 40.0 ],
 									"text" : "Double-clicking on a node will let you edit the content",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -3594,7 +3594,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 417.0, 167.0, 244.0, 54.0 ],
 									"text" : "Clicking on a tree node will cause the corresponding element to be output, along with its address",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -3612,7 +3612,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 443.0, 248.0, 234.0, 40.0 ],
 									"text" : "Add parenthesis to create inner levels!",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -4680,7 +4680,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 418.0, 391.0, 188.0, 40.0 ],
 									"text" : "Double-clicking on a node to edit the content",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}

@@ -374,7 +374,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 392.0, 475.0, 231.0, 33.0 ],
 					"text" : "Good, fine, but slots keep being a volatile entity: I don't see them, I don't hear them!",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

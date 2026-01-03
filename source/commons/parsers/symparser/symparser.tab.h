@@ -79,6 +79,7 @@ extern int symparser_debug;
 #if ! defined SYMPARSER_STYPE && ! defined SYMPARSER_STYPE_IS_DECLARED
 union SYMPARSER_STYPE
 {
+#line 61 "symparser.y"
 
 	long l;
 	double d;
@@ -86,6 +87,7 @@ union SYMPARSER_STYPE
 	t_pitch p;
 	t_symbol *sym;
 
+#line 91 "symparser.tab.h"
 
 };
 typedef union SYMPARSER_STYPE SYMPARSER_STYPE;
@@ -99,6 +101,7 @@ typedef union SYMPARSER_STYPE SYMPARSER_STYPE;
 int symparser_parse (void *scanner, t_llll **ll, t_llll_stack *stack, long *depth);
 
 /* "%code provides" blocks.  */
+#line 26 "symparser.y"
 
   // Tell Flex the expected prototype of yylex.
   #define YY_DECL                             \
@@ -109,5 +112,6 @@ int symparser_parse (void *scanner, t_llll **ll, t_llll_stack *stack, long *dept
   // Declare the scanner.
   YY_DECL;
 
+#line 116 "symparser.tab.h"
 
 #endif /* !YY_SYMPARSER_SYMPARSER_TAB_H_INCLUDED  */

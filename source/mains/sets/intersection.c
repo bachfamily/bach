@@ -1,7 +1,7 @@
 /*
  *  intersection.c
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -336,6 +336,8 @@ void intersection_free(t_intersection *x)
 	codableobj_free((t_codableobj *) x);
 }
 
+// @arg 0 @name default @optional 1 @type llll @digest Default second llll
+// @description An optional second-inlet llll.
 t_intersection *intersection_new(t_symbol *s, short ac, t_atom *av)
 {
 	t_intersection *x = NULL;
@@ -343,19 +345,24 @@ t_intersection *intersection_new(t_symbol *s, short ac, t_atom *av)
 	t_max_err err = MAX_ERR_NONE;
 	
 	if ((x = (t_intersection *) object_alloc_debug(intersection_class))) {
-        if (codableobj_setup((t_codableobj *) x, ac, av) < 0) {
+        short true_ac = codableobj_setup((t_codableobj *) x, ac, av);
+        if (true_ac < 0) {
             object_free_debug(x);
             return nullptr;
         }
-		llllobj_obj_setup((t_llllobj_object *) x, 2, "444");
-		for (i = 2; i > 0; i--)
-			x->n_proxy[i] = proxy_new_debug((t_object *) x, i, &x->n_in);
-		x->n_empty = llll_get();
+        
+        llllobj_obj_setup((t_llllobj_object *) x, 2, "444");
+        if (true_ac) {
+            t_llll* def_llll = llllobj_parse_retain_and_store((t_object *) x, LLLL_OBJ_VANILLA, _sym_list, true_ac, av, 1);
+        }
+        for (i = 2; i > 0; i--)
+            x->n_proxy[i] = proxy_new_debug((t_object *) x, i, &x->n_in);
+        x->n_empty = llll_get();
         
         codableobj_finalize((t_codableobj *) x);
 
         
-	} else
+    } else
 		error(BACH_CANT_INSTANTIATE);
 	
     llllobj_set_current_version_number_and_ss((t_object *) x, LLLL_OBJ_VANILLA);

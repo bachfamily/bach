@@ -62,7 +62,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 170.0, 377.5, 428.0, 33.0 ],
 					"text" : "Ok, I trusted you, I didn't pick'n'choose, and I ended up with a 350MB+ file which only displays two notes. This doesn't make any sense, I'm so angry!",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

@@ -718,7 +718,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 171.0, 514.0, 489.0, 33.0 ],
 					"text" : "Ok, but I made a mistake. I connected the floating [print] to the output of [bach.nth], in this last example, and some strange bach.llll stuff appeared. Is my computer haunted?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

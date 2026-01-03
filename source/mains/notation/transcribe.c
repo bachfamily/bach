@@ -1,7 +1,7 @@
 /*
  *  transcribe.c
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -441,7 +441,7 @@ t_llll *transcribe_event_noteoff(t_transcribe *x, t_transcribe_event *ev)
     if (x->n_use_names)
         out = transcribe_get_unsel_long_llll(x, ev->n_assigned_name);
     else
-        out = transcribe_get_unsel_llll(x, ev->n_onset, hatom_gettype(&ev->n_pitch) == H_PITCH ? hatom_getpitch(&ev->n_pitch).toMC() : hatom_getdouble(&ev->n_pitch), ev->n_voice);
+        out = transcribe_get_unsel_llll(x, ev->n_onset, hatom_gettype(&ev->n_pitch) == H_PITCH ? hatom_getpitch(&ev->n_pitch).toMCdouble() : hatom_getdouble(&ev->n_pitch), ev->n_voice);
     llll_destroyelem(ev->n_parent);
     bach_freeptr(ev);
     return out;
@@ -458,7 +458,7 @@ void transcribe_allnotesoff(t_transcribe *x)
             if (x->n_use_names)
                 transcribe_send_unsel_long(x, ev->n_assigned_name);
             else
-                transcribe_send_unsel(x, ev->n_onset, hatom_gettype(&ev->n_pitch) == H_PITCH ? hatom_getpitch(&ev->n_pitch).toMC() : hatom_getdouble(&ev->n_pitch), ev->n_voice);
+                transcribe_send_unsel(x, ev->n_onset, hatom_gettype(&ev->n_pitch) == H_PITCH ? hatom_getpitch(&ev->n_pitch).toMCdouble() : hatom_getdouble(&ev->n_pitch), ev->n_voice);
         }
         transcribe_clear_active_notes(x);
         systhread_mutex_unlock(x->n_mutex);

@@ -1292,6 +1292,26 @@
       "bach.primeser"
     ]
   },
+  "bach.continuedfraction": {
+    "digest": "Continued fractions",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach math"
+    ],
+    "keywords": [
+      "fraction",
+      "continued",
+      "approximation",
+      "convergents"
+    ],
+    "seealso": [
+      "bach.primeser",
+      "bach.geomser",
+      "bach.recurser"
+    ]
+  },
   "bach.recurser": {
     "digest": "Series from recurrence relations",
     "module": "bach",
@@ -1332,6 +1352,26 @@
       "bach.arithmser",
       "bach.geomser",
       "bach.recurser"
+    ]
+  },
+  "bach.jilimit": {
+    "digest": "Just intonation prime limits",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach math"
+    ],
+    "keywords": [
+      "series",
+      "arithmetic",
+      "step",
+      "compute",
+      "calculate"
+    ],
+    "seealso": [
+      "bach.jiwheel",
+      "bach.fareyser"
     ]
   },
   "bach.resample": {
@@ -1468,6 +1508,27 @@
       "bach.expr",
       "bach.slot",
       "bach.reducefunction"
+    ]
+  },
+  "bach.fareyser": {
+    "digest": "Farey series",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach math"
+    ],
+    "keywords": [
+      "series",
+      "arithmetic",
+      "step",
+      "compute",
+      "calculate"
+    ],
+    "seealso": [
+      "bach.primeser",
+      "bach.geomser",
+      "bach.recurser"
     ]
   },
   "bach.geomser": {
@@ -1953,6 +2014,69 @@
       "bach.bachtree2omtree",
       "bach.score",
       "The World Outside"
+    ]
+  },
+  "bach.jiwheel": {
+    "digest": "Just intonation clock diagram",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach just intonation",
+      "bach interface",
+      "U/I"
+    ],
+    "keywords": [
+      "jiwheel",
+      "diagram",
+      "clock",
+      "just intonation",
+      "ratio",
+      "Helmholtz-Ellis",
+      "wheel",
+      "rotate"
+    ],
+    "seealso": [
+      "bach.jilimit",
+      "bach.fareyser"
+    ],
+    "palette": {
+      "category": [
+        "bach",
+        "bach objects",
+        "bach just intonation",
+        "bach interface",
+        "U/I"
+      ],
+      "action": "bach.jiwheel",
+      "pic": "bach.jiwheel.svg"
+    }
+  },
+  "bach.pitch": {
+    "digest": "Construction and query of pitches and their components",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach notation",
+      "bach pitches"
+    ],
+    "keywords": [
+      "convert",
+      "pitch",
+      "note",
+      "name",
+      "jicommas",
+      "ji",
+      "exponents",
+      "jiexps",
+      "ratio"
+    ],
+    "seealso": [
+      "bach.mc2p",
+      "bach.f2mc",
+      "bach.mc2f",
+      "bach.makepitch"
     ]
   },
   "bach.transcribe": {

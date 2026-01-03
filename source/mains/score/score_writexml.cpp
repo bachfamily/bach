@@ -1,7 +1,7 @@
 /*
  *  score_writexml.cpp
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -584,6 +584,36 @@ bool xml_close_hairpin(mxml_node_t* directionxml)
     return false;
 }
 
+class slurManager {
+private:
+    const t_slur* slurs[17];
+public:
+    slurManager() {
+        for (int i = 0; i < 17; i++)
+            slurs[i] = nullptr;
+    }
+    
+    int startSlur(const t_slur* s) {
+        for (int i = 1; i < 17; i++) {
+            if (!slurs[i]) {
+                slurs[i] = s;
+                return i;
+            }
+        }
+        return 0;
+    }
+    
+    int endSlur(const t_slur* s) {
+        for (int i = 1; i < 17; i++) {
+            if (slurs[i] == s) {
+                slurs[i] = nullptr;
+                return i;
+            }
+        }
+        return 0;
+    }
+};
+
 t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
 {
     long err = MAX_ERR_NONE;
@@ -760,6 +790,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
     
     partidx = 1;
     long voiceidx;
+    int voiceelementidx;
     for (voice = x->firstvoice, voiceidx = 1;
          voice && voiceidx <= numvoices;
          voice = voice->next, voiceidx++) {
@@ -771,7 +802,6 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
             numparts_elem = numparts_elem->l_next;
 
             voices_left_in_voiceensemble = hatom_getlong(&numparts_elem->l_hatom);
-            
             mxml_node_t *partxml = mxmlNewElement(partlistxml, "score-part");
             
             t_atom *names = NULL;
@@ -847,6 +877,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
         long clef;
         mxml_node_t *partxml;
         t_llll *open_gliss = export_glissandi ? llll_get() : NULL;
+        slurManager theSlurManager;
         
         if (new_voice_ensemble) {
             char part_id[16];
@@ -857,6 +888,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
             
             numparts_elem = numparts_elem->l_next;
             voices_left_in_voiceensemble = hatom_getlong(&numparts_elem->l_hatom);
+            voiceelementidx = 1;
         }
         stafftxt = NULL;
         long staves = 1;
@@ -1165,7 +1197,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                         mxml_node_t *stepxml = mxmlNewElement(pitchxml, "step");
                         mxml_node_t *alterxml = mxmlNewElement(pitchxml, "alter");
                         mxml_node_t *octavexml = mxmlNewElement(pitchxml, "octave");
-                        screen_midicents = note_get_screen_midicents(note);
+                        screen_midicents = note_get_display_midicents(note);
                         switch (screen_midicents % 1200) {
                             case 0:        mxmlNewText(stepxml, 0, "C");    break;
                             case 200:    mxmlNewText(stepxml, 0, "D");    break;
@@ -1175,8 +1207,9 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                             case 900:    mxmlNewText(stepxml, 0, "A");    break;
                             case 1100:    mxmlNewText(stepxml, 0, "B");    break;
                         }
+                        
                         // alter
-                        screen_accidental = note_get_screen_accidental(note);
+                        screen_accidental = note_get_display_accidentals_ordinary(note);
                         if (parenthesized_quartertones && screen_accidental.r_den > 2) {
                             if (parenthesized_quartertones == 30061984) { // yeah, that's bad and private :-) It's however a very bad convention, but I needed it now.
                                 screen_accidental = screen_accidental > 0 ? screen_accidental + genrat(1, 4) : screen_accidental - genrat(1, 4);
@@ -1193,7 +1226,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                             mxmlNewReal(alterxml, alter);
                         
                         // octave
-                        long octave = note_get_screen_midicents(note) / 1200 - 1;
+                        long octave = note_get_display_midicents(note) / 1200 - 1;
                         if (octave < 0)
                             object_warn((t_object *) x, "Octave lower than 1 in voice %ld, measure %ld doesn't comply with the MusicXML standard", voiceidx, measureidx);
                         
@@ -1224,13 +1257,16 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                         }
                     }
                     
+                    mxml_node_t *voice = mxmlNewElement(notexml, "voice");
+                    mxmlNewInteger(voice, voiceelementidx);
+                    
                     mxml_node_t *type = mxmlNewElement(notexml, "type");
                     mxmlNewText(type, 0, chordtype);
                     
                     for (i = 0; i < num_dots; i++)
                         mxmlNewElement(notexml, "dot");
                     
-                    if (note && note->show_accidental) {
+                    if (note && note->show_accidentals) {
                         mxml_node_t *accidental = bach_mxmlNewTextElement(notexml, "accidental", 0, acc_name);
                         if (add_par_qrtrtone)
                             mxmlElementSetAttr(accidental, "parentheses", "yes");
@@ -1362,6 +1398,30 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                     
                     mxml_node_t *notations = mxmlNewElement(notexml, "notations");
                     
+                    if (isfirstnote) {
+                        for (int i = 0; i < chord->num_slurs_from; i++) {
+                            const t_slur *s = chord->slur_from[i];
+                            const int idx = theSlurManager.endSlur(s);
+                            mxml_node_t *slurXML = mxmlNewElement(notations, "slur");
+                            mxmlElementSetAttr(slurXML, "type", "stop");
+                            char idxTxt[3];
+                            snprintf_zero(idxTxt, 3, "%d", idx);
+                            mxmlElementSetAttr(slurXML, "number", idxTxt);
+                        }
+                        for (int i = 0; i < chord->num_slurs_to; i++) {
+                            const t_slur *s = chord->slur_to[i];
+                            const int idx = theSlurManager.startSlur(s);
+                            mxml_node_t *slurXML = mxmlNewElement(notations, "slur");
+                            mxmlElementSetAttr(slurXML, "type", "start");
+                            char idxTxt[3];
+                            snprintf_zero(idxTxt, 3, "%d", idx);
+                            mxmlElementSetAttr(slurXML, "number", idxTxt);
+                            const int dir = s->direction;
+                            if (dir)
+                                mxmlElementSetAttr(slurXML, "placement", dir > 0 ? "above" : "below");
+                        }
+                    }
+                    
                     if (note) {
                         if (note->tie_from) { // stop the tie and delete this item
                             mxml_node_t *tied = mxmlNewElement(notations, "tied");
@@ -1447,7 +1507,11 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                     }
                     
                     
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
                     if (note && (note->num_articulations > 0 || (isfirstnote && chord->num_articulations > 0) || articulations_slot >= 0)) {
+#else
+                    if (note && articulations_slot >= 0) {
+#endif
                         long i;
                         mxml_node_t *ornaments = NULL;
                         mxml_node_t *technical = NULL;
@@ -1477,6 +1541,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                         
                         // 1. first the ornaments, who might require different <ornaments> elements
                         {
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
                             //      OLD WAY of assigning articulations:
                             for (i = 0; i < note->num_articulations; i++) {
                                 long id = note->articulation[i].articulation_ID;
@@ -1489,6 +1554,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                                     bach_xml_add_ornament(atp, &ornaments, notations, id);
                                 }
                             }
+#endif
                             
                             //      NEW WAY of assigning articulations:
                             if (articulations_slot >= 0 && articulations_slot < CONST_MAX_SLOTS) {
@@ -1502,6 +1568,8 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                         
                         // 2. then technical and articulations
                         {
+
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
                             // old way (the weird interleaved-fashion of this part is due to the fact that standard articulations must apparently
                             // be put BEFORE other-articulations in order to be properly parsed by Finale
                             for (i = 0; i < note->num_articulations; i++)
@@ -1520,6 +1588,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                                     bach_xml_add_technical_or_articulation(atp, &technical, &articulations, notations, chord->articulation[i].articulation_ID, 2);
                             }
                             
+#endif
                             
                             // new way
                             if (articulations_slot >= 0 && articulations_slot < CONST_MAX_SLOTS) {
@@ -1532,6 +1601,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                         
                         // 3. then fermatas (hopefully one!)
                         {
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
                             // old way:
                             for (i = 0; i < note->num_articulations; i++) {
                                 long id = note->articulation[i].articulation_ID;
@@ -1550,6 +1620,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                                     }
                                 }
                             }
+#endif
                             
                             // new way:
                             if (articulations_slot >= 0 && articulations_slot < CONST_MAX_SLOTS) {
@@ -1656,6 +1727,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
         } else {
             --voices_left_in_voiceensemble;
             new_voice_ensemble = false;
+            ++voiceelementidx;
         }
         
         if (open_gliss)

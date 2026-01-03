@@ -1,7 +1,7 @@
 /*
  *  mathFunction.hpp
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -98,6 +98,109 @@ public:
         setArgument(pn2);
         setArgument(pn3);
 
+    }
+};
+
+template <void (*FN)(t_hatom*, t_hatom*, t_hatom*, t_hatom*, t_hatom*)>
+class t_math4aryFunction : public t_mathFunction<4>
+{
+public:
+    t_math4aryFunction(const char *n, const char *pn1, const char *pn2, const char *pn3, const char *pn4) : t_mathFunction<4>((method) FN, n) {
+        setArgument(pn1);
+        setArgument(pn2);
+        setArgument(pn3);
+        setArgument(pn4);
+    }
+};
+
+class t_fnRandom : public t_mathFunction<3>
+{
+public:
+    t_fnRandom() : t_mathFunction<3>((method) hatom_fn_random_seed, "random") {
+        setArgument("low");
+        setArgument("high");
+        setArgument("seed", 0L);
+    }
+};
+
+class t_fnMakepitch : public t_mathFunction<11>
+{
+public:
+    t_fnMakepitch() : t_mathFunction<11>((method) hatom_fn_makepitch_ext, "makepitch") {
+        setArgument("etwhitekey", 0L);
+        setArgument("etalter", 0L);
+        setArgument("octave", 0L);
+        setArgument("jiwhitekey", 0L);
+        setArgument("jisharps", 0L);
+        setArgument("jiplof", 0L);
+        setArgument("jicommas");
+        setArgument("jiratio", new astConst(t_rational(0, 1)));
+        setArgument("jiexps");
+        setArgument("jilimit", 47L);
+        setArgument("jiapproxthresh", 67.);
+
+    }
+
+    t_llll* call(const t_execEnv &context) {
+        t_llll *lists[11];
+        lists[0] = context.argv[1]; // etwhitekey
+        lists[1] = context.argv[2]; // etalter
+        lists[2] = context.argv[3]; // octave
+        lists[3] = context.argv[4]; // jiwhitekey
+        lists[4] = context.argv[5]; // jisharps
+        lists[5] = context.argv[6]; // jiplof
+        lists[7] = context.argv[8]; // jiratio
+        lists[9] = context.argv[10]; // jilimit
+        lists[10] = context.argv[11]; // jiapproxthresh
+        t_llll *trash = llll_get();
+
+        {
+            // commas
+            t_llll *x = context.argv[7];
+            t_llll *y = llll_get();
+            if (x->l_depth == 1) {
+                llll_appendobj(y, x);
+            } else {
+                for (t_llllelem *e = x->l_head; e; e = e->l_next) {
+                    if (t_llll *l = hatom_getllll(&e->l_hatom); l != nullptr) {
+                        llll_appendobj(y, l);
+                    } else {
+                        l = llll_get();
+                        llll_appendhatom(l, &e->l_hatom);
+                        llll_appendobj(y, l);
+                        llll_appendllll(trash, l);
+                    }
+                }
+            }
+            lists[6] = y;
+        }
+        
+        {
+            // jiexps
+            t_llll *x = context.argv[9];
+            t_llll *y = llll_get();
+            if (x->l_depth == 1) {
+                llll_appendobj(y, x);
+            } else {
+                for (t_llllelem *e = x->l_head; e; e = e->l_next) {
+                    if (t_llll *l = hatom_getllll(&e->l_hatom); l != nullptr) {
+                        llll_appendobj(y, l);
+                    } else {
+                        l = llll_get();
+                        llll_appendhatom(l, &e->l_hatom);
+                        llll_appendobj(y, l);
+                        llll_appendllll(trash, l);
+                    }
+                }
+            }
+            lists[8] = y;
+        }
+        
+        t_llll *res = llllIterator<11>::run(lists);
+        llll_free(trash);
+        llll_free(lists[6]);
+        llll_free(lists[8]);
+        return res;
     }
 };
 

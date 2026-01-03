@@ -1,7 +1,7 @@
 /*
  *  llll_append.c
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -212,13 +212,13 @@ t_llllelem *llll_appendpitch(t_llll *where, t_pitch what, long flags, t_llll *ad
 }
 
 // a new llllelem is created
-t_llllelem *llll_appendpitch_from_elems(t_llll *where, t_atom_short degree, t_shortRational alter, t_atom_short octave, long flags, t_llll *adopter)
+t_llllelem *llll_appendpitch_from_elems(t_llll *where, const t_atom_short degree, const t_tinyRational alter, const t_shortRational r, const t_atom_short octave, const t_int32 flags, t_llll *adopter)
 {
     t_llllelem *outelem;
     if (!where)
         return NULL;
     outelem = llllelem_get();
-    hatom_setpitch_from_elems(&outelem->l_hatom, degree, alter, octave);
+    hatom_setpitch_from_elems(&outelem->l_hatom, degree, alter, r, octave);
     //hatom_setrational_from_elems(&outelem->l_hatom, what_num, what_den);
     outelem->l_flags = flags;
     llll_append(where, outelem, adopter);
@@ -416,13 +416,13 @@ t_llllelem *llll_prependpitch(t_llll *where, t_pitch what, long flags, t_llll *a
 }
 
 // a new llllelem is created
-t_llllelem *llll_prependpitch_from_elems(t_llll *where, t_atom_short degree, t_shortRational alter, t_atom_short octave, long flags, t_llll *adopter)
+t_llllelem *llll_prependpitch_from_elems(t_llll *where, const t_atom_short degree, const t_tinyRational alter, const t_shortRational r, const t_atom_short octave, const t_int32 flags, t_llll *adopter)
 {
     t_llllelem *outelem;
     if (!where)
         return NULL;
     outelem = llllelem_get();
-    hatom_setpitch_from_elems(&outelem->l_hatom, degree, alter, octave);
+    hatom_setpitch_from_elems(&outelem->l_hatom, degree, alter, r, octave);
     outelem->l_flags = flags;
     llll_prepend(where, outelem, adopter);
     pedantic_llll_check(where);
@@ -626,13 +626,13 @@ t_llllelem *llll_insertpitch_before(t_pitch what, t_llllelem *before_what, long 
     return outelem;
 }
 
-t_llllelem *llll_insertpitch_from_elems_before(t_atom_short degree, t_shortRational alter, t_atom_short octave, t_llllelem *before_what, long flags, t_llll *adopter)
+t_llllelem *llll_insertpitch_from_elems_before(const t_atom_short degree, const t_tinyRational alter, const t_shortRational r, const t_atom_short octave, t_llllelem *before_what, const t_int32 flags, t_llll *adopter)
 {
     t_llllelem *outelem;
     if (!before_what)
         return NULL;
     outelem = llllelem_get();
-    hatom_setpitch_from_elems(&outelem->l_hatom, degree, alter, octave);
+    hatom_setpitch_from_elems(&outelem->l_hatom, degree, alter, r, octave);
     outelem->l_flags = flags;
     llll_insert_before(outelem, before_what, adopter);
     pedantic_llll_check(before_what->l_parent);
@@ -819,13 +819,13 @@ t_llllelem *llll_insertpitch_after(t_pitch what, t_llllelem *after_what, long fl
     return outelem;
 }
 
-t_llllelem *llll_insertpitch_from_elems_after(t_atom_short degree, t_shortRational alter, t_atom_short octave, t_llllelem *after_what, long flags, t_llll *adopter)
+t_llllelem *llll_insertpitch_from_elems_after(const t_atom_short degree, const t_tinyRational alter, const t_shortRational r, const t_atom_short octave, t_llllelem *after_what, const t_int32 flags, t_llll *adopter)
 {
     t_llllelem *outelem;
     if (!after_what)
         return NULL;
     outelem = llllelem_get();
-    hatom_setpitch_from_elems(&outelem->l_hatom, degree, alter, octave);
+    hatom_setpitch_from_elems(&outelem->l_hatom, degree, alter, r, octave);
     outelem->l_flags = flags;
     llll_insert_after(outelem, after_what, adopter);
     pedantic_llll_check(after_what->l_parent);

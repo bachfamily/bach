@@ -202,7 +202,7 @@
 					"patching_rect" : [ 241.0, 482.0, 164.0, 20.0 ],
 					"style" : "",
 					"text" : "Enough for OM. What more?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

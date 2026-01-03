@@ -2,41 +2,16 @@
 	"patcher" : 	{
 		"fileversion" : 1,
 		"appversion" : 		{
-			"major" : 8,
+			"major" : 9,
 			"minor" : 0,
-			"revision" : 2,
+			"revision" : 0,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
 		"classnamespace" : "box",
 		"rect" : [ 93.0, 158.0, 617.0, 539.0 ],
-		"bglocked" : 0,
-		"openinpresentation" : 0,
-		"default_fontsize" : 13.0,
-		"default_fontface" : 0,
-		"default_fontname" : "Arial",
-		"gridonopen" : 1,
 		"gridsize" : [ 15.0, 15.0 ],
-		"gridsnaponopen" : 1,
-		"objectsnaponopen" : 1,
-		"statusbarvisible" : 2,
-		"toolbarvisible" : 1,
-		"lefttoolbarpinned" : 0,
-		"toptoolbarpinned" : 0,
-		"righttoolbarpinned" : 0,
-		"bottomtoolbarpinned" : 0,
-		"toolbars_unpinned_last_save" : 0,
-		"tallnewobj" : 0,
-		"boxanimatetime" : 200,
-		"enablehscroll" : 1,
-		"enablevscroll" : 1,
-		"devicewidth" : 0.0,
-		"description" : "",
-		"digest" : "",
-		"tags" : "",
-		"style" : "",
-		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
 					"bubble" : 1,
@@ -47,7 +22,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 219.0, 278.0, 209.0, 54.0 ],
+					"patching_rect" : [ 211.0, 278.0, 209.0, 54.0 ],
 					"text" : "... or this, since cos takes as its first (and only) argument the exact thing that map passes."
 				}
 
@@ -86,6 +61,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 293.5, 199.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -142,6 +118,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 186.5, 255.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -159,7 +136,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 285.0, 57.5, 206.0, 54.0 ],
+					"patching_rect" : [ 288.0, 65.0, 206.0, 54.0 ],
 					"text" : "The \"map\" function processes all the items of the incoming llll with its lambda, one by one."
 				}
 
@@ -198,6 +175,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 80.5, 274.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -309,6 +287,7 @@
 
 			}
  ],
+		"originid" : "pat-382",
 		"dependency_cache" : [ 			{
 				"name" : "bach.eval.mxo",
 				"type" : "iLaX"

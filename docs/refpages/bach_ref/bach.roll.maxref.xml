@@ -667,9 +667,10 @@
 				(voice popup menu) or on the background (backgroun popup menu). <br />
 				<br />
 				Marker regions
-				• <m>doubleclick</m> on marker region strips: Select items in region <br />
+				• <m>doubleclick</m> on marker region strips (but not on names), or <m>Shift+doubleclick</m> on marker region strips: Select items in region <br />
 				• <m>click+drag</m> on the end portion of a marker region strip: Extend the marker region <br />
 				• <m>doubleclick</m> on the end portion of a marker region strip: Extend the marker region till the next marker <br />
+				• <m>Cmd+click</m> (mac) or <m>Ctrl+click</m> (win) on the end portion of a marker region strip: Turn region into a simple marker <br />
 				<br />
 				Selection, zooming, scrollbar and dilation rectangle: <br />
 				• <m>click</m> on any item: Select item <br />
@@ -893,7 +894,16 @@
 				In its most general form, each chord can have a specification defining its name(s). This specification must be in the form
 				<b>[name <m>NAME_OR_LLLL_OF_NAMES</m>]</b>, and must be put after the last note llll,
 				before the <m>chord_flag</m>. For instance, a chord definition might
-				have the form <b>[500 [7000. 500 127] [7200. 1200 100] [name paul] 0]</b>
+				have the form <b>[500 [7000. 500 127] [7200. 1200 100] [name paul] 0]</b>. <br />
+				Chords can also bear an additional slur specification, accounting for slurs that start on the chord.
+				<br /> <br />
+				A slur beginning on a given chord is identified by appending a list of the type
+				<b>[slurs <m>SLUR1</m> <m>optional:SLUR2</m> <m>optional:SLUR3</m>]</b>.
+				Up to three slurs can be defined. Every <m>SLUR</m> can be represented by an integer number, simply
+				counting the number of chords spanned by the slur.
+				Alternatively, every <m>SLUR</m> can be a complex list of the kind:
+				<b>[ <m>number_of_spanned_chords</m> [ name <m>name_or_llll_of_names</m> ] [ direction <m>direction_as_int</m> ] ]</b>
+				where <m>direction_as_int</m> sets the slur direction: 0 for auto, 1 for up and -1 for down.
 				<br /> <br />
 				For <o>bach.roll</o>, the gathered syntax for any note is, in its simplest form <b>[<m>pitch_cents</m> <m>duration</m> <m>velocity</m> <m>note_flag</m>]</b>
 				where <m>pitch_cents</m> is the pitch of the note in MIDI cents, the <m>duration</m> is measured in milliseconds, the <m>velocity</m>
@@ -1045,7 +1055,16 @@
 				In its most general form, each chord can have a specification defining its name(s). This specification must be in the form
 				<b>[name <m>NAME_OR_LLLL_OF_NAMES</m>]</b>, and must be put after the last note llll,
 				before the <m>chord_flag</m>. For instance, a chord definition might
-				have the form <b>[500 [7000. 500 127] [7200. 1200 100] [name paul] 0]</b>
+				have the form <b>[500 [7000. 500 127] [7200. 1200 100] [name paul] 0]</b>. <br />
+				Chords can also bear an additional slur specification, accounting for slurs that start on the chord.
+				<br /> <br />
+				A slur beginning on a given chord is identified by appending a list of the type
+				<b>[slurs <m>SLUR1</m> <m>optional:SLUR2</m> <m>optional:SLUR3</m>]</b>.
+				Up to three slurs can be defined. Every <m>SLUR</m> can be represented by an integer number, simply
+				counting the number of chords spanned by the slur.
+				Alternatively, every <m>SLUR</m> can be a complex list of the kind:
+				<b>[ <m>number_of_spanned_chords</m> [ name <m>name_or_llll_of_names</m> ] [ direction <m>direction_as_int</m> ] ]</b>
+				where <m>direction_as_int</m> sets the slur direction: 0 for auto, 1 for up and -1 for down.
 				<br /> <br />
 				For <o>bach.roll</o>, the gathered syntax for any note is, in its simplest form <b>[<m>pitch_cents</m> <m>duration</m> <m>velocity</m> <m>note_flag</m>]</b>
 				where <m>pitch_cents</m> is the pitch of the note in MIDI cents, the <m>duration</m> is measured in milliseconds, the <m>velocity</m>
@@ -1225,6 +1244,8 @@
 			<description>
 				Syntax: <b>addslur <m>[&lt;symbol: selection&gt;]</m> <m>[&lt;llll: start_path&gt;]</m> <m>[&lt;llll: end_path&gt;]</m> <i>[message attributes]</i> </b><br />
 				Examples:<br />
+				• <b>addslur selection</b>   <i>→ add a slur over the selected chords</i><br />
+				• <b>addslur selection @name john</b>   <i>→ the same, with a name</i><br />
 				• <b>addslur [1 1 1] [1 3 2]</b>   <i>→ add a slur from the first chord to the second chord of the 3rd measure</i><br />
 				• <b>addslur [1 1 1] [1 3 2] @name john</b>   <i>→ the same, with a name</i><br />
 				<br />
@@ -1238,15 +1259,15 @@
 				<br />				See also:<m>clearslur</m><br />
 			</description>
 		</method>
-		<method name="adjustadditionalstartpad">
+		<method name="adjustpadafterclef">
 			<arglist />
 			<digest>
-				Adjust additional start pad automatically
+				Adjust pad after clef automatically
 			</digest>
 			<description>
-				The <m>adjustadditionalstartpad</m> adjusts automatically the additional
+				The <m>adjustpadafterclef</m> adjusts automatically the additional
 				padding space at the beginning of the <o>bach.roll</o>, so that all accidentals
-				of the notes near the beginning can be properly displayed. Also see the <m>additionalstartpad</m> attribute.
+				of the notes near the beginning can be properly displayed. Also see the <m>padafterclef</m> attribute.
 			</description>
 		</method>
 		<method name="appendslotitem">
@@ -2095,7 +2116,16 @@
 				In its most general form, each chord can have a specification defining its name(s). This specification must be in the form
 				<b>[name <m>NAME_OR_LLLL_OF_NAMES</m>]</b>, and must be put after the last note llll,
 				before the <m>chord_flag</m>. For instance, a chord definition might
-				have the form <b>[500 [7000. 500 127] [7200. 1200 100] [name paul] 0]</b>
+				have the form <b>[500 [7000. 500 127] [7200. 1200 100] [name paul] 0]</b>. <br />
+				Chords can also bear an additional slur specification, accounting for slurs that start on the chord.
+				<br /> <br />
+				A slur beginning on a given chord is identified by appending a list of the type
+				<b>[slurs <m>SLUR1</m> <m>optional:SLUR2</m> <m>optional:SLUR3</m>]</b>.
+				Up to three slurs can be defined. Every <m>SLUR</m> can be represented by an integer number, simply
+				counting the number of chords spanned by the slur.
+				Alternatively, every <m>SLUR</m> can be a complex list of the kind:
+				<b>[ <m>number_of_spanned_chords</m> [ name <m>name_or_llll_of_names</m> ] [ direction <m>direction_as_int</m> ] ]</b>
+				where <m>direction_as_int</m> sets the slur direction: 0 for auto, 1 for up and -1 for down.
 				<br /> <br />
 				For <o>bach.roll</o>, the gathered syntax for any note is, in its simplest form <b>[<m>pitch_cents</m> <m>duration</m> <m>velocity</m> <m>note_flag</m>]</b>
 				where <m>pitch_cents</m> is the pitch of the note in MIDI cents, the <m>duration</m> is measured in milliseconds, the <m>velocity</m>
@@ -2714,6 +2744,20 @@
 				<br />				See also:<m>copyslot</m>,<m>moveslot</m>,<m>setslot</m>,<m>changeslotitem</m>,<m>resetslotinfo</m><br />
 			</description>
 		</method>
+		<method name="etapprox">
+			<arg name="tonedivision" optional="1" type="int" />
+			<digest>
+				Approximate selected pitches to equal temperament
+			</digest>
+			<description>
+				Syntax: <b>etapprox <m>[&lt;int: tonedivision&gt;]</m> </b><br />				<br />
+				The <m>approxet</m> message approximates the pitches of each selected note to the
+				currently defined equal temperament (see the <m>tonedivision</m> attribute).
+				If an additional integer argument is provided, it is consider to be a custom tonedivision
+				for the approximation
+				<br />				See also:<m>snappitchtogrid</m>,<m>jiapprox</m><br />
+			</description>
+		</method>
 		<method name="explodechords">
 			<arg name="selection" optional="1" type="symbol" />
 			<digest>
@@ -3249,7 +3293,16 @@
 				In its most general form, each chord can have a specification defining its name(s). This specification must be in the form
 				<b>[name <m>NAME_OR_LLLL_OF_NAMES</m>]</b>, and must be put after the last note llll,
 				before the <m>chord_flag</m>. For instance, a chord definition might
-				have the form <b>[500 [7000. 500 127] [7200. 1200 100] [name paul] 0]</b>
+				have the form <b>[500 [7000. 500 127] [7200. 1200 100] [name paul] 0]</b>. <br />
+				Chords can also bear an additional slur specification, accounting for slurs that start on the chord.
+				<br /> <br />
+				A slur beginning on a given chord is identified by appending a list of the type
+				<b>[slurs <m>SLUR1</m> <m>optional:SLUR2</m> <m>optional:SLUR3</m>]</b>.
+				Up to three slurs can be defined. Every <m>SLUR</m> can be represented by an integer number, simply
+				counting the number of chords spanned by the slur.
+				Alternatively, every <m>SLUR</m> can be a complex list of the kind:
+				<b>[ <m>number_of_spanned_chords</m> [ name <m>name_or_llll_of_names</m> ] [ direction <m>direction_as_int</m> ] ]</b>
+				where <m>direction_as_int</m> sets the slur direction: 0 for auto, 1 for up and -1 for down.
 				<br /> <br />
 				For <o>bach.roll</o>, the gathered syntax for any note is, in its simplest form <b>[<m>pitch_cents</m> <m>duration</m> <m>velocity</m> <m>note_flag</m>]</b>
 				where <m>pitch_cents</m> is the pitch of the note in MIDI cents, the <m>duration</m> is measured in milliseconds, the <m>velocity</m>
@@ -3616,7 +3669,16 @@
 				In its most general form, each chord can have a specification defining its name(s). This specification must be in the form
 				<b>[name <m>NAME_OR_LLLL_OF_NAMES</m>]</b>, and must be put after the last note llll,
 				before the <m>chord_flag</m>. For instance, a chord definition might
-				have the form <b>[500 [7000. 500 127] [7200. 1200 100] [name paul] 0]</b>
+				have the form <b>[500 [7000. 500 127] [7200. 1200 100] [name paul] 0]</b>. <br />
+				Chords can also bear an additional slur specification, accounting for slurs that start on the chord.
+				<br /> <br />
+				A slur beginning on a given chord is identified by appending a list of the type
+				<b>[slurs <m>SLUR1</m> <m>optional:SLUR2</m> <m>optional:SLUR3</m>]</b>.
+				Up to three slurs can be defined. Every <m>SLUR</m> can be represented by an integer number, simply
+				counting the number of chords spanned by the slur.
+				Alternatively, every <m>SLUR</m> can be a complex list of the kind:
+				<b>[ <m>number_of_spanned_chords</m> [ name <m>name_or_llll_of_names</m> ] [ direction <m>direction_as_int</m> ] ]</b>
+				where <m>direction_as_int</m> sets the slur direction: 0 for auto, 1 for up and -1 for down.
 				<br /> <br />
 				For <o>bach.roll</o>, the gathered syntax for any note is, in its simplest form <b>[<m>pitch_cents</m> <m>duration</m> <m>velocity</m> <m>note_flag</m>]</b>
 				where <m>pitch_cents</m> is the pitch of the note in MIDI cents, the <m>duration</m> is measured in milliseconds, the <m>velocity</m>
@@ -3863,6 +3925,20 @@
 				If an element has no names, the <m>name</m> specification is never given as output.
 				<br /> <br />
 				<br />				See also:<m>getcurrentchord</m>,<m>sample</m><br />
+			</description>
+		</method>
+		<method name="jiapprox">
+			<arg name="jilimit" optional="1" type="int" />
+			<digest>
+				Approximate selected pitches with just intonation
+			</digest>
+			<description>
+				Syntax: <b>jiapprox <m>[&lt;int: jilimit&gt;]</m> </b><br />				<br />
+				The <m>approxji</m> message approximates the pitches of each selected note to the
+				currently defined just intonation limit (see the <m>jilimit</m> attribute).
+				If an additional integer argument is provided, it is consider to be the custom prime limit
+				for the approximation
+				<br />				See also:<m>snappitchtogrid</m>,<m>etapprox</m><br />
 			</description>
 		</method>
 		<method name="lambda">
@@ -4186,7 +4262,16 @@
 				In its most general form, each chord can have a specification defining its name(s). This specification must be in the form
 				<b>[name <m>NAME_OR_LLLL_OF_NAMES</m>]</b>, and must be put after the last note llll,
 				before the <m>chord_flag</m>. For instance, a chord definition might
-				have the form <b>[500 [7000. 500 127] [7200. 1200 100] [name paul] 0]</b>
+				have the form <b>[500 [7000. 500 127] [7200. 1200 100] [name paul] 0]</b>. <br />
+				Chords can also bear an additional slur specification, accounting for slurs that start on the chord.
+				<br /> <br />
+				A slur beginning on a given chord is identified by appending a list of the type
+				<b>[slurs <m>SLUR1</m> <m>optional:SLUR2</m> <m>optional:SLUR3</m>]</b>.
+				Up to three slurs can be defined. Every <m>SLUR</m> can be represented by an integer number, simply
+				counting the number of chords spanned by the slur.
+				Alternatively, every <m>SLUR</m> can be a complex list of the kind:
+				<b>[ <m>number_of_spanned_chords</m> [ name <m>name_or_llll_of_names</m> ] [ direction <m>direction_as_int</m> ] ]</b>
+				where <m>direction_as_int</m> sets the slur direction: 0 for auto, 1 for up and -1 for down.
 				<br /> <br />
 				For <o>bach.roll</o>, the gathered syntax for any note is, in its simplest form <b>[<m>pitch_cents</m> <m>duration</m> <m>velocity</m> <m>note_flag</m>]</b>
 				where <m>pitch_cents</m> is the pitch of the note in MIDI cents, the <m>duration</m> is measured in milliseconds, the <m>velocity</m>
@@ -5898,11 +5983,11 @@
 		<method name="snappitchtogrid">
 			<arglist />
 			<digest>
-				Snap selected notes' pitches to the current microtonal grid
+				Snap selected pitches to the current microtonal settings
 			</digest>
 			<description>
 				The <m>snappitchtogrid</m> message snaps the midicents of each selected note to the
-				currently active microtonal grid (see the <m>tonedivision</m> attribute).
+				currently displayed pitch.
 				<br />				See also:<m>respell</m>,<m>snaponsettogrid</m>,<m>snaptailtogrid</m><br />
 			</description>
 		</method>
@@ -6403,6 +6488,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Accidental Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -6430,18 +6516,18 @@
 			</digest>
 			<description>
 				@description Sets the font used to display accidentals.
-				The official notation bach font is "November for bach", created by Robert Piéchaud (www.poeticprocessing.net) and
-				automatically loaded at bach startup. "November for bach" is a light version of the famous November font.
+				The bach package by default loads the "Bravura" font, developed by Steinberg.
+				The bach package also includes the font "November for bach", created by Robert Piéchaud (www.poeticprocessing.net).
+				"November for bach" is a light version of the famous November font.
 				The full November font covers a wide range of music symbols, from Renaissance to the XXI century, and gives a unique,
 				warm and lively look to your music scores. It is fully compatible with Finale, Sibelius and other notation softwares.
 				You can purchase November from this web address: www.klemm-music.de/notation/november/.
-				Other supported fonts are: Accidentals (up to the eighth-tones), Tamburo (up to the quartertones),
-				Maestro, Petrucci, Boulez, Engraver Font Set (up to the semitones).
+				Other supported fonts are: Boulez, Maestro, Petrucci, Engraver Font Set.
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
-				<attribute name="default" get="1" set="1" type="symbol" size="1" value="\" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Accidentals Font" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
@@ -6466,7 +6552,7 @@
 				<br /> <br />
 			</description>
 			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Accidental Graphic" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
@@ -6489,7 +6575,7 @@
 				<br /> <br />
 			</description>
 			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Accidental Preferences" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
@@ -6508,27 +6594,6 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Edit" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Active Part" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
-			</attributelist>
-		</attribute>
-		<attribute name="additionalstartpad" get="1" set="1" type="float" size="1">
-			<digest>
-				Additional Start Pad
-			</digest>
-			<description>
-				Sets an additional left pad to the domain display start, in pixels (rescaled according to the <m>vzoom</m>),
-				This pad is located right after each clef, before the music content starts.
-				In <o>bach.roll</o>, this pad is extremely useful if you have chords around 0ms
-				having a lot of accidentals. In this case you can shift, via this pad, the position of the 0ms on the screen, so that all accidentals
-				are correctly displayed. Also see the message <m>adjustadditionalstartpad</m>.
-				<br /> <br />
-			</description>
-			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
-				<attribute name="default" get="1" set="1" type="float" size="1" value="0." />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Additional Start Pad" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
@@ -6668,10 +6733,43 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Annotation Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
-		<attribute name="annotationfontsize" get="1" set="1" type="float" size="1">
+		<attribute name="annotationsalign" get="1" set="1" type="int" size="1">
+			<digest>
+				Annotation Alignment
+			</digest>
+			<description>
+				Sets how the annotation must be aligned with respect to the note to which they refer.
+				Possibilities are: "Auto", "Left", "Center", "Right". Currently "Auto" completely coincides with "Left".
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Annotation Alignment" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
+			</attributelist>
+		</attribute>
+		<attribute name="annotationsfont" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Annotations Font
+			</digest>
+			<description>
+				@description Sets the font used to display annotations (default is Arial).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
+				<attribute name="default" get="1" set="1" type="symbol" size="1" value="Arial" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Annotations Font" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
+			</attributelist>
+		</attribute>
+		<attribute name="annotationsfontsize" get="1" set="1" type="float" size="1">
 			<digest>
 				Annotation Font Size
 			</digest>
@@ -6687,18 +6785,21 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
-		<attribute name="annotationsfont" get="1" set="1" type="symbol" size="1">
+		<attribute name="annotationsvadj" get="1" set="1" type="float" size="1">
 			<digest>
-				Annotations Font
+				Annotations Vertical Adjustment
 			</digest>
 			<description>
-				@description Sets the font used to display annotations (default is Arial).
+				Sets a vertical shift (in pixels, rescaled depending on the <m>vzoom</m>) of the
+				annotations display.
 			</description>
 			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
-				<attribute name="default" get="1" set="1" type="symbol" size="1" value="Arial" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Annotations Font" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Annotations Vertical Adjustment" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
 		<attribute name="applyslope" get="1" set="1" type="int" size="1">
@@ -6729,6 +6830,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Articulation Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -6738,17 +6840,16 @@
 			</digest>
 			<description>
 				@description Sets the font used to display articulations.
-				The official notation bach font is "November for bach", created by Robert Piéchaud (www.poeticprocessing.net) and
-				automatically loaded at bach startup. "November for bach" is a light version of the famous November font.
+				The bach package by default loads the "Bravura" font, developed by Steinberg.
+				The bach package also includes the font "November for bach", created by Robert Piéchaud (www.poeticprocessing.net).
+				"November for bach" is a light version of the famous November font.
 				The full November font covers a wide range of music symbols, from Renaissance to the XXI century, and gives a unique,
 				warm and lively look to your music scores. It is fully compatible with Finale, Sibelius and other notation softwares.
 				You can purchase November from this web address: www.klemm-music.de/notation/november/.
-				Other supported fonts are: Boulez, Maestro, Petrucci, Engraver Font Set. Not all articulations are supported by all fonts.
-				You can however always define custom articulations with any font of your choice.
+				Other supported fonts are: Boulez, Maestro, Petrucci, Engraver Font Set.
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
-				<attribute name="default" get="1" set="1" type="symbol" size="1" value="\" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Articulations Font" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
@@ -6832,6 +6933,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Auxiliary Clef Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -6846,6 +6948,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.4 0.4 0.4 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Auxiliary Staff Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -6860,6 +6963,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="1. 1. 1. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Background Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -6939,6 +7043,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.6 0.6 0.6 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Border Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -6964,7 +7069,8 @@
 			</digest>
 			<description>
 				Toggles the ability to display pitch breakpoints as real notes (possibly with accidentals).
-				If this is not set, pitch breakpoints are displayed as small diamonds.
+				The options are: no noteheads (0, default); all noteheads, tails included (1); noteheads only
+				for internal breakpoints (2)
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
@@ -6972,7 +7078,7 @@
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Breakpoints Have Noteheads" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
 		<attribute name="breakpointshavevelocity" get="1" set="1" type="int" size="1">
@@ -7009,18 +7115,66 @@
 		</attribute>
 		<attribute name="catchplay" get="1" set="1" type="int" size="1">
 			<digest>
-				Catch Play Head
+				Catch Playhead
 			</digest>
 			<description>
-				Toggles the ability to follow the playhead in the domain during playback.
+				Handles how the playhead moves during playback, and how its moving modifies the domain of the object. <br />
+				0 = Don't: playhead moves, but domain stays the same; <br />
+				1 = ChangePage: playhead moves, and domain changes once playhead gets to the end of the line; <br />
+				2 = FixedPlayhead: playhead remains fixed at a specific position, set by the attribute <m>playheadfixedpos</m>; <br />
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Play" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Catch Play Head" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Catch Playhead" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
+			</attributelist>
+		</attribute>
+		<attribute name="centsdifffont" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Cents Differences Font
+			</digest>
+			<description>
+				Sets the font for cents difference display.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
+				<attribute name="default" get="1" set="1" type="symbol" size="1" value="Arial" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Cents Differences Font" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
+			</attributelist>
+		</attribute>
+		<attribute name="centsdifffontsize" get="1" set="1" type="float" size="1">
+			<digest>
+				Cents Differences Font Size
+			</digest>
+			<description>
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="8" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Cents Differences Font Size" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="centssymbol" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Cents Symbol
+			</digest>
+			<description>
+				Symbol used to represent cents (or MIDIcents).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="symbol" size="1" value="¢" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Cents Symbol" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
 		<attribute name="clefcolor" get="1" set="1" type="rgba" size="1">
@@ -7034,6 +7188,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Clef Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -7191,6 +7346,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Dynamics Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -7282,6 +7438,28 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
+		<attribute name="eighthtonearrow" get="1" set="1" type="int" size="1">
+			<digest>
+				Eighth-Tone Arrow Display
+			</digest>
+			<description>
+				Decides how to use eighth-tone arrows: <br />
+				- According To Direction: upward accidentals always get upward arrows, downward accidentals always get downward arrows.
+				This means, for instance, that <b>Fq^5</b> is displayed instead of <b>F#v5</b>. <br />
+				- On Semitonal Accidentals Only: arrows are only placed on semitonal accidentals.
+				This means, for instance, that <b>F#v5</b> is displayed instead of <b>Fq^5</b>.
+				This feature is only supported for the (default) Bravura font.
+				<br /> <br />
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Eighth-Tone Arrow Display" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
+			</attributelist>
+		</attribute>
 		<attribute name="embed" get="1" set="1" type="int" size="1">
 			<digest>
 				Save Data With Patcher
@@ -7349,7 +7527,7 @@
 				<br /> <br />
 			</description>
 			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
 				<attribute name="default" get="1" set="1" type="sym_array" size="0" value="default" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Custom Enharmonic Table" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
@@ -7397,6 +7575,7 @@
 			<description>
 			</description>
 			<attributelist>
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -7407,6 +7586,7 @@
 			<description>
 			</description>
 			<attributelist>
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -7417,6 +7597,7 @@
 			<description>
 			</description>
 			<attributelist>
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -7534,6 +7715,90 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
+		<attribute name="jialwaysshowpythacc" get="1" set="1" type="int" size="1">
+			<digest>
+				Always Show JI Pythagorean Accidentals
+			</digest>
+			<description>
+				Toggles the ability to always display accidentals for Pythagorean diatonic pitches in jusst intonation.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Just Intonation" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Always Show JI Pythagorean Accidentals" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="jiapproxthresh" get="1" set="1" type="float" size="1">
+			<digest>
+				JI Approximation Threshold (Cents)
+			</digest>
+			<description>
+				Sets the approximation threshold for automatically converting cents into just intonation.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Just Intonation" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="67" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="JI Approximation Threshold (Cents)" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="jibase" get="1" set="1" type="" size="1">
+			<digest>
+				Reference Diatonic Pitch for JI Ratios
+			</digest>
+			<description>
+				Sets the reference diatonic pitch for just intonation ratios.
+			</description>
+			<attributelist>
+				<attribute name="default" get="1" set="1" type="" size="1" value="C5" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Reference Diatonic Pitch for JI Ratios" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="jilimit" get="1" set="1" type="int" size="1">
+			<digest>
+				JI Harmonic Limit
+			</digest>
+			<description>
+				Sets the just intonation harmonic limit for the score display.
+				This is the analogous, for just intonation, of the <m>tonedivision</m> attribute, in that
+				it doesn't change the profound nature of the pitch (which can very well be in a higher limit)
+				but it only trims its display to the selected harmonic prime number, and adjusts the interface
+				accordingly
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Just Intonation" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="5" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="JI Harmonic Limit" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="jishowetoffset" get="1" set="1" type="int" size="1">
+			<digest>
+				Show Equal-Tempered Offset for Mixed Pitches
+			</digest>
+			<description>
+				Toggles the ability to display the equal-tempered offsets for mixed pitches (including
+				both an equal-tempered offset and a non-trivial just intonation portion).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Just Intonation" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Equal-Tempered Offset for Mixed Pitches" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
 		<attribute name="jitmatrix" get="1" set="1" type="symbol" size="1">
 			<digest>
 				Mirror To Jitter Matrix
@@ -7613,6 +7878,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Key Signature Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -7674,6 +7940,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.5 0.5 0.5 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Mouseover Legend Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -7948,6 +8215,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.83 0.04 0.04 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Lock Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -7964,6 +8232,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Play" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Loop Region" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text_large" />
 			</attributelist>
@@ -7979,6 +8248,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.68 0.48 0.69 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Loop Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -8067,7 +8337,7 @@
 				Markers Font
 			</digest>
 			<description>
-				Sets the font size of markers
+				Sets the font for markers
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
@@ -8087,6 +8357,36 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
 				<attribute name="default" get="1" set="1" type="float" size="1" value="9" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Markers Font Size" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="markerspan" get="1" set="1" type="int" size="1">
+			<digest>
+				Marker Vertical Span
+			</digest>
+			<description>
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Marker Vertical Span" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
+			</attributelist>
+		</attribute>
+		<attribute name="markerwidth" get="1" set="1" type="float" size="1">
+			<digest>
+				Marker Line Width
+			</digest>
+			<description>
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="1.5" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Marker Line Width" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
@@ -8159,6 +8459,22 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
+		<attribute name="multistaffaccollatura" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Accollatura Type for Multi-Staff Voices
+			</digest>
+			<description>
+				Chooses the type of accollatura display for voice displayed with more than one staff.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="symbol" size="1" value="rule" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Accollatura Type for Multi-Staff Voices" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enum" />
+			</attributelist>
+		</attribute>
 		<attribute name="mutecolor" get="1" set="1" type="rgba" size="1">
 			<digest>
 				Mute Color
@@ -8170,6 +8486,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.29 0.29 0.72 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Mute Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -8199,8 +8516,9 @@
 			</digest>
 			<description>
 				@description Sets the font used to display all notation elements except accidentals.
-				The official notation bach font is "November for bach", created by Robert Piéchaud (www.poeticprocessing.net) and
-				automatically loaded at bach startup. "November for bach" is a light version of the famous November font.
+				The bach package by default loads the "Bravura" font, developed by Steinberg.
+				The bach package also includes the font "November for bach", created by Robert Piéchaud (www.poeticprocessing.net).
+				"November for bach" is a light version of the famous November font.
 				The full November font covers a wide range of music symbols, from Renaissance to the XXI century, and gives a unique,
 				warm and lively look to your music scores. It is fully compatible with Finale, Sibelius and other notation softwares.
 				You can purchase November from this web address: www.klemm-music.de/notation/november/.
@@ -8208,9 +8526,28 @@
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
-				<attribute name="default" get="1" set="1" type="symbol" size="1" value="\" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Notation Font" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
+			</attributelist>
+		</attribute>
+		<attribute name="notationstyles" get="1" set="1" type="sym_array" size="0">
+			<digest>
+				Notation Styles
+			</digest>
+			<description>
+				Sets the notation styles, which are a property of voices: a list with one symbol per voice is expected.
+				Symbols can be one of the following: "et" (equal temperament), "ji" (just intonation, displayed via the
+				Helmholtz-Ellis Just Intonation system, version 2.0), "linpitch" (continuous linear pitch),
+				"linfreq" (continuous linear frequency).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
+				<attribute name="default" get="1" set="1" type="sym_array" size="0" value="et" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Notation Styles" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
 		<attribute name="notecolor" get="1" set="1" type="rgba" size="1">
@@ -8224,6 +8561,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Note Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -8387,6 +8725,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Outlet Types" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -8464,6 +8803,120 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
+		<attribute name="padafterclef" get="1" set="1" type="float" size="1">
+			<digest>
+				Pad After Clef
+			</digest>
+			<description>
+				Shifts the beginning of the musical content after the clefs (and key signatures), in pixels
+				(rescaled according to the <m>vzoom</m>),
+				This pad is located right after each clef, before the music content starts.
+				In <o>bach.roll</o>, this pad is particularly useful if you have chords around 0ms
+				bearing many accidentals. In this case you can shift, via this pad, the position of the 0ms on the screen, so that all accidentals
+				are correctly displayed. Also see the message <m>adjustpadafterclef</m>.
+				<br /> <br />
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="0." />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Pad After Clef" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="padbeforeclef" get="1" set="1" type="float" size="1">
+			<digest>
+				Pad Before Clef
+			</digest>
+			<description>
+				Sets an additional left pad before the clef, in pixels (rescaled according to the <m>vzoom</m>).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="0." />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Pad Before Clef" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="partsaccollatura" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Accollatura Type for Parts
+			</digest>
+			<description>
+				Chooses the type of accollatura display for voice ensembles.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="symbol" size="1" value="bracket" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Accollatura Type for Parts" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enum" />
+			</attributelist>
+		</attribute>
+		<attribute name="pianorolldarkcolor" get="1" set="1" type="rgba" size="1">
+			<digest>
+				Piano Roll Dark Color
+			</digest>
+			<description>
+				Sets the color of dark piano roll background, in RGBA format.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
+				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 0.3" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Piano Roll Dark Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
+			</attributelist>
+		</attribute>
+		<attribute name="pianorollkeyboardtype" get="1" set="1" type="int" size="1">
+			<digest>
+				Piano Roll Keyboard Type
+			</digest>
+			<description>
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Piano Roll Keyboard Type" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
+			</attributelist>
+		</attribute>
+		<attribute name="pianorolllightcolor" get="1" set="1" type="rgba" size="1">
+			<digest>
+				Piano Roll Light Color
+			</digest>
+			<description>
+				Sets the color of light piano roll background, in RGBA format.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
+				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 0.1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Piano Roll Light Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
+			</attributelist>
+		</attribute>
+		<attribute name="pianorolltype" get="1" set="1" type="int" size="1">
+			<digest>
+				Piano Roll Display Type
+			</digest>
+			<description>
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Piano Roll Display Type" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
+			</attributelist>
+		</attribute>
 		<attribute name="pitcheditrange" get="1" set="1" type="llll" size="1">
 			<digest>
 				Constraint Pitches While Editing
@@ -8500,6 +8953,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.34 0.87 0.20 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Play Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -8519,6 +8973,38 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
+			</attributelist>
+		</attribute>
+		<attribute name="playheadfixedpos" get="1" set="1" type="float" size="1">
+			<digest>
+				Playhead Fixed Position
+			</digest>
+			<description>
+				Fixed position of the playhead, only used if <m>catch_playhead</m> is set to 2 (FixedPlayhead).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Play" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Playhead Fixed Position" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="playheadnotify" get="1" set="1" type="int" size="1">
+			<digest>
+				Notify Playhead Position During Playback
+			</digest>
+			<description>
+				Constantly notify playhead position during playback.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Play" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Notify Playhead Position During Playback" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
 		<attribute name="playheadwidth" get="1" set="1" type="float" size="1">
@@ -8543,7 +9029,7 @@
 			</digest>
 			<description>
 				Toggle the ability to also send the marker information through the playout during the playback.
-				By default this is 1.
+				By default this is on (1).
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Play" />
@@ -8958,6 +9444,29 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
+		<attribute name="playslurs" get="1" set="1" type="int" size="1">
+			<digest>
+				Play Slurs
+			</digest>
+			<description>
+				Toggle the ability to also send the slur information through the playout during the playback.
+				There are several options: <br />
+				0 (Don't): don't send out slurs information; <br />
+				1 (Chordwise Only, default): send out slur information only with chordwise <m>playmode</m>; <br />
+				2 (Also Notewise [Highest]): also send out slur information with notewise <m>playmode</m>, and
+				assign the slur to the highest note of a chord; <br />
+				3 (Also Notewise [Lowest]): the same, with the lowest note of a chord; <br />
+				4 (Also Notewise [Any]): the same, with the any note of a chord. <br />
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Play" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Play Slurs" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
+			</attributelist>
+		</attribute>
 		<attribute name="playstep" get="1" set="1" type="float" size="1">
 			<digest>
 				Play Bar Average Step (ms)
@@ -9106,12 +9615,26 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
+		<attribute name="rulerlabelsfont" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Ruler Labels Font
+			</digest>
+			<description>
+				@description Sets the font used to display ruler labels (default is Arial).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
+				<attribute name="default" get="1" set="1" type="symbol" size="1" value="Arial" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Ruler Labels Font" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
+			</attributelist>
+		</attribute>
 		<attribute name="rulerlabelsfontsize" get="1" set="1" type="float" size="1">
 			<digest>
 				Ruler Labels Font Size
 			</digest>
 			<description>
-				Sets the font size of ruler labels (rescaled according to the <m>vzoom</m>).
+				Sets the font size of cents differences display.
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
@@ -9169,6 +9692,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.3 0.3 0.3 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Scrollbar Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -9184,6 +9708,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.2 0.2 0.2 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Selection Legend Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -9198,6 +9723,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.8 0. 0.8 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Selection Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -9265,6 +9791,22 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
+			</attributelist>
+		</attribute>
+		<attribute name="showaccollature" get="1" set="1" type="int" size="1">
+			<digest>
+				Show Accollature
+			</digest>
+			<description>
+				Toggles the display of accollature for voice groups and voice ensembles.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Show" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Accollature" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
 		<attribute name="showannotations" get="1" set="1" type="int" size="1">
@@ -9348,6 +9890,24 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="showcents" get="1" set="1" type="int" size="1">
+			<digest>
+				Show Cents
+			</digest>
+			<description>
+				Toggles the display of cents differences above the accidentals, either detailing
+				the difference between the actual note and the displayed one (1) or detailing the
+				contribution of the displayed accidental in cents (2).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Show" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Cents" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
 		<attribute name="showclefs" get="1" set="1" type="int" size="1">
@@ -9449,6 +10009,22 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="showinitialrule" get="1" set="1" type="int" size="1">
+			<digest>
+				Show Initial Rule
+			</digest>
+			<description>
+				Toggles the display of the initial vertical line running through all the staves.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Show" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Initial Rule" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
 		<attribute name="showledgerlines" get="1" set="1" type="int" size="1">
@@ -9560,6 +10136,24 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
+		<attribute name="shownoteheads" get="1" set="1" type="int" size="1">
+			<digest>
+				Show Noteheads
+			</digest>
+			<description>
+				Toggles the display of noteheads. When noteheads are not displayed,
+				the notation object will override the <m>align</m> attribute and align
+				every chord with respect to its stem.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Show" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Noteheads" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
 		<attribute name="shownotenames" get="1" set="1" type="int" size="1">
 			<digest>
 				Show Note Names In Selection Legend
@@ -9603,6 +10197,22 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Show" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Playhead" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="showregionend" get="1" set="1" type="int" size="1">
+			<digest>
+				Show Region End
+			</digest>
+			<description>
+				Toggles the display of ending markers for regions
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Show" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Region End" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
@@ -9653,6 +10263,22 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Slots" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Slot Legend" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="showslotnames" get="1" set="1" type="int" size="1">
+			<digest>
+				Show Slot Names In Slot Window
+			</digest>
+			<description>
+				Toggles the display of slot names in the slot windows.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Slots" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Slot Names In Slot Window" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
@@ -9801,6 +10427,23 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
+		<attribute name="singlelyricsdash" get="1" set="1" type="int" size="1">
+			<digest>
+				Lyrics Always Connect With A Single Dash
+			</digest>
+			<description>
+				Toggles the ability to always connect lyrics with single dashes, and not with repeated dashes
+				when the space between them is too large
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Lyrics Always Connect With A Single Dash" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
 		<attribute name="slopemapping" get="1" set="1" type="int" size="1">
 			<digest>
 				Slope Mapping
@@ -9829,6 +10472,52 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Slots" />
 				<attribute name="default" get="1" set="1" type="float" size="1" value="1.3" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Function Slot Point Radius" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="slotlabelsfont" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Slot Labels Font
+			</digest>
+			<description>
+				Sets the font for slot labels
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
+				<attribute name="default" get="1" set="1" type="symbol" size="1" value="Arial" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Slot Labels Font" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
+			</attributelist>
+		</attribute>
+		<attribute name="slotlabelsfontface" get="1" set="1" type="int" size="1">
+			<digest>
+				Slot Labels Font Style
+			</digest>
+			<description>
+				Sets the font style of slot labels
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Slot Labels Font Style" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
+			</attributelist>
+		</attribute>
+		<attribute name="slotlabelsfontsize" get="1" set="1" type="float" size="1">
+			<digest>
+				Slot Labels Font Size
+			</digest>
+			<description>
+				Sets the font size of slot labels (rescaled according to the <m>vzoom</m>).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="5" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Slot Labels Font Size" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
@@ -10031,6 +10720,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.61 0.61 0.21 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Solo Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -10061,6 +10751,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Main Staff Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -10099,6 +10790,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Stem Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -10227,6 +10919,25 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
+		<attribute name="voicegroups" get="1" set="1" type="llll" size="1">
+			<digest>
+				Voice Groups
+			</digest>
+			<description>
+				Sets the voice groups, i.e. the runs of voices that may be shown as gathered with a bracket, slur, .
+				The syntax is a list of <b><m>GROUP1</m> <m>GROUP2</m> <m>GROUP3</m>...</b>, where each <m>GROUP</m>
+				is <b>[<m>numvoice_start</m> <m>numvoice_end</m> <m>display_type</m>]</b>, where in turn <m>display_type</m>
+				is one of the following symbols: "none" (no display), "rule" (display with a straight line),
+				"bracket" (display with a bracket), "brace" (display with a brace).
+				<br /> <br />
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Voice Groups" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text_large" />
+			</attributelist>
+		</attribute>
 		<attribute name="voicenames" get="1" set="1" type="llll" size="1">
 			<digest>
 				Voice Names
@@ -10245,6 +10956,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Voice Names" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text_large" />
 			</attributelist>
@@ -10310,6 +11022,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Voice Spacing" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>

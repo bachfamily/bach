@@ -419,7 +419,7 @@
 					"patching_rect" : [ 392.0, 408.0, 163.0, 33.0 ],
 					"style" : "",
 					"text" : "Sounds awful! Can we have a little bit more control?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

@@ -60,7 +60,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 366.0, 304.0, 195.0, 69.0 ],
 					"text" : "Cmd+Shift (mac) or Ctrl+Shift (win) and drag inside a cell to finely edit the value",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -108,7 +108,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 381.0, 171.0, 69.0 ],
 					"text" : "Cmd+Alt+click (mac) or Ctrl+Alt+click (win) on any cell to revert it to the defined default value",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -148,7 +148,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 239.5, 206.0, 128.0, 69.0 ],
 					"text" : "Click on the cells (and possibly drag) to change values",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -207,7 +207,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 32.0, 222.0, 107.0, 55.0 ],
 					"text" : "Click on cells to toggle them",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

@@ -52,7 +52,7 @@
 					"patching_rect" : [ 15.0, 322.0, 114.0, 54.0 ],
 					"style" : "",
 					"text" : "Doubleclick on a piece of lyrics to edit it",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -89,7 +89,7 @@
 					"patching_rect" : [ 106.0, 376.0, 399.0, 40.0 ],
 					"style" : "",
 					"text" : "This syllable is in reality \"fa-\": doubleclick on it to show it and edit it.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -109,7 +109,7 @@
 					"patching_rect" : [ 6.0, 73.0, 214.0, 69.0 ],
 					"style" : "",
 					"text" : "Select a chord, and press Cmd+Shift+L (mac) or Ctrl+Shift+L (win) to start edit its lyrics",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -127,7 +127,7 @@
 					"patching_rect" : [ 207.0, 73.0, 246.0, 54.0 ],
 					"style" : "",
 					"text" : "If you want to move to the next chord, use the Tab key, use Shift+Tab to move to the previous chord",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -145,7 +145,7 @@
 					"patching_rect" : [ 436.0, 73.0, 165.0, 40.0 ],
 					"style" : "",
 					"text" : "Press the Esc key once you have finished",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

@@ -1,7 +1,7 @@
 /*
  *  llll_commons_ext.c
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -1854,6 +1854,14 @@ t_llll *symbol_and_rational_to_llll(t_symbol *sym, t_rational r)
     t_llll *this_ll = llll_get();
     llll_appendsym(this_ll, sym, 0, WHITENULL_llll);
     llll_appendrat(this_ll, r, 0, WHITENULL_llll);
+    return this_ll;
+}
+
+t_llll *symbol_and_pitch_to_llll(t_symbol *sym, t_pitch p)
+{
+    t_llll *this_ll = llll_get();
+    llll_appendsym(this_ll, sym, 0, WHITENULL_llll);
+    llll_appendpitch(this_ll, p, 0, WHITENULL_llll);
     return this_ll;
 }
 

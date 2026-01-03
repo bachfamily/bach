@@ -1,7 +1,7 @@
 /*
  *  score_files.cpp
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -716,7 +716,7 @@ char *note_and_acc_to_lilypond_buf(t_notation_obj *r_ob, t_note *note)
 {
     char *buf = (char *)bach_newptr((4 + 4 * note->num_accidentals + 20) * sizeof(char));
     long cur = 0;
-    long step = midicents2diatonicstep(note_get_screen_midicents(note));
+    long step = midicents2diatonicstep(note_get_display_midicents(note));
     
     // note
     switch (step) {
@@ -748,7 +748,7 @@ char *note_and_acc_to_lilypond_buf(t_notation_obj *r_ob, t_note *note)
     
     // accidental
     long i;
-    t_rational note_screen_accidental = note_get_screen_accidental(note);
+    t_rational note_screen_accidental = note_get_display_accidentals_ordinary(note);
     if (rat_rat_cmp(note_screen_accidental, genrat(0, 1)) == 0){
         // most common case, nothing to do
     } else if (rat_rat_cmp(note_screen_accidental, genrat(1, 4)) == 0){
@@ -786,7 +786,7 @@ char *note_and_acc_to_lilypond_buf(t_notation_obj *r_ob, t_note *note)
     }
     
     // octaviation
-    long temp = note_get_screen_midicents(note) / 1200 - 4;
+    long temp = note_get_display_midicents(note) / 1200 - 4;
     if (temp > 0) {
         for (i = 1; i <= temp; i++)
             buf[cur++] = '\'';
@@ -938,10 +938,22 @@ long chord_to_lilypond_buf(t_notation_obj *r_ob, t_chord *ch, char **buf)
     if (dyn)
         estimated_buffer_length += dynamics_to_lilypond(dyn, dynbuf, 2048);
     
+    long num_articulations = 0;
+    long articulations_slot = r_ob->link_articulations_to_slot - 1;
+    if (articulations_slot >= 0 && articulations_slot < CONST_MAX_SLOTS) {
+        num_articulations = note->slot[articulations_slot].length;
+    }
+    
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
     for (note = ch->firstnote; note; note = note->next)
         estimated_buffer_length += 40 * note->num_articulations;
     estimated_buffer_length += 40 * ch->num_articulations;
-
+#else
+    for (note = ch->firstnote; note; note = note->next)
+        estimated_buffer_length += 40 * num_articulations;
+    estimated_buffer_length += 40 * num_articulations;
+#endif
+    
     if (!*buf)
         *buf = (char *)bach_newptr(estimated_buffer_length * sizeof(char));
     
@@ -967,6 +979,7 @@ long chord_to_lilypond_buf(t_notation_obj *r_ob, t_chord *ch, char **buf)
             (*buf)[cur++] = '~';
         
         if (ch->num_notes > 1) {
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
             for (j = 0; j < note->num_articulations; j++) {
                 char *buf_articulation = NULL;
                 long len_art = articulation_to_lilypond_buf(r_ob, note->articulation[j].articulation_ID, &buf_articulation);
@@ -974,6 +987,15 @@ long chord_to_lilypond_buf(t_notation_obj *r_ob, t_chord *ch, char **buf)
                 cur += len_art;
                 bach_freeptr(buf_articulation);
             }
+#else
+            for (t_slotitem *slotitem = note->slot[articulations_slot].firstitem; slotitem; slotitem = slotitem->next) {
+                char *buf_articulation = NULL;
+                long len_art = articulation_to_lilypond_buf(r_ob, ((t_articulation *)slotitem->item)->articulation_ID, &buf_articulation);
+                strncpy((*buf) + cur, note_buf, len_art);
+                cur += len_art;
+                bach_freeptr(buf_articulation);
+            }
+#endif
         }
                 
         if (ch->num_notes > 1 && note->next)
@@ -1005,6 +1027,7 @@ long chord_to_lilypond_buf(t_notation_obj *r_ob, t_chord *ch, char **buf)
 
     // articulations
     if (ch->num_notes == 1) {
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
         for (j = 0; j < ch->firstnote->num_articulations; j++) {
             char *buf_articulation = NULL;
             long len_art = articulation_to_lilypond_buf(r_ob, ch->firstnote->articulation[j].articulation_ID, &buf_articulation);
@@ -1012,7 +1035,18 @@ long chord_to_lilypond_buf(t_notation_obj *r_ob, t_chord *ch, char **buf)
             bach_freeptr(buf_articulation);
             cur += len_art;
         }
+#else
+        for (t_slotitem *slotitem = ch->firstnote->slot[articulations_slot].firstitem; slotitem; slotitem = slotitem->next) {
+            char *buf_articulation = NULL;
+            long len_art = articulation_to_lilypond_buf(r_ob, ((t_articulation *)slotitem->item)->articulation_ID, &buf_articulation);
+            strncpy((*buf) + cur, buf_articulation, len_art);
+            bach_freeptr(buf_articulation);
+            cur += len_art;
+        }
+#endif
     }
+
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
     for (j = 0; j < ch->num_articulations; j++) {
         char *buf_articulation = NULL;
         long len_art = articulation_to_lilypond_buf(r_ob, ch->articulation[j].articulation_ID, &buf_articulation);
@@ -1020,7 +1054,16 @@ long chord_to_lilypond_buf(t_notation_obj *r_ob, t_chord *ch, char **buf)
         bach_freeptr(buf_articulation);
         cur += len_art;
     }    
-    
+#else
+    for (t_slotitem *slotitem = ch->slot[articulations_slot].firstitem; slotitem; slotitem = slotitem->next) {
+        char *buf_articulation = NULL;
+        long len_art = articulation_to_lilypond_buf(r_ob, ((t_articulation *)slotitem->item)->articulation_ID, &buf_articulation);
+        strncpy((*buf) + cur, buf_articulation, len_art);
+        bach_freeptr(buf_articulation);
+        cur += len_art;
+    }
+#endif
+
     // tie
     if (is_all_chord_tie_to_next)
         (*buf)[cur++] = '~';
@@ -1101,6 +1144,9 @@ long barline_to_lilypond_buf(t_notation_obj *r_ob, t_measure *measure, char **bu
             break;
         case k_BARLINE_TICK:
             return snprintf_zero(*buf, 30, "\t\t\t\\bar \"'\"\r\n");
+            break;
+        case k_BARLINE_REPEAT_START:
+            return snprintf_zero(*buf, 30, "\t\t\t\\bar \"|.\"\r\n");
             break;
         default:
             return snprintf_zero(*buf, 30, "\t\t\t|\r\n");
@@ -1250,6 +1296,7 @@ char are_trills_with_accidental_used(t_score *x)
     for (voice = (t_scorevoice *)x->r_ob.firstvoice; voice; voice = voice->next) {
         for (meas = voice->firstmeasure; meas; meas = meas->next) {
             for (chord = meas->firstchord; chord; chord = chord->next) {
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
                 for (j = 0; j < chord->num_articulations; j++)
                     if (chord->articulation[j].articulation_ID == k_ARTICULATION_TRILL_NATURAL ||
                         chord->articulation[j].articulation_ID == k_ARTICULATION_TRILL_SHARP ||
@@ -1263,6 +1310,28 @@ char are_trills_with_accidental_used(t_score *x)
                             note->articulation[j].articulation_ID == k_ARTICULATION_TRILL_FLAT)
                             return true;
                 }
+#else
+                long articulations_slot = x->r_ob.link_articulations_to_slot - 1;
+                if (articulations_slot >= 0 && articulations_slot < CONST_MAX_SLOTS) {
+                    for (t_slotitem *slotitem = chord->slot[articulations_slot].firstitem; slotitem; slotitem = slotitem->next) {
+                        long art_ID = ((t_articulation *)slotitem->item)->articulation_ID;
+                        if (art_ID == k_ARTICULATION_TRILL_NATURAL ||
+                            art_ID == k_ARTICULATION_TRILL_SHARP ||
+                            art_ID == k_ARTICULATION_TRILL_FLAT)
+                            return true;
+                    }
+                    
+                    for (note = chord->firstnote; note; note = note->next) {
+                        for (t_slotitem *slotitem = note->slot[articulations_slot].firstitem; slotitem; slotitem = slotitem->next) {
+                            long art_ID = ((t_articulation *)slotitem->item)->articulation_ID;
+                            if (art_ID == k_ARTICULATION_TRILL_NATURAL ||
+                                art_ID == k_ARTICULATION_TRILL_SHARP ||
+                                art_ID == k_ARTICULATION_TRILL_FLAT)
+                                return true;
+                        }
+                    }
+                }
+#endif
             }
         }
     }

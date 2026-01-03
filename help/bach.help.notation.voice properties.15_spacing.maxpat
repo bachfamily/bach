@@ -98,7 +98,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 322.0, 99.416672000000005, 240.0, 69.0 ],
 					"text" : "You can Shift+Ctrl+click on a clef, and drag up or down to increase/decrease the space after the clef",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -117,7 +117,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 90.5, 57.0, 228.0, 55.0 ],
 					"text" : "You can simply Shift+click on a clef, and drag up or down.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

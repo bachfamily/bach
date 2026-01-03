@@ -1,7 +1,7 @@
 /*
  *  bach_math_utilities.c
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -415,6 +415,7 @@ void fill_long_array(long *a, long count,...){
     va_end(ap);
 }
 
+// still work with longs!
 void fill_char_array(char *a, long count,...){
        long i; va_list ap; 
 	   va_start(ap, count);
@@ -550,12 +551,12 @@ double array_fmax_and_idx(long num_elem, long start, long end, double *array, lo
 
 
 
-double mc2f(double mc, double reference_freq){
-	return pow(2, ((mc/100. - 69.) / 12)) * reference_freq;
+double mc2f(const double mc, const double basefreq, const double basepitch){
+    return basefreq * pow(2, (mc - basepitch) / 1200.);
 }
 
-double f2mc(double freq, double reference_freq){
-	return (12 * log2(freq / reference_freq) + 69) * 100.;
+double f2mc(const double freq, const double basefreq, const double basepitch){
+    return basepitch + log2(freq / basefreq) * 1200;
 }
 
 
@@ -612,20 +613,23 @@ int perfect_log2(long number){ // computes the precise log2 logarithm (n) if num
 
 
 // snap a given *value to the nearest of the possibilities
-t_llllelem *ysnap_double(double *value, t_llll *ysnap_possibilities, char force_snap_direction){
+t_llllelem *ysnap_double(double *value, t_llll *ysnap_possibilities, char force_snap_direction, long *snap_index){
 	double best_diff = -1, best_snapvalue = 0;
+    long best_snapindex = -1;
 	t_llllelem *elem, *res = NULL;
 	
 	if (!value || !ysnap_possibilities || !ysnap_possibilities->l_head)
 		return NULL;
 	
-	for (elem = ysnap_possibilities->l_head; elem; elem = elem->l_next) {
-		if (is_hatom_number(&elem->l_hatom)) {
+    long i = 0;
+	for (elem = ysnap_possibilities->l_head; elem; elem = elem->l_next, i++) {
+		if (is_hatom_number(&elem->l_hatom) || hatom_gettype(&elem->l_hatom) == H_PITCH) {
 			double this_snapvalue = hatom_getdouble(&elem->l_hatom);
 			if (!force_snap_direction || (force_snap_direction > 0 && this_snapvalue >= *value) || (force_snap_direction < 0 && this_snapvalue <= *value)) {
 				double this_diff = fabs(this_snapvalue - *value);
 				if (best_diff < 0 || this_diff < best_diff){
 					best_diff = this_diff;
+                    best_snapindex = i;
 					best_snapvalue = this_snapvalue;
 					res = elem;
 				}
@@ -635,8 +639,12 @@ t_llllelem *ysnap_double(double *value, t_llll *ysnap_possibilities, char force_
 	
 	if (best_diff >= 0) {
 		*value = best_snapvalue;
-		return res; 
+        if (snap_index)
+            *snap_index = best_snapindex;
+		return res;
 	} else {
+        if (snap_index)
+            *snap_index = -1;
 		return NULL;
 	}
 
@@ -661,17 +669,6 @@ double random_double_in_range(double a, double b) {
     double diff = b - a;
     double r = random * diff;
     return a + r;
-}
-
-
-double mc2f(double mc, double basefreq, double basepitch)
-{
-    return basefreq * pow(2, (mc - basepitch) / 1200.);
-}
-
-double f2mc(double f, double basefreq, double basepitch)
-{
-    return basepitch + log2(f / basefreq) * 1200;
 }
 
 t_llll *llll_mc2f(t_llll *ll, double basefreq, double basepitch)
@@ -742,6 +739,8 @@ t_llll *llll_f2mc(t_llll *ll, double basefreq, double basepitch)
 
 t_lexpr_token get_times_operator(){
     // defining times operator
+    t_hatom h;
+    
     t_lexpr_token times;
     times.t_type = TT_OP;
     times.t_operands = 2;
@@ -753,6 +752,8 @@ t_lexpr_token get_times_operator(){
 
 t_lexpr_token get_div_operator(){
     // defining times operator
+    t_hatom h;
+    
     t_lexpr_token div;
     div.t_type = TT_OP;
     div.t_operands = 2;
@@ -793,3 +794,4 @@ t_lexpr_token get_sqrt_function(){
     mysqrt.t_contents.c_func.f_type = H_DOUBLE;
     return mysqrt;
 }
+

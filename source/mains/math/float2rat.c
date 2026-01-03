@@ -1,7 +1,7 @@
 /*
  *  float2rat.c
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -271,7 +271,7 @@ long approx_single_num_fn(void *data, t_hatom *a, const t_llll *address){
 				approx_res = approx_double_with_rat_up_to_tolerance(num, x->tolerance, x->max_den, direction, x->tolerance_is_ratio, &this_error, &found);
 				break;
 			case k_FLOAT2RAT_ALGORITHM_BEST_MATCH:
-				approx_res = approx_double_with_rat_best_match(num, x->max_den, direction, &this_error);
+				approx_res = approx_double_with_rat_up_to_maxden(num, x->max_den, direction, &this_error);
 				break;
 			case k_FLOAT2RAT_ALGORITHM_SMART_PERMANENCE:
 				approx_res = approx_double_with_rat_smart_permanence(num, x->tolerance, x->max_den, direction, x->tolerance_is_ratio, &this_error, &found);
@@ -327,7 +327,7 @@ void float2rat_anything(t_float2rat *x, t_symbol *msg, long ac, t_atom *av)
 		data[1] = errors;
 		
 		llll_funall(ll, (fun_fn) approx_single_num_fn, data, 1, -1, FUNALL_ONLY_PROCESS_ATOMS);
-		llll_reshape(errors, ll, NULL);
+        llll_reshape_old(errors, ll, NULL);
 
 		llllobj_gunload_llll((t_object *) x, LLLL_OBJ_VANILLA, errors, 1);
 		llllobj_gunload_llll((t_object *) x, LLLL_OBJ_VANILLA, ll, 0);

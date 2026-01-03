@@ -1,7 +1,7 @@
 /*
  *  tonnetz.c
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -356,7 +356,7 @@ t_pitch tonnetz_get_pitch_from_diatonic_and_chromatic_steps(t_tonnetz *x, long d
     
     t_rational mc = chro * genrat(1200,x->modulo);
     t_pitch temp = t_pitch(positive_mod(diat, 7), long2rat(0), integer_div_round_down(diat, 7));
-    t_rational temp_mc = temp.toMC();
+    t_rational temp_mc = temp.toMCrat();
     return t_pitch(positive_mod(diat, 7), genrat(mc - temp_mc, 200), integer_div_round_down(diat, 7));
 }
 
@@ -364,7 +364,7 @@ t_tonnetz_diatonic_interval tonnetz_get_diatonic_interval_from_pitch(t_tonnetz *
 {
     t_tonnetz_diatonic_interval dinterval;
     dinterval.diatonic_steps = pitch.toSteps();
-    dinterval.chromatic_steps = round((double)(pitch.toMC()/genrat(1200, x->modulo)));
+    dinterval.chromatic_steps = round(pitch.toMCdouble()/((double)genrat(1200, x->modulo)));
     dinterval.frequency_ratio = long2rat(1);
     dinterval.user_defined_ratio = 0;
     return dinterval;
@@ -759,7 +759,7 @@ t_max_err tonnetz_setattr_generators(t_tonnetz *x, t_object *attr, long ac, t_at
                     } else {
                         long screen_mc;
                         t_rational screen_acc;
-                        mc_to_screen_approximations_do(x->modulo / 6, k_ACCIDENTALS_AUTO, 6000 + hatom_getdouble(&ll->l_head->l_hatom), &screen_mc, &screen_acc, NULL, NULL);
+                        mc_to_display_approximation_ET_do(x->modulo / 6, k_ACCIDENTALS_AUTO, 6000 + hatom_getdouble(&ll->l_head->l_hatom), &screen_mc, &screen_acc, NULL, NULL);
                         x->generators[0] = screen_midicents_and_accidental_to_diatonic_interval(screen_mc, screen_acc, x->modulo);
                         
                     }
@@ -775,7 +775,7 @@ t_max_err tonnetz_setattr_generators(t_tonnetz *x, t_object *attr, long ac, t_at
                     } else {
                         long screen_mc;
                         t_rational screen_acc;
-                        mc_to_screen_approximations_do(x->modulo / 6, k_ACCIDENTALS_AUTO, 6000 + hatom_getdouble(&ll->l_head->l_next->l_hatom), &screen_mc, &screen_acc, NULL, NULL);
+                        mc_to_display_approximation_ET_do(x->modulo / 6, k_ACCIDENTALS_AUTO, 6000 + hatom_getdouble(&ll->l_head->l_next->l_hatom), &screen_mc, &screen_acc, NULL, NULL);
                         x->generators[1] = screen_midicents_and_accidental_to_diatonic_interval(screen_mc, screen_acc, x->modulo);
                     }
                 }
@@ -1925,7 +1925,7 @@ t_llll *get_coordinates_from_pitch(t_tonnetz *x, t_pitch pitch, long also_set_ve
                                       char only_return_lattice_elems_with_nonnegative_velocity)
 {
     long screen_mc = pitch.toMC_wo_accidental();
-    t_rational screen_acc = pitch.alter();
+    t_rational screen_acc = pitch.getAlterET();
     
     t_llll *res;
     if (x->mode == 2) {
@@ -2415,7 +2415,7 @@ void tonnetz_free(t_tonnetz *x){
 double purely_diatonic_interval_to_midicents(t_tonnetz *x, t_tonnetz_diatonic_interval purely_diatonic_interval)
 {
     long screen_midicents = x->pitch_center.toMC_wo_accidental();
-    t_rational screen_acc = x->pitch_center.alter();
+    t_rational screen_acc = x->pitch_center.getAlterET();
 	double mc = screen_midicents + rat2double(rat_long_prod(screen_acc, 200));
 	long interval_modulo = positive_mod(purely_diatonic_interval.diatonic_steps, (long)x->purely_diatonic_scale_intervals->l_size);
 	long interval_base = (purely_diatonic_interval.diatonic_steps - interval_modulo) / ((long)x->purely_diatonic_scale_intervals->l_size);
@@ -2456,7 +2456,7 @@ void purely_diatonic_interval_to_notename(t_tonnetz *x, t_tonnetz_diatonic_inter
 	if (!also_put_octave)
 		mc = 6000 + fmod(mc, 1200);
 
-	mc_to_screen_approximations_do(x->modulo / 6, k_ACCIDENTALS_AUTO, mc, &screen_mc, &screen_acc, NULL, NULL);
+	mc_to_display_approximation_ET_do(x->modulo / 6, k_ACCIDENTALS_AUTO, mc, &screen_mc, &screen_acc, NULL, NULL);
 	midicents2notename(x->middleC_octave, screen_mc, screen_acc, x->note_names_style, true, buf);
 
 	if (!also_put_octave && strlen(*buf) > 1)
@@ -2469,7 +2469,7 @@ void diatonic_interval_to_notename(t_tonnetz *x, t_tonnetz_diatonic_interval int
 	t_rational screen_acc = long2rat(0);
 	if (x->purely_diatonic) {
 		double mc = purely_diatonic_interval_to_midicents(x, interval);
-		mc_to_screen_approximations_do(x->modulo / 6, k_ACCIDENTALS_AUTO, mc, &screen_midicents, &screen_acc, NULL, NULL);
+		mc_to_display_approximation_ET_do(x->modulo / 6, k_ACCIDENTALS_AUTO, mc, &screen_midicents, &screen_acc, NULL, NULL);
 	} else
 		diatonic_interval_to_screen_midicents_and_accidental(interval, &screen_midicents, &screen_acc, x->modulo);
 	
@@ -2558,7 +2558,7 @@ void build_tonnetz_point(t_tonnetz *x, double center_x, double center_y, t_tonne
 			t_rational screen_acc = long2rat(0);
 			if (x->purely_diatonic) {
 				double mc = purely_diatonic_interval_to_midicents(x, interval);
-				mc_to_screen_approximations_do(x->modulo / 6, k_ACCIDENTALS_AUTO, mc, &screen_midicents, &screen_acc, NULL, NULL);
+				mc_to_display_approximation_ET_do(x->modulo / 6, k_ACCIDENTALS_AUTO, mc, &screen_midicents, &screen_acc, NULL, NULL);
 			} else
 				diatonic_interval_to_screen_midicents_and_accidental(interval_plus_center, &screen_midicents, &screen_acc, x->modulo);
 			midicents = screen_midicents + rat2double(screen_acc) * 200;

@@ -1,7 +1,7 @@
 /*
  *  score_api.h
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -250,7 +250,7 @@ char has_measure_attached_markers(t_score *x, t_measure *meas);
 
 void score_delete_voice(t_score *x, t_scorevoice *voice);
 void score_delete_voiceensemble(t_score *x, t_voice *any_voice_in_voice_ensemble);
-void score_move_and_reinitialize_last_voice(t_score *x, t_scorevoice *after_this_voice, t_symbol *key, long clef, t_llll *voicename, long midichannel, long idx_of_the_stafflist_element_in_llll, t_scorevoice *ceilmeasure_from_this_voice);
+void score_move_and_reinitialize_last_voice(t_score *x, t_scorevoice *after_this_voice, t_symbol *key, long clef, t_llll *voicename, long midichannel, t_symbol *notation_style, long idx_of_the_stafflist_element_in_llll, t_scorevoice *ceilmeasure_from_this_voice);
 void score_swap_voices(t_score *x, t_scorevoice *v1, t_scorevoice *v2);
 void score_swap_voiceensembles(t_score *x, t_scorevoice *v1, t_scorevoice *v2);
 t_tuttipoint *build_tuttipoint(t_score *x);
@@ -363,7 +363,7 @@ void set_score_from_llll_from_read(t_score *x, t_llll* inputlist);
 t_llll* get_score_values_as_llll_for_pwgl(t_score *x);
 
 // bach inspector stuff
-void score_bach_attribute_declares(t_score *x);
+void score_declare_bach_attributes(t_score *x);
 t_rect bach_measure_miniature_fn(t_score *x, void *elem, long elem_type, char *show_line);
 t_rect bach_tempo_miniature_fn(t_score *x, void *elem, long elem_type, char *show_line);
 

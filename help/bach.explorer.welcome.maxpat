@@ -2,15 +2,15 @@
 	"patcher" : 	{
 		"fileversion" : 1,
 		"appversion" : 		{
-			"major" : 7,
-			"minor" : 1,
-			"revision" : 0,
+			"major" : 8,
+			"minor" : 6,
+			"revision" : 1,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
+		"classnamespace" : "box",
 		"rect" : [ 783.0, 233.0, 594.0, 458.0 ],
-		"bgcolor" : [ 1.0, 1.0, 1.0, 0.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -37,6 +37,7 @@
 		"tags" : "",
 		"style" : "",
 		"subpatcher_template" : "",
+		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
 					"bubble" : 1,
@@ -49,8 +50,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 415.0, 256.0, 40.0 ],
-					"presentation_rect" : [ 3.0, 415.0, 0.0, 0.0 ],
-					"style" : "",
 					"text" : "...or discover bach by picking random modules and see what they do!"
 				}
 
@@ -65,7 +64,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 76.5, 330.0, 471.0, 36.0 ],
-					"style" : "",
 					"text" : "You will often find references of keywords to be searched (marked with a #, and clickable). Don't hesitate to click on them for more information!",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -82,7 +80,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 225.0, -65.5, 160.0, 23.0 ],
-					"style" : "",
 					"text" : "bubble 1, textcolor 0 0 0 1"
 				}
 
@@ -98,7 +95,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 362.0, -129.0, 40.0, 23.0 ],
-					"style" : "",
 					"text" : "defer"
 				}
 
@@ -114,7 +110,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 555.5, -73.0, 160.0, 23.0 ],
-					"style" : "",
 					"text" : "bubble 0, textcolor 0 0 0 0"
 				}
 
@@ -130,7 +125,6 @@
 					"numoutlets" : 2,
 					"outlettype" : [ "bang", "" ],
 					"patching_rect" : [ 362.0, -101.0, 44.0, 23.0 ],
-					"style" : "",
 					"text" : "sel all"
 				}
 
@@ -146,7 +140,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 362.0, -155.0, 156.0, 22.0 ],
-					"style" : "",
 					"text" : "r bach.help.sendtobpatcher"
 				}
 
@@ -160,7 +153,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 154.5, 141.0, 215.0, 23.0 ],
-					"style" : "",
 					"text" : "Welcome to the Explorer of",
 					"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
 				}
@@ -176,7 +168,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 21.5, 59.0, 371.0, 50.0 ],
-					"style" : "",
 					"text" : "Use + to jointly search multiple tags.\nUse spaces to search either one of the tags.\nExamples: \"rotate\", \"matrix+inverse\", \"midi play\"...",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -208,7 +199,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 7.0, 5.0, 191.0, 54.0 ],
-					"style" : "",
 					"text" : "If you have a precise idea on what you want to search, write some keywords here"
 				}
 
@@ -224,7 +214,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 242.0, 192.0, 54.0 ],
-					"style" : "",
 					"text" : "You can explore the library objects and abstractions, organized by category"
 				}
 
@@ -238,7 +227,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"style" : "",
 					"text" : "See Also: ",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
@@ -254,7 +242,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 495.0, 585.0, 19.0 ],
-					"style" : "",
 					"text" : "Objects: bach.roll, bach.score, bach.slot, all",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "objects"
@@ -271,7 +258,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 158.5, 123.0, 259.0, 23.0 ],
-					"style" : "",
 					"text" : "Welcome to the bach Explorer",
 					"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ],
 					"varname" : "title"
@@ -287,10 +273,24 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"style" : "",
 					"text" : "Tags: welcome, help",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"angle" : 270.0,
+					"bgcolor" : [ 1.0, 1.0, 1.0, 0.9 ],
+					"bordercolor" : [ 0.0, 0.0, 0.0, 0.79 ],
+					"id" : "obj-7",
+					"maxclass" : "panel",
+					"mode" : 0,
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 141.0, 134.0, 360.0, 94.0 ],
+					"proportion" : 0.5
 				}
 
 			}
@@ -298,7 +298,6 @@
 		"lines" : [ 			{
 				"patchline" : 				{
 					"destination" : [ "obj-3", 0 ],
-					"disabled" : 0,
 					"hidden" : 1,
 					"source" : [ "obj-16", 0 ]
 				}
@@ -307,7 +306,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-16", 0 ],
-					"disabled" : 0,
 					"hidden" : 1,
 					"source" : [ "obj-29", 0 ]
 				}
@@ -316,7 +314,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-21", 0 ],
-					"disabled" : 0,
 					"hidden" : 1,
 					"source" : [ "obj-3", 0 ]
 				}
@@ -325,13 +322,15 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-8", 0 ],
-					"disabled" : 0,
 					"hidden" : 1,
 					"source" : [ "obj-3", 1 ]
 				}
 
 			}
- ]
+ ],
+		"dependency_cache" : [  ],
+		"autosave" : 0,
+		"bgcolor" : [ 1.0, 1.0, 1.0, 0.0 ]
 	}
 
 }

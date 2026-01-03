@@ -1,7 +1,7 @@
 /*
  *  bach_math_utilities.h
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -212,8 +212,7 @@ char double_double_cmp_with_threshold(double num1, double num2, double threshold
 	@param		reference_freq	Frequence (in Hz) of the diapason A (e.g. 440)
 	@return						The midicents value
  */
-double f2mc(double freq, double reference_freq);
-double f2mc(double f, double basefreq, double basepitch);
+double f2mc(double f, double basefreq = 440., double basepitch = 6900.);
 t_llll *llll_f2mc(t_llll *ll, double basefreq, double basepitch);
 
 /**	Convert a midicents value into a frequence.
@@ -222,8 +221,7 @@ t_llll *llll_f2mc(t_llll *ll, double basefreq, double basepitch);
 	@param		reference_freq	Frequence (in Hz) of the diapason A (e.g. 440)
 	@return						The frequence value in Hz
  */
-double mc2f(double mc, double reference_freq);
-double mc2f(double mc, double basefreq, double basepitch);
+double mc2f(double mc, double basefreq = 440., double basepitch = 6900.);
 t_llll *llll_mc2f(t_llll *ll, double basefreq, double basepitch);
 
 
@@ -368,6 +366,7 @@ char is_number_in_double_array_with_modulo(double number, double num_elem, doubl
 
 
 /**	Fill an array of type char with a list of values.
+    Important: the input must be long (although they will be then converted to char): use 1L instead of 1, etc. Otherwise it can be problematic!
 	@ingroup		miscellanea
 	@param	a		The pointer to the first element of the array.
 	@param	count	The number of elements to fill
@@ -385,6 +384,7 @@ void fill_char_array(char *a, long count,...);
 
 
 /**	Fill an array of type long with a list of values (see fill_char_array() for an example).
+    Important: the values must actually be long: use 1L instead of 1, etc. Otherwise it can be problematic!
 	@ingroup		miscellanea
 	@param	a		The pointer to the first element of the array.
 	@param	count	The number of elements to fill
@@ -480,11 +480,12 @@ void change_rational_from_llllelem(t_rational *number, t_llllelem *modify, char 
 	@param force_snap_direction	Leave 0 for standard behavior. Any positive integer forces the snapping to be a "ceil"-like snapping (snapped values
 								must be greater or equal than original value); any negative integer forces the snapping to be "floor"-like snapping
 								(snapped values must be less or equal to the original value).
+    @param  snap_index                      An optional pointer that will contain the index of the snapped value
 	@return						The llllelem of #ysnap_possibilities to which the value has been snapped (or NULL if none)
 	@remark						This is used for the the slot y-snapping (and z-snapping)
 	@ingroup					math
  */
-t_llllelem *ysnap_double(double *value, t_llll *ysnap_possibilities, char force_snap_direction);
+t_llllelem *ysnap_double(double *value, t_llll *ysnap_possibilities, char force_snap_direction, long *snap_index = NULL);
 
 
 

@@ -78,7 +78,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 12.0, 366.0, 296.5, 69.0 ],
 					"text" : "Instead of clicking on numbers 1 to 9, you can click on letters A to G, which will assign the pitch of the note. The note will have as duration the last inserted one:",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -140,7 +140,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 316.125, 190.0, 283.75, 137.0 ],
 					"text" : "Numbers 1 to 9 assign the duration. \nThe correspondance is handled via an attribute:\n\n\nBy default, 1 corresponds to a 64th note, 9 to a double whole note; all remaining durations are in between (e.g. 4 for a 1/8th note, 5 for a quarter, and so on). \nUse \".\" to add a dot, and \"T\" to add a tie.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -156,7 +156,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 280.25, 134.0, 315.5, 54.0 ],
 					"text" : "If you use the arrows up/down, the position of the horizontal tick changes: it represents the diatonic position at which the next note will be created.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -175,7 +175,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 175.0, 279.0, 69.0 ],
 					"text" : "Press the number 4, and an 1/8th note appears, at the position of the cursor. Then press number 3 and a 1/16th note appears.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -193,7 +193,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 12.0, 240.0, 222.5, 55.0 ],
 					"text" : "To exit the linear editing system, just press Esc or click outside the staff.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -227,7 +227,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 48.0, 53.0, 390.0, 55.0 ],
 					"text" : "Ctrl+click (mac) or Shift+Ctrl+click (win) inside a given measure (avoiding all possible content) to enter the linear editing mode.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

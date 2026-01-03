@@ -1,7 +1,7 @@
 /*
  *  llll_commonsyms.c
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -143,6 +143,8 @@ t_llllobj_common_symbols_table *llllobj_common_symbols_gettable()
     x->s_onsets = gensym("onsets");
     x->s_cent = gensym("cent");
     x->s_cents = gensym("cents");
+    x->s_midinote = gensym("midinote");
+    x->s_frequency = gensym("frequency");
     x->s_deltacents = gensym("deltacents");
     x->s_duration = gensym("duration");
     x->s_durations = gensym("durations");
@@ -387,6 +389,12 @@ t_llllobj_common_symbols_table *llllobj_common_symbols_gettable()
     x->s_voice = gensym("voice");
     x->s_pim = gensym("pim");
     x->s_stafflines = gensym("stafflines");
+    x->s_notationstyle = gensym("notationstyle");
+    x->s_notationstyles = gensym("notationstyles");
+    x->s_et = gensym("et");
+    x->s_ji = gensym("ji");
+    x->s_linpitch = gensym("linpitch");
+    x->s_linfreq = gensym("linfreq");
     x->s_timesig = gensym("timesig");
     x->s_role = gensym("role");
     x->s_loop = gensym("loop");
@@ -446,6 +454,11 @@ t_llllobj_common_symbols_table *llllobj_common_symbols_gettable()
     x->s_active = gensym("active");
     x->s_openslot = gensym("openslot");
     x->s_sample = gensym("sample");
+
+    x->s_repeatstart = gensym("repeatstart");
+    x->s_repeatend = gensym("repeatend");
+    x->s_repeatnum = gensym("repeatnum");
+    x->s_repeatendinglength = gensym("repeatendinglength");
 
     x->s_left = gensym("left");
     x->s_right = gensym("right");

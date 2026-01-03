@@ -442,7 +442,7 @@
 					"patching_rect" : [ 463.0, 435.0, 106.0, 33.0 ],
 					"style" : "",
 					"text" : "Uhm... and how do I insert a rest?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

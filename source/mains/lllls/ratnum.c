@@ -1,7 +1,7 @@
 /*
  *  ratnum.c
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -116,7 +116,7 @@ typedef struct _ratnum // [bach.ratnum] structure
 	char					output_mode; 
 	char					autoreduce;
 	char					show_triangle; // show/hide triangle	
-	double					zoom_y;	// zoom y, w.r. to the original object
+	double					zoom_y;	// zoom y, w.r.t. the original object
 
 	t_systhread_mutex		c_mutex;
 

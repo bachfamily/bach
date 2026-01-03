@@ -1,7 +1,7 @@
 /*
  *  notation.h
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -72,8 +72,6 @@
     #define BACH_CHORDS_HAVE_SLOTS
 //    #define BACH_MARKERS_HAVE_SLOTS   ///< Not yet ready for this!
 
-    // #define BACH_SUPPORT_SLURS       ///< Not yet ready for this!
-
     // THESE THREE SHOULD NOT BE DEFINED; they increase the size of the t_note without actually gaining that much in CPU speed.
     //#define BACH_SLOTS_HAVE_LASTITEM              ///< Last item is saved inside slot structure
     //#define BACH_SLOTS_HAVE_ACTIVEITEM            ///< Active item is saved inside slot structure
@@ -86,6 +84,11 @@
     #define BACH_NEW_LLLLSLOT_SYNTAX            ///< This one might or might not be advisable. Removes the outer ( ) in the llll and matrix slot syntax 
 
     #define BACH_SUPPORT_SLURS
+    #define BACH_ALLOW_SLURS_ON_RESTS
+//    #define BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX ///< Disabled from bach 0.9; re-enable it for old syntax support
+
+//    #define BACH_GROUPS_ARE_DOUBLY_LINKED     ///< Commenting this line saves 8 bytes in the t_notation_item structure
+
 
     #ifdef CONFIGURATION_Development
 
@@ -207,7 +210,6 @@
  *  @{
  */
 // common graphic constants
-#define CONST_MARKER_LINE_WIDTH 1.5                             ///< Width of a marker
 #define CONST_MARKER_REGION_TEXT_WHITENING 0.8                  ///< Proportion for whitening out the marker color to be painted on a region strip
 #define CONST_MIDDLEC_UY 112                                    ///< Unscaled pixel y position of the middle C for a single voice having staff #k_CLEF_FFGG,
 #define CONST_STEP_UY 3                                            ///< Unscaled height of a step (see #e_clefs to know more about steps), i.e. HALF of the unscaled distance between two staff lines
@@ -239,8 +241,12 @@
 #define CONST_SLUR_MIN_UHEIGHT 4.2                            ///< Unscaled minimum overall height of a slur (precisely: minimum unscaled height of the bounding trapece)
 #define CONST_SLUR_MAX_UHEIGHT 21                            ///< Unscaled maximum overall height of a slur (precisely: maximum unscaled height of the bounding trapece)
 
+#define CONST_SLUR_AVOID_NOTE_WO_ACCIDENTAL_PAD 2
 #define CONST_SLUR_AVOID_OBJECTS_PAD 2
 #define CONST_SLUR_AVOID_LAST_ACCIDENTALS_PAD 0
+
+#define CONST_BARLINE_USPACE_FOR_REPEAT 3   ///< Unscaled space to be added to a barline if it has a repeat
+#define CONST_REPEAT_CIRCLE_SIZE_IN_STEPS 0.4
 
 #define CONST_LABEL_FAMILY_NOTE_STARTING_URADIUS 6.
 #define CONST_LABEL_FAMILY_NOTE_SEPARATION_URADIUS 4.
@@ -377,16 +383,10 @@
                                                         ///< (This is used to avoid the case where beamings get too "tall" even just for a sequence of 1/16 notes)
 #define CONST_VERTICAL_USEPARATION_RESTS_FROM_BEAM 5.    ///< Unscaled vertical additional separation between a rest and a beam inside which the rest lies
 
-// score spacing constants
-#define CONST_SCORE_USPACE_AFTER_START_BARLINE_WITH_NO_TS 6        ///< Unscaled horizontal blank space (in pixels) after a measure barline, when no time signature in the measure is needed
-#define CONST_SCORE_USPACE_AFTER_START_BARLINE_WITH_TS 5        ///< Unscaled horizontal blank space (in pixels) after a measure barline, before the time signature (if there's a time signature
-#define CONST_SCORE_USPACE_AFTER_TS 14                            ///< Unscaled horizontal blank space (in pixels) after a time signature, before drawing the measure chords 
 #define CONST_REST_DOT_USEPARATION 2.                            ///< Unscaled separation (in pixels) between a rest and its first dot
 #define CONST_CHORD_DOT_USEPARATION 2.                            ///< Unscaled separation (in pixels) between a note and its first dot
 #define CONST_DOT_DOT_USEPARATION 4.                            ///< Unscaled separation (in pixels) between a dot, and the next one
 #define CONST_DOT_UWIDTH 4                                        ///< Reserved width, during spacing calculation, for one dot
-#define CONST_UX_ACC_SEPARATION_FROM_ACC 0.8                    ///< Unscaled separation (in pixels) between two accidentals
-#define CONST_UX_ACC_SEPARATION_FROM_NOTE 1.5 // was: 3                    ///< Unscaled separation (in pixels) between a note and its accidental (if there's no other accidental horizontally in between)
 #define CONST_SCORE_TIE_ADDITIONAL_USPACING 6                    ///< Unscaled horizontal additional spacing if note has a tie which starts on it
 
 #define CONST_FIGURE_IN_TUPLET_LEGEND_RATIO 0.55                ///< Rescaling factor of the small note in the tuplet ratio specification, as 'aq:b'
@@ -403,7 +403,6 @@
 #define CONST_G_CLEF_OCTAVE_NUMBER_UY_SHIFT_BELOW 15.8    ///< Unscaled vertical shift (in pixels), with respect to the G clef textbox, of the top textbox boundary to write the small octave number under the G clef
 #define CONST_F_CLEF_OCTAVE_NUMBER_UY_SHIFT_ABOVE 15        ///< Unscaled vertical shift (in pixels), with respect to the F clef textbox, of the top textbox boundary to write the small octave number over the F clef
 #define CONST_F_CLEF_OCTAVE_NUMBER_UY_SHIFT_BELOW 23    ///< Unscaled vertical shift (in pixels), with respect to the F clef textbox, of the top textbox boundary to write the small octave number under the F clef
-#define CONST_CLEF_OCTAVE_NUMBER_BASE_PT 9        ///< Dimension in pt (for <zoom_y> = 1) of the small "15" number under the F clef
 /** @}*/
 
 
@@ -447,7 +446,7 @@
                                                                 ///< If one clicks above or below the bounding rectangle by at most #CONST_ARTICULATION_SELECTION_HORIZONTAL_UTOLERANCE, the articulation is still selected
 #define CONST_ARTICULATION_EXTENSION_END_UTRIM 10                ///< Unscaled left nudge of the right limit of the textbox containing an articulation extension. 
                                                                 ///< This applies for instance at teh '~~~~~~~' line for the trill, so that the articulation extension does not overflow on the next chord
-
+#define CONST_ARTICULATION_SLUR_USEP 1        ///< Unscaled separation between articulation and slur
 
 // slurs
 #define CONST_SLUR_START_END_POINT_SEL_WIDTH 4            ///< (UNSUPPORTED) Width and height of the rectangle (in pixels) around the slur starting or ending point, allowing to select those points
@@ -545,7 +544,7 @@
  *  @{
  */
 #define CONST_MAX_NUM_DYNAMICS_PER_CHORD 64                 ///< Max number of dynamics for a chord (used in sequence)
-#define CONST_MAX_NUM_DYNAMICS_CHARS 64                     ///< Max number of character per dynamics
+#define CONST_MAX_NUM_DYNAMICS_CHARS 96                     ///< Max number of character per dynamics
 #define CONST_USPACE_BETWEEN_DYNAMICS_MARK_WORDS 2          ///< Space between words inside the same dynamics mark
 #define CONST_MIN_UWIDTH_BETWEEN_DYNAMICS 10
 #define CONST_UX_NUDGE_LEFT_FOR_FIRST_ROMAN_WORD 4           ///< Small left nudge for first roman word inside a dynamic mark
@@ -693,7 +692,8 @@ typedef enum _header_elems {
     k_HEADER_LOOP = 8192,          ///< Loop position
     k_HEADER_VOICESPACING = 16384,        ///< Voice spacing information
     k_HEADER_HIDEVOICES = 32768,        ///< Voice hiding information
-    k_HEADER_ALL = 0xFFFFFFFF,        ///< All the other #e_header_elems together
+    k_HEADER_NOTATIONSTYLES = 65536,        ///< Notation style
+    k_HEADER_ALL = 0xFFFFFFFF,        ///< All the #e_header_elems together
 } e_header_elems;
 
 
@@ -733,6 +733,13 @@ typedef enum _voiceensemble_interface_policy {
     k_VOICEENSEMBLE_INTERFACE_ANY = 4
 } e_voiceensemble_interface_policy;
 
+typedef enum _accollatura_type {
+    k_ACCOLLATURA_NONE = 0,
+    k_ACCOLLATURA_RULE = 1,
+    k_ACCOLLATURA_THINBRACKET = 2,
+    k_ACCOLLATURA_BRACKET = 3,
+    k_ACCOLLATURA_BRACE = 4,
+} e_accollatura_type;
 
 typedef enum _chord_position_in_screen {
     k_CHORDPOSITIONINSCREEN_ENDS_BEFORE_DOMAIN = -3,
@@ -931,6 +938,15 @@ typedef enum _show_accidentals_tie_preferences {
 } e_show_accidentals_tie_preferences;
 
 
+/** Accidental and eighth-tones display preferences.
+    @ingroup    notation
+ */
+typedef enum _accidentals_eighthtones_preferences {
+    k_ACC_EIGHTHTONE_ARROW_ACCORDING_TO_DIRECTION = 0,  ///< Arrows go in the same direction as the accidental (if accidental is upwards, arrows are upward
+    k_ACC_EIGHTHTONE_ARROW_ONLY_ON_SEMITONES = 1,       ///< Arrows only placed on semitones
+} e_accidentals_eighthtones_preferences;
+
+
 /** Rests display preferences.
     @ingroup    notation
  */
@@ -977,6 +993,20 @@ typedef enum _accidentals_display_type {
     k_ACCIDENTALS_UNREDUCED_FRACTION = 3,    ///< Display accidentals as fractions, but never reduce the fractions (e.g. leave -3/6 when working with 6-th tones)
     k_ACCIDENTALS_CENTS = 4                    ///< Display accidentals only as cents differences (+25c, -74c...)
 } e_accidentals_display_type;
+
+/** Accidental display type. Accidentals can be displayed in various ways: classically, as fractions and as cents differences.
+    The two latter cases work with no matter which microtonal division; the classical view only works for semitone, quartertone and eighttone division,
+    and only if the chosen accidental fonts have the proper symbols (e.g. Boulez does NOT allow quartertones). If the classical view is chosen when the
+    microtonal division is not supported, some 'bogus' accidentals are shown instead.
+    @ingroup    notation
+    @see        #e_accidentals_preferences
+ */
+typedef enum _show_cents_mode {
+    k_SHOW_CENTS_MODE_DONT = 0,                         ///< Don't ever display cents differences
+    k_SHOW_CENTS_MODE_ORIGINAL_MINUS_SCREEN = 1,        ///< Display the difference between the true pitch and the displayed one (including accidentals)
+    k_SHOW_CENTS_MODE_ACCIDENTAL = 2,      ///< Essentially display the cents of the accidental
+} e_show_cents_mode;
+
 
 
 /** Alignment positions (only supported in bach.roll)
@@ -1109,7 +1139,8 @@ typedef enum _velocity_handling {
     k_VELOCITY_HANDLING_COLORSPECTRUM = 2,        ///< Represent velocity with a colorspectrum (red being the softest, blue being the loudest)
     k_VELOCITY_HANDLING_ALPHACHANNEL = 3,        ///< Represent velocity by changing the alpha-channel of the note color (from almost 0., softest, to 1., loudest)
     k_VELOCITY_HANDLING_DURATIONLINEWIDTH = 4,    ///< Represent velocity by increasing or decreasing the width of the duration line (from almost 0., softest, to the attribute-defined width, loudest)
-    k_VELOCITY_HANDLING_NOTEHEADSIZE = 5        ///< Represent velocity by increasing or decreasing the notehead size (from almost 0., softest, to the default size, loudest)
+    k_VELOCITY_HANDLING_NOTEHEADSIZE = 5,        ///< Represent velocity by increasing or decreasing the notehead size (from almost 0., softest, to the default size, loudest)
+    k_VELOCITY_HANDLING_NOTESIZE = 6            ///< Combine k_VELOCITY_HANDLING_NOTEHEADSIZE and k_VELOCITY_HANDLING_DURATIONLINEWIDTH
 } e_velocity_handling;
 
 
@@ -1136,7 +1167,10 @@ typedef enum _barline_modifier {
     k_BARLINE_HIDDEN = 'h',        ///< Hidden barline
     k_BARLINE_SOLID = 's',         ///< Solid barline (thicker than the normal one)
     k_BARLINE_TICK = 'k',          ///< Tick
-    k_BARLINE_INTERVOICES = 'i'    ///< Intervoice barline only
+    k_BARLINE_INTERVOICES = 'i',    ///< Intervoice barline only
+    k_BARLINE_REPEAT_START = 'w',       ///< Starts a repeat
+    k_BARLINE_REPEAT_END = 'x',         ///< Ends a repeat
+    k_BARLINE_REPEAT_END_AND_START = 'y',  ///< Starts and ends a repeat
 } e_barline_modifier;
 
 
@@ -1285,6 +1319,7 @@ typedef enum _articulation_options {
                                                                  ///< is split, the articulation is assigned to all notes (if more than one),
                                                                  ///< and not just to the first one
                                                                  ///< For instance, to a whole tied sequence of notes quantizing the single original one
+    k_ARTICULATION_OPTION_INSIDE_SLURS = 0x400,         ///< Articulation is inside slurs - UNIMPLEMENTED YET
 } e_articulation_options;
 
 
@@ -1368,6 +1403,18 @@ typedef enum _custom_spacing_mode
     k_CUSTOMSPACING_PIXELINWINDOW = 1,    ///< Pixels refer to the proper pixel position inside the window
     k_CUSTOMSPACING_PIXELFROMSTART = 2,    ///< Pixels are asked and retrieved "from the beginning of the score"
 } e_custom_spacing_mode;
+
+
+
+/** Flags for notation elements that need to be saved in the gathered syntax dump
+    @ingroup    markers
+ */
+typedef enum _bach_marker_span {
+    k_MARKER_SPAN_PLAYHEAD = 0,
+    k_MARKER_SPAN_ABOVEFIRSTSTAFF = 1,
+    k_MARKER_SPAN_UNTILLASTSTAFF = 2,
+    k_MARKER_SPAN_BETWEENSTAVES = 3,
+} e_bach_marker_span;
 
 
 
@@ -1679,6 +1726,27 @@ typedef enum _clone_for_types
 } e_clone_for_types;
 
 
+/** Piano roll display types.
+    @ingroup    notation
+ */
+typedef enum _pianoroll_display_type {
+    k_PIANOROLL_DISPLAY_BACKGROUND_STRIPES = 0,        ///< Background stripes
+    k_PIANOROLL_DISPLAY_WHITEKEY_LINES = 1,            ///< Lines corresponding to white keys
+    k_PIANOROLL_DISPLAY_BLACKKEY_LINES = 2,            ///< Lines corresponding to black keys
+    k_PIANOROLL_DISPLAY_C_LINES = 3,                   ///< Lines corresponding to C's
+} e_pianoroll_display_type;
+
+
+/** Piano roll keyboard types.
+    @ingroup    notation
+ */
+typedef enum _pianoroll_keyboard_type {
+    k_PIANOROLL_KEYBOARD_CLASSIC = 0,            ///< Classic piano keyboard
+    k_PIANOROLL_KEYBOARD_UNIFORM = 1,            ///< Uniform keyboard
+} e_pianoroll_keyboard_type;
+
+
+
 
 /** Actions to perform when something has changed, given as argument for handle_change() or handle_change_if_there_are_dangling_undo_ticks().
     See also the convenience combinations #k_CHANGED_DO_NOTHING, #k_CHANGED_STANDARD_SEND_BANG, #k_CHANGED_STANDARD_UNDO_MARKER and #k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG.
@@ -1775,6 +1843,7 @@ typedef enum _undo_operations
     k_UNDO_OP_POP_OUT_TEMPO,
     k_UNDO_OP_ADD_TEMPO,
     k_UNDO_OP_DELETE_SELECTION,
+    k_UNDO_OP_DELETE_SELECTED_MEASURES_CONTENT,
     k_UNDO_OP_DELETE_SELECTED_MEASURES,
     k_UNDO_OP_RIPPLE_DELETE_SELECTION,
     k_UNDO_OP_CHANGE_SLOT,
@@ -1783,7 +1852,9 @@ typedef enum _undo_operations
     k_UNDO_OP_ASSIGN_VELOCITIES,
     k_UNDO_OP_CLEAR_MARKERS,
     k_UNDO_OP_CLEAR_SLURS,
-    k_UNDO_OP_SNAP_PITCH_TO_GRID_FOR_SELECTION,
+    k_UNDO_OP_SNAP_PITCH_TO_CURRENT_DISPLAY_FOR_SELECTION,
+    k_UNDO_OP_SNAP_PITCH_TO_ET_GRID_FOR_SELECTION,
+    k_UNDO_OP_SNAP_PITCH_TO_JI_LIMIT_FOR_SELECTION,
     k_UNDO_OP_SNAP_ONSET_TO_GRID_FOR_SELECTION,
     k_UNDO_OP_SNAP_TAIL_TO_GRID_FOR_SELECTION,
     k_UNDO_OP_RESET_ALL_ENHARMONICITIES,
@@ -1794,6 +1865,7 @@ typedef enum _undo_operations
     k_UNDO_OP_CHANGE_TAIL_FOR_SELECTION,
     k_UNDO_OP_CHANGE_CENTS_FOR_SELECTION,
     k_UNDO_OP_CHANGE_PITCH_FOR_SELECTION,
+    k_UNDO_OP_SET_PITCH_RATIO_FOR_SELECTION,
     k_UNDO_OP_CHANGE_POC_FOR_SELECTION,
     k_UNDO_OP_CHANGE_MEASUREINFO_FOR_SELECTION,
     k_UNDO_OP_CHANGE_VOICE_FOR_SELECTION,
@@ -1929,6 +2001,7 @@ typedef enum _undo_operations
     k_UNDO_OP_NO_SOLOS,
     k_UNDO_OP_NO_MUTES,
     k_UNDO_OP_ENHARMONICALLY_RESPELL_NOTE,
+    k_UNDO_OP_APPROXIMATE_TO_JI_RATIO,
     k_UNDO_OP_CHANGE_BARLINE_TYPE,
     k_UNDO_OP_CHANGE_TIME_SIGNATURE_FOR_SELECTED_MEASURES,
     k_UNDO_OP_LOCK_RHYTHMIC_TREE_FOR_SELECTION,
@@ -2140,29 +2213,34 @@ typedef enum _annotations_filterdup_mode {
  */
 typedef struct _notation_item
 {
-    e_element_types    type;        ///< Type of the notation item, it can be one of the following: #k_NOTE, #k_CHORD, #k_DURATION_LINE, #k_PITCH_BREAKPOINT, 
-                                ///  #k_LYRICS, #k_DYNAMICS, #k_MEASURE, #k_VOICE, #k_TEMPO, #k_MARKER. In any of these cases, the pointer to this notation item will also
-                                ///  be the pointer respectively to a #t_note, #t_chord, #t_duration_line, #t_bpt, #t_lyrics, #t_dynamics, #t_measure, #t_voice, #t_tempo, #t_marker.
+    e_element_types    type;        ///< Type of the notation item, it can be one of the following: #k_NOTE, #k_CHORD, #k_DURATION_LINE, #k_PITCH_BREAKPOINT,
+    ///  #k_LYRICS, #k_DYNAMICS, #k_MEASURE, #k_VOICE, #k_TEMPO, #k_MARKER. In any of these cases, the pointer to this notation item will also
+    ///  be the pointer respectively to a #t_note, #t_chord, #t_duration_line, #t_bpt, #t_lyrics, #t_dynamics, #t_measure, #t_voice, #t_tempo, #t_marker.
+    
+    // these two are here high because of alignment (if I put them here the whole structure is lighter)
+    char                    selected;            ///< Is the notation element selected?
+    char                    preselected;        ///< Is the notation element preselected?
+    
     unsigned long    ID;            ///< ID (> 0) of the notation item, or 0 if none. Not all items have ID, only the ones whose tracking is meaningful for undo purposes.
-                                ///< Beware that, for instance, if #type = #k_MEASURE, this ID is by no means the measure number, just a variously assigned ID.
-
+    ///< Beware that, for instance, if #type = #k_MEASURE, this ID is by no means the measure number, just a variously assigned ID.
+    
     t_llll            *names;                ///< llll containing the name or names of the notation item. Names can be also organized in sublist, such as <b>[foo 1] [fee 2 bar] [bar 3]</b>
-    t_llll            *label_families;    ///< Name-labeling families to which the item belongs, in the form of (<pointer_to_family> <pointer_to_llllelem_corresponding_to_notation_item>) (<family> <lllelem>)... 
-                                        ///< where the pointer to the family is a H_OBJ pointing to the correct t_bach_family structure.
+    t_llll            *label_families;    ///< Name-labeling families to which the item belongs, in the form of (<pointer_to_family> <pointer_to_llllelem_corresponding_to_notation_item>) (<family> <lllelem>)...
+    ///< where the pointer to the family is a H_OBJ pointing to the correct t_bach_family structure.
     
     long                    flags;            ///< Generic flags, internal, a combination of #e_bach_internal_notation_flags for private use
     
-    char                    selected;            ///< Is the notation element selected?
     struct _notation_item    *next_selected;        ///< Pointer to the next selected notation item
     struct _notation_item    *prev_selected;        ///< Pointer to the previous selected notation item
     
-    char                    preselected;        ///< Is the notation element preselected?
     struct _notation_item    *next_preselected;    ///< Pointer to the next preselected notation item
     struct _notation_item    *prev_preselected;    ///< Pointer to the previous preselected notation item
     
     struct _group            *group;                ///< Group to which the element belongs
     struct _notation_item    *next_group_item;    ///< Pointer to the next item in the same group
+#ifdef BACH_GROUPS_ARE_DOUBLY_LINKED
     struct _notation_item    *prev_group_item;    ///< Pointer to the next item in the same group
+#endif
 } t_notation_item;
 
 
@@ -2417,7 +2495,7 @@ typedef struct _articulation
     char            flipped;                    ///< Is flipped 
     double            x_pos;                        ///< Pixel x value of the "writing-box" for the articulation, centered on the chord stem (thus it is 0 if the x value is exactly at the chord stem).
     double            y_pos;                        ///< Pixel y value of the "writing-box" for the articulation, relative to the corresponding voice middle C position
-    double            middle_x_pos;                ///< Pixel x value of the middle position of the bounding rectangle for the articulation (it is absolute, in pixel)
+    double            middle_x_pos;                ///< Pixel x value of the middle position of the bounding rectangle for the articulation (w.r.t. the stem x position)
     double            middle_y_pos;                ///< Pixel y value of the middle position of the bounding rectangle for the articulation
     double            width;                        ///< Width in pixel of the bounding rectangle 
     double            height;                        ///< Height in pixel of the bounding rectangle
@@ -2444,18 +2522,18 @@ typedef struct _slur
     struct _chord    *start_chord;                ///< Pointer to the chord where the starting of the slur is attached
     struct _chord    *end_chord;                  ///< Pointer to the chord where the ending of the slur is attached
 
-    char            direction;                    ///< Direction of the slur (1 = up, -1 = down)
+    char            direction;                    ///< Direction of the slur (1 = up, -1 = down, 0=automatic, chosen opposite to the direction of the first chord)
     char            end_is_before_start;          ///< Internal flag, telling if is the horizontal direction reversed
                                                   /// (because the end note is before the start one)
 
     t_llllelem      *elem;  ///< Corresponding element in the notation object "slurs" llll
     
     // painting parameters
-    double            start_ux;                    ///< x of the pixel of the slur starting point
+    double            start_ux;                    ///< x of the pixel of the slur starting point (unscaled)
     double            start_y;                    ///< y of the pixel of the slur starting point
-    double            cp1_ux;                    ///< relative x of the pixel of the slur first control point. This is a relative value, between 0. and 1., where 0. = start_x and 1. = end_x.
+    double            cp1_relx;                    ///< relative x of the pixel of the slur first control point. This is a relative value, between 0. and 1., where 0. = start_x and 1. = end_x.
     double            cp1_y;                        ///< y of the pixel of the slur first control point
-    double            cp2_ux;                    ///< relative x of the pixel of the slur second control point. This is a relative value, between 0. and 1., where 0. = start_x and 1. = end_x.
+    double            cp2_relx;                    ///< relative x of the pixel of the slur second control point. This is a relative value, between 0. and 1., where 0. = start_x and 1. = end_x.
     double            cp2_y;                        ///< y of the pixel of the slur second control point
     double            end_ux;                        ///< x of the pixel of the slur end point    
     double            end_y;                        ///< y of the pixel of the slur end point
@@ -2493,7 +2571,7 @@ typedef struct _note
     struct _note    *tie_from;            ///< Pointer to the previous tied note. If the note has no tie ending on it, this is NULL
     char            tie_direction;        ///< Direction of the *starting* tie, if any. 1 = tie is over, -1 = ties is under, 0 = tie direction is undefined (or not yet defined)
     
-    char            show_accidental;                    ///< Flag saying if we show the accidental or not, depending on the key signature, on previous score content, on cautionary accidentals handling, and so on.
+    char            show_accidentals;                    ///< Flag saying if we show the accidental or not, depending on the key signature, on previous score content, on cautionary accidentals handling, and so on.
     ///< For instance, a natural accidental is obtained by setting #screen_accidental to 0, and #show_accidental to 1.
     
     
@@ -2521,17 +2599,19 @@ typedef struct _note
     char        played;                    ///< Flag telling if the note is being played
     char        solo;                    ///< Flag telling if the note is soloed
 
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
     // articulations, ***only for backward compatibility***
     long                  num_articulations;        ///< Number of articulations really attached to the note
     t_articulation        *articulation;            ///< The array containing the articulations for the note (#num_articulations elements are allocated, NULL if none).
-
+#endif
     
     // Fixed painting parameters (calculated at some point, and not recalculated if not needed)
 //    long            scaleposition;                                ///< Number of steps of vertical graphical distance between the note and the middle C (see #e_clefs for more info about steps)
                                                                 ///< E.g. for the F# above the middle C, this is 3 (C->D->E->F). For the B just below the middle C, this is -1.
-    char            num_accidentals;                            ///< Number of accidentals needed to display the screen_accidental of the note. E.g. for a Ebb, this is 2.
     char            need_auxiliary_stem;                        ///< Flag telling if the notehead is attached to the stem (0) or not (1, and thus needs the auxiliary stem)
-    unicodeChar        accidental_text[CONST_MAX_ACCIDENTALS + 1]; ///< Unicode chararcters for the text of the accidental
+    t_uint8         num_accidentals;                            ///< Number of accidentals needed to display the screen_accidental of the note. E.g. for a Ebb, this is 2.
+    t_uint8         accidentals[CONST_MAX_ACCIDENTALS + 1];     ///< List of numbers from #e_bach_accidentals
+//    unicodeChar        accidental_text[CONST_MAX_ACCIDENTALS + 1]; ///< Unicode chararcters for the text of the accidental
     double            notecenter_stem_delta_ux;                    ///< Unscaled horizontal deplacement of the x of the notehead center pixel, with respect to the stem position
 
     
@@ -2543,12 +2623,12 @@ typedef struct _note
     
     double            accidental_stem_delta_ux;                    ///< Unscaled horizontal deplacement of the RIGHT boundary of the accidental text field, with respect to the stem position. Should be always negative.
 //    double            accidental_uwidth;                          ///< Unscaled width of the accidental (or 0 if none).
-//    double            accidental_top_uextension;                    ///< Unscaled vertical extension of the accidental, from its align vertical center to its topmost point.
+//    double            accidental_uascent;                    ///< Unscaled vertical extension of the accidental, from its align vertical center to its topmost point.
                                                                 ///< The align vertical center is the vertical y position of the center of the notehead to which it is referred. 
                                                                 ///< Notice that the align vertical center of the accidental usually does not coincide with the center of the accidental bounding rectangle. 
                                                                 ///< For instance, for a flat, the align vertical center is much lower than the center of the bounding rectangle.
-//    double            accidental_bottom_uextension;                ///< Unscaled vertical extension of the accidental, from its align center to its bottommost point.
-                                                                ///< See #accidental_top_uextension for more information.
+//    double            accidental_udescent;                ///< Unscaled vertical extension of the accidental, from its align center to its bottommost point.
+                                                                ///< See #accidental_uascent for more information.
 
     // Windowed painting parameters (in real pixels, and only calculated when the note is inside the window and painted)
     t_pt              center;                                        ///< Center of the note (it is in real pixels, and not an unscaled ones)
@@ -2753,8 +2833,8 @@ typedef struct _chord
     
     // flags
     char        is_score_chord;                    ///< Flag telling if the chord is a [bach.score] chord (1) or a [bach.roll] chord (0)
-    char        imposed_direction;                ///< Internal flag, private use, to impose a direction to the chord stem (then calculate_chord_parameters() will set the direction flag), as before 1 = stem up, -1 = stem down.
-    char        need_recompute_parameters;        ///< Flag telling if we need to recompute the chord parameters. If yes, as soon as needed, some functions are run: assign_chord_lyrics(), chord_assign_dynamics() and calculate_chord_parameters(),
+    char        imposed_direction;                ///< Internal flag, private use, to impose a direction to the chord stem (then chord_calculate_parameters() will set the direction flag), as before 1 = stem up, -1 = stem down.
+    char        need_recompute_parameters;        ///< Flag telling if we need to recompute the chord parameters. If yes, as soon as needed, some functions are run: assign_chord_lyrics(), chord_assign_dynamics() and chord_calculate_parameters(),
                                                 ///< which sets the chord lyrics from the slot content (if any) andall the chord parameters such as direction, left_uextension, right_uextension... 
     char        need_recalculate_onset;            ///< Internal flag, privat use, telling if we need to recalculate the onset of the chord. Only used by score, where the
     
@@ -2806,11 +2886,17 @@ typedef struct _chord
     
     // used by tree beaming handling and for groups linking
     double            stemtip_stafftop_uy;                ///< Unscaled vertical shift (in pixels) of the topmost stem point, with respect to the staff top
+    
+    // Now: these are so that topmost_stafftop_uy > topmost_stafftop_uy_notuplets > topmost_stafftop_uy_noacc
+    // The first one includes every aspect of the chord, the second one ignores tuplets, the third one ALSO ignores accidentals
+    // Similarly for the bottom parts
     double            topmost_stafftop_uy;                ///< Unscaled vertical shift (in pixels) of the topmost point in the chord, with respect to the staff top
-    double            bottommost_stafftop_uy;                ///< Unscaled vertical shift (in pixels) of the bottommost point in the chord, with respect to the staff top
-    double            topmost_stafftop_uy_noacc;            ///< Unscaled vertical shift (in pixels) of the topmost point in the chord, if we ignore the accidentals
-    double            bottommost_stafftop_uy_noacc;        ///< Unscaled vertical shift (in pixels) of the bottommost point in the chord, if we ignore the accidentals
-//    double            beam_stafftop_uy;                    ///< Unscaled vertical shift (in pixels) of the point of the flag or beam nearest to the a note
+    double            bottommost_stafftop_uy;             ///< Unscaled vertical shift (in pixels) of the bottommost point in the chord, with respect to the staff top
+    double            topmost_stafftop_uy_notuplets;      ///< Unscaled vertical shift (in pixels) of the topmost point in the chord, with respect to the staff top ignoring tuplet signs
+    double            bottommost_stafftop_uy_notuplets;   ///< Unscaled vertical shift (in pixels) of the bottommost point in the chord, with respect to the staff top ignoring tuplet signs
+    double            topmost_stafftop_uy_noacc;          ///< Unscaled vertical shift (in pixels) of the topmost point in the chord, if we ignore the accidentals
+    double            bottommost_stafftop_uy_noacc;       ///< Unscaled vertical shift (in pixels) of the bottommost point in the chord, if we ignore the accidentals
+//    double            beam_stafftop_uy;                 ///< Unscaled vertical shift (in pixels) of the point of the flag or beam nearest to the a note
     double            topmostnote_stafftop_uy;            ///< Unscaled vertical shift (in pixels) of the topmost note center, with respect to the staff top
     double            bottommostnote_stafftop_uy;            ///< Unscaled vertical shift (in pixels) of the bottommost note center, with respect to the staff top
     
@@ -2838,20 +2924,23 @@ typedef struct _chord
                                                         ///< actual symbolic figure used to display the 1/12 chord. Analogously, a chord lasting 3/8 will have a figure of 1/4, and then a dot.
                                                         ///< The chord figure is always positive, even if the chord is a rest.
                                                         ///< Also: for rests spanning the whole measure, the figure is simply 1. 
-    char            num_dots;                            ///< Number of dots that the chord has.
     
     // tuplet parameters, only used by [bach.score] 
     t_rational        overall_tuplet_ratio;        ///< If the chord is within a tuplet, here we have the tuplet ratio (for instance, a quaver tuplet, having symbolic duration of 1/12, has ratio 2/3)
                                                 ///< Please consider that this is the OVERALL ratio (should the chord be in nested tuplets). This means that this is the precise
                                                 ///< ratio between the symbolic duration <r_sym_duration> and the <figure>.
     
+    char            num_dots;                            ///< Number of dots that the chord has.
+
     // beamings
-    long            beams_depth;                ///< Number of beaming lines over the chord
+    t_uint8            beams_depth;                ///< Number of beaming lines over the chord
     
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
     // articulations (for the moment, only implemented in [bach.score])
     // These are deprecated and will be removed at some point: use the articulation-typed slots instead
     long            num_articulations;        ///< (DEPRECATED) Number of articulations really attached to the note
     t_articulation    *articulation;            ///< (DEPRECATED) The array containing the articulations for the note (#num_articulations elements are allocated, NULL if none).
+#endif
     
     struct _lyrics      *lyrics;                ///< The chord piece of lyrics (it is always allocated).
     t_slot              *dynamics_slot;          ///< Pointer to the slot containing the dynamics
@@ -2870,8 +2959,8 @@ typedef struct _chord
     
 #ifdef BACH_SUPPORT_SLURS
     // slurs
-    long            num_slurs_to;                            ///< Number of slurs starting on the note
-    long            num_slurs_from;                            ///< Number of slurs ending on the note
+    long            num_slurs_to;                            ///< Number of slurs starting on the chord
+    long            num_slurs_from;                          ///< Number of slurs ending on the chord
     t_slur          *slur_to[CONST_MAX_SLURS_PER_CHORD];        ///< The array containing the pointer to the slurs starting on the chord (only num_slurs_to elements are meaningful)
     t_slur          *slur_from[CONST_MAX_SLURS_PER_CHORD];    ///< The array containing the pointer to the slurs ending on the chord (only num_slurs_from elements are meaningful)
 #endif
@@ -3078,14 +3167,18 @@ typedef struct _rhythm_level_properties
 } t_rhythm_level_properties;
 
 
+
 /** The data structure representing a measure end barline (only used inside [bach.score]).
     @ingroup    notation
  */ 
 typedef struct _measure_end_barline
 {
-    t_notation_item        r_it;            ///< Notation item, containing common stuff for all notation items.
-    struct _measure        *owner;            ///< The measure which owns it 
-    char                barline_type;    ///< Type of ending barline. Must be one of #e_barline_modifier. By default it is #k_BARLINE_AUTOMATIC.
+    t_notation_item     r_it;            ///< Notation item, containing common stuff for all notation items.
+    struct _measure     *owner;            ///< The measure which owns it
+    char          barline_type;    ///< Type of ending barline. Must be one of #e_barline_modifier. By default it is #k_BARLINE_AUTOMATIC.
+    t_uint16      repeat_num;      ///< Number of repeat times (only applicable if barline types are of type ...._REPEAT_...)
+//    t_uint16      repeat_alternate_ending_length; ///< Length of alternate ending for repeating: unsupported for now
+    t_uint16      repeat_count;      ///< Current repetition count during playback (set at runtime)
 } t_measure_end_barline;
 
 
@@ -3169,7 +3262,8 @@ typedef struct _measure
 
     struct _measure_end_barline        *end_barline;        ///< Measure end barline
     char                            end_barline_dummy;    ///< Dummy field only used by bach attribute system
-
+    char                            repeat_num_dummy;     ///< Dummy field only used by bach attribute system
+    
     // flags
     char            need_recompute_beamings;            ///< Flag telling if we have to reanalyze the beamings inside the measure
     char            need_recompute_beams_positions;        ///< Flag telling if we have only to recompute the beaming positions, leaving the beaming structure untouched 
@@ -3193,11 +3287,25 @@ typedef struct _measure
                                         ///< Most lllls also contain as <l_thing> field a #t_rhythm_level_properties structure specifying the type of rhythmic level
     char            lock_rhythmic_tree;    ///< This is 1 if the beaming tree is locked, 0 otherwise. In case this is 1, no retranscription is performed, unless new data from messages is inserted
                                         ///< This flag is saved, so that locked measure remain locked when the object is saved
-    
+
     // double linked list
     struct _measure*    next;        ///< Pointer to the next measure
     struct _measure*    prev;        ///< Pointer to the previous measure
 } t_measure;
+
+
+
+/** List of possible display styles for notes in a voice
+ @ingroup    dynamics
+ */
+typedef enum _voice_notation_style
+{
+    k_VOICE_NOTATION_STYLE_ET = 0,          ///< Equal tempered
+    k_VOICE_NOTATION_STYLE_JI = 1,          ///< Just intonation
+    k_VOICE_NOTATION_STYLE_LINEAR_PITCH = 2,       ///< Continuous linear pitch space
+    k_VOICE_NOTATION_STYLE_LINEAR_FREQ = 3,       ///< Continuous linear frequential space: unimplemented yet, and problematic: notation objects shouldn't take care of frequency conversions, I think
+} e_voice_notation_style;
+
 
 
 /** The data structure representing a voice.
@@ -3224,7 +3332,7 @@ typedef struct _voice
     double            middleC_y;        ///< Y position (in pixels) of the middle C inside the voice. This is computed in compute_middleC_position_for_voice(),
                                     ///< and updated as the zoom or voice configuration change. This y position is the base to build stafflines and to place
                                     ///< notes, so it is throuroughly used in the code.
-    double            offset_y;        ///< Vertical offset of the voice w.r. to the top of the roll.
+    double            offset_y;        ///< Vertical offset of the voice w.r.t. the top of the roll.
     long            midichannel;    ///< Midichannel globally associated to the voice
     long            clef;            ///< Clef (and thus subsequently staff type) associated to the voice. This must be one of the #e_clefs (by default, #k_CLEF_G) 
 
@@ -3262,6 +3370,7 @@ typedef struct _voice
 
     double        vertical_uspacing;    ///< Unscaled vertical spacing AFTER the voice (before the next one, or before the end of the object) 
 
+    long        notation_style;          ///< One of the e_voice_notation_style
 } t_voice;
 
 
@@ -3333,7 +3442,6 @@ typedef struct _tuttipoint
     char        need_recompute_spacing;            ///< A flag telling if we need to recompute the spacing within this tuttipoint region, one of the #e_spacing_calculation_types
     long        flag;                            ///< Internal, for private use: generic flag.
     
-    ////
     double      data;                           ///< Internal
     
     // double linked list
@@ -3601,12 +3709,23 @@ typedef struct _notation_typo_preferences
     double            rest_uwidths[9];                ///< Unscaled widths of the rests symbols for: DOUBLEWHOLE, WHOLE, 1/2, 1/4, 1/8, 1/16, 1/32, 1/64, 1/128
     double            rest_ux_shift;                    ///< Unscaled horizontal shift of the rests, with respect to a default reference position
     double            rest_uy_shift;                    ///< Unscaled vertical shift of the rests, with respect to a default reference position
+    long              nominal_staff_line_shift[9];      ///< Nominal staff line shift w.r. to the middle staff line, in staff lines (1 = staffline above)
 
     // clefs
     unicodeChar        clefs_unicode_characters[4];    ///< Unicode characters for the clefs: G clef, F clef, C clef, Percussion clef
     double            clef_ux_shift;                    ///< Unscaled horizontal shift of the clefs, with respect to a default reference position
     double            clef_uy_shift;                    ///< Unscaled vertical shift of the clefs, with respect to a default reference position
-        
+
+    double            clef_num_base_pt;                 ///< Base pt for the clef numbers (will be in Arial bold)
+    t_pt              clef_G15ma_num_ushift;            ///< Shift to clef numbers for each specific clef (unscaled)
+    t_pt              clef_G8va_num_ushift;
+    t_pt              clef_F15ma_num_ushift;
+    t_pt              clef_F8va_num_ushift;
+    t_pt              clef_G15mb_num_ushift;
+    t_pt              clef_G8vb_num_ushift;
+    t_pt              clef_F15mb_num_ushift;
+    t_pt              clef_F8vb_num_ushift;
+
     // flags
     unicodeChar        flag_unicode_characters[6];        ///< Unicode characters for the following flags: 1/8 (stem up), 1/8 (stem down), 
                                                     ///< 1/16 (stem up), 1/16 (stem down), further flag (stem up), further flag (stem down).
@@ -3660,7 +3779,10 @@ typedef struct _articulation_preferences
     unicodeChar        extension_line_char;            ///< Unicode character for the articulation extension (e.g. the '~' character for the tr~~~~~~)
     double            extension_line_uy_offset;      ///< Unscaled vertical offset for the articulation extension line with respect to the associated articulation position.
                                                                                 ///< E.g. this is useful to shift the ~~~~~~ higher or lower with respect to the 'tr' symbol.
-    
+    unicodeChar       superscript_char;               ///< Superscript chars, used by trills
+    double            superscript_char_ux_shift;      ///< Superscript chars horizontal shift
+    double            superscript_char_uy_shift;      ///< Superscript chars vertical shift
+
     // XML export stuff
     t_symbol        *xmlornament;
     t_symbol        *xmltechnical;
@@ -3678,6 +3800,7 @@ typedef struct _articulations_typo_preferences
 {
     long                        num_articulations;  // number of defined articulations (<= CONST_MAX_ARTICULATIONS), including the NONE one
     t_articulation_preferences  *artpref;           // actual articulation preferences for each one of them (allocated at startup with size #CONST_MAX_ARTICULATIONS)
+    double                      card_uy_shift;      //< Vertical shift for painting articulation within the slot window ("cards")
 } t_articulations_typo_preferences;
 
 
@@ -3694,42 +3817,27 @@ typedef struct _accidentals_typo_preferences
     double            base_pt;                            ///< Font size for the accidentals for zoom_y = 1.
     double            ux_shift;                            ///< Unscaled horizontal shift (in pixels) of the accidentals with respect to a default reference position (usually 0.)
     double            uy_shift;                            ///< Unscaled vertical shift (in pixels) of the accidental text box, with respect to the vertical pitch reference position.
-                                                        ///< (This is usually much bigger than 0, depending on the font!)
+    ///< (This is usually much bigger than 0, depending on the font!)
     
     // binary accidentals
-    char            binary_characters_depth;            ///< Depth of the binary character mapping. 
-                                                        ///< Depending on the font, this is a number telling how deep in the binary semitone subdivision we can go, still having accidental symbols 
-                                                        ///< mapped to be used as accidentals for the specified subdivision.
-                                                        ///< Common values are: 2 = the font has only semitones alteration; 4 = has also quartertonal alterations; 8 = has also octotonal alterations 
-                                                        ///< Values greater than 8 are not supported.
-    unicodeChar        unicode_binary_character[17];        ///< Unicode characters for the eight-tone sequence of accidentals. The sequence namely is:
-                                                        ///< -1 tone (double flat), -7/8 tone, -3/4 (tribemol), -5/8, -1/2 (flat), -3/8, -1/4 (mobemol), -1/8,
-                                                        ///< 0 (natural), +1/8, +1/4 (monesis), +3/4, +1/2 (sharp), +5/8, +3/4 (triesis), +7/8, +1 tone (double sharp)
-                                                        ///< This sequence is the sequence to which also the fields <binary_top_uextension>, <binary_bottom_uextension> and <binary_uwidth> refer to.
-    double            binary_top_uextension[17];            ///< Unscaled extension (in pixels) of the accidental from the vertical pitch reference position to the topmost accidental point. Sequence is the previously exposed octotonal sequence, from -1tone to +1tone.
-    double            binary_bottom_uextension[17];        ///< Unscaled extension (in pixels) of the accidental from the vertical pitch reference position to the bottommost accidental point. Sequence is the previously exposed octotonal sequence, from -1tone to +1tone.
-    double            binary_uwidth[17];                    ///< Unscaled width (in pixels) of the accidental. Sequence is the previously exposed octotonal sequence, from -1tone to +1tone.
+    short             et_dyadic_depth; ///< Depth of the equal-temperament dyadic character mapping.
+    ///< Depending on the font, this is a number telling how deep in the binary semitone subdivision we can go, still having accidental symbols
+    ///< mapped to be used as accidentals for the specified subdivision.
+    ///< Common values are: 2 = the font has only semitones alteration; 4 = has also quartertonal alterations; 8 = has also octotonal alterations
+    ///< Values greater than 8 are not supported.
+    short             et_triadic_depth; ///< Depth of the equal-temperament triadic character mapping (only support is for 6).
+    bool              supports_ji;
     
-    // ternary accidentals: STILL UNSUPPORTED (and we don't know if it will ever be supported)
-    char            ternary_characters_depth;            ///< UNSUPPORTED. 
-                                                        ///< It should be the same thing as #binary_characters_depth, but for ternary subdivision. Yet it's not supported
-    unicodeChar        unicode_ternary_character[13];        ///< UNSUPPORTED. 
-                                                        ///< It should be the sequence of unicode symbols for the accidentals: 
-                                                        ///< -1 tone, -5/6 tone, -2/3, -1/2, -1/3, -1/6, 0 (natural), +1/6, +1/3, +1/2, +2/3, +5/6, +1 tone
-    double            ternary_top_extension[13];            ///< UNSUPPORTED. 
-                                                        ///< It should be the unscaled extension (in pixels) of the accidental from the vertical pitch reference position to the topmost accidental point. Sequence is the previously exposed sixth-tonal sequence, from -1tone to +1tone.
-    double            ternary_bottom_extension[13];        ///< UNSUPPORTED. 
-                                                        ///< It should be the unscaled extension (in pixels) of the accidental from the vertical pitch reference position to the bottommost accidental point. Sequence is the previously exposed sixth-tonal sequence, from -1tone to +1tone.
-    double            ternary_width[13];                    ///< UNSUPPORTED. 
-                                                        ///< It should be the unscaled width (in pixels) of the accidental. Sequence is the previously exposed sixth-tonal sequence, from -1tone to +1tone.
-
-    // bogus character
-    unicodeChar        unicode_bogus_character;            ///< Unicode character of the 'bogus' character. The 'bogus' character is shown, instead of accidentals, 
-                                                        ///< when the user chooses to show with classical accidental graphics some accidentals which don't have any
-                                                        ///< corresponding character inside the chosen font. Usually the bogus character is a circle, such as 'o'.
-    double            bogus_top_uextension;                ///< Unscaled extension (in pixels) of the bogus character, from the vertical pitch reference position to the topmost bogus character point.
-    double            bogus_bottom_uextension;            ///< Unscaled extension (in pixels) of the bogus character from the vertical pitch reference position to the bottommost bogus character point
-    double            bogus_uwidth;                        ///< Unscaled width (in pixels) of the bogus character.
+    unicodeChar       unicode_characters[BACH_NUM_ACCIDENTALS];        ///< Unicode characters: one for each #e_bach_accidental
+    double            uascent[BACH_NUM_ACCIDENTALS];            ///< Unscaled extension (in pixels) of the accidental from the vertical pitch reference position to the topmost accidental point. Sequence is the previously exposed octotonal sequence, from -1tone to +1tone.
+    double            udescent[BACH_NUM_ACCIDENTALS];        ///< Unscaled extension (in pixels) of the accidental from the vertical pitch reference position to the bottommost accidental point. Sequence is the previously exposed octotonal sequence, from -1tone to +1tone.
+    double            uwidth[BACH_NUM_ACCIDENTALS];                    ///< Unscaled width (in pixels) of the accidental. Sequence is the previously exposed octotonal sequence, from -1tone to +1tone.
+    
+    unicodeChar       space_character; ///< Codepoint of the space character
+    double            space_uwidth; ///< Width of the space character
+    
+    double            gap_between_accidentals_of_different_notes_of_same_chord_uwidth;
+    double            gap_between_accidentals_and_note_uwidth; ///< Space between an accidental and its own note
 } t_accidentals_typo_preferences;
 
 
@@ -4030,6 +4138,17 @@ typedef t_chord* (*addchordfromllll_fn)(void *notation_obj, t_llll* chord, t_rol
 typedef void (*setmeasurefromllll_fn)(void *notation_obj, t_measure *measure, t_llll *measelemllll, char also_set_tempi, char when_no_ts_given_use_previous_measure_ts, char *need_update_solos);
 
 
+/** List of possible display styles for notes in a voice
+ @ingroup    dynamics
+ */
+typedef enum _playhead_domainchange_mode
+{
+    k_PLAYHEAD_DOMAINCHANGE_DONT = 0,          ///< Don't change domain while playing
+    k_PLAYHEAD_DOMAINCHANGE_PAGES = 1,          ///< Change domain like pages (default)
+    k_PLAYHEAD_DOMAINCHANGE_FIXPOS = 2,          ///< Keep playhead fixed at a specific position, while everything else moves.
+} e_playhead_domainchange_mode;
+
+
 
 /** A common structure for UI notation objects. 
     [bach.score], [bach.roll] and [bach.slot] will extend this structure, but most of the stuff is already inside here.
@@ -4096,6 +4215,9 @@ typedef struct _notation_obj
                                                     ///< It is an array with #CONST_MAX_VOICES elements allocated in notationobj_init() and freed by notationobj_free()
     long            *midichannels_as_longlist;        ///< List of midichannels (one for each voice). 
                                                     ///< It is an array with #CONST_MAX_VOICES elements allocated in notationobj_init() and freed by notationobj_free()
+    t_symbol        **notationstyles_as_symlist;     ///< List of notation styles (one for each voice) as symbols
+                                                    ///< It is an array with #CONST_MAX_VOICES elements allocated in notationobj_init() and freed by notationobj_free()
+    t_llll          *voicegroups_as_llll;          ///< Voice groups (brackets, braces,...) as llll
 
     // tuttipoints, for bach.score
     t_tuttipoint    *firsttuttipoint;               ///< First tuttipoint
@@ -4105,16 +4227,30 @@ typedef struct _notation_obj
     
     // staff lines
     t_llll            *stafflines_as_llll;    ///< Stafflines as an llll
+    double            stafflines_width;                  ///< width
+    char              stafflines_width_scales_with_zoom; ///< by default off
     
     // autoclear
-    char            autoclear;                ///< If this flag is set, when a reconstruction bang is received, the object is automatically cleared first, and only THEN rebuilt.
+    char            autoclear;                   ///< If this flag is set, when a reconstruction bang is received,
+                                                 ///  the object is automatically cleared first, and only THEN rebuilt.
 
+    // just intonation references
+    long            ji_limit;                    ///< JI limit for editing and display
+    t_pitch         ji_base_for_ratios;          ///< Base pitch used as reference for JI ratios (e.g. C5 or C{}5, or D{}5...)
+    double          ji_limit_approx_mcthresh;    ///< Cents threshold for error while approximating cents to JI
+    char            ji_always_show_pythagorean_accidentals;     ///< Always show naturals for JI pitches
+    char            ji_show_et_offsets;         ///< Show equal-tempered offsets for JI notes, if any
+    
     // measure numbers
     char            *show_measure_numbers;            ///< List of flags (one for each voice) telling if we want to show the measure numbers in that voice
                                                     ///< It is an array with #CONST_MAX_VOICES elements allocated in notationobj_init() and freed by notationobj_free()
     double            measure_numbers_font_size;        ///< Font size for the measure numbers (for zoom_y = 1, will be scaled according to the zoom)
     char            show_measure_numbers_on_first_measure; ///< Whether to show also the very first measure number
     
+    // pianoroll display
+    char        pianoroll_display_type; ///< One of the e_pianoroll_display_type
+    char        pianoroll_keyboard_type; ///< One of the e_pianoroll_keyboard_type
+
     // private, utilities
     long        add_staff;                    ///< (PRIVATE) Flag which is 1 during the process of staff adding
     long        add_voice;                    ///< (PRIVATE) Flag which is 1 during the process of voice adding
@@ -4342,8 +4478,12 @@ typedef struct _notation_obj
                                                     ///< 3 = They also affect measure width, always
 
     char        annotation_alignment;                    ///< Alignment type for the annotations, must be one of the #e_alignments
+    double      annotation_uy_shift;                  ///< Unscaled y shift (in pixels) for the text annotations
 
     char        show_end_marker_for_regions;            ///< Display end marker for regions
+    double      markers_line_width;                      ///< Marker line width
+    char        markers_span;                           ///< Type of markers span visualization
+    
     ///
     // command fields, arrays (containing one element for each command)
     t_commandinfo commands[CONST_MAX_COMMANDS];
@@ -4426,9 +4566,13 @@ typedef struct _notation_obj
     char        velocity_handling;            ///< Parameter handling the way we display the velocity on screen. This must be one of #e_velocity_handling 
     long        tone_division;                ///< Microtonal subdivision, in n-th of tone: 2 = semitone, 4 = quartertone, 17 = 17th of a tone, and so on
     char        accidentals_display_type;    ///< Type of display for the accidentals; must be one of the #e_accidentals_display_type
+    char        accidentals_location;        ///< Currently undocumented and working for bach.roll only (0 = ordinary, 1=above note)
     e_accidentals_preferences    accidentals_preferences;    ///< Preference for the accidental choice; must be one of the #e_accidentals_preferences
-    char        show_cents_differences;           ///< Flag saying if we also display a cents difference w.r. to the displayed (screen) accidentals
+    e_accidentals_eighthtones_preferences        accidentals_eighthtones_display_type; ///< Preference for the eighthtonal arrow. One of the e_accidentals_eighthtones_preferences
+    char        show_cents_differences;           ///< One of the #e_show_cents_mode
     double      cents_differences_font_size;       ///< Font size for cents differences
+    t_symbol    *cents_differences_font;        ///< Font used to display cents differences
+
     t_symbol    *cents_symbol;                    ///< Symbol used to represent cents or MIDIcents
     double      accidentals_decay_threshold_ms;     ///< For [bach.roll] only, handles the decay threshold for accidental naturalization display.
     t_symbol    **full_acc_repr;                    ///< List of accidental representation symbols (one for each voice).
@@ -4457,7 +4601,6 @@ typedef struct _notation_obj
     double      focus_border_width;                  ///< Border size for object having focus
     double      border_width;                        ///< Border size for objects not having focus (or if @showfocus is off)
     
-    char        catch_playhead;                     ///< Catch the playhead while playing
     char        play_mode;                            ///< Play mode (see e_play_modes 0 = chord-wise, 1 = note-wise, by default it is 1, which should RARELY be changed!)
     char        play_rests;                            ///< Play rests (only work if play mode is chord-wise)
     char        play_tied_elements_separately;        ///< Flag telling if we want to send through playout tied chords just once, or if we want to have each tied chord separately output.
@@ -4491,6 +4634,9 @@ typedef struct _notation_obj
                                                         ///< it's "too late". Yet loop end is no chord, and we need to somehow force its scheduling: we do it via this flag: if this is set, check_correct_scheduling()  
                                                         ///< will check that the current timing is NO bigger than the loop end, otherwise it'll simply schedule immediately the loop end.
                                                         ///< This flag is updated each time the play is started.
+    
+//    t_timepoint            repeat_teleport_to;        ///< Teleport ending position for a repeat sign as timepoint (used internally)
+//    double                 repeat_teleport_to_ms;     ///< Teleport ending position for a repeat sign in milliseconds (used internally)
     
     char        breakpoints_have_velocity;            ///< Flag telling if the breakpoints can have a velocity (and thus one can have diminuendi and crescendi inside a note), see #t_bpt
     char        breakpoints_have_noteheads;            ///< Flag telling if the breakpoints are shown as standard classical noteheads (0 = none,  1= all, 2 = only internal)
@@ -4554,6 +4700,8 @@ typedef struct _notation_obj
     char    show_lock_color_when;    ///< Flag telling when the lock color has to be shown on locked elements; must be one of the #e_show_when 
     char    show_solo_color_when;     ///< Flag telling when the solo color has to be shown on soloed elements; must be one of the #e_show_when
     char    are_there_solos;        ///< Flag telling if, globally, there are soloed elements in the score (1) or not (0)
+    char    are_there_repeats;        ///< Flag telling if, globally, there are repeats in the score (1) or not (0)
+    char    show_repeat_times;          ///< Show how many times a repeat will repeat (0 = no, 1 = only for repeat_num != 2, 2 = always)
     char    allow_mute;                ///< Allow muting elements
     char    allow_solo;                ///< Allow solo-ing elements
     char    allow_lock;                ///< Allow locking elements
@@ -4597,6 +4745,9 @@ typedef struct _notation_obj
     t_jrgba        j_clef_rgba;                    ///< Color of the clefs
     t_jrgba     j_auxiliaryclef_rgba;           ///< Color of the auxiliary clefs
     t_jrgba        j_keysig_rgba;                    ///< Color of the key signature
+    t_jrgba        j_timesig_rgba;                    ///< Color of the time signature
+    t_jrgba        j_barline_rgba;                    ///< Color of the barlines
+    t_jrgba        j_measnum_rgba;                    ///< Color of the measrue numbers
     t_jrgba        j_note_rgba;                    ///< Color of the notes
     t_jrgba        j_accidentals_rgba;                ///< Color of the accidentals
     t_jrgba        j_rest_rgba;                    ///< Color of the rests
@@ -4624,6 +4775,8 @@ typedef struct _notation_obj
     t_jrgba        j_lyrics_rgba;                    ///< Color of the lyrics
     t_jrgba        j_linear_edit_rgba;                ///< Color related to the speedy edit (for [bach.score])
     t_jrgba        j_loop_rgba;                    ///< Color related to loop region
+    t_jrgba        j_pianoroll_dark_rgba;                ///< Color of a dark pianoroll background
+    t_jrgba        j_pianoroll_light_rgba;                ///< Color of a light pianoroll background
 
     // graphical values
     double        corner_roundness;        ///< Roundness of the corners
@@ -4666,8 +4819,9 @@ typedef struct _notation_obj
     char        show_note_names;                    ///< Flags telling if we want to show the note names in the upper legend when a note is selected
     long        last_used_octave;                    ///< Internal, private use: it keeps track of the last used octave while entering notes with notenames, so that when a user
                                                     ///< enters "C3 D E", the object understands that D and E are always at the 3rd octave. 
-    double        additional_ux_start_pad;            ///< Unscaled width of an additional starting pad, to shift the beginning of the staff farther or nearer with respect to the clefs 
-    char        show_ledger_lines;                    ///< Flags telling if we want to show the ledger lines: 
+    double      additional_ux_start_pad_after_clef; ///< Unscaled width of an additional starting pad after clef and key signatures
+    double      additional_ux_start_pad_before_clef; ///< Unscaled width of an additional starting pad before clef
+    char        show_ledger_lines;                    ///< Flags telling if we want to show the ledger lines:
                                                     ///< 0 = Never show ledger lines; 1 = Show them in the standard way (default) ; 2 = Always refer ledger lines to the main staves, 
                                                     ///< which means that if there's a note in a auxiliary staff, we'll show ledger lines between the auxiliary and the main staff 
     double        head_vertical_additional_uspace;    ///< Unscaled additional vertical space at the top of the object. 
@@ -4803,14 +4957,16 @@ typedef struct _notation_obj
     char        show_flags;                     ///< Flag telling if we want to show the chord flags
     char        show_beams;                     ///< Flag telling if we want to show the beams
     char        show_ties;                      ///< Flag telling if we want to show the ties
+    char        show_noteheads;                 ///< Flag telling if we want to show the noteheads
     char        show_dots;                      ///< Flag telling if we want to show the augmentation dots
     e_show_rests_preferences    show_rests;     ///< Flag telling if we want to show the rests
     
     
     // initial rule
     char        show_initial_rule;              ///< Flag telling whether to show initial rule
-    char        show_accollatura;               ///< Flag telling if we show the brackets for staff ensemble
-    ///
+    t_symbol    *parts_accollatura;               ///< Type of accollatura displayed for parts
+    t_symbol    *multistaff_accollatura;         ///< Type of accollatura for voices with more than one staff
+    char        show_accollature;               ///< Flag toggling the display of any accollatura
     
     // slurs (SOME OF THESE ARE YET UNSUPPORTED)
     char        show_slurs;                 ///< Flag telling if we want to show the slurs
@@ -4856,6 +5012,10 @@ typedef struct _notation_obj
     double        minimum_uwidth_for_measure;                    ///< Unscaled minimum width for ANY measure, leave 0 for unused
     double        minimum_uwidth_per_sym_unit_for_measure;    ///< Unscaled minimum width per symbolic unit for ANY measure, leave 0. for unused
 
+    // score appearance
+    double uwidth_after_barline_with_no_ts; ///< Unscaled horizontal blank space (in unscaled pixels) after a measure barline, when no time signature in the measure is needed
+    double uwidth_after_barline_with_ts;    ///< Unscaled horizontal blank space (in unscaled pixels) after a measure barline, before the time signature (if there's a time signature
+    double uwidth_after_ts;                 ///< Unscaled horizontal blank space after time signature (un unscaled pixels)
     
     // play
     char        allow_play_from_interface;    ///< Flag telling if we allow playing from the interface
@@ -4875,15 +5035,22 @@ typedef struct _notation_obj
                                         ///< by the mobile playtime playcursor)
     double        play_head_fixed_end_ms; ///< Fixed end in milliseconds for the play to stop. Once reached this millisecond position, the stop function is called, and the play is over.
                                         ///< If this value is negative (e.g. -1), no end is given, and the play stops only when the score reading is over.
-    
+    double        play_head_reset_start_ms_when_play_ends; ///< if positive, sets a position for the reset of the play_head after play ends
+    ///<
     double        theoretical_play_step_ms;    ///< Approximative step (in milliseconds) for playhead redraw. 0 means that the score is redrawn at each
                                             ///< scheduled event. The "approximative" adjective is due to the fact that we need an integer number of ticks 
                                             ///< between two scheduled events, so this might slightly vary in each scheduled interval
+
+    char        catch_playhead;             ///< Handles how the playhead changes the domain during playback: one of the e_playhead_changedomain_modes
+    double      playhead_fixed_pos;         ///< relative position of the playehad within the bar
+    char        playhead_notify_during_playback;    ///< Notify cursor position during playback
+
     char        highlight_played_notes;        ///< Highlights the played notes with the playcolor. It's a bit more CPU-expensive, but more clear.
     char        play_markers;                ///< Send markers during play
     char        play_tempi;                 ///< Send tempi during play
     char        play_measures;              ///< Send measure start barlines during play
-    
+    char        play_slurs;                 ///< Send slur information during playback
+
     void        *m_clock;                            ///< The clock for the play and task routine
     t_symbol    *setclock;                            ///< The setclock, to handle the change of clock speed
     long        play_num_steps;                        ///< Internal, number of steps to schedule between the output of a chord and the output of the next one.
@@ -4920,6 +5087,9 @@ typedef struct _notation_obj
     t_jpopupmenu *popup_durationline;            ///< Main contextual menu when clicking on a duration line
     t_jpopupmenu *popup_note_slots;                ///< Contextual submenu for the slots (when clicking on a note, chord, or mixed selection)
     t_jpopupmenu *popup_note_enharmonicity;        ///< Contextual submenu for the enharmonicity possibilities (when clicking on a note, chord, or mixed selection)
+    t_jpopupmenu *popup_note_approximate;        ///< Contextual submenu for the approximation possibilities (when clicking on a note, chord, or mixed selection)
+    t_jpopupmenu *popup_note_approximate_et;        ///< Contextual submenu for the approximation equal-tempered possibilities (when clicking on a note, chord, or mixed selection)
+    t_jpopupmenu *popup_note_approximate_ji;        ///< Contextual submenu for the approximation just intonation possibilities (when clicking on a note, chord, or mixed selection)
     t_jpopupmenu *popup_note_copy;              ///< Contextual submenu when copying selection
     t_jpopupmenu *popup_note_copy_slot;         ///< Contextual subsubmenu when copying a given slot
     t_jpopupmenu *popup_note_paste_slot;        ///< Contextual subsubmenu when pasting a given slot
@@ -4931,10 +5101,17 @@ typedef struct _notation_obj
     t_jpopupmenu *popup_filters;                ///< Contextual menu when clicking on a slotwindow of a #k_SLOT_TYPE_FILTER type of slot
     t_jpopupmenu *popup_articulations;            ///< Contextual menu when clicking on an articulation
 
-    long        current_enharmonic_list_screenmc[5];    ///< The enharmonic possibilities which pops up when using contextual menus, are saved in these two fields.
+    long        current_enharmonic_list_display_mc[5];  ///< The enharmonic possibilities which pops up when using
+                                                        ///< contextual menus, are saved in these two fields.
                                                         ///< This first one keeps the 5 possibilities for the screen midicents (diatonic pitch shown on screen, ignoring accidentals)
-    t_rational    current_enharmonic_list_screenacc[5];    ///< This second one keeps the 5 possibilities for the accidentals (related to the 5 screen midicents possibilities)
+    t_rational    current_enharmonic_list_display_alter_ET[5];    ///< This second one keeps the 5 possibilities for the accidentals (related to the 5 screen midicents possibilities)
 
+    t_rational    *current_ji_approximation_ratio_list;  ///< The enharmonic possibilities which pops up when using
+                                                         ///< contextual menus, are saved in these two fields.
+                                                         ///< This first one keeps the 5 possibilities for the screen midicents (diatonic pitch shown on screen, ignoring accidentals)
+    long    current_ji_approximation_ratio_list_size;  ///< The size of the list above
+
+    
     t_jfont *popup_main_font;                    ///< Font name (as symbol) for the main contextual menus
     t_jfont *popup_secondary_font;                ///< Font name (as symbol) for the contextual submenus
 
@@ -5013,7 +5190,8 @@ typedef struct _notation_obj
     t_symbol    *grace_note_equivalent_sym;                        ///< Playing equivalent for a 1/8 grace note (if this is 1/64, it'll mean that a grace quaver note will be played as a 64th note) 
     t_rational    grace_note_equivalent;                            ///< As #grace_note_equivalent_sym, but translated into a rational value
     double        max_percentage_of_chord_taken_by_grace_notes;    ///< Maximum percentage of the chord duration that can be taken by subsequent grace notes
-    
+
+    char        shift_voiceensemble_unisons;        ///< If 0, it doesn't shift unisons, if 1 it shifts them when noteheads are different, if 2 it shifts them always
     
     // functions
     rebuild_fn                        rebuild_function;                ///< Pointer to the function setting the whole object from llll
@@ -5078,6 +5256,8 @@ typedef struct _notation_obj
                                                 ///< will ensure compatibility (whenever possible...) with bach 0.7.9, and so on.
     
     char                dont_change_size_now;   ///< Internal flag to overcome an issue of  jbox_set_fontname() changing the size of the object
+    
+    double  temp[6];
 } t_notation_obj;
 
 
@@ -5349,7 +5529,11 @@ double mc_to_yposition_in_scale(t_notation_obj *r_ob, double mc, t_voice *v_ob);
 double mc_to_yposition_in_scale_for_notes(t_notation_obj *r_ob, t_note *note, t_voice *v_ob, double notehead_resize, char ignore_custom_noteheads);
 
 
-/**    Convert midicents into graphical pitch data: i.e. the midicents of the displayed diatonic note and the displayed accidental. 
+double mc_to_yposition_linear(t_notation_obj *r_ob, double mc, t_voice *v_ob);
+double yposition_to_mc_linear(t_notation_obj *r_ob, double mc, t_voice *v_ob);
+
+
+/**    Convert midicents into graphical pitch data: i.e. the midicents of the displayed diatonic note and the displayed accidental.
     @ingroup                    conversions
     @param r_ob                    The notation object
     @param mc                    Midicents
@@ -5361,7 +5545,7 @@ double mc_to_yposition_in_scale_for_notes(t_notation_obj *r_ob, t_note *note, t_
     @remark                        For instance, if <mc> = 6610, in a C major situation, the algorithm will fill <screen_note> = 6500 (F), <screen_accidental> = 1/2. 
     @remark                        This is an easy wrapper of the mc_to_screen_approximations_do() function.
  */
-void mc_to_screen_approximations(t_notation_obj *r_ob, double mc, long *screen_note, t_rational *screen_accidental, t_rational *key_acc_pattern, t_rational *full_repr);
+void mc_to_display_approximation_ET(t_notation_obj *r_ob, double mc, long *screen_note, t_rational *screen_accidental, t_rational *key_acc_pattern, t_rational *full_repr);
 
 
 /**    Convert midicents into graphical pitch data: i.e. the midicents of the displayed diatonic note and the displayed accidental (without needing a #t_notation_obj).
@@ -5378,13 +5562,14 @@ void mc_to_screen_approximations(t_notation_obj *r_ob, double mc, long *screen_n
 
     @remark                            If works exactly like mc_to_screen_approximations() but it doesn't neead an r_ob. For instance, it is used by [bach.mc2n].
  */
-void mc_to_screen_approximations_do(long tone_division, char accidentals_preferences, double mc, long *screen_midicents, t_rational *screen_accidental, t_rational *key_acc_pattern, t_rational *full_repr);
+void mc_to_display_approximation_ET_do(long tone_division, char accidentals_preferences, double mc, long *screen_midicents, t_rational *screen_accidental, t_rational *key_acc_pattern, t_rational *full_repr);
 
 
 /**    Convert midicents into the number of (diatonic) steps from the middle C. 
     @ingroup            conversions
     @param r_ob            The notation object (or NULL if none)
     @param midicents    Midicents
+    @param voice    Voice
     @return                The number of diatonic steps from the middle C (see #e_clefs for more info about steps)
  
     @remark                For instance, if <midicents> is 6400, the function returns 2 (since the note is 2 steps above middle C
@@ -5395,24 +5580,27 @@ void mc_to_screen_approximations_do(long tone_division, char accidentals_prefere
                         long note_steps;
                         note = obtain_note_somewhere(...);
                         note_compute_approximation(r_ob, note); // This line is only needed if the note is newly created, and its approximation values have not been yet computed
-                        note_steps = midicents_to_diatsteps_from_middleC(r_ob, note_get_screen_midicents(note));
+                        note_steps = midicents_to_diatsteps_from_middleC(r_ob, note_get_screen_midicents(note), voice);
                         @endcode
                         And NOT this:
                         @code
-                        note_steps = midicents_to_diatsteps_from_middleC(r_ob, note->midicents);
+                        note_steps = midicents_to_diatsteps_from_middleC(r_ob, note->midicents, voice);
                         @endcode
     @see                scaleposition_to_midicents()
 */
-long midicents_to_diatsteps_from_middleC(t_notation_obj *r_ob, long midicents);
+long midicents_to_diatsteps_from_middleC(t_notation_obj *r_ob, long midicents, t_voice *voice);
+
+long diatsteps_from_middleC_to_chromsteps_from_middleC(long steps);
 
 /**    As midicents_to_diatsteps_from_middleC() but steps are computed from C0 = 0
     @ingroup            conversions
     @param r_ob            The notation object (or NULL if none)
     @param midicents    Midicents
+    @param voice    Voice
     @return                The number of diatonic steps from C0
     @see                midicents_to_diatsteps_from_middleC()
 */
-long midicents_to_diatsteps_from_C0(t_notation_obj *r_ob, long midicents);
+long midicents_to_diatsteps_from_C0(t_notation_obj *r_ob, long midicents, t_voice *voice);
 
 
 /**    Convert a scaleposition in steps into the midicents value (considering step 0 = middle C, step 7 = higher C and so on).
@@ -5503,7 +5691,7 @@ double xposition_to_ms(t_notation_obj *r_ob, double xposition, char mode);
     @param note             The note
     @return                    The midicents of the displayed note, without accidental
  */
-long note_get_screen_midicents(t_note *nt);
+long note_get_display_midicents(t_note *nt);
 
 
 /**    Obtain the accidental of the displayed note.
@@ -5511,7 +5699,13 @@ long note_get_screen_midicents(t_note *nt);
     @param note             The note
     @return                    The accidental of the displayed note
  */
-t_shortRational note_get_screen_accidental(t_note *nt);
+//t_shortRational note_get_screen_accidental(t_note *nt);
+
+t_shortRational note_get_display_accidentals_ordinary(t_note *nt);
+t_rational note_get_display_accidentals_JIcommas(t_note *nt);
+double note_get_display_accidentals_cents(t_note *nt);
+bool pitch_has_accidentals(t_pitch *p);
+bool note_has_accidentals(t_note *nt);
 
 
 /**    Obtain the midicents of the displayed note (accidentals are also accounted for).
@@ -5519,7 +5713,7 @@ t_shortRational note_get_screen_accidental(t_note *nt);
     @param note             The note
     @return                    The midicents of the displayed note
  */
-t_rational note_get_screen_midicents_with_accidental(t_note *nt);
+double note_get_display_midicents_with_accidental(t_note *nt);
 
 
 /**    Flag telling if the note pitch is user defined or not.
@@ -5527,7 +5721,7 @@ t_rational note_get_screen_midicents_with_accidental(t_note *nt);
     @param note             The note
     @return                    1 if pitch is user-defined, 0 otherwise
  */
-char note_is_enharmonicity_userdefined(t_note *nt);
+char note_is_original_pitch_userdefined(t_note *nt);
 
 
 /**    Flags the note as not having a user-defined pitch (automatic enharmonicity)
@@ -5544,11 +5738,13 @@ void note_set_auto_enharmonicity(t_note *nt);
     @param screen_acc       The accidental of the note
     @param also_assign_mc       Also assign midicents depending on the diatonic note values
  */
-void note_set_user_enharmonicity_from_screen_representation(t_note *nt, double screen_mc, t_rational screen_acc, char also_assign_mc = true);
+void note_set_user_enharmonicity_from_display_representation(t_note *nt, double screen_mc, t_rational screen_acc, char also_assign_mc = true);
 void note_set_user_enharmonicity(t_note *nt, t_pitch pitch, char also_assign_mc = true);
 void note_set_enharmonicity(t_note *nt, t_pitch pitch); // if pitch is NaP it'll be auto, otherwise user
-void note_set_displayed_user_enharmonicity_from_screen_representation(t_note *nt, double screen_mc, t_rational screen_acc);
+void note_set_displayed_user_enharmonicity_from_display_representation(t_note *nt, double screen_mc, t_rational screen_acc);
 void note_set_displayed_user_enharmonicity(t_note *nt, t_pitch pitch);
+void note_set_to_best_jilimited_approximation_if_jivoice(t_notation_obj *r_ob, t_note *nt);
+char notationobj_set_selection_to_best_jilimited_approximation_if_jivoice(t_notation_obj *r_ob);
 
 void note_appendpitch_to_llll_for_gathered_syntax_or_playout(t_notation_obj *r_ob, t_llll *ll, t_note *note, e_data_considering_types mode);
 void note_appendpitch_to_llll_for_separate_syntax(t_notation_obj *r_ob, t_llll *ll, t_note *note, e_output_pitches pitch_output_mode = k_OUTPUT_PITCHES_DEFAULT);
@@ -5862,6 +6058,8 @@ long actiontypesym2actiontypeid(t_symbol *sym);
  */
 e_header_elems header_symbol_to_long(t_symbol *this_sym);
 
+char symbol_to_barline_type(t_symbol *thissym);
+
 
 /** Convert an llll containing the symbols of header objects into a combination of #e_header_elems.
     @ingroup    conversions
@@ -5954,19 +6152,19 @@ char is_diatonic_step_after_degree_semitone(long degree);
     @param    elem        The llllelem containing either the pitch of the note as double or a note name
     @return                The midicents of the note
 */
-double get_midicents_from_double_elem_or_notename(t_notation_obj *r_ob, t_llllelem *elem);
+double get_midicents_from_double_or_pitch_llllelem(t_notation_obj *r_ob, t_llllelem *elem);
 
 
-/**    Retrieve some standard enharmonic possibilities for the graphical representation of a note.
-    These possibilities are stored in the #current_enharmonic_list_screenmc and #current_enharmonic_list_screenacc fields of the #t_notation_obj structure.
+/**    Retrieve some standard equal-tempered enharmonic possibilities for the graphical representation of a note.
+    These possibilities are stored in the #current_enharmonic_list_display_mc and #current_enharmonic_list_display_alter_ET fields of the #t_notation_obj structure.
     The algorithm also fills the #curr_idx pointer with the index, within the lists, of the current note representation.
     @ingroup            notation_utilities
     @param    r_ob        The notation object
     @param    note        The note
-    @param    curr_idx    Pointer which will be filled with the index of the current representation (the index is referred to the #current_enharmonic_list_screenmc and #current_enharmonic_list_screenacc arrays).
+    @param    curr_idx    Pointer which will be filled with the index of the current representation (the index is referred to the #current_enharmonic_list_display_mc and #current_enharmonic_list_display_alter_ET arrays).
                         This will be filled with -1 if the note enharmonical representation is not in the arrays. 
 */ 
-void note_get_enharmonic_possibilities(t_notation_obj *r_ob, t_note *note, long *curr_idx);
+void note_get_ET_enharmonic_possibilities(t_notation_obj *r_ob, t_note *note, long *curr_idx);
 
 
 /**    Fills a full-representation array (array of 48 #t_rational containing accidental representation for each eighttonal step) 
@@ -6177,7 +6375,7 @@ void get_staff_range_mc(int clef, long *mc_min, long *mc_max);
     @remark Only standard figures should be introduced; nevertheless if nonstandard figures are introduced, they are considered as default tuplets
             and the corresponding beams number is returned (e.g. 1/24 -> 2).
 */ 
-long get_num_beams_from_figure(t_rational figure);
+t_uint8 get_num_beams_from_figure(t_rational figure);
 
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -6199,7 +6397,9 @@ long get_bits_from_figure(t_rational figure);
     @param barline    Barline type (one of the #e_barline_modifier)
     @return            The unscaled width of the barline
  */
-double get_barline_ux_width(t_notation_obj *r_ob, char barline);
+double get_barline_uwidth(t_notation_obj *r_ob, char barline);
+double get_barline_left_offset_ux(t_notation_obj *r_ob, char barline_type);
+double get_barline_right_offset_ux(t_notation_obj *r_ob, char barline_type);
 
 
 /**    Obtain the unscaled width of a measure barline in pixels.
@@ -6208,7 +6408,9 @@ double get_barline_ux_width(t_notation_obj *r_ob, char barline);
     @param measure    The measure
     @return            The unscaled width of the barline
  */
-double measure_get_barline_ux_width(t_notation_obj *r_ob, t_measure *meas);
+double measure_get_barline_uwidth(t_notation_obj *r_ob, t_measure *meas);
+double measure_get_barline_left_offset_ux(t_notation_obj *r_ob, t_measure *meas);
+double measure_get_barline_right_offset_ux(t_notation_obj *r_ob, t_measure *meas);
 
 
 
@@ -6233,6 +6435,8 @@ void adjust_zoom_for_non_antialiased_lines(t_notation_obj *r_ob);
  */
 void update_hscrollbar(t_notation_obj *r_ob, char from_what);
 
+
+double notationobj_get_starting_pads_ux(t_notation_obj *r_ob);
 
 /**    Refresh the position of the horizontal scrollbar (refresh all the horizontal scrollbar fields in the structure.
     @ingroup            notation_graphics
@@ -6324,6 +6528,8 @@ void chord_set_recompute_parameters_flag(t_notation_obj *r_ob, t_chord *ch);
     @remark                BEWARE: only used it with [bach.score]!!!
  */
 char chord_get_placement_in_screen(t_notation_obj *r_ob, t_chord *chord);
+
+int chord_get_clef(t_notation_obj *r_ob, t_chord *ch);
 
 
 /** Tell if a given vertical pixel position is inside the staff (or staves) of a given voice.
@@ -6423,56 +6629,37 @@ void get_playhead_ypos(t_notation_obj *r_ob, double *y1, double *y2);
 
 
 // -----------------------------------
-// TYPOGRAPHICAL
+// ACCIDENTALS
 // -----------------------------------
 
-/**    Returns the Unicode character for an accidental, given the current <accidentals_typo_preferences> of the notation object.
-    @ingroup            typographical
-    @param r_ob            The notation object
-    @param accidental    Accidental (in rational form, e.g. -1/2 = flat...)
-    @return                Unicode character for the accidental
- */
-unicodeChar get_accidental_character(t_notation_obj *r_ob, t_rational accidental);
+double note_get_accidental_uascent(t_notation_obj *r_ob, t_note *note);
+double note_get_accidental_udescent(t_notation_obj *r_ob, t_note *note);
+double note_get_accidental_uwidth(t_notation_obj *r_ob, t_note *nt, char always_classical_display);
+double accidentals_get_udescent(t_notation_obj *r_ob, t_uint8 *accidentals);
+double accidentals_get_uascent(t_notation_obj *r_ob, t_uint8 *accidentals);
+double accidentals_get_uwidth(t_notation_obj *r_ob, t_uint8 *accidentals);
+void note_get_accidental_as_cents(t_notation_obj *r_ob, t_note *nt, char *buf);
+void note_get_accidental_as_fraction(t_notation_obj *r_ob, t_note *nt, char *buf);
+void note_get_accidentals_unicode_chars(t_notation_obj *r_ob, t_note *nt, unicodeChar *accidental_text, long *accidental_text_len);
+bool note_has_accidentals(t_note *nt);
+bool note_has_no_accidentals_or_has_natural(t_note *nt);
+
+e_bach_accidental rational_to_accidental_ET(t_notation_obj *r_ob, t_rational accidental);
+void get_accidentals_for_pitch_ET(t_notation_obj *r_ob, t_pitch p, t_uint8 *accidentals, t_uint8 *numAccidentals);
+void get_accidentals_for_pitch_JI(t_notation_obj *r_ob, t_pitch pitch_displayed, t_uint8 *accidentals, t_uint8 *numAccidentals, t_pitch pitch_original);
+bool note_accidental_equals_alter_ET(t_notation_obj *r_ob, t_note *nt, t_shortRational alterET);
+
+bool accidentals_eq(t_uint8 *accidentals1, t_uint8 *accidentals2);
+void note_get_display_accidentals(t_note *nt, t_uint8 *accidentals);
 
 
-/**    Returns the unscaled top extension of an accidental, given the current <accidentals_typo_preferences> of the notation object.
-    See #e_accidentals_typo_preferences for more informatino about what the unscaled top extension is.
-    @ingroup            typographical
-    @param r_ob            The notation object
-    @param accidental    Accidental (in rational form, e.g. -1/2 = flat...)
-    @return                Unscaled top exension of the accidental
- */
-double get_accidental_top_uextension(t_notation_obj *r_ob, t_rational accidental); 
+// -----------------------------------
+// OTHER TYPOGRAPHICAL
+// -----------------------------------
 
 
-/**    Returns the unscaled bottom extension of an accidental, given the current <accidentals_typo_preferences> of the notation object.
-    See #e_accidentals_typo_preferences for more informatino about what the unscaled bottom extension is.
-    @ingroup            typographical
-    @param r_ob            The notation object
-    @param accidental    Accidental (in rational form, e.g. -1/2 = flat...)
-    @return                Unscaled bottom exension of the accidental
- */
-double get_accidental_bottom_uextension(t_notation_obj *r_ob, t_rational accidental);
 
-
-//TBD
-double note_get_accidental_top_uextension(t_notation_obj *r_ob, t_note *note);
-double note_get_accidental_bottom_uextension(t_notation_obj *r_ob, t_note *note);
-
-
-/**    Returns the unscaled width of an accidental, given the current <accidentals_typo_preferences> of the notation object.
-    @ingroup            typographical
-    @param r_ob            The notation object
-    @param accidental    Accidental (in rational form, e.g. -1/2 = flat...)
-    @param always_classical_display    If this flag is non-zero, the accidentals are always assumed to be displayed classically,
-                                    via #k_ACCIDENTALS_CLASSICAL. This is handy when painting the key signatures, which 
-                                    is always painted with classical accidentals. Leave this to 0 otherwise.
-    @return                Unscaled width of the accidental
- */
-double get_accidental_uwidth(t_notation_obj *r_ob, t_rational accidental, char always_classical_display);
-
-
-/**    Convert a number into a sequence of unicode characters. 
+/**    Convert a number into a sequence of unicode characters.
     @ingroup                typographical
     @param r_ob                The notation object
     @param number            The number to be converted
@@ -6521,7 +6708,7 @@ void load_noteheads_typo_preferences(t_notation_obj *r_ob, t_symbol *font);
     @param r_ob        The notation object
     @param font        The font name
  */
-void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, t_symbol *font);
+void load_articulations_typo_preferences(t_notation_obj *r_ob, t_articulations_typo_preferences *atp, t_symbol *font);
 
 
 // Internal
@@ -6711,6 +6898,8 @@ double get_stem_x_from_alignment_point_x(t_notation_obj *r_ob, t_chord *chord, d
 */
 double rest_get_uwidth(t_notation_obj *r_ob, t_rational r_sym_duration);
 
+long rest_get_nominal_staff_line_shift(t_notation_obj *r_ob, t_rational r_sym_duration);
+
 
 /**    Get the top vertical extension (from the rest vertical barycenter position upwards) of a rest, in steps.
     @ingroup                typographical
@@ -6735,6 +6924,8 @@ double rest_get_bottom_extension_in_steps(t_notation_obj *r_ob, t_rational r_sym
 // -----------------------------------
 // NOTATION COLORS
 // -----------------------------------
+
+const char *notationobj_get_dynamic_fontname(t_notation_obj *r_ob);
 
 /**    Change a given color depending if the element is selected, played, locked, muted, solo or speedy-edited.
     So the element might assume the selection color, play color, locked color, muted color, solo color or a combination of these. Or the speedy edit color.
@@ -7715,23 +7906,33 @@ char check_notes_order(t_chord *chord);
 void note_compute_approximation(t_notation_obj *r_ob, t_note *nt);
 
 
-/**    Snap a pitch (in midicents) to the current microtonal grid for the notation object.
-    @ingroup        notation
-    @param r_ob        The notation object
-    @param pitch    Midicents to be snapped
-    @return            Midicents snapped to the microtonal grid
- */
-double snap_to_microtonal_grid(t_notation_obj *r_ob, double pitch);
-
-
 /**    Snap a pitch (in midicents) to the current microtonal grid for a given tone division.
-    @remark            This is as snap_to_microtonal_grid(), but doesn't need a notation obejct.
     @ingroup        notation
-    @param pitch    Midicents to be snapped
+    @param cents    Midicents to be snapped
     @param tone_division    The tone division (number of steps in which the tone is divided: 2 = semitonal, 4 = quartertonal...)
     @return            Midicents snapped to the microtonal grid
  */
-double snap_to_microtonal_grid_do(double pitch, long tone_division);
+double snap_to_microtonal_grid(double cents, long tone_division);
+
+/**    Snap a pitch (in midicents) to the current microtonal grid for the notation object.
+    @ingroup        notation
+    @param r_ob        The notation object
+    @param cents    Midicents to be snapped
+    @return            Midicents snapped to the microtonal grid
+ */
+double notationobj_snap_to_microtonal_grid(t_notation_obj *r_ob, double cents);
+
+double snap_to_jilimit(double cents, long jilimit, double jierrthresh, double baseratio, t_rational *ratio = NULL);
+double notationobj_snap_to_jilimit(t_notation_obj *r_ob, double cents, t_rational *ratio = NULL);
+t_pitch notationobj_get_best_jilimited_approximation(t_notation_obj *r_ob, double cents);
+
+long ratio_fold_octaves(t_rational *r); // returns number of folded octaves
+long ratio_fold_octaves(double *r); // returns number of folded octaves
+double cents_to_freqratio(t_notation_obj *r_ob, double cents, double baseratio);
+double freqratio_to_cents(t_notation_obj *r_ob, double ratio, double baseratio);
+// These two function account for the JI base contained in r_ob
+double notationobj_cents_to_freqratio(t_notation_obj *r_ob, double cents);
+double notationobj_freqratio_to_cents(t_notation_obj *r_ob, double ratio);
 
 
 /**    Modify a pitch in order to be sure that it isn't a NaN or infinite.
@@ -7765,26 +7966,24 @@ int get_middle_scaleposition(int clef);
     If the chord is a [bach.roll] chord, it first calls note_compute_approximation() on each note. Then it calculates:
     - the <notehead_resize>, <accidentals_resize>, <notehead_uwidth> fields of all notes
     - the <scaleposition> field for all notes
-    - the <show_accidental> fields (only for [bach.roll]: for [bach.score] this is done in validate_accidentals_for_measure())
-    - the <direction> field (chord direction), you can impose it by setting the <imposed_direction> field different from 0, before calling 
-        for calculate_chord_parameters(); leave it to 0 for automatic calculatio - if we're in [bach.roll] and we don't show stems, by default the stem will be upward
+    - the <show_accidental> fields (only for [bach.roll]: for [bach.score] this is done in measure_validate_accidentals())
+    - the <direction> field (chord direction), you can impose it by setting the <imposed_direction> field different from 0, before calling
+        for chord_calculate_parameters(); leave it to 0 for automatic calculatio - if we're in [bach.roll] and we don't show stems, by default the stem will be upward
     - the <left_uextension> and <right_uextension>, <lyrics_portion_of_left_uextension> fields of the chord (representing the unscaled amount of pixels, 
         at the left and right of the stem line, needed to paint the chord)
     - the <notecenter_stem_delta_ux> field for each note (the position of each notehead with respect to the stem) 
     - the <need_auxiliary_stem> field for each note (does the note need an auxiliary stem?) 
-    - all the fields concerning accidentals for the note, and their positioning. The function calculates the <num_accidentals>, the <accidental_text> (text sequence 
-        of all accidentals, e.g. "bbbb"), the <accidental_stem_delta_ux> (position of accidental text box with respect to the stem), <accidental_top_uextension> and
-        <accidental_bottom_uextension> (upper/lower extension of accidentals)
+    - all the fields concerning accidentals for the note, and their positioning. The function calculates the <num_accidentals>, the <accidentals> (sequence of all accidentals), the <accidental_stem_delta_ux> (position of accidental text box with respect to the stem), <accidental_uascent> and
+        <accidental_udescent> (upper/lower extension of accidentals)
     - the default <notehead_unicode_character>, but only for [bach.score] chords
     @ingroup                                notation
     @param    r_ob                            The notation object
     @param    chord                            The chord
-    @param    clef                            The clef or clef combination, as one of the #e_clefs (typically this could be in roll the chord->voiceparent->v_ob.clef, 
-                                            in score the chord->parent->voiceparent->v_ob.clef)
     @param    reset_graphical_position_values    Set this to 1 if you also want to reset the graphical position values. Namely this resets the <topmost_y>, <bottommost_y>, 
                                             <beam_y>, <topmost_y_noacc>, <bottommost_y_noacc> fields, and then call for reset_articulation_position_for_chord()
+    @param force_compute_show_accidentals   If set, it forces the filling of the show_accidentals field even for bach.score
  */
-void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, char reset_graphical_position_values);
+void chord_calculate_parameters(t_notation_obj *r_ob, t_chord *chord, char reset_graphical_position_values, char force_compute_show_accidentals = 0);
 
 
 /**    Fill the <notehead_resize> and <accidentals_resize> fields for a given note, depening if the note size is linked to some slot, or
@@ -7792,11 +7991,12 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
     @ingroup        notation
     @param    r_ob    The notation object
     @param    note    The note
-    @remark            This is used in calculate_chord_parameters().
+    @remark            This is used in chord_calculate_parameters().
 */ 
 void calculate_note_sizes_from_slots(t_notation_obj *r_ob, t_note *note);
 double velocity_to_notesize_factor(t_notation_obj *r_ob, long velocity);
 
+void chord_calculate_staff_uy_stuff(t_notation_obj *r_ob, t_chord *chord);
 
 /**    Retrieve the y position of the ledger lines relative to a given scaleposition (see the <scaleposition> field in the #t_note structure). 
     @ingroup    notation
@@ -7910,6 +8110,8 @@ void marker_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_marker
     @see    chord_check_dependencies_before_deleting_it()
  */
 void dynamics_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_dynamics *dyn);
+
+void articulation_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_articulation *art);
 
 /**    Check and erase all the dependencies for a pitch breakpoint (supposedly because we want to delete the breakpoint right after).
     @ingroup            notation
@@ -9641,7 +9843,10 @@ void set_matrix_parameters_from_slotinfo(t_notation_obj *r_ob, long slot_num);
     @param    note    The note
     @see            snap_pitch_to_grid_for_selection()
  */ 
-void snap_pitch_to_grid_for_note(t_notation_obj *r_ob, t_note *note);
+void note_snap_midicents_to_displayed_pitch(t_notation_obj *r_ob, t_note *note);
+void note_snap_original_pitch_to_display_pitch(t_notation_obj *r_ob, t_note *note);
+
+char snap_pitch_to_et_tonedivision_for_selection(t_notation_obj *r_ob, long tonedivision);
 
 
 /**    Snap the pitch of all the selected notes to the microtonal grid (works exactly as snap_pitch_to_grid_for_note(), but for all the notes in 
@@ -9650,7 +9855,11 @@ void snap_pitch_to_grid_for_note(t_notation_obj *r_ob, t_note *note);
     @param    r_ob    The notation object
     @see            snap_pitch_to_grid_for_note()
  */ 
-char snap_pitch_to_grid_for_selection(t_notation_obj *r_ob);
+char snap_pitch_to_current_display_for_selection(t_notation_obj *r_ob);
+
+char snap_pitch_to_ji_limit_for_selection(t_notation_obj *r_ob, long jilimit);
+
+char snap_pitch_to_current_ji_limit_for_selection(t_notation_obj *r_ob);
 
 
 /**    Snap the onset of a chord to the time grid (ruler or grid, if any). Only works for [bach.roll], currently.
@@ -9703,8 +9912,9 @@ char snap_tail_to_grid_for_selection(t_notation_obj *r_ob);
     @param    new_screen_midicents    The screen midicents of the note (see the <screen_midicents> field of #t_note), only used if <auto_mode> = 0 
     @param    new_screen_accidental    The screen accidental of the note (see the <screen_accidental> field of #t_note), only used if <auto_mode> = 0 
  */ 
-void enharmonically_retranscribe_note(t_notation_obj *r_ob, t_note *note, char auto_mode, long new_screen_midicents, t_rational new_screen_accidental);
+void note_retranscribe_enharmonically_ET(t_notation_obj *r_ob, t_note *note, char auto_mode, long new_screen_midicents, t_rational new_screen_accidental);
 
+void note_retranscribe_as_JI_ratio(t_notation_obj *r_ob, t_note *note, t_rational ratio);
 
 /**    Enharmonically retranscribe the pitch of all the selected note (works exactly as enharmonically_retranscribe_note(), but for all the notes in 
     the current object selection, and only in the default automatic mode, <auto_mode> = 1) 
@@ -9713,6 +9923,9 @@ void enharmonically_retranscribe_note(t_notation_obj *r_ob, t_note *note, char a
  */ 
 char enharmonically_respell_selection(t_notation_obj *r_ob);
 
+
+bool note_should_be_treated_as_ji(t_notation_obj *r_ob, t_note *nt);
+bool note_should_be_treated_as_mixed_et_and_ji(t_notation_obj *r_ob, t_note *nt);
 
 /**    DEPRECATED, OBSOLETE: use note_set_pitch().
     Properly set all the note pitch and accidental fields (also screen ones) starting from a note name (as symbo).
@@ -9736,6 +9949,9 @@ void note_set_pitch_from_notename(t_notation_obj *r_ob, t_note *note, t_symbol *
 void note_set_pitch(t_notation_obj *r_ob, t_note *note, t_pitch pitch);
 
 
+void notationobj_setintervalratio(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+
+
 /**    Get the pitch of a note. If the note has user-defined pitch, this is the pitch that the user inserted 
     (which might differ from the displayed one, for instance because it was incompatible for microtonality),
     otherwise it returns the displayed pitch.
@@ -9745,6 +9961,10 @@ void note_set_pitch(t_notation_obj *r_ob, t_note *note, t_pitch pitch);
     @return                         The pitch of the note
  */
 t_pitch note_get_pitch(t_notation_obj *r_ob, t_note *note);
+
+
+// TBD: only for legend display (handles linpitch differently)
+t_pitch note_get_pitch_for_legend(t_notation_obj *r_ob, t_note *note);
 
 
 // TBD: pitch-or-cents
@@ -9886,6 +10106,8 @@ void set_all_prevent_edit_to_value(t_prevent_edit *pe, long val);
  */
 void constraint_midicents_depending_on_editing_ranges(t_notation_obj *r_ob, double *midicents, long voicenum);
 
+void note_constrain_pitch_depending_on_editing_ranges(t_notation_obj *r_ob, t_note *nt, long voicenum);
+
 
 
 /** Obtain the midicents a cerain number "steps" above or below a certain midicent. This number of steps is the #delta_steps,
@@ -9900,6 +10122,8 @@ void constraint_midicents_depending_on_editing_ranges(t_notation_obj *r_ob, doub
  */
 double get_next_step_depending_on_editing_ranges(t_notation_obj *r_ob, double midicents, long voicenum, long delta_steps);
 
+t_rational get_next_rational_in_farey_sequence(t_notation_obj *r_ob, double r, long delta_steps);
+void note_set_next_step_in_farey_sequence_depending_on_editing_ranges(t_notation_obj *r_ob, t_note *note, long delta_steps);
 
 
 
@@ -9969,7 +10193,7 @@ void assign_chord_lyrics(t_notation_obj *r_ob, t_chord *chord, t_jfont *jf_lyric
 
 
 /**    Delete the lyrics associated to a chord. More precisely: erase the chord slot linked with the lyrics content (if any), and then
-    sets the <need_recompute_parameters> field, which will oblige to call for assign_chord_lyrics() and calculate_chord_parameters().
+    sets the <need_recompute_parameters> field, which will oblige to call for assign_chord_lyrics() and chord_calculate_parameters().
     The first function will be such that (since there's no more slot content), also the <lyrics> field of the chord will be erased.
      @ingroup        lyrics
     @param    r_ob    The notation object
@@ -10269,6 +10493,9 @@ void paint_tie(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, double x1, d
  */
 void paint_clef(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf, double middleC_y, long clef, t_jrgba color, t_jrgba auxcolor);
 
+bool midicents_is_whitekey(long mc);
+
+void paint_keyboard_clef(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf, double middleC_y, long clef, t_jrgba color, t_jrgba auxcolor);
 
 /**    Paint the accollatura for a clef combination (if the <clef> is a simple clef, it does nothing)
     @ingroup            notation_paint
@@ -10278,10 +10505,11 @@ void paint_clef(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf, double middle
     @param    staffbottom_y    The y of the bottommost staff point
     @param    color        The color of the accollatura
  */ 
-void paint_accollatura(t_notation_obj *r_ob, t_jgraphics* g, double stafftop_y, double staffbottom, t_jrgba color);
+void paint_accollatura(t_notation_obj *r_ob, t_jgraphics* g, double stafftop_y, double staffbottom, t_jrgba color, e_accollatura_type type);
 
 
 // TBD
+e_accollatura_type accollatura_symbol_to_type(t_notation_obj *r_ob, t_symbol *acc);
 void paint_playhead(t_notation_obj *r_ob, t_jgraphics* g, t_rect rect);
 char is_clef_multistaff(t_notation_obj *r_ob, long clef);
 
@@ -10421,7 +10649,7 @@ void paint_notehead(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t_jfon
 void paint_duration_line(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t_jrgba notecolor, t_jrgba tailcolor, t_note *curr_nt, 
                             double end_pos, double system_shift, double system_jump, char note_unselected, char is_chord_selected, 
                             char is_note_selected, char is_durationline_selected, char is_note_played, char is_note_locked,
-                            char is_note_muted, char is_note_solo, t_bpt **selected_breakpoint);
+                            char is_note_muted, char is_note_solo, t_bpt **selected_breakpoint, double note_y_real);
     
 
 
@@ -10437,15 +10665,20 @@ void paint_duration_line(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t
     @param    clef                    The clef or clef combination of the note's voice (one of the #e_clefs)
     @param    note_y_real                The y pixel of the center of the notehead 
     @param    stem_x                    The x pixel of the chord stem
-    @param    acc_top_uextension        Pointer which will be filled with the unscaled top extension of the accidental (see #e_accidentals_typo_preferences) 
-                                    Leave NULL if you don't care for the information.
-    @param    acc_bottom_uextension    Pointer which will be filled with the unscaled bottom extension of the accidental (see #e_accidentals_typo_preferences). 
-                                    Leave NULL if you don't care for the information.
- */ 
-void paint_accidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_acc, t_jfont *jf_text_fractions, 
-                           t_jfont *jf_acc_bogus, t_jrgba *color, t_note *curr_nt, long clef, 
-                           double note_y_real, double stem_x, 
-                           double *acc_top_uextension, double *acc_bottom_uextension);
+    @param  set_topmost_bottommost_stuff    Toggles the ability to set the topmost/bottommost chord fields
+ */
+void note_paint_accidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_acc, t_jfont *jf_text_fractions, 
+                           t_jfont *jf_acc_bogus, t_jrgba *color, t_note *curr_nt, long clef,
+                           double note_y_real, double stem_x, bool set_topmost_bottommost_stuff);
+
+bool note_must_show_cents(t_notation_obj *r_ob, t_note nt);
+
+double chord_get_bottommost_y_noacc(t_notation_obj *r_ob, t_chord *chord);
+double chord_get_topmost_y_notuplets(t_notation_obj *r_ob, t_chord *chord);
+double chord_get_bottommost_y_notuplets(t_notation_obj *r_ob, t_chord *chord);
+double chord_get_topmost_y_noacc(t_notation_obj *r_ob, t_chord *chord);
+double chord_get_bottommost_y(t_notation_obj *r_ob, t_chord *chord);
+double chord_get_topmost_y(t_notation_obj *r_ob, t_chord *chord);
 
 
 /**    Paint an articulation
@@ -10514,10 +10747,16 @@ double paint_label_for_ruler(t_notation_obj *r_ob, t_jgraphics* g, double millis
 void paint_staff_lines(t_notation_obj *r_ob, t_jgraphics* g, double x1, double x2, double width, double middleC_y, long clef, 
                        t_jrgba main_staff_color, t_jrgba aux_staff_color, long num_staff_lines, char *staff_lines);
 
+double notationobj_get_stafflines_width(t_notation_obj *r_ob);
+
+void paint_staff_lines_pianoroll(t_notation_obj *r_ob, t_jgraphics *g, double x1, double x2, double width, double middleC_y, long clef, t_jrgba color);
 
 // TBD
-void paint_left_vertical_staffline(t_notation_obj *r_ob, t_jgraphics* g, t_voice *voice, t_jrgba color);
+void paint_left_vertical_staffline(t_notation_obj *r_ob, t_jgraphics* g, t_voice *voice, t_jrgba color); // no longer used
 void paint_initial_rule(t_notation_obj *r_ob, t_jgraphics *g, t_jrgba color);
+void paint_multistaff_accollatura(t_notation_obj *r_ob, t_jgraphics *g, t_voice *voice, t_jrgba mainstaffcolor);
+void paint_voiceensemble_accollatura(t_notation_obj *r_ob, t_jgraphics *g, t_voice *voice, t_jrgba mainstaffcolor);
+void paint_voicegroups_accollature(t_notation_obj *r_ob, t_jgraphics *g);
 
 
 
@@ -10981,6 +11220,14 @@ void write_text_standard_account_for_insets_singleline(t_notation_obj *r_ob, t_j
  */ 
 void write_text_standard_account_for_vinset(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char * text, double x1, double y1);
 
+void write_text_vcentered_account_for_vinset(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1);
+
+void write_text_vcentered_and_hcentered_account_for_vinset(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char  *text, double x1, double y1);
+
+void write_text_hcentered_top_account_for_vinset(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1);
+
+void write_text_hcentered_bottom_account_for_vinset(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1);
+
 void write_text_standard_account_for_vinset_singleline(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char * text, double x1, double y1);
 
 #endif
@@ -11159,6 +11406,8 @@ void end_editing_textfield(t_notation_obj *r_ob);
  */
 void set_midichannels_from_llll(t_notation_obj *r_ob, t_llll* midichannels);
 
+void set_notationstyles_from_llll(t_notation_obj *r_ob, t_llll* notationstyles);
+
 
 /**    Change the midichannel of a specific voice
     @ingroup                midichannels
@@ -11168,6 +11417,9 @@ void set_midichannels_from_llll(t_notation_obj *r_ob, t_llll* midichannels);
     @param    also_add_undo_tick    Also adds an undo tick before changing
  */
 void change_single_midichannel(t_notation_obj *r_ob, t_voice *voice, long new_midichannel, char also_add_undo_tick);
+
+
+void change_single_notationstyle(t_notation_obj *r_ob, t_voice* voice, t_symbol *new_notationstyle, char also_add_undo_tick);
 
 
 
@@ -11249,7 +11501,7 @@ char move_breakpoint(t_notation_obj *r_ob, t_bpt *breakpoint, double delta_rel_x
     @param    bpt        The breakpoint
     @remark            What is snapped is of course not the <delta_mc> field, but its absolute pitch position (so the note's mc plus the breakpoint delta_mc).
  */ 
-void snap_pitch_to_grid_for_breakpoint(t_notation_obj *r_ob, t_bpt *bpt);
+void snap_pitch_to_current_grid_for_breakpoint(t_notation_obj *r_ob, t_bpt *bpt);
 
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -11353,14 +11605,16 @@ void destroy_articulation(t_articulation *art);
 t_articulation *build_articulation(t_notation_obj *r_ob, long articulation_ID, t_notation_item *owner, t_slotitem *parent, t_symbol *original_name);
 
 
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
 /**    Delete a given articulation of a given notation item.
     @ingroup                        articulations
     @param    r_ob                    The notation object
     @param    owner                    The notation item owning the articulation (either a #k_CHORD or a #k_NOTE)
-    @param    articulation_number        The 0-based index of the articulation (among all the owner's articulations). 
- */ 
+    @param    articulation_number        The 0-based index of the articulation (among all the owner's articulations).
+ @remark    Deprecated, old way to deal with articulations
+ */
 void delete_articulation_from_notation_item(t_notation_obj *r_ob, t_notation_item *owner, long articulation_number);
-
+#endif
 
 /**    Delete all articulations of a given notation item.
     @ingroup                        articulations
@@ -11704,6 +11958,7 @@ t_chord *chord_get_first_selected(t_notation_obj *r_ob);
  */
 t_note *note_get_first_selected(t_notation_obj *r_ob);
 
+t_llll *note_get_selected_as_llll(t_notation_obj *r_ob);
 
 // TBD
 t_dynamics *dynamics_get_first_selected(t_notation_obj *r_ob);
@@ -12489,9 +12744,10 @@ t_llll *get_rests_sequence(t_notation_obj *r_ob, t_chord *chord);
     @param    mode        If this is 1, only groups appearing #start_ms and #end_ms are considered.
     @param    start_ms    If mode == 1, the beginning of the portion of the score to be considered
     @param    end_ms        If mode == 1, the end of the portion of the score to be considered
+    @param selection_only   Only consider selected items
     @return                The group information as an llll, in the form explained above.
  */
-t_llll *get_groups_for_dump_as_llll(t_notation_obj *r_ob, char mode, double start_ms, double end_ms);
+t_llll *get_groups_for_dump_as_llll(t_notation_obj *r_ob, char mode, double start_ms, double end_ms, bool selection_only);
 
 
 /**    Get the first tempo in a given scorevoice
@@ -12577,8 +12833,11 @@ t_voice *voice_get_first_visible(t_notation_obj *r_ob);
  */
 t_voice *voice_get_last_visible(t_notation_obj *r_ob);
 
+t_voice *voice_get_first_visible_before_voice(t_notation_obj *r_ob, t_voice *v);
+t_voice *voice_get_first_visible_after_voice(t_notation_obj *r_ob, t_voice *v);
 
-/**    Obtain an llll containing as symbols all the voice names  
+
+/**    Obtain an llll containing as symbols all the voice names
     @ingroup            notation_data
     @param    r_ob        The notation object
     @param    prepend_router    If this is non-zero a "voicenames" symbol at the beginning is prepended
@@ -12616,6 +12875,19 @@ t_llll *get_keys_as_llll(t_notation_obj *r_ob, char prepend_router);
     @return                An llll containing all midichannels (and possibly a "midichannels" symbol at the beginning)
  */
 t_llll *get_midichannels_as_llll(t_notation_obj *r_ob, char prepend_router);
+
+
+/**    Obtain an llll containing all notation styles as symbols (plus possibly a "notationstyles" router at the beginning)
+    @ingroup            notation_data
+    @param    r_ob        The notation object
+    @param    prepend_router    If this is non-zero a "notationstyles" symbol at the beginning is prepended
+    @return                An llll containing all notation styles (and possibly a "notationstyles" symbol at the beginning)
+ */
+t_llll *get_notationstyles_as_llll(t_notation_obj *r_ob, char prepend_router);
+
+t_symbol *notationstyle_to_symbol(e_voice_notation_style s);
+long notationstyle_from_symbol(t_symbol *s);
+
 
 
 /**    Obtain the header of a notation object
@@ -12961,6 +13233,10 @@ t_notation_item *get_rightmost_selected_notation_item(t_notation_obj *r_ob);
 t_note *get_leftmost_selected_note(t_notation_obj *r_ob);
 t_note *get_rightmost_selected_note(t_notation_obj *r_ob);
 
+// SAME FOR CHORDS, of which even just one of their notes may be selected
+t_chord *get_leftmost_selected_chord_even_partially(t_notation_obj *r_ob);
+t_chord *get_rightmost_selected_chord_even_partially(t_notation_obj *r_ob);
+
 
 /** Obtain the unscaled horizontal pixel corresponding to the chord's alignment point (the point which is geometrically aligned
     when more chords are to be aligned). This point is usually the barycenter of the principal noteheads (noteheads near the stem, at its main side).
@@ -13128,7 +13404,7 @@ double get_key_uwidth(t_notation_obj *r_ob, t_voice *voice);
  @param    nonstandard_stafflines    Choose what to do with staves with non-standard stafflines.
     @return        The vertical pixel position of the topmost staff line of the input voice
 */
-double get_staff_top_y(t_notation_obj *x, t_voice *voice, e_nonstandard_staffline_topbottom_options nonstandard_stafflines);
+double voice_get_staff_top_y(t_notation_obj *x, t_voice *voice, e_nonstandard_staffline_topbottom_options nonstandard_stafflines);
 
 
 /** Obtain the vertical pixel position of the staff bottom line of a given voice.
@@ -13138,7 +13414,12 @@ double get_staff_top_y(t_notation_obj *x, t_voice *voice, e_nonstandard_stafflin
     @param    nonstandard_stafflines    Choose what to do with staves with non-standard stafflines.
     @return        The vertical pixel position of the bottommost staff line of the input voice
 */
-double get_staff_bottom_y(t_notation_obj *x, t_voice *voice, e_nonstandard_staffline_topbottom_options nonstandard_stafflines);
+double voice_get_staff_bottom_y(t_notation_obj *x, t_voice *voice, e_nonstandard_staffline_topbottom_options nonstandard_stafflines);
+
+void voice_get_staves_middle_lines_y(t_notation_obj *r_ob, t_voice *voice, long *num_staves, double *middle_staff_y);
+
+
+void get_pianoroll_display_range(t_notation_obj *r_ob, long clef, long *mincents, long *maxcents);
 
 
 /** Obtain the number of steps between the bottommost staff line and the topmost staff line for a given voice.
@@ -13645,9 +13926,9 @@ char split_rhythm_to_boxes(t_llll *rhythm, t_llll *infos, t_llll *ties, t_llll *
     @param    r_ob    The notation object
     @param    chord    The chord
     @param    also_put_show_accidental_to_false    If this is 1, all the t_note::show_accidental flag are set to false.
-                                                in which case, you usually might want to call validate_accidentals_for_measure() after this
+                                                in which case, you usually might want to call measure_validate_accidentals() after this
  */
-void compute_note_approximations_for_chord(t_notation_obj *r_ob, t_chord *chord, char also_put_show_accidental_to_false);
+void chord_compute_note_approximations(t_notation_obj *r_ob, t_chord *chord, char also_put_show_accidental_to_false);
 
 
 /**    Calls the note_compute_approximation() function on all the notes of a measure.
@@ -13655,7 +13936,7 @@ void compute_note_approximations_for_chord(t_notation_obj *r_ob, t_chord *chord,
     @param    r_ob    The notation object
     @param    measure    The measure
     @param    also_put_show_accidental_to_false    If this is 1, all the t_note::show_accidental flag are set to false.
-                                                in which case, you usually might want to call validate_accidentals_for_measure() after this
+                                                in which case, you usually might want to call measure_validate_accidentals() after this
  */
 void compute_note_approximations_for_measure(t_notation_obj *r_ob, t_measure *measure, char also_put_show_accidental_to_false);        
 
@@ -13666,7 +13947,9 @@ void compute_note_approximations_for_measure(t_notation_obj *r_ob, t_measure *me
     @param    r_ob    The notation object
     @param    measure    The measure
  */
-void validate_accidentals_for_measure(t_notation_obj *r_ob, t_measure *measure);
+void measure_validate_accidentals(t_notation_obj *r_ob, t_measure *measure);
+
+bool note_has_significant_cents_difference_with_screen_representation(t_notation_obj *r_ob, t_note *nt);
 
 
 
@@ -14121,7 +14404,7 @@ char get_all_tuttipoint_barlines(t_notation_obj *r_ob, t_measure_end_barline *re
 
 // TBD
 t_llll *measure_get_aligned_measures_as_llll(t_notation_obj *r_ob, t_measure *meas);
-
+void synchronize_repeats_across_voices(t_notation_obj *r_ob, t_measure *measure);
 
 /**    Set the t_chord::need_recompute_parameters flags for all the chords in a given measure, and also sets the t_notation_obj::need_perform_analysis_and_change flag.
     Those flags will force the chord graphic parameters to be recomputed at the next paint cycle.
@@ -15581,6 +15864,8 @@ char no_solo(t_notation_obj *r_ob);
                     @endcode
  */
 char are_there_solos(t_notation_obj *r_ob);
+
+char are_there_repeats(t_notation_obj *r_ob, bool zero_out_counts);
 
 
 /**    Remove all solo or mute flags set to rests.
@@ -17485,6 +17770,14 @@ void notation_class_add_pitches_attributes(t_class *c, char obj_type);
 void notation_class_add_settings_attributes(t_class *c, char obj_type);
 
 
+/** Add to a class all the common attributes concerning just intonation
+    @ingroup    attributes
+    @param        c            The class
+    @param        obj_type    The object type (one of the #e_notation_objects)
+ */
+void notation_class_add_ji_attributes(t_class *c, char obj_type);
+
+
 /** Add to a class all the common attributes concerning colors
     @ingroup    attributes
     @param        c            The class
@@ -17519,15 +17812,20 @@ t_max_err notationobj_setattr_voicenames_font_size(t_notation_obj *r_ob, t_objec
 t_max_err notationobj_setattr_voicenames_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_nonantialiasedstaff(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_numvoices(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_jilimit(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_jialwaysshowpythacc(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_clefs(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_keys(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_midichannels(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_notationstyles(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_voicespacing(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_hidevoices(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_markers_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_markers_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_slot_labels_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_centsdiff_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_slot_labels_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_catchplay(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_rulermode(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_stafflines(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_lyrics_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
@@ -17569,7 +17867,7 @@ t_max_err notationobj_set_voicespacing(t_notation_obj *r_ob, long ac, double *va
 t_max_err notationobj_setattr_preventedit(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_maxundosteps(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_showaccidentalspreferences(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notationobj_setattr_showcentsdiff(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_showcents(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_lyrics_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_rulerlabels_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_tuplets_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
@@ -17582,6 +17880,7 @@ t_max_err notationobj_set_numparts_from_llll(t_notation_obj *r_ob, t_llll *ll);
 t_max_err notationobj_set_parts_from_llll(t_notation_obj *r_ob, t_llll *ll);
 t_max_err notationobj_set_parts(t_notation_obj *r_ob, long *part);
 t_max_err notationobj_setattr_dumpplaycmd(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_eighthtonearrow(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 
 // GETTERS
 
@@ -17848,7 +18147,7 @@ void bach_attribute_add_enumindex(t_bach_attribute *attr, long num_items, t_symb
     @ingroup    attributes
     @param    r_ob                The    notation object
  */
-void notationobj_bach_attribute_declares(t_notation_obj *r_ob);
+void notationobj_declare_bach_attributes(t_notation_obj *r_ob);
 
 
 
@@ -18424,6 +18723,8 @@ void lock_markers_mutex(t_notation_obj *r_ob);
     @param        r_ob            The notation object
  */
 void unlock_markers_mutex(t_notation_obj *r_ob);
+
+void get_markers_ys(t_notation_obj *r_ob, double *y1, double *y2);
 
 
 /** Verify that a chord has the correct stored number of notes, and that all the parenting works fine.
@@ -19037,6 +19338,7 @@ t_llll *dynamics_to_llll_full(t_notation_obj *r_ob, t_dynamics *dyn);
 t_llll *dynamics_to_llll_detailed(t_notation_obj *r_ob, t_dynamics *dyn);
 t_llll *dynamics_to_llll_plain(t_notation_obj *r_ob, t_dynamics *dyn);
 t_llll *dynamics_to_llll(t_notation_obj *r_ob, t_dynamics *dyn, e_data_considering_types mode);
+void notationobj_reparse_all_dynamics(t_notation_obj *r_ob);
 
 void dynamics_mark_measure(t_dynamics_mark *mark, t_jfont *jf_dynamics_nozoom, t_jfont *jf_dynamics_roman_nozoom, double *w, double *h);
 void dynamics_mark_to_textbuf(t_dynamics_mark *mark, char *buf, long buf_size);

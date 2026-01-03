@@ -1,7 +1,7 @@
 /*
  *  fnMap.cpp
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -28,13 +28,13 @@ long t_fnMap::lambdaAsk(t_fnData *lambdaData, t_llll *ll, t_llll *old_address, t
     switch (numargs) {
         case 3:     lists[3] = llll_clone(new_address);
         case 2:     lists[2] = llll_clone(old_address);
-        default:    lists[1] = ll;  break;
+        default:    lists[1] = llll_retain(ll);  break;
     }
-    context->resetFnNamedArgs(fn, numargs);
+    context->resetAndRetainFnNamedArgs(fn, numargs);
     t_llll *res = fn->call(*context);
     long res_long = llll_istrue(res);
-    bell_release_llll(lists[3]);
-    bell_release_llll(lists[2]);
+    //bell_release_llll(lists[3]);
+    //bell_release_llll(lists[2]);
     bell_release_llll(res);
     return !res_long;
 }
@@ -48,12 +48,12 @@ t_llll* t_fnMap::lambdaMod(t_fnData *lambdaData, t_llll *ll, t_llll *old_address
     switch (numargs) {
         case 3:     lists[3] = llll_clone(new_address);
         case 2:     lists[2] = llll_clone(old_address);
-        default:    lists[1] = ll;  break;
+        default:    lists[1] = llll_retain(ll);  break;
     }
     context->resetFnNamedArgs(fn, numargs);
     t_llll *res = fn->call(*context);
-    bell_release_llll(lists[3]);
-    bell_release_llll(lists[2]);
+    //bell_release_llll(lists[3]);
+    //bell_release_llll(lists[2]);
     t_llll *res_clone = llll_clone(res);
     bell_release_llll(res);
     return res_clone;
@@ -116,19 +116,20 @@ t_llll* t_fnReduce::lambdaFunction(t_fnData *lambdaData, t_llll *accum, const t_
     t_execEnv *context = &lambdaData->context;
     long numargs = context->argc;
     t_llll **lists = context->argv;
-    context->resetFnNamedArgs(fn, numargs);
     lists[1] = accum;
     t_llll *res;
     switch (numargs) {
         case 3:
             llll_appendlong(lists[3] = llll_get(), address);
             llll_appendhatom_clone(lists[2] = llll_get(), h);
+            context->resetFnNamedArgs(fn, numargs);
             res = fn->call(*context);
             bell_release_llll(lists[3]);
             lists[3] = nullptr;
             break;
         default:
             llll_appendhatom_clone(lists[2] = llll_get(), h);
+            context->resetFnNamedArgs(fn, numargs);
             res = fn->call(*context);
             break;
     }

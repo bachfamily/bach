@@ -1,7 +1,7 @@
 /*
  *  llll_settheory.h
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -211,7 +211,7 @@ t_llll *get_all_prime_forms(long modulo, long cardinality, e_primeform_modes mod
 	@param		pcset		The pcset
 	@param		modulo		The modulo
 	@return		1 if the pcset is symmetrical, 0 otherwise
-	@remark		For instance, with modulo = 12, (0 1 2 5 9) is symmetrical w.r. to the axis passing through 1 and 7.
+	@remark		For instance, with modulo = 12, (0 1 2 5 9) is symmetrical w.r.t. the axis passing through 1 and 7.
  */
 char pcset_is_symmetrical(t_llll *pcset, long modulo);
 

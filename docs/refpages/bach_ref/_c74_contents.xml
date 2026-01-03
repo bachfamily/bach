@@ -56,14 +56,17 @@
 <refpage name='bach.tree.maxref.xml'/>
 <refpage name='bach.deferlow.maxref.xml'/>
 <refpage name='bach.factorize.maxref.xml'/>
+<refpage name='bach.continuedfraction.maxref.xml'/>
 <refpage name='bach.recurser.maxref.xml'/>
 <refpage name='bach.primeser.maxref.xml'/>
+<refpage name='bach.jilimit.maxref.xml'/>
 <refpage name='bach.resample.maxref.xml'/>
 <refpage name='bach.arithmser.maxref.xml'/>
 <refpage name='bach.derive.maxref.xml'/>
 <refpage name='bach.float2rat.maxref.xml'/>
 <refpage name='bach.fft.maxref.xml'/>
 <refpage name='bach.integrate.maxref.xml'/>
+<refpage name='bach.fareyser.maxref.xml'/>
 <refpage name='bach.geomser.maxref.xml'/>
 <refpage name='bach.prime.maxref.xml'/>
 <refpage name='bach.weights.maxref.xml'/>
@@ -82,6 +85,8 @@
 <refpage name='bach.writesdif.maxref.xml'/>
 <refpage name='bach.write.maxref.xml'/>
 <refpage name='bach.omtree2bachtree.maxref.xml'/>
+<refpage name='bach.jiwheel.maxref.xml'/>
+<refpage name='bach.pitch.maxref.xml'/>
 <refpage name='bach.transcribe.maxref.xml'/>
 <refpage name='bach.beatunbox.maxref.xml'/>
 <refpage name='bach.p2mc.maxref.xml'/>

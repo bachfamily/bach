@@ -48,12 +48,12 @@
 				join them in a single llll in the form
 				<b>[slot <m>name_or_number</m> <m>name_or_number</m>...]</b>,
 				Allowed parameters to retrieve correspond to the following symbols:
-				"type", "onset", "symonset", "cents", "pitch", "duration", "symduration", "tail", "velocity",
-				"midichannel", "tie", "voicenumber", "chordindex", "noteindex, "path" (these last three only meaningful
+				"type", "onset", "symonset", "cents", "midinote" (12-EDO approximation), "pitch", "duration", "symduration", "tail", "velocity",
+				"midichannel", "tie", "voicenumber", "chordindex", "noteindex", "path" (these last three only meaningful
 				if <m>playoutfullpath</m> is active for the notation object), "measurenumber"
 				(only meaningful for notes and chords if <m>playoutfullpath</m> is active for the notation object), "breakpoints",
 				"measureinfo", "name", "tempo", "quartertempo", "slot", "playoffset" (for partial played notes with
-				<m>playpartialnotes</m> set to 2), "role" (for markers only), "slots" (all slots)
+				<m>playpartialnotes</m> set to 2), "role" (for markers only), "slots" (all slots), "slurs".
 				In addition to these,
 				also "play", "stop", "pause", "end" keys are allowed; the "router" key will output the incoming router message;
 				they will report the corresponding actions with a bang.
@@ -72,6 +72,16 @@
 			</digest>
 			<description>
 				The playkeys are searched for in the most recently received llll.
+			</description>
+		</method>
+		<method name="forceresetmtsesp">
+			<arglist />
+			<digest>
+				Force reset for MTS-ESP system
+			</digest>
+			<description>
+				Resets everything in the MTS-ESP system, including the master connection status and client count.
+				IMPORTANT: This is only intended to be used in case the master plug-in is running crashes.
 			</description>
 		</method>
 		<method name="llll">
@@ -138,6 +148,34 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
+		<attribute name="basefreq" get="1" set="1" type="float" size="1">
+			<digest>
+				Reference Frequency
+			</digest>
+			<description>
+				Sets the frequency of the reference pitch (<m>basepitch</m>).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Tuning" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Reference Frequency" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="basepitch" get="1" set="1" type="float" size="1">
+			<digest>
+				Reference Pitch
+			</digest>
+			<description>
+				Sets the reference pitch for tuning.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Tuning" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Reference Pitch" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
 		<attribute name="breakpointshavevelocity" get="1" set="1" type="int" size="1">
 			<digest>
 				Breakpoints Have Velocity
@@ -192,6 +230,26 @@
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Lyrics Slot Number" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="mtsesp" get="1" set="1" type="int" size="1">
+			<digest>
+				Act as MTS-ESP Master
+			</digest>
+			<description>
+				Toggles the ability for <o>bach.playkeys</o> to act as MTS-ESP Master
+				whenever a "midinote" key is used. The object will send specific tuning information
+				about any outgoing note so that any MTS-ESP compliant plugins loaded in <o>vst~</o>
+				can be influenced automatically. Choices are: don't send MTS-ESP messages (0),
+				send them globally (1), send them on a channel-by-channel basis (2), and then two variants
+				of #1 and #2 that also try to allow for microtonal cluster to be played by possibly
+				assigning different MIDI notes to outgoing pitches.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Tuning" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Act as MTS-ESP Master" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
 		<attribute name="noteheadslot" get="1" set="1" type="atom" size="1">

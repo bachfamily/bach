@@ -157,14 +157,14 @@
 				"box" : 				{
 					"maxclass" : "comment",
 					"text" : "How do I set the filter content via message?",
-					"frgb" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"frgb" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"id" : "obj-61",
 					"fontface" : 2,
 					"fontsize" : 12.0,
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"fontname" : "Arial",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"patching_rect" : [ 236.0, 374.0, 243.0, 20.0 ]
 				}
 

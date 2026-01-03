@@ -10,6 +10,21 @@ VERSION NOTES:
    แ now support slurs
    แ now feature a new system of notification of interface actions that provides details on the elements being modified. See the new "notifywith" message.
    แ Markers have a duration, i.e. they can actually be used as regions to identify portion of the scores
+   แ "snappitchtogrid" message has been renamed "approxet", but the old name is kept for backward compatibility
+   แ barlines, time signatures and measure numbers have their own independent colors (new attributes)
+   แ @additionalstartpad is now called @padafterclef (and a new @padbeforeclef now exists);
+     The "adjustadditionalstartpad" message is also renamed to "adjustpadafterclef".
+     The old nomenclature is still understood for backward compatibility, but please switch to the new nomenclature.
+   แ The "goto" system has changed some of the defaults for going BACKWARDS, which now involve heads (onsets) not tails.
+   แ @annotationfontsize is now @annotationsfontsize (bw compatibility SHOULD be preserved, but check!)
+   แ @annotationalignment is now @annotationsalign (bw compatibility SHOULD be preserved, but check!)
+   แ Accollature (rules, brackets, braces) for custom sets of voices can be displayed
+        by using the new @voicegroup attribute.
+        This is now in cooperation with @partsaccollatura, @multistaffaccollatura, choosing the type of accollatura
+        used for displaying voice ensembles and multistaff-voices respectively.
+        (Also a global @showaccollature attribute has been added.)
+    แ Showvelocity had an option called "Note Size" which was actually "Notehead Size". This typo has been corrected.
+        and a true "Note Size" option (combining both notehead size and duration line width) has been added.
 
 - bach.score:
     แ fixed bug causing wrong playback for grace notes!
@@ -19,6 +34,32 @@ VERSION NOTES:
 - bach.slot:
     แ now background slots work (if you reduce the window opacity)
 
+- bach.float2rat, and rational approximations:
+    แ the error has switched sign, as is more reasonable. When the approximation is above the original, the error is now positive.
+
+- bach.playkeys:
+    แ now has MST-ESP support and can drive VST instrument microtonality
+    
+- bach.expr, bach.eval and bell-compliant objects:
+    แ t (meaning a whole tone alteration in equal-tempered pitches) is now an operator, with intermediate precedence between addition and multiplication. This means that C4+1/2t*2 now yields correctly Cx4, rather than Cx8 as it did previously
+
+*****************
+*** IMPORTANT ***
+*****************
+
+*** THESE CHANGES MIGHT BREAK COMPATIBILITY WITH OLDER PATCHES ***
+
+- bell: syntax changes, hopefully marginal:
+    แ function definitions with no arguments require a $ placeholder.
+      e.g., (-> 1) is not a valid function definition anymore, it has to be rewritten as ($ -> 1).
+    แ #! is the functional form of the ! operator (it is no longer an alternative form for line comments)
+        
+- bach.roll, bach.score:
+    แ With respect to former 0.9 development prerelease, the llll syntax for slurs in roll/score contains the router "slurs" and not "slur".
+    แ the @showpartbrackets that was present in a dev prerelease is now subsumed by @partsaccollatura
+
+- bach.roll: the subroll message doesn't output partial notes of duration 0 any longer
+
 - bach.stream: 
     แ fixed bug causing wrong output after clear
 
@@ -26,7 +67,10 @@ VERSION NOTES:
 *** VERSION CHANGES ***
 ***********************
 
-- bell: bach.sum, bach.prod now work
+- bell: new engine, with countless bug fixes, various new functions and some changes to the syntax
+    bach.sum, bach.prod now work
+
+- bach.fareyser, bach.jilimit, bach.continuedfraction: new objects
 
 - bach.roll, bach.score, bach.slot:
     @bordersize, @focusbordersize: new attributes
@@ -42,20 +86,42 @@ VERSION NOTES:
 - bach.quantize: removed puzzling innocuous errors for SmartMix mode
 
 - bach.roll, bach.score:
-    แ Now clefs and keys behave properly w.r. to undo, even if changed via messages
+    แ Now clefs and keys behave properly w.r.t. undo, even if changed via messages
     แ Fixed bug causing non-refresh for keepselectioniflostfocus
     แ Now setdl works in lambda mode properly
     แ New @annotationalignment attribute setting the text alignment for annotations
     แ Added "opaque" spec for custom noteheads, thus allowing a better implementation of tablatures
-    แ @showpartbrackets, @showinitialrule: new attributes
-    แ New display of deviations in cents (@showcentsdiff, @centssymbol: new attributes)
+    แ @showinitialrule: new attribute
+    แ New display of deviations in cents (@showcents, @centssymbol: new attributes)
     แ @breakpointshavenoteheads: new value "Internal Only" added to display noteheads only for internal breakpoints
     แ fixed bug causing wrong partial note float slot playback
-
+    แ @shownoteheads: new attribute
+    แ @spaceafterbarline, @spacebetweenbarlineandts, @spaceafterts: new fine-tuning spacing attributes
+    แ Now support repeats. Repeat barlines are 're', 'rs' and 'res' measure barlines (repeat end, repeat start, repeat end and start),
+        and there's a repeatnum measure parameter to define the number of repetitions (which can also be displayed via @showrepeatnum).
+    แ Fixed crashes with the goto system and tempi
+    แ @shiftunisons: new attribute to handle shifting of unisons in different parts
+    แ @markerwidth, @markerspan: two new attributes to control the appearance of markers
+    แ @centsdifffont: new attribute
+    แ Now @catchplay and @playheadfixedpos define different ways of scrolling the score during playback
+    แ New @playheadnotify attribute to notify playhead position during playback
+    แ New @annotationsvadj attribute to adjust vertical position of annotations globally
+    แ With respect to development prerelease, fixed bug with slurs causing potential crashes when more than 2 slurs started on a chord
+    แ New @playslurs attribute, defining the way slurs are output during evaluation/playback
+    แ Fixed bug potentially causing crashes when changing background color often
+    แ Fixed bug causing wrong refresh with dynamics2velocities when velocity was mapped on notehead size
+    แ Improved lyrics alignment
+    แ Fixed issue causing wrong pitch display in the legend with linpitch mode
+    แ now octaves are preserved with pitches when transposing using Shift+Arrows
+    แ @stafflineswidth and @scalablestafflineswidth: new attributes for roll/score
+    แ Fixed bug causing crashes with highlighted playback and no fade-domain
+    แสAdded parameter to "distribute" message to warp the distribution
+    
 - bach.roll, bach.score, bach.score2roll:
     Now user-defined pitches are correctly preserved
 
 - bach.roll:  Improved intelligent ruler
+              exportmidi: added "defaulttempo" message attribute
 
 - bach.score:
     แ Fixed bug causing crashes with wrong select syntax (e.g., unbalanced parentheses)
@@ -63,12 +129,30 @@ VERSION NOTES:
     แ @bigtsvadj, @bigtsabovetempi: new attributes
     แ fixed bug causing wrong positioning of dashes in lyrics
     แ new @tupletfont and @tupletfontsize attributes
+    แ new "deletemeasurecontent" message, operating on selection,
+        to clear the measures' chords without deleting the measures themselves
+    แ XML export: added "voice" tag to ensure correct behaviour with Dorico
+                  fixed crash happening when importing files without "attributes" tag
+
+- bach.n2mc: fixed @middlecoctave not working for pitches
+
+- bach.circle: has a new @phase attribute
+
+- bach.diff, bach.intersection, bach.symdiff, bach.union: second-inlet llll can be set as object argument
 
 - bach.urn: fixed behavior with @autoclear 1
 
+- bach.stream: fixed behavior with list with nonative mode active
 
+- bach.step: now can show progress via a progress bar with @showprogress set to 1
 
+- bach.reshape: fixed bug with empty sublists in the model
 
+- bach.beatbox: fixed bug causing wrongly assigned chord-based slots
+
+- bach.beatunbox:   fixed bug causing crashes with wrong syntax
+                    fixed bug causing non-output of chord-attached slots
+                    
 v0.8.3
 
 ***********************

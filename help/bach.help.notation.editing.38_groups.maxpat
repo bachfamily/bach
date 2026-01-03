@@ -126,7 +126,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 359.0, 111.0, 187.0, 69.0 ],
 					"text" : "To destroy a group, just select it and press Cmd+G (mac) or Ctrl+G (win) again.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -160,7 +160,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 12.5, 109.0, 221.5, 69.0 ],
 					"text" : "Select some notes or chords and press Cmd+G (mac) or Ctrl+G (win) in order to group them",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

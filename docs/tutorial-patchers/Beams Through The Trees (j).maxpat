@@ -377,7 +377,7 @@
 					"patching_rect" : [ 288.0, 455.0, 299.0, 33.0 ],
 					"style" : "",
 					"text" : "My last remark was cool, wasn't it? I'll just skip the remarks for this section in an act of mirth and joy.",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

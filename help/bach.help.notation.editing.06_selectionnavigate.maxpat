@@ -89,7 +89,7 @@
 					"patching_rect" : [ 370.5, 235.0, 232.0, 54.0 ],
 					"style" : "",
 					"text" : "Use Cmd+← (mac) or Ctrl+← (win) to select the item at left with respect to the currently selected one (if any)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -107,7 +107,7 @@
 					"patching_rect" : [ 370.5, 166.0, 232.0, 69.0 ],
 					"style" : "",
 					"text" : "Use Cmd+→ (mac) or Ctrl+→ (win) to select the item at right with respect to the currently selected one (if any)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -125,7 +125,7 @@
 					"patching_rect" : [ 370.5, 112.0, 228.5, 54.0 ],
 					"style" : "",
 					"text" : "Use Cmd+↓ (mac) or Ctrl+↓ (win) to select the item below the currently selected one (if any)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -143,7 +143,7 @@
 					"patching_rect" : [ 370.5, 58.0, 220.5, 54.0 ],
 					"style" : "",
 					"text" : "Use Cmd+↑ (mac) or Ctrl+↑ (win) to select the item above the currently selected one (if any)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

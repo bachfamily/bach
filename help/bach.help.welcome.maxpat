@@ -3,14 +3,14 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 1,
-			"revision" : 0,
+			"minor" : 6,
+			"revision" : 1,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 549.0, 79.0, 617.0, 539.0 ],
+		"rect" : [ 67.0, 384.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -37,6 +37,7 @@
 		"tags" : "",
 		"style" : "",
 		"subpatcher_template" : "",
+		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
 					"fontname" : "Arial",
@@ -47,8 +48,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 225.0, -65.5, 160.0, 23.0 ],
-					"text" : "bubble 1, textcolor 0 0 0 1"
+					"patching_rect" : [ 225.0, -65.5, 181.0, 23.0 ],
+					"text" : "patching_rect 210. 5. 245. 40."
 				}
 
 			}
@@ -109,8 +110,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 555.5, -73.0, 160.0, 23.0 ],
-					"text" : "bubble 0, textcolor 0 0 0 0"
+					"patching_rect" : [ 481.0, -69.0, 192.0, 23.0 ],
+					"text" : "patching_rect 210. -65. 245. 40."
 				}
 
 			}
@@ -292,6 +293,21 @@
 					"text" : "Tags: welcome, help",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"angle" : 270.0,
+					"bgcolor" : [ 1.0, 1.0, 1.0, 0.9 ],
+					"bordercolor" : [ 0.0, 0.0, 0.0, 0.79 ],
+					"id" : "obj-7",
+					"maxclass" : "panel",
+					"mode" : 0,
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 141.0, 134.0, 360.0, 94.0 ],
+					"proportion" : 0.5
 				}
 
 			}

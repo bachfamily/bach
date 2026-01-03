@@ -355,7 +355,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 309.0, 538.0, 287.0, 33.0 ],
 					"text" : "Fair enough, but decibels and Hertz are displayed linearly inside our slot window... that's not handy!",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

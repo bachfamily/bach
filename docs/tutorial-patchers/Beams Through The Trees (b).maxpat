@@ -421,7 +421,7 @@
 					"patching_rect" : [ 159.0, 575.0, 508.0, 47.0 ],
 					"style" : "",
 					"text" : "Hey!!! What a stupid example! I actually always see beams! That make no sense, I want the tree to be taken for granted, thus all duration should be leaves, so NO rhythm relationships between them, so no beams, what the hell, bach is broken! I want my money back!!!",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

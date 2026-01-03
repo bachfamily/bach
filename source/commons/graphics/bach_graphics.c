@@ -1,7 +1,7 @@
 /*
  *  bach_graphics.c
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -997,6 +997,50 @@ t_pt get_single_bezier_subdivision_point(t_pt p0, t_pt p1, t_pt p2, t_pt p3, dou
     return subd_pt[0];
 }
 
+t_pt bezier_sample(t_pt p0, t_pt p1, t_pt p2, t_pt p3, double t)
+{
+    t_pt res;
+    double omt = (1-t);
+    double omtsq = (1-t)*(1-t);
+    double omtc = omtsq * omt;
+    double tsq = t * t;
+    double tc = t * tsq;
+//    res.x = (1-t)*(1-t)*(1-t)*p0.x + 3*(1-t)*(1-t)*t*p1.x + 3*(1-t)*t*t*p2.x + t*t*t*p3.x;
+//    res.y = (1-t)*(1-t)*(1-t)*p0.y + 3*(1-t)*(1-t)*t*p1.y + 3*(1-t)*t*t*p2.y + t*t*t*p3.y;
+    res.x = omtc*p0.x + 3*omtsq*t*p1.x + 3*omt*tsq*p2.x + tc*p3.x;
+    res.y = omtc*p0.y + 3*omtsq*t*p1.y + 3*omt*tsq*p2.y + tc*p3.y;
+    return res;
+}
+
+double bezier_x_to_t(t_pt p0, t_pt p1, t_pt p2, t_pt p3, double x, double tolerance, t_pt *sampled_pt)
+{
+    double tL = 0, tR = 1;
+    const long MAX_ITER = 100;
+    long i = 0;
+    
+    while (i < MAX_ITER) {
+        double t = 0.5*(tL + tR);
+        t_pt p = bezier_sample(p0, p1, p2, p3, t);
+        double diff = p.x - x;
+        if (fabs(diff) < tolerance) {
+            if (sampled_pt)
+                *sampled_pt = p;
+            return t;
+        }
+        
+        if (diff < 0) {
+            tL = t;
+        } else {
+            tR = t;
+        }
+        
+        i++;
+    }
+    if (sampled_pt)
+        *sampled_pt = p0;
+    return tL;
+}
+
 
 void paint_simple_curve(t_jgraphics* g, t_jrgba color, double x1, double y1, double x2, double y2, double slope, double width)
 {
@@ -1916,6 +1960,14 @@ char are_pts_aligned(double x0, double y0, double x1, double y1, double x2, doub
 char is_pt_in_segment(double ptx, double pty, double x1, double y1, double x2, double y2) {
     double dot_prod, square_length_12;
 
+    if (fabs(x1 - x2) < CONST_EPSILON_ALIGNMENTS && fabs(y1 - y2) < CONST_EPSILON_ALIGNMENTS) {
+        // essentially same point
+        if (fabs(ptx - x1) < CONST_EPSILON_ALIGNMENTS && fabs(pty - y1) < CONST_EPSILON_ALIGNMENTS)
+            return true;
+        else
+            return false;
+    }
+    
     if (!are_pts_aligned(ptx, pty, x1, y1, x2, y2))
         return false;
     
@@ -2069,7 +2121,9 @@ double pt_segment_distance(t_pt pt, t_pt v, t_pt w)
     return pt_pt_distance(pt, projection);
 }
 
-// distance calculated on the y vertical line passing from ptx pty
+// distance calculated on the y vertical line passing from ptx pty, signed.
+// BEware, there's something odd about how this is computed. Use the function below.
+// THis is kept for legacy
 double pt_line_distance_vertical(double ptx, double pty, double x1, double y1, double x2, double y2) {
     double squared_length_12 = (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1);
 
@@ -2082,6 +2136,21 @@ double pt_line_distance_vertical(double ptx, double pty, double x1, double y1, d
         return pty - y1;
     }
 }
+
+
+double pt_line_distance_vertical_signed(double ptx, double pty, double x1, double y1, double x2, double y2) {
+    double squared_length_12 = (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1);
+
+    if (x2 == x1) {
+        return 0;
+    } else if (squared_length_12 > 0) {
+        double intersection_y = y1 + (ptx - x1) * (y2 - y1)/(x2 - x1);
+        return pty - intersection_y;
+    } else {
+        return pty - y1;
+    }
+}
+
 
 double pt_polygon_distance(t_pt pt, t_polygon *poly)
 {

@@ -131,7 +131,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 45.0, 404.0, 113.0, 36.0 ],
 					"style" : "",
-					"text" : "rational onset w.r. to the measure:"
+					"text" : "rational onset w.r.t. the measure:"
 				}
 
 			}
@@ -434,7 +434,7 @@
 					"patching_rect" : [ 5.0, 256.666687, 231.0, 55.0 ],
 					"style" : "",
 					"text" : "Select a note and press V to see its content unpacked from the playout",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

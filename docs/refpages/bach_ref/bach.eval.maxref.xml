@@ -72,7 +72,7 @@
 				Expression to evaluate
 			</digest>
 			<description>
-				The syntax of the expression is based upon <o>bach.expr</o>'s,
+				The syntax of the expression is based upon that of <o>bach.expr</o>,
 				but it can contain branching and loop statements, and user-defined variables and functions.
 				For a complete description of the expression syntax, please refer to the help file.
 			</description>
@@ -215,6 +215,23 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
+		<attribute name="bellversion" get="1" set="1" type="int" size="1">
+			<digest>
+				Bell Language Version
+			</digest>
+			<description>
+				The <m>bellversion</m> attribute
+				sets the version of the bell language to be used by the object.
+				When set to 0, the version used is the default one (currently version 2).<br/>
+				Changing the value of the attribute will not affect the interpretation of code
+				that has already been loaded. For the change to be effective, the code must be reloaded.
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Bell Language Version" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
 		<attribute name="directins" get="1" set="1" type="int" size="1">
 			<digest>
 				Number of Direct Inlets
@@ -285,7 +302,6 @@
 				and the editor.
 				This is a static attribute which can only be set by typing it in the object box.
 				<br /> <br />
-				codableclass_add_extended_methods_and_attrs(c);
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Code file to be read at initialization" />
@@ -416,7 +432,7 @@
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Triggers" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
 		<attribute name="watch" get="1" set="1" type="int" size="1">

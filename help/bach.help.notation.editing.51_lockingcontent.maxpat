@@ -305,7 +305,7 @@
 					"patching_rect" : [ 219.0, 216.0, 167.0, 69.0 ],
 					"style" : "",
 					"text" : "Cmd+L (mac) or Ctrl+L (win) to lock/unlock selected musical elements",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

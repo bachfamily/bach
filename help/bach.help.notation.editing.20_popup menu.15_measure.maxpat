@@ -50,7 +50,7 @@
 					"presentation_rect" : [ 124.0, 345.5, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "Delete measure",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -68,7 +68,7 @@
 					"presentation_rect" : [ 126.0, 319.0, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "Clear measure",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -86,7 +86,7 @@
 					"presentation_rect" : [ 329.5, 152.5, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "Paste",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -104,7 +104,7 @@
 					"presentation_rect" : [ 169.5, 139.5, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "Copy",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -123,7 +123,7 @@
 					"patching_rect" : [ 273.0, 180.0, 290.0, 40.0 ],
 					"style" : "",
 					"text" : "Change the time signature for the measure (some common options are listed)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -140,7 +140,7 @@
 					"patching_rect" : [ 192.0, 363.0, 155.0, 25.0 ],
 					"style" : "",
 					"text" : "Lock the rhythmic tree",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -159,7 +159,7 @@
 					"patching_rect" : [ 6.0, 363.0, 83.0, 98.0 ],
 					"style" : "",
 					"text" : "\n\nRhythmic trees\nhandling\n\n",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -193,7 +193,7 @@
 					"patching_rect" : [ 203.0, 440.0, 361.0, 25.0 ],
 					"style" : "",
 					"text" : "Flatten completely the rhythmic tree (all separate chords)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -210,7 +210,7 @@
 					"patching_rect" : [ 183.5, 419.0, 371.0, 25.0 ],
 					"style" : "",
 					"text" : "Fix current tree as original (and lock measure rhythmic tree)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -228,7 +228,7 @@
 					"patching_rect" : [ 323.5, 398.5, 233.0, 25.0 ],
 					"style" : "",
 					"text" : "Auto-recalculate (also tuplet levels!)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -246,7 +246,7 @@
 					"patching_rect" : [ 318.0, 378.0, 256.0, 25.0 ],
 					"style" : "",
 					"text" : "Auto-recalculate (but keep tuplet levels)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -280,7 +280,7 @@
 					"patching_rect" : [ 153.0, 278.5, 189.0, 25.0 ],
 					"style" : "",
 					"text" : "Remove all muted elements",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -298,7 +298,7 @@
 					"patching_rect" : [ 153.0, 258.5, 176.0, 25.0 ],
 					"style" : "",
 					"text" : "Remove all solo elements",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -315,7 +315,7 @@
 					"patching_rect" : [ 121.0, 236.5, 168.0, 25.0 ],
 					"style" : "",
 					"text" : "Set the selection as solo",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -332,7 +332,7 @@
 					"patching_rect" : [ 121.0, 215.5, 133.0, 25.0 ],
 					"style" : "",
 					"text" : "Mute the selection",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -349,7 +349,7 @@
 					"patching_rect" : [ 121.0, 194.5, 132.0, 25.0 ],
 					"style" : "",
 					"text" : "Lock the selection",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -367,7 +367,7 @@
 					"patching_rect" : [ 183.5, 299.5, 373.0, 25.0 ],
 					"style" : "",
 					"text" : "Explicitly pop the tempo out at the beginning of the measure",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -384,7 +384,7 @@
 					"patching_rect" : [ 169.5, 99.5, 232.0, 25.0 ],
 					"style" : "",
 					"text" : "Open the inspector for the measure",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

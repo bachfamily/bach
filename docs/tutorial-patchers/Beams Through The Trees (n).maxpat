@@ -458,7 +458,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 246.0, 506.0, 318.0, 20.0 ],
 					"text" : "What's the stuff coming from the first outlet? I'm puzzled...",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

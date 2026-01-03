@@ -428,7 +428,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 456.0, 483.0, 287.0, 33.0 ],
 					"text" : "Come on... I'm able to build an sfplay playing stuff... come back to slots!!! Teach me about slots!!!",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

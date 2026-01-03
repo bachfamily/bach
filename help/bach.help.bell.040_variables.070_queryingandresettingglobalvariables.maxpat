@@ -3,14 +3,14 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 0,
-			"revision" : 2,
+			"minor" : 6,
+			"revision" : 3,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 34.0, 79.0, 617.0, 539.0 ],
+		"rect" : [ 134.0, 172.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -37,6 +37,7 @@
 		"tags" : "",
 		"style" : "",
 		"subpatcher_template" : "",
+		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
 					"bubble" : 1,
@@ -100,6 +101,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 14.0, 146.0, 199.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -185,6 +187,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 14.0, 215.0, 263.0, 38.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -199,11 +202,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-5",
-					"linecount" : 9,
+					"linecount" : 7,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 234.0, 58.0, 302.0, 141.0 ],
+					"patching_rect" : [ 234.0, 58.0, 357.0, 112.0 ],
 					"text" : "@auto 1 (bach.eval only) means that the code is immediately evaluated as soon as the object is created. \nIts typical use is setting the starting value of some global variables. \nIf you have more than one bach.eval object setting the same global variables with @auto 1, the actual values they will take among the ones provides is undefined."
 				}
 
@@ -217,8 +220,9 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 14.0, 66.5, 215.0, 38.0 ],
+					"patching_rect" : [ 14.0, 66.5, 217.0, 38.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,

@@ -671,11 +671,11 @@
 					"maxclass" : "comment",
 					"text" : "And what could I do with matrices?",
 					"fontsize" : 12.0,
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"numinlets" : 1,
 					"patching_rect" : [ 326.0, 542.0, 196.0, 20.0 ],
 					"numoutlets" : 0,
-					"frgb" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"frgb" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"id" : "obj-61",
 					"fontname" : "Arial",
 					"fontface" : 2

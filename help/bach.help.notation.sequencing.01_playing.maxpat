@@ -133,7 +133,7 @@
 					"patching_rect" : [ 437.0, 221.0, 167.0, 69.0 ],
 					"style" : "",
 					"text" : "...or by using the spacebar to play/stop, once the object has the focus",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -185,7 +185,7 @@
 					"patching_rect" : [ 239.0, 191.0, 158.0, 40.0 ],
 					"style" : "",
 					"text" : "...or by simply pressing V",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

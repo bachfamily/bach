@@ -42,7 +42,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 147.0, 429.0, 295.0, 40.0 ],
 					"text" : "In bach.slot, just press the number or the hotkey (no need to select any note, of course!)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -95,7 +95,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 274.0, 186.0, 325.0, 98.0 ],
 					"text" : "Alternatively, any slot can be accessed via its hotkey: for instance, here we have defined \"a\" as hotkey for the first slot, and \"S\" as hotkey for the second one. Select a note and press A to open its first slot, or Shift+S to open the second one.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -132,7 +132,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 16.5, 168.0, 258.0, 98.0 ],
 					"text" : "The first step to edit a slot is to open the slot window.\nTo do so, select a note, and then press a number 1 to 9 (or 0 for slot no. 10) to open the slot window ",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

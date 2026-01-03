@@ -212,9 +212,9 @@
 				"box" : 				{
 					"maxclass" : "comment",
 					"text" : "Undo is cool. I always make mistakes.",
-					"frgb" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"frgb" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"numoutlets" : 0,
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"id" : "obj-61",
 					"fontname" : "Arial",
 					"patching_rect" : [ 338.0, 392.0, 213.0, 20.0 ],

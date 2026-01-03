@@ -1,7 +1,7 @@
 /*
  *  bach_slots.c
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -1128,12 +1128,26 @@ void paint_articulations_cards_in_slot(t_notation_obj *r_ob, t_jgraphics* g, t_r
         char selected = is_long_in_llll_first_level(selected_arts, id);
         double width, height;
         t_symbol *font = r_ob->articulations_typo_preferences.artpref[id].font;
-        double fontsize = r_ob->articulations_typo_preferences.artpref[id].base_pt * zoom_y * 0.75;
+        double fontsize = r_ob->articulations_typo_preferences.artpref[id].base_pt * zoom_y * 0.65;
         t_jfont *jf_art = jfont_create_debug(font ? font->s_name : r_ob->articulations_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, fontsize);
         char *buf = articulation_to_text_buf(&r_ob->articulations_typo_preferences, id);
         jfont_text_measure(jf_art, buf, &width, &height);
         paint_rectangle(cards_g, build_jrgba(1, 1, 1, 1), selected ? change_alpha(slot_color, 0.5) : build_jrgba(0.9, 0.9, 0.9, 0.5), cur_x, cur_y, card_width, card_height, 1);
-        write_text(cards_g, jf_art, label_color, buf, cur_x, cur_y, card_width, card_height, JGRAPHICS_TEXT_JUSTIFICATION_CENTERED, true, false);
+        write_text(cards_g, jf_art, label_color, buf, cur_x, cur_y - r_ob->articulations_typo_preferences.card_uy_shift * r_ob->zoom_y, card_width, card_height, JGRAPHICS_TEXT_JUSTIFICATION_CENTERED, true, false);
+        
+        if (r_ob->articulations_typo_preferences.artpref[id].superscript_char > 0) {
+            char *articulation_utf = NULL;
+            char articulation_txt[5];
+            long articulation_utf_len;
+            articulation_utf = charset_unicodetoutf8_debug(&r_ob->articulations_typo_preferences.artpref[id].superscript_char, 1, &articulation_utf_len);
+            strncpy(articulation_txt, articulation_utf, 4);
+            bach_freeptr(articulation_utf);
+            write_text(cards_g, jf_art, label_color, articulation_txt,
+                       cur_x + r_ob->articulations_typo_preferences.artpref[id].superscript_char_ux_shift * r_ob->zoom_y * 0.65,
+                       cur_y - r_ob->articulations_typo_preferences.card_uy_shift * r_ob->zoom_y - r_ob->articulations_typo_preferences.artpref[id].superscript_char_uy_shift * r_ob->zoom_y * 0.65,
+                       card_width, card_height, JGRAPHICS_TEXT_JUSTIFICATION_CENTERED, true, false);
+        }
+        
         bach_freeptr(buf);
         jfont_destroy_debug(jf_art);
     }
@@ -1452,11 +1466,12 @@ void paint_slot(t_notation_obj *r_ob, t_jgraphics* g, t_rect graphic_rect, t_not
     jf_slot_function_point_labels = jfont_create_debug(r_ob->slot_labels_font ? r_ob->slot_labels_font->s_name : "Arial", 
                                                        r_ob->slot_labels_font_face >= 2 ? JGRAPHICS_FONT_SLANT_ITALIC : JGRAPHICS_FONT_SLANT_NORMAL,
                                                        r_ob->slot_labels_font_face % 2 == 1 ? JGRAPHICS_FONT_WEIGHT_BOLD : JGRAPHICS_FONT_WEIGHT_NORMAL, round(r_ob->slot_labels_font_size * zoom_y));
-    jf_slot_dynamics = jfont_create_debug("November for bach", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(18 * zoom_y));
+
+    jf_slot_dynamics = jfont_create_debug(notationobj_get_dynamic_fontname(r_ob), JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(18 * zoom_y));
+
     jf_slot_dynamics_roman = jfont_create_debug("Times New Roman", JGRAPHICS_FONT_SLANT_ITALIC, JGRAPHICS_FONT_WEIGHT_NORMAL, round(9 * zoom_y));
     if (has_x_labels || has_y_labels)
         jf_slot_function_grid_labels = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(5 * zoom_y));
-    
     
 	mouse.x = r_ob->j_mouse_x; 
 	mouse.y = r_ob->j_mouse_y;
@@ -1637,7 +1652,7 @@ void paint_slot(t_notation_obj *r_ob, t_jgraphics* g, t_rect graphic_rect, t_not
     
 	r_ob->slot_window_active_nozoom = build_rect(slot_window_active_x1, slot_window_active_y1, slot_window_active_width, slot_window_active_height);
 
-	// modifying activeslotwin w.r. to zoom
+	// modifying activeslotwin w.r.t. zoom
 	if (((!slot_is_temporal(r_ob, s)) || r_ob->obj_type == k_NOTATION_OBJECT_SLOT) && (can_slot_be_hzoomed(r_ob, s) || can_slot_be_hmoved(r_ob, s))) {
 		slot_window_active_width *= r_ob->slot_window_hzoom_factor;
 		slot_window_active_x1 = slot_window_active_x1 - r_ob->slot_window_zoomed_start * slot_window_active_width;
@@ -2007,7 +2022,7 @@ void paint_slot(t_notation_obj *r_ob, t_jgraphics* g, t_rect graphic_rect, t_not
 							else if (r_ob->slotinfo[s].slot_type == k_SLOT_TYPE_FLOATMATRIX)
 								snprintf_zero(value_str, 50, "%.2f%s", curr_val, unit);
 							
-							// do we display it at left or at right, w.r. to the bar?
+							// do we display it at left or at right, w.r.t. the bar?
 							if (bar_width < h_cell_size/2.) {
 								write_text_standard_singleline(g, jf_slot_smallvalues, slot_textcolor, value_str,
 												  slot_window_table_x1 + col * h_cell_size + bar_width + 2, slot_window_table_y1 + row * v_cell_size, h_cell_size - bar_width - 2, v_cell_size);
@@ -2154,7 +2169,7 @@ void paint_slot(t_notation_obj *r_ob, t_jgraphics* g, t_rect graphic_rect, t_not
 					long screen_note = 0; 
 					t_rational screen_acc = long2rat(0);
 					char *outname = NULL;
-					mc_to_screen_approximations(r_ob, mc, &screen_note, &screen_acc, NULL, NULL);
+					mc_to_display_approximation_ET(r_ob, mc, &screen_note, &screen_acc, NULL, NULL);
 					midicents2notename(r_ob->middleC_octave, screen_note, screen_acc, r_ob->note_names_style, true, &outname);
 					snprintf_zero(legend, CONST_SLOT_MAX_LEGEND_CHARS, "%ldmc (%s)  %.1fQ  %.1fdB", (long)round(mc), outname, biquad->Q, biquad->gain_dB);
 					bach_freeptr(outname);
@@ -2187,7 +2202,7 @@ void paint_slot(t_notation_obj *r_ob, t_jgraphics* g, t_rect graphic_rect, t_not
 						long screen_note = 0; 
 						t_rational screen_acc = long2rat(0);
 						char *outname = NULL;
-						mc_to_screen_approximations(r_ob, mc, &screen_note, &screen_acc, NULL, NULL);
+						mc_to_display_approximation_ET(r_ob, mc, &screen_note, &screen_acc, NULL, NULL);
 						midicents2notename(r_ob->middleC_octave, screen_note, screen_acc, r_ob->note_names_style, true, &outname);
 						snprintf_zero(legend, 100, "%ldmc (%s)  %.1fQ  %.1fdB", (long)round(mc), outname, biquad->Q, biquad->gain_dB);
 						bach_freeptr(outname);
@@ -3066,7 +3081,7 @@ void paint_function_in_slot_win(t_notation_obj *r_ob, t_jgraphics* g, t_rect fun
 				snprintf_zero(label, 100, "%.*f", num_decimal_points, point.y);
 				jfont_text_measure(jf_label_font, label, &ww, &hh);
 				
-				// choosing label direction ( 1 = up, -1 = down, w.r. to the point )
+				// choosing label direction ( 1 = up, -1 = down, w.r.t. the point )
 				if (!temp->next && !temp->prev) {
 					direction = (point_screen.y > displayed_bounding_rectangle.y + displayed_bounding_rectangle.height / 2. ? 1 : -1); 
 				} else if (!temp->next) {
@@ -4519,6 +4534,9 @@ void slotitem_delete(t_notation_obj *r_ob, long slot_num, t_slotitem *item){
         } else if (r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_DYNAMICS) {
             dynamics_check_dependencies_before_deleting_it(r_ob, (t_dynamics *) item->item);
             free_dynamics(r_ob, (t_dynamics *) item->item);
+        } else if (r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_ARTICULATIONS) {
+            articulation_check_dependencies_before_deleting_it(r_ob, (t_articulation *)item->item);
+            bach_freeptr(item->item);
         } else if (r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_LLLL || r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_INTMATRIX ||
 			r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_FLOATMATRIX || r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_TOGGLEMATRIX)
 			llll_free((t_llll *) item->item);
@@ -10136,6 +10154,17 @@ t_max_err notationobj_setattr_lyrics_font(t_notation_obj *r_ob, t_object *attr, 
     return MAX_ERR_NONE;
 }
 
+t_max_err notationobj_setattr_eighthtonearrow(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+{
+    if (ac) {
+        r_ob->accidentals_eighthtones_display_type = (e_accidentals_eighthtones_preferences)CLAMP(atom_getlong(av), 0, 1);
+        implicitely_recalculate_all(r_ob, false);
+        notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+    }
+
+    return MAX_ERR_NONE;
+}
+
 t_max_err notationobj_setattr_annotations_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
 {
     if (ac && av) {
@@ -10166,10 +10195,10 @@ t_max_err notationobj_setattr_showaccidentalspreferences(t_notation_obj *r_ob, t
     return MAX_ERR_NONE;
 }
 
-t_max_err notationobj_setattr_showcentsdiff(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+t_max_err notationobj_setattr_showcents(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
 {
     if (ac) {
-        r_ob->show_cents_differences = CLAMP(atom_getlong(av), 0, 1);
+        r_ob->show_cents_differences = CLAMP(atom_getlong(av), 0, 2);
         quick_notationobj_recompute_all_chord_parameters(r_ob);
     }
 

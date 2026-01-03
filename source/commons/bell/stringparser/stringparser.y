@@ -2,7 +2,7 @@
     /*
      *  stringparser.y
      *
-     * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+     * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
      *
      * This program is free software: you can redistribute it and/or modify it
      * under the terms of the GNU General Public License
@@ -48,8 +48,8 @@
     
     #include "bell/bach_codableobj.hpp"
     #include "bell/ast.hpp"
-    #include "stringparser.h"
-    
+    #include "bell/bellparser_commons.h"
+
     extern t_bach *bach;
 
 
@@ -168,30 +168,8 @@
     
     YY_BUFFER_STATE stringparser_scan_string(yyscan_t myscanner, const char *buf);
     void stringparser_flush_and_delete_buffer(yyscan_t myscanner, YY_BUFFER_STATE bp);
-    
-    void addVariableToScope(t_parseParams *params, t_symbol *name)
-    {
-        auto known = (*(params->localVariablesAuxMapStack))->find(name);
-        if (known == (*(params->localVariablesAuxMapStack))->end()) { // yet unknown
-            (**(params->localVariablesAuxMapStack))[name] = 1;
-            
-            if (params->liftedVariablesStack == params->liftedVariablesStackBase) {
-                *(params->localVariablesStack) = new countedList<t_localVar> (t_localVar(name, true), *(params->localVariablesStack)); // if we're at the main function level, then everything is lifted (as it can be set from the outside)
-            } else {
-                t_bool lifted = (*(params->liftedVariablesStack))->find(name) != (*(params->liftedVariablesStack))->end();
-                
-                *(params->localVariablesStack) = new countedList<t_localVar> (t_localVar(name, lifted), *(params->localVariablesStack));
 
-                /*
-                if (lifted == (*(params->liftedVariablesStack))->end()) { // not lifted
-                    *(params->argumentsStack) = new countedList<funArg *>(new funArg(name), *(params->argumentsStack));
-                } else { // old behavior: lifted
-                    *(params->localVariablesStack) = new countedList<t_symbol *> (name, *(params->localVariablesStack));
-                }
-                 */
-            }
-        }
-    }
+
 %}
 
 %parse-param {void *scanner}
@@ -342,12 +320,12 @@ forargList : forarg {
 
 forarg : LOCALVAR IN_KW sequence {
     $$ = new forArg($1, nullptr, $3);
-    addVariableToScope(params, $1);
+    addVariableToScope<e_flexBison>(params, $1);
     code_dev_post ("parse: for iterator with index");
 }
 | LOCALVAR LOCALVAR IN_KW sequence {
-    addVariableToScope(params, $1);
-    addVariableToScope(params, $2);
+    addVariableToScope<e_flexBison>(params, $1);
+    addVariableToScope<e_flexBison>(params, $2);
     $$ = new forArg($1, $2, $4);
     code_dev_post ("parse: for iterator with index and address");
 }
@@ -502,7 +480,7 @@ liftedargList : LIFT LOCALVAR {
 functionApplication : funcall %dprec 2
 | exp APPLY funcall
 {
-    $3->addOopStyleArg($1);
+    $3->addDataflowStyleArg($1);
     code_dev_post ("parse: term APPLY funcall");
     $$ = $3;
 } %dprec 1
@@ -530,7 +508,7 @@ funcall : term STARTPARAMS argsByPositionList CLOSEDROUND {
     code_dev_post ("parse: function call with args by position and by name");
 }
 | term STARTPARAMS CLOSEDROUND {
-    $$ = new astFunctionCall($1, nullptr, nullptr, params->owner);
+    $$ = new astFunctionCall($1, params->owner);
     code_dev_post ("parse: function call with no args");
 }
 ;
@@ -615,7 +593,7 @@ assign : var ASSIGN list {
     code_dev_post("parse: var ASSIGN list");
 }
 | INIT LOCALVAR ASSIGN list {
-    addVariableToScope(params, $2);
+    addVariableToScope<e_flexBison>(params, $2);
     $$ = new astInit($2, $4, params->owner);
     code_dev_post("parse: INIT LOCALVAR ASSIGN list");
 }
@@ -784,24 +762,24 @@ assign : var ASSIGN list {
     code_dev_post("parse: var lvalueStepList ARCONCAT list");
 }
 | localVar AAPPLY funcall {
-    $3->addOopStyleArg($1);
+    $3->addDataflowStyleArg($1);
     $$ = new astAssign(new astLocalVar($1), $3, params->owner);
     code_dev_post ("parse: localVar AAPPLY funcall");
 }
 | patcherVar AAPPLY funcall {
-    $3->addOopStyleArg($1);
+    $3->addDataflowStyleArg($1);
     astPatcherVar *v = new astPatcherVar($1);
     (*params->name2patcherVars)[v->getName()].insert(v);
     $$ = new astAssign(v, $3, params->owner);
     code_dev_post ("parse: patcherVar AAPPLY funcall");
 }
 | globalVar AAPPLY funcall {
-    $3->addOopStyleArg($1);
+    $3->addDataflowStyleArg($1);
     $$ = new astAssign(new astGlobalVar($1), $3, params->owner);
     code_dev_post ("parse: globalVar AAPPLY funcall");
 }
 | var lvalueStepList AAPPLY funcall {
-    $4->addOopStyleArg(new astConst(params->owner));
+    $4->addDataflowStyleArg(new astConst(params->owner));
     $$ = new astRichAccessApplyOp<astRichAssignment<E_RA_SHORTCIRCUIT>>($1, $4, $2, params->owner);
     code_dev_post("parse: var lvalueStepList AAPPLY list");
 }
@@ -1180,7 +1158,7 @@ exp: term %dprec 2
     code_dev_post("parse: var lvalueStepList ARCONCAT list");
 }
 | term lvalueStepList AAPPLY funcall %dprec 2 {
-    $4->addOopStyleArg(new astConst(params->owner));
+    $4->addDataflowStyleArg(new astConst(params->owner));
     $$ = new astRichAccessApplyOp<astRichEdit<E_RA_SHORTCIRCUIT>>($1, $4, $2, params->owner);
     code_dev_post("parse: var lvalueStepList AAPPLY list");
 }
@@ -1212,7 +1190,7 @@ term: LONG_LITERAL {
 }
 | ARGCOUNT {
     auto fnConst = new astConst((*(params->bifs))["$argcount"], params->owner);
-    $$ = new astFunctionCall(fnConst, nullptr, nullptr, params->owner);
+    $$ = new astFunctionCall(fnConst, params->owner);
     code_dev_post("parse: ARGCOUNT");
 }
 | BACHNIL {
@@ -1320,17 +1298,17 @@ patcherVar: PATCHERVAR {
 
 localVar: LOCALVAR {
     $$ = new astLocalVar($1, params->owner);
-    addVariableToScope(params, $1);
+    addVariableToScope<e_flexBison>(params, $1);
     code_dev_post ("parse: Local variable %s", $1->s_name);
 }
 | KEEP LOCALVAR {
     $$ = new astKeep($2, params->owner);
-    addVariableToScope(params, $2);
+    addVariableToScope<e_flexBison>(params, $2);
     code_dev_post ("parse: Keep local variable %s", $2->s_name);
 }
 | UNKEEP LOCALVAR {
     $$ = new astUnkeep($2, params->owner);
-    addVariableToScope(params, $2);
+    addVariableToScope<e_flexBison>(params, $2);
     code_dev_post ("parse: Unkeep local variable %s", $2->s_name);
 }
 ;
@@ -1352,10 +1330,14 @@ t_mainFunction *codableobj_parse_buffer(t_codableobj *x, long *codeac, t_atom_lo
     params.ast = NULL;
     params.fnDepth = 0;
     params.localVariablesStack = params.localVariablesStackBase;
+    params.localVariablesStackV = params.localVariablesStackBaseV;
+    params.localVariablesStackV[0] = nullptr;
     params.localVariablesAuxMapStack = params.localVariablesAuxMapStackBase;
     params.localVariablesAuxMapStack[0] = new std::unordered_map<t_symbol *, int>;
     params.liftedVariablesStack = params.liftedVariablesStackBase;
     params.argumentsStack = params.argumentsStackBase;
+    params.argumentsStackV = params.argumentsStackBaseV;
+    params.argumentsStackV[0] = nullptr;
     params.gvt = bach->b_gvt;
     params.bifs = bach->b_bifTable;
     params.codeac = codeac;

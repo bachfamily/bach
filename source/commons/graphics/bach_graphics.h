@@ -1,7 +1,7 @@
 /*
  *  bach_graphics.h
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -220,6 +220,7 @@ void get_middle_refinement_point_for_curve(double x1, double y1, double x2, doub
 
 
 /** Fill an array of #t_unicodeChar with some data.
+    Important: all the variable-number of input values must be long numbers: use 1L instead of 1 etc. Otherwise it can be sneakily problematic!
     @ingroup    math
     @param        a        Pointer to the first element of the array
     @param        count    Number of #t_unicodeChar arguments (to be placed after this <count> argument) with which the array will be filled
@@ -356,6 +357,7 @@ double pt_line_distance(double ptx, double pty, double x1, double y1, double x2,
                     distance will be null (which is also the case if the line is purely vertical).
  */
 double pt_line_distance_vertical(double ptx, double pty, double x1, double y1, double x2, double y2);
+double pt_line_distance_vertical_signed(double ptx, double pty, double x1, double y1, double x2, double y2);
 
 /**    Find the distance between a point and a line segment (not the whole infinite line!)
     @ingroup    geometry
@@ -869,6 +871,8 @@ char get_bezier_subdivision_points(t_pt p0, t_pt p1, t_pt p2, t_pt p3, double t,
  */
 t_pt get_single_bezier_subdivision_point(t_pt p0, t_pt p1, t_pt p2, t_pt p3, double t);
 
+t_pt bezier_sample(t_pt p0, t_pt p1, t_pt p2, t_pt p3, double t);
+double bezier_x_to_t(t_pt p0, t_pt p1, t_pt p2, t_pt p3, double x, double tolerance, t_pt *sampled_pt); // iterative algorithm, within tolerance...
 
                                                  
 /**    Paint a slur like the one used to gather tuplets (if slur and NOT bracket is chosen, of course). Actually, this is just a 3-rd order bezier curve,

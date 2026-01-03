@@ -1,7 +1,7 @@
 /*
  *  uislot.c
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -1541,7 +1541,7 @@ void uislot_paint_ext(t_uislot *x, t_object *view, t_jgraphics *g, t_rect rect)
         if (x->r_ob.slot_background_alpha_percentage < 100) {
             t_jfont *jf_text_small = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(x->r_ob.slot_background_font_size * x->r_ob.zoom_y));  // text font (small and bold)
             t_jfont *jf_text_smallbold = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, round(x->r_ob.slot_background_font_size * x->r_ob.zoom_y));  // text font (small and bold)
-            t_jfont *jf_dynamics = jfont_create_debug("November for bach", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(x->r_ob.slot_background_font_size * 2 * x->r_ob.zoom_y));  // text font (small and bold)
+            t_jfont *jf_dynamics = jfont_create_debug(notationobj_get_dynamic_fontname((t_notation_obj *)x), JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(x->r_ob.slot_background_font_size * 2 * x->r_ob.zoom_y));  // text font (small and bold)
             t_jfont *jf_dynamics_roman = jfont_create_debug("Times New Roman", JGRAPHICS_FONT_SLANT_ITALIC, JGRAPHICS_FONT_WEIGHT_NORMAL, round(x->r_ob.slot_background_font_size * x->r_ob.zoom_y));
 
             double slot_window_active_x1 = CONST_SLOT_WINDOW_INSET_X;

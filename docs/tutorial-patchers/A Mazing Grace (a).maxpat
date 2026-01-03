@@ -305,7 +305,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 315.0, 500.0, 245.0, 33.0 ],
 					"text" : "So there are two different representations for grace notes? Isn't that confusing?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

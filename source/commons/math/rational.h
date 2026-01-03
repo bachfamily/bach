@@ -1,7 +1,7 @@
 /*
  *  rational.h
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -23,6 +23,7 @@
 */
 
 #include "foundation/bach.h"
+#include <vector>
 
 #ifdef BACH_JUCE
 #include "bach_jucewrapper.h"
@@ -154,6 +155,7 @@ typedef t_uint16 t_atom_ushort;
 } t_rational;*/
 typedef t_rat<t_atom_long> t_rational;
 typedef t_rat<t_atom_short> t_shortRational;
+typedef t_rat<t_int16> t_tinyRational;
 
 
 
@@ -414,11 +416,20 @@ t_rational rat_long_diff(t_rational rat1, t_atom_long num);
 
 /**	Raise a rational number to an integer exponent
 	@ingroup		rational
-	@param	rat1	The rational number.
-	@param	num		The integer exponent.
-	@return			The result of the exponentiation.	
+	@param	base	The rational number.
+	@param	power	The integer exponent.
+	@return			The result of the exponentiation.
  */
-t_rational rat_long_pow(t_rational rat, t_atom_long num);
+t_rational rat_long_pow(t_rational base, t_atom_long power);
+
+
+/**    Raise an integer number to a (possibly negative) integer exponent
+    @ingroup        rational
+    @param    base    The base.
+    @param    power       The integer exponent.
+    @return            The result of the exponentiation.
+ */
+t_rational long_long_pow(long base, t_atom_long power);
 
 
 /**	Return the difference of a long number and a rational one
@@ -652,12 +663,13 @@ char rat_rat_cmp_account_for_approximations(t_rational *rat1, t_rational *rat2, 
 						0 if you just want to choose the closest approximation (either above or below the original number).
 	@param	error		A pointer to a double *, to be filled with the difference between the (double) number and the rational approximation (num - rat).
 						Leave NULL if you don't need it.
+    @param  log_error       If true, the error is logarithmic (computed as the cents equivalent of incoming ratios)
 	@return				A rational approximating the double number.
 	@ingroup			rational
  */
-t_rational approx_double_with_rat_fixed_den(double num, t_atom_long fixed_den, char direction, double *error);
+t_rational approx_double_with_rat_fixed_den(double num, t_atom_long fixed_den, char direction, double *error, bool log_error = false);
 
-t_urrational approx_double_with_rat_fixed_den_no_reduce(double num, t_atom_long fixed_den, char direction, double *error);
+t_urrational approx_double_with_rat_fixed_den_no_reduce(double num, t_atom_long fixed_den, char direction, double *error, bool log_error = false);
 
 
 /**	Approximate a double precision floating number with a rational having at most a given denominator, and also computes the error. 
@@ -668,22 +680,45 @@ t_urrational approx_double_with_rat_fixed_den_no_reduce(double num, t_atom_long 
 						0 if you just want to choose the closest approximation (either above or below the original number).
 	@param	error		A pointer to a double *, to be filled with the difference between the (double) number and the rational approximation (num - rat).
 						Leave NULL if you don't need it.
+    @param  log_error       If true, the error is logarithmic (computed as the cents equivalent of incoming ratios)
 	@return				A rational approximating the double number.
 	@remark				This function is way slower than approx_double_with_rat_fixed_den(), since it tries all the possible denominators
 						up to #max_den. You might want to use approx_double_with_rat_fixed_den() for fast purposes.
 	@see				approx_double_with_rat_fixed_den()
 	@ingroup			rational
  */
-t_rational approx_double_with_rat_best_match(double num, t_atom_long max_den, char direction, double *error);
+t_rational approx_double_with_rat_up_to_maxden(double num, t_atom_long max_den, char direction, double *error, bool log_error = false);
 
 
-t_rational approx_double_with_rat_up_to_tolerance(double number, double tolerance, t_atom_long max_den, char direction, char tolerance_is_ratio, double *error, char *found);
+t_rational approx_double_with_rat_up_to_tolerance(double number, double tolerance, t_atom_long max_den, char direction, char tolerance_is_ratio, double *error, char *found, bool log_error = false);
 
-t_rational approx_double_with_rat_smart_permanence(double number, double tolerance, t_atom_long max_den, char direction, char tolerance_is_ratio, double *error, char *found);
+t_rational approx_double_with_rat_smart_permanence(double number, double tolerance, t_atom_long max_den, char direction, char tolerance_is_ratio, double *error, char *found, bool log_error = false);
 
 
+// Get continued fraction convergents for number num
+std::vector<t_rational> get_convergents(double num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0, bool includeSemiconvergents = 0, const std::vector<int> &allowed_primes = {}, long stop_at_this_an = 100000, long max_iter = 0);
+std::vector<t_rational> get_convergents(t_rational num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0, bool includeSemiconvergents = 0, const std::vector<int> &allowed_primes = {}, long stop_at_this_an = 100000, long max_iter = 0);
+std::vector<t_rational> get_convergents(t_tinyRational num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0, bool includeSemiconvergents = 0, const std::vector<int> &allowed_primes = {}, long stop_at_this_an = 100000, long max_iter = 0);
+std::vector<t_rational> get_convergents(t_shortRational num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0, bool includeSemiconvergents = 0, const std::vector<int> &allowed_primes = {}, long stop_at_this_an = 100000, long max_iter = 0);
 
-/**	Approximate a rational with another one having a specific denominator. 
+// general function
+std::vector<t_rational> get_convergents_ext_and_continued_fraction(std::vector<long> &continuedfraction, std::vector<double> &errors, double num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0, bool check_for_exact_den_equality = false, long den_stop = 0, bool includeSemiconvergents = 0, const std::vector<int> &allowed_primes = {}, long stop_at_this_an = 1000, long max_iter = 0, bool also_fill_continuedfraction_and_errors = 0);
+
+std::vector<t_rational> rational_approximation_with_primes(double v, const std::vector<int> &allowed_primes,
+                                                           double err_thresh, bool log_error, long maxden,
+                                                           // three parameters to thin the list
+                                                           const double bestErrorRelativeTolerance = 1.2,
+                                                           const double tenneyHeightFactor = 50,
+                                                           const double tenneyHeightExp =0.2);
+
+
+double rational_get_tenney_height(t_rational r);
+long rational_get_jilimit(t_rational r);
+t_rational get_best_jilimited_approximation(double num, long jilimit, double mc_thresh);
+t_rational get_best_jilimited_approximation(t_rational r, long jilimit, double mc_thresh);
+void tenney_sort(std::vector<t_rational> candidate_approx, double target);
+
+/**	Approximate a rational with another one having a specific denominator.
 	@param	rat		The rational number to approximate.
 	@param	den		The denominator of the approximation.
 	@return			The approximated rational.

@@ -1,7 +1,7 @@
 /*
  *  hatom.c
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -54,7 +54,7 @@ t_atom_long hatom_getlong(const t_hatom *h)
                 return 0;
             break;
         case H_PITCH:
-            return t_atom_long(h->h_w.w_pitch.toMC());
+            return t_atom_long(h->h_w.w_pitch.toMCdouble());
             break;
         default:
             return 0;
@@ -75,7 +75,7 @@ double hatom_getdouble(const t_hatom *h)
             return ((double) h->h_w.w_rat.r_num) / ((double) h->h_w.w_rat.r_den);
             break;
         case H_PITCH:
-            return double(h->h_w.w_pitch.toMC());
+            return double(h->h_w.w_pitch.toMCdouble());
             break;
         default:
             return 0;
@@ -104,7 +104,7 @@ t_rational hatom_getrational(const t_hatom *h)
             return h->h_w.w_rat;
             break;
         case H_PITCH:
-            return t_rational(h->h_w.w_pitch.toMC());
+            return t_rational(h->h_w.w_pitch.toMCrat());
             break;
         default:
             return r;
@@ -235,10 +235,10 @@ void hatom_setpitch(t_hatom *h, const t_pitch &p)
     h->h_w.w_pitch = p;
 }
 
-void hatom_setpitch_from_elems(t_hatom *h, t_atom_short degree, t_shortRational &alter, t_atom_short octave)
+void hatom_setpitch_from_elems(t_hatom *h, const t_atom_short degree, const t_shortRational &alter, const t_shortRational &r, const t_atom_short octave)
 {
     h->h_type = H_PITCH;
-    h->h_w.w_pitch.set(degree, alter, octave);
+    h->h_w.w_pitch.set(degree, alter, r, octave);
 }
 
 void hatom_setsym(t_hatom *h, const t_symbol *s)

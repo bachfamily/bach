@@ -1,7 +1,7 @@
 /*
  *  conditional.hpp
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -139,6 +139,11 @@ public:
                        lvalueStepList *lvalueStepList,
                          t_codableobj *owner) : BASE(lNode, rNode, lvalueStepList, owner) { }
     
+    astSCLogRichAccessOp(typename BASE::firstType *lNode,
+                       astNode *rNode,
+                       lvalueSpecs *lvalueSpecs,
+                         t_codableobj *owner) : BASE(lNode, rNode, lvalueSpecs, owner) { }
+    
     ~astSCLogRichAccessOp() { }
     
 private:
@@ -166,6 +171,8 @@ typedef astSCLogRichAccessOp<astRichAssignment<E_RA_SHORTCIRCUIT>, astSCOr_core,
 typedef astSCLogRichAccessOp<astRichAssignment<E_RA_SHORTCIRCUIT>, astSCAnd_core, astSCAnd_hatom> astLogRASCAnd;
 
 
+
+
 typedef astSCLogRichAccessOp<astRichEdit<E_RA_SHORTCIRCUIT>, astLogXor_core, astLogXor_hatom> astLogREXor;
 typedef astSCLogRichAccessOp<astRichEdit<E_RA_SHORTCIRCUIT>, astSCOr_core, astSCOr_hatom> astLogRESCOr;
 typedef astSCLogRichAccessOp<astRichEdit<E_RA_SHORTCIRCUIT>, astSCAnd_core, astSCAnd_hatom> astLogRESCAnd;
@@ -179,6 +186,11 @@ public:
                          lvalueStepList *lvalueStepList,
                          t_codableobj *owner)  : BASE(lNode, rNode, lvalueStepList, owner) { }
 
+    astSCRichAccessOrExt(typename BASE::firstType *lNode,
+                         astNode *rNode,
+                         lvalueSpecs *lvalueSpecs,
+                         t_codableobj *owner)  : BASE(lNode, rNode, lvalueSpecs, owner) { }
+    
     ~astSCRichAccessOrExt() { };
 private:
     void lastNthDo(t_llll *current, t_llllelem* &lookHere, t_llll* origV, t_bool created, t_execEnv const &context) {
@@ -227,6 +239,11 @@ public:
                          lvalueStepList *lvalueStepList,
                          t_codableobj *owner)  : BASE(lNode, rNode, lvalueStepList, owner) { }
     
+    astSCRichAccessAndExt(typename BASE::firstType *lNode,
+                         astNode *rNode,
+                         lvalueSpecs *lvalueSpecs,
+                         t_codableobj *owner)  : BASE(lNode, rNode, lvalueSpecs, owner) { }
+    
     ~astSCRichAccessAndExt() { };
 private:
     void lastNthDo(t_llll *current, t_llllelem* &lookHere, t_llll* origV, t_bool created, t_execEnv const &context) {
@@ -268,7 +285,11 @@ private:
 };
 
 
+typedef astSCRichAccessAndExt<astRichAssignment<E_RA_SHORTCIRCUIT>> astLogRASCAndExt;
+typedef astSCRichAccessAndExt<astRichEdit<E_RA_SHORTCIRCUIT>> astLogRESCAndExt;
 
+typedef astSCRichAccessOrExt<astRichAssignment<E_RA_SHORTCIRCUIT>> astLogRASCOrExt;
+typedef astSCRichAccessOrExt<astRichEdit<E_RA_SHORTCIRCUIT>> astLogRESCOrExt;
 
 
 //////////////////
@@ -339,21 +360,19 @@ private:
     t_symbol **addressPseudovariables; // NULL-terminated
     t_symbol **localVariableNames; // NULL-terminated
     astNode **inClauses; // NULL-terminated
-    countedList<symNodePair *> *attributes;
+    std::vector<symNodePair *> attrs;
     astNode *whileClause;
     astNode *body;
     
-    static t_bool llll_getAttributeValue(countedList<symNodePair *> *attribute, t_execEnv const &context, t_symbol *sym, t_atom_long *v) {
-        if (attribute->getItem()->getSym() == sym) {
-            t_llll *attr_ll = attribute->getItem()->getNode()->eval(context);
+    static t_bool llll_getAttributeValue(symNodePair *attribute, t_execEnv const &context, t_symbol *sym, t_atom_long *v) {
+        if (attribute->getSym() == sym) {
+            t_llll *attr_ll = attribute->getNode()->eval(context);
             *v = hatom_getlong(&attr_ll->l_head->l_hatom);
             bell_release_llll(attr_ll);
             return true;
         } else
         return false;
     }
-    
-    
     
     typedef struct {
         astForLoop *me;
@@ -367,6 +386,7 @@ private:
         t_symbol *pseudovarName = me->dataPseudovariables[idx];
         t_variable *pseudovar = data->context->scope.find(pseudovarName)->second;
         pseudovar->set(ll);
+        data->evaluate = true;
         return 0;
     }
     
@@ -375,9 +395,10 @@ private:
         astForLoop *me = data->me;
         t_symbol *pseudovarName = me->addressPseudovariables[idx];
         if (!pseudovarName)
-        return 0;
+            return 0;
         t_variable *pseudovar = data->context->scope.find(pseudovarName)->second;
         pseudovar->set(ll);
+        data->evaluate = true;
         return 0;
     }
     
@@ -408,7 +429,7 @@ private:
                 bell_release_llll(append);
             }
         }
-        data->evaluate = true;
+        data->evaluate = false;
         return 0;
     }
     
@@ -419,15 +440,21 @@ public:
                  countedList<symNodePair *> *attributes,
                  astNode *body,
                t_codableobj *owner) :
-    astNode(owner), attributes(attributes), whileClause(whileClause), body(body) {
+    astNode(owner), whileClause(whileClause), body(body) {
         count = lists->getCount();
         
         // put all the local variables in the array of local variable names (for faster access at loop call)
         if (localVariableNamesList) {
-            localVariableNamesList->copyIntoNullTerminatedArray(&localVariableNames);
+            copyIntoNullTerminatedArray<t_symbol*>(localVariableNamesList, &localVariableNames);
             delete localVariableNamesList->getHead();
         } else {
             localVariableNames = new t_symbol* [1] { };
+        }
+        
+        if (attributes) {
+            for (auto a = attributes->getHead(); a; a = a->getNext()) {
+                attrs.push_back(a->getItem());
+            }
         }
         
         dataPseudovariables = new t_symbol*[count+1];
@@ -450,7 +477,42 @@ public:
         delete lists;
     }
     
-    
+    astForLoop(std::vector<forArg *> *lists,
+               std::vector<t_symbol *> *localVariableNamesList,
+               astNode *whileClause,
+               std::vector<symNodePair *> *attributes,
+               astNode *body,
+               t_codableobj *owner) :
+    astNode(owner), whileClause(whileClause), body(body) {
+        if (attributes)
+            attrs = *attributes;
+        
+        count = lists->size();
+        
+        // put all the local variables in the array of local variable names (for faster access at loop call)
+        if (localVariableNamesList) {
+            copyIntoNullTerminatedArray<t_symbol*>(localVariableNamesList, &localVariableNames);
+            delete localVariableNamesList;
+        } else {
+            localVariableNames = new t_symbol* [1] { };
+        }
+        
+        dataPseudovariables = new t_symbol*[count+1];
+        addressPseudovariables = new t_symbol*[count+1];
+        inClauses = new astNode*[count+1];
+        //countedList<forArg *> *thisList;
+        int i = 0;
+        for (auto l : *lists) {
+            dataPseudovariables[i] = l->getIndex();
+            addressPseudovariables[i] = l->getAddress();
+            inClauses[i] = l->getNode();
+            i++;
+        }
+        dataPseudovariables[i] = nullptr;
+        addressPseudovariables[i] = nullptr;
+        inClauses[i] = nullptr;
+        delete lists;
+    }
     
     ~astForLoop() {
         astNode **thisClause;
@@ -463,7 +525,6 @@ public:
         delete dataPseudovariables;
         delete addressPseudovariables;
         delete localVariableNames;
-        delete attributes;
     }
     
     
@@ -479,18 +540,17 @@ public:
         t_atom_long spikemode = 0;
         t_atom_long unwrap = 0;
         
-        countedList<symNodePair *> *thisAttributes;
+        //countedList<symNodePair *> *thisAttributes;
         
-        if (attributes) {
-            for (thisAttributes = attributes->getHead(); thisAttributes; thisAttributes = thisAttributes->getNext()) {
-                llll_getAttributeValue(thisAttributes, context, gensym("maxdepth"), &maxdepth) ||
-                llll_getAttributeValue(thisAttributes, context, gensym("scalarmode"), &scalarmode) ||
-                llll_getAttributeValue(thisAttributes, context, gensym("recursionmode"), &recursionmode) ||
-                llll_getAttributeValue(thisAttributes, context, gensym("iterationmode"), &iterationmode) ||
-                llll_getAttributeValue(thisAttributes, context, gensym("spikemode"), &spikemode) ||
-                llll_getAttributeValue(thisAttributes, context, gensym("unwrap"), &unwrap);
-            }
+        for (auto a : attrs) {
+            llll_getAttributeValue(a, context, gensym("maxdepth"), &maxdepth) ||
+            llll_getAttributeValue(a, context, gensym("scalarmode"), &scalarmode) ||
+            llll_getAttributeValue(a, context, gensym("recursionmode"), &recursionmode) ||
+            llll_getAttributeValue(a, context, gensym("iterationmode"), &iterationmode) ||
+            llll_getAttributeValue(a, context, gensym("spikemode"), &spikemode) ||
+            llll_getAttributeValue(a, context, gensym("unwrap"), &unwrap);
         }
+        
         t_auxiliaryData funcData;
         funcData.me = this;
         funcData.context = &context;

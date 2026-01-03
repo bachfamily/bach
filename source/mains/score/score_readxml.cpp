@@ -1,7 +1,7 @@
 /*
  *  score_readxml.cpp
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -428,6 +428,13 @@ private:
     //
     //////////////////////////
     
+    
+    struct slurData {
+        int span;
+        int direction;
+        slurData(): span(0), direction(0) {}
+    };
+    
     class chord : public timedThing<voice>, public levelChild, public thingWithSlots {
     public:
         //chordParent *parent;
@@ -436,6 +443,7 @@ private:
         std::vector<note *> notes;
         note* currentNote;
         int ties;
+        std::vector<slurData> slurs;
         bool rest; // if a chord is a rest it will anyway have a dummy note
         
         chord(voice *owner, t_rational duration, bool grace = false);
@@ -451,7 +459,6 @@ private:
             currentNote->setSlot(n, slotll);
         }
 
-        
         virtual ~chord() {
             for (auto n : notes)
                 delete n;
@@ -469,6 +476,10 @@ private:
             return chosen && singleSlotForTiedNotes ? chosen->tieStart : chosen;
         }
         
+        void addSlur(slurData data) {
+            slurs.push_back(data);
+        }
+        
         t_llll* getllll() {
             t_llll *ll = llll_get();
             llll_appendrat(ll, duration);
@@ -483,6 +494,23 @@ private:
                 llll_appendllll(ll, slotsll);
             else
                 llll_free(slotsll);
+            
+            if (slurs.size()) {
+                t_llll *slursll = llll_get();
+                llll_appendsym(slursll, gensym("slurs"));
+                t_llll *slursdetailsll = llll_get();
+                for (auto s : slurs) {
+                    llll_appendlong(slursdetailsll, s.span);
+                    if (s.direction) {
+                        t_llll *directionll = llll_get();
+                        llll_appendsym(directionll, gensym("direction"));
+                        llll_appendlong(directionll, s.direction);
+                        llll_appendllll(slursdetailsll, directionll);
+                    }
+                }
+                llll_appendllll(slursll, slursdetailsll);
+                llll_appendllll(ll, slursll);
+            }
             
             return ll;
         }
@@ -500,10 +528,13 @@ private:
     class level : public levelChild {
     public:
         std::vector<levelChild *> children;
-        using levelChild::levelChild;
+        bool grace;
         
-        level* addChildLevel() {
-            level* l = new level(this);
+        level(): levelChild(), grace(false) { }
+        level(level* parent, bool grace = false) : levelChild(parent), grace(grace) { }
+        
+        level* addChildLevel(bool grace = false) {
+            level* l = new level(this, grace);
             children.push_back(l);
             return l;
         }
@@ -514,6 +545,8 @@ private:
         
         t_llll* getllll() {
             t_llll* ll = llll_get();
+            if (grace)
+                llll_appendsym(ll, _llllobj_sym_g);
             for (auto c : children) {
                 llll_appendllll(ll, c->getllll());
             }
@@ -821,8 +854,8 @@ private:
             return r;
         }
         
-        level* pushLevel() {
-            currentLevel = currentLevel->addChildLevel();
+        level* pushLevel(bool grace = false) {
+            currentLevel = currentLevel->addChildLevel(grace);
             return currentLevel;
         }
         
@@ -848,9 +881,8 @@ private:
             
         }
     };
-    
-    
-    
+
+
     //////////////////////////
     //
     //  voice
@@ -870,6 +902,59 @@ private:
         chord* prevChord;
         dynamicsllData lastDynamicsData;
         
+        class slurSet {
+            voice *owner;
+        private:
+            class slur {
+                chord* startChord;
+                slurData data;
+                bool on;
+            public:
+                slur() : on(false) { }
+                
+                void start(chord *startC, int dir) {
+                    startChord = startC;
+                    data.direction = dir;
+                    data.span = 0;
+                    on = true;
+                }
+                
+                void update() {
+                    if (on)
+                        data.span++;
+                }
+                
+                void end() {
+                    if (on) {
+                        startChord->addSlur(data);
+                    }
+                    on = false;
+                }
+            };
+            const static int maxSlurs = 16;
+            slur theSlurs[17]; // 0 is unused
+        public:
+            slurSet(voice *owner) : owner(owner) {
+                
+            }
+            
+            void start(int idx, int direction) {
+                theSlurs[idx].start(owner->currentChord, direction);
+            }
+            
+            void update() {
+                for (int i = 1; i < 17; i++) {
+                    theSlurs[i].update();
+                }
+            }
+            
+            void end(int idx) {
+                theSlurs[idx].end();
+            }
+        };
+        
+        slurSet theSlurSet;
+        
         voice(part *owner) :
             owner(owner),
             num(0),
@@ -877,7 +962,8 @@ private:
             key(nullptr),
             currentMeasure(nullptr),
             currentChord(nullptr),
-            prevChord(nullptr)
+            prevChord(nullptr),
+            theSlurSet(this)
         { }
         
         voice(const voice* obj, const bool dummy) :
@@ -887,7 +973,8 @@ private:
             key(obj->key),
             name(obj->name),
             currentChord(nullptr),
-            prevChord(nullptr)
+            prevChord(nullptr),
+            theSlurSet(this)
         {
             currentMeasure = nullptr;
             for (auto m : obj->measures) {
@@ -915,17 +1002,53 @@ private:
             currentMeasure->addChord(c);
         }
         
-        void setChordDuration(t_rational dur) {
+        void startSlur(int idx, int direction) {
+            if (idx >= 1 && idx <= 16)
+                theSlurSet.start(idx, direction);
+        }
+        
+        void endSlur(int idx) {
+            if (idx >= 1 && idx <= 16)
+                theSlurSet.end(idx);
+        }
+        
+        bool setChordDuration(t_rational dur) {
+            currentChord->duration = dur;
             if (!currentChord->grace) {
-                currentChord->duration = dur;
                 currentMeasure->usedDuration += dur;
             }
+            return !currentChord->grace;
         }
         
         void adjustTies() {
             if (!prevChord || prevChord->ties == 0)
                 return;
             
+            // a simpler, slightly less efficient version
+            for (note* prev: prevChord->notes) {
+                if (prev->tied) {
+                    bool found = false;
+                    for (note* current: currentChord->notes) {
+                        if (prev->pitch == current->pitch && !current->tiedFrom) {
+                            found = true;
+                            prev->tiedTo = current;
+                            current->tiedFrom = prev;
+                            current->tieStart = prev->tieStart;
+                            for (note* n = prev->tieStart;
+                                 n != current;
+                                 n = n->tiedTo)
+                                n->tieEnd = current;
+                            
+                            if (!prevChord->grace)
+                                current->prevDuration += prevChord->duration;
+                        }
+                    }
+                    if (!found)
+                        object_error((t_object *) owner->owner->obj, "Tie mismatch");
+                }
+            }
+            
+            /*
             std::vector<note*>::iterator currentNoteIterator = currentChord->notes.begin();
             for (note* prevNote : prevChord->notes) {
                 if (prevNote->tied) {
@@ -958,12 +1081,12 @@ private:
                         prevChord->ties--;
                     }
                 }
-            }
+            }*/
         }
         
         
-        level* pushLevel() {
-            return currentMeasure->pushLevel();
+        level* pushLevel(bool grace = false) {
+            return currentMeasure->pushLevel(grace);
         }
         
         t_llll* getllll() {
@@ -1029,8 +1152,8 @@ private:
             return n;
         }
         
-        level* pushLevel() {
-            return currentVoice->pushLevel();
+        level* pushLevel(bool grace = false) {
+            return currentVoice->pushLevel(grace);
         }
         
         void setClef(t_symbol *clef) {
@@ -1044,7 +1167,7 @@ private:
         }
         
         void setClef(const char *clef) { setClef(gensym(clef)); }
-        void setKey(const char *key) { setClef(gensym(key)); }
+        void setKey(const char *key) { setKey(gensym(key)); }
         
         
         void insertDirectionFromXML(mxml_node_t *directionXML, long divisions, long* velocity) {
@@ -1147,9 +1270,10 @@ private:
         }
         
         void setChordDuration(t_rational dur) {
-            currentVoice->setChordDuration(dur);
-            globalPosition += dur;
-            positionInMeasure += dur;
+            if (currentVoice->setChordDuration(dur)) {
+                globalPosition += dur;
+                positionInMeasure += dur;
+            }
         }
         
         void setChordSlot(t_llll* slotll) {
@@ -1162,6 +1286,14 @@ private:
         
         void setTimeSignature(timeSignature& timeSig) {
             currentVoice->currentMeasure->getMeasureInfo()->timeSig = timeSig;
+        }
+        
+        void startSlur(int idx, int direction) {
+            currentVoice->startSlur(idx, direction);
+        }
+        
+        void endSlur(int idx) {
+            currentVoice->endSlur(idx);
         }
         
         void finalize(bool singleDyns, bool singleDirs) {
@@ -1289,6 +1421,7 @@ private:
             
             theTimedThings.insert(c);
             
+            currentVoice->theSlurSet.update();
             currentVoice->prevChord = currentVoice->currentChord;
             currentVoice->currentChord = nullptr;
             return true;
@@ -1341,7 +1474,7 @@ private:
         t_llll *getClefsllll() {
             t_llll *ll = llll_get();
             for (auto v : voices) {
-                llll_appendsym(ll, v->clef);
+                llll_appendsym(ll, v->clef ? v->clef : _llllobj_sym_G);
             }
             return ll;
         }
@@ -1349,7 +1482,7 @@ private:
         t_llll *getKeysllll() {
             t_llll *ll = llll_get();
             for (auto v : voices) {
-                llll_appendsym(ll, v->key);
+                llll_appendsym(ll, v->key ? v->key : gensym("CM"));
             }
             return ll;
         }
@@ -1425,7 +1558,7 @@ public:
     
     int addVoice() { return currentPart->addVoice(); }
 
-    void pushLevel() { currentPart->pushLevel(); }
+    void pushLevel(bool grace = false) { currentPart->pushLevel(grace); }
     
     void setClef(t_symbol *clef) { currentPart->setClef(clef); }
     
@@ -1457,6 +1590,14 @@ public:
     
     void setTimeSignature(mxml_node_t* attributesXML) {
         currentPart->setTimeSignature(attributesXML, obj);
+    }
+    
+    void startSlur(int idx, int direction) {
+        currentPart->startSlur(idx, direction);
+    }
+    
+    void endSlur(int idx) {
+        currentPart->endSlur(idx);
     }
     
     void insertDirectionFromXML(mxml_node_t *directionXML, long divisions, long* velocity) {
@@ -2376,7 +2517,7 @@ t_llll *score_readxmlbuffer(t_score *x,
                 xml_get_divisions(x, attributesXML, &divisions);
  
             } else if (isfirstmeasure) {
-                object_warn((t_object *) x, "Tag <divisions> missing or corrupted");
+                object_warn((t_object *) x, "Tag <attributes> missing or corrupted");
                 divisions = 4;
                 theScore.setClef(_llllobj_sym_G);
                 theScore.setKey("CM");
@@ -2479,7 +2620,7 @@ t_llll *score_readxmlbuffer(t_score *x,
                     theScore.insertDirectionFromXML(itemXML, divisions, &velocity);
                     continue;
                 
-                } else if (strcmp(itemName, "note")) {
+                } else if (strcmp(itemName, "note")) { // if it's not a note
                     continue;
                 }
                 
@@ -2524,7 +2665,7 @@ t_llll *score_readxmlbuffer(t_score *x,
                     grace = mxmlFindElement(itemXML, itemXML, "grace", NULL, NULL, MXML_DESCEND_FIRST) != 0;
                     if (grace && !grace_group) { // that is, we're starting a new grace group
                         
-                        theScore.pushLevel();
+                        theScore.pushLevel(true);
                         grace_group = true;
                         
                     } else if (!grace && grace_group) { // that is, this is the first note outside a grace group
@@ -2675,13 +2816,13 @@ t_llll *score_readxmlbuffer(t_score *x,
                             } else {
                                 // this could be a quarter-tone with an implicit accidental,
                                 // as in the sequence C+ C(+)
-                                for (long i = numpitches - 1; i >= 0; i--) {
-                                    if (allpitches[i].degree() == degree &&
-                                        allpitches[i].octave() == octave &&
+                                for (long i = numpitches - 1; i >= 0; i--) { // TODO: @Andrea: I assume XML is ET only... but should we approximate non ET-stuff?
+                                    if (allpitches[i].getWhiteKeyET() == degree &&
+                                        allpitches[i].getOctave() == octave &&
                                         allpitches[i].onset < currOnset &&
                                         ((!accidentalXML && alter == 0) ||
-                                         allpitches[i].alter() == alter - t_pitch::qrtrsharp)) {
-                                            alter = allpitches[i].alter();
+                                         allpitches[i].getAlterET() == alter - t_pitch::qrtrsharp)) {
+                                            alter = allpitches[i].getAlterET();
                                             break;
                                         }
                                 }
@@ -2851,7 +2992,32 @@ t_llll *score_readxmlbuffer(t_score *x,
                         }
                     }
                 }
+                
+                mxml_node_t *slurXML;
+                for (slurXML = mxmlFindElement(notationsXML, notationsXML, "slur", NULL, NULL, MXML_DESCEND_FIRST);
+                     slurXML;
+                     slurXML = mxmlFindElement(slurXML, itemXML, "slur", NULL, NULL, MXML_NO_DESCEND)) {
+                    const char *type = mxmlElementGetAttr(slurXML, "type");
+                    const char *idxTxt = mxmlElementGetAttr(slurXML, "number");
+                    int idx = idxTxt ? atoi(idxTxt) : 0;
+                    if (type && idx) {
+                        if (!strcmp(type, "start")) {
+                            const char *placement = mxmlElementGetAttr(slurXML, "placement");
+                            int direction = 0;
+                            if (placement) {
+                                if (!strcmp(placement, "above")) {
+                                    direction = 1;
+                                } else if (!strcmp(placement, "below")) {
+                                    direction = -1;
+                                }
+                            }
+                            theScore.startSlur(idx, direction);
+                        } else if (!strcmp(type, "stop")) {
+                            theScore.endSlur(idx);
+                        }
 
+                    }
+                }
             }
                         
             //delete [] allpitches;

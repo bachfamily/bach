@@ -69,7 +69,7 @@
 					"patching_rect" : [ 405.0, 319.0, 201.0, 69.0 ],
 					"style" : "",
 					"text" : "Use Shift+Cmd+click (mac) or Shift+Ctrl+click (win) to add a measure before the clicked one",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -88,7 +88,7 @@
 					"patching_rect" : [ 6.0, 364.0, 249.0, 54.0 ],
 					"style" : "",
 					"text" : "To select a measure, click on it: inside the staff, but not on any of the noteheads contained in it.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -107,7 +107,7 @@
 					"patching_rect" : [ 6.0, 416.0, 263.0, 54.0 ],
 					"style" : "",
 					"text" : "Once a measure is selected, you can pres Shift+Backspace to delete it.\nSimple Backspace will delete the content",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -127,7 +127,7 @@
 					"patching_rect" : [ 405.0, 222.5, 191.0, 113.0 ],
 					"style" : "",
 					"text" : "To add more than one measure, always Cmd+click (mac) or Ctrl+click (win) inside the staff: a measure will be created after the one you have just clicked",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -174,7 +174,7 @@
 					"patching_rect" : [ 140.0, 272.0, 231.0, 84.0 ],
 					"style" : "",
 					"text" : "A whole note has been created.\nWe can Cmd+click (mac) or Ctrl+click (win) again on the notehead to turn the chord into a rest",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -194,7 +194,7 @@
 					"patching_rect" : [ 182.0, 149.0, 205.0, 98.0 ],
 					"style" : "",
 					"text" : "A measure with a whole rest has appeared. Now we need to change the whole rest into a note. Again: we Cmd+click (mac) or Ctrl+click (win) on it.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -214,7 +214,7 @@
 					"patching_rect" : [ 5.0, 156.0, 170.0, 84.0 ],
 					"style" : "",
 					"text" : "First of all we should add a measure. To do so, simply Cmd+click (mac) or Ctrl+click (win) on the staff.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

@@ -259,14 +259,14 @@
 					"text" : "I love slashed flags. They make everything so romantic. Can I have some?",
 					"linecount" : 2,
 					"numinlets" : 1,
-					"frgb" : [ 0.0, 0.168627, 0.67451, 1.0 ],
+					"frgb" : [ 0.502, 0.557, 0.702, 1.0 ],
 					"fontface" : 2,
 					"fontsize" : 12.0,
 					"numoutlets" : 0,
 					"id" : "obj-61",
 					"patching_rect" : [ 282.0, 304.0, 246.0, 34.0 ],
 					"fontname" : "Arial",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

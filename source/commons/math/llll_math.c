@@ -1,7 +1,7 @@
 /*
  *  llll_math.c
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -20,7 +20,8 @@
 #include <math.h>
 #include "foundation/hatom.h"
 #include "math/llll_math.h"
-#include "foundation/llll_comparisons.h"
+#include "foundation/llll_commons.h"
+#include <random>
 
 #ifdef WIN_VERSION
 
@@ -83,6 +84,45 @@ double trunc_at(double number, long position)
 }
 
 #endif
+
+
+
+double fold(double a, double b) {
+    // "folds" a rational as a pitch multiplicatively, so that it lies inside the fundamenetal "pseudooctave" between 1 and b
+    // Similarly to r=mod(a,b), i.e. there is an integer q s.t. a=qb+r (with r<b) , q and r unique
+    // f = fold(a, b): there is an integer p s.t. a = f · b^p; f and p are unique
+
+    // the matter of signs on anything mod-related is a nightmare in implementations.
+    // Here, we assume that  fold(a, b) = fold(a, 1/b), and that both a and b must be >0
+    // otherwise an invalid rational is returned (0/0)
+    
+    if (a == 0)
+        return 0; // either 0 or nan: let's keep them this way
+
+    if (b <= 0 || a <= 0)
+        return NAN; // invalid
+
+    if (b == 1)
+        return INFINITY; // folding by 1 is just like dividing by 0
+    
+    if (b < 1)
+        b = 1. / b;
+    
+    // iterative version
+    while (a >= b) { // TODO: there must be a non-iterative way via logarithms – still...
+        a /= b;
+    }
+    while (a < 1) {
+        a *= b;
+    }
+
+    // log-based version , but that's not faster, since ipow() is iterative :-)
+/*        double L = log(a)/log(b);
+    long Lfloor = (long)floor(L);
+    return sign * a / ipow(b, Lfloor); */
+
+    return a;
+}
 
 
 void hatom_fn_float(t_hatom *arg, t_hatom *res)
@@ -158,14 +198,87 @@ void hatom_fn_pitch(t_hatom *arg, t_hatom *res)
 
 void hatom_fn_degree(t_hatom *a1, t_hatom *res)
 {
-    switch (a1->h_type) {
+    switch (a1->h_type) { // TODO: @Andrea, check if p.getWhiteKeyET() is OK (was: p.degree())
         case H_PITCH:
-            hatom_setlong(res, a1->h_w.w_pitch.degree());
+            hatom_setlong(res, a1->h_w.w_pitch.getWhiteKeyET());
             break;
         case H_LONG:
         case H_RAT:
         case H_DOUBLE:
-            hatom_setlong(res, t_pitch::fromMC(hatom_getdouble(a1)).degree());
+            hatom_setlong(res, t_pitch::fromMC(hatom_getdouble(a1)).getWhiteKeyET());
+            break;
+        default:
+            hatom_setlong(res, 0);
+            break;
+    }
+}
+
+void hatom_fn_etwhitekey(t_hatom *a1, t_hatom *res)
+{
+    hatom_fn_degree(a1, res);
+}
+
+void hatom_fn_jiwhitekey(t_hatom *a1, t_hatom *res)
+{
+    switch (a1->h_type) { // TODO: @Andrea, check if p.getWhiteKeyET() is OK (was: p.degree())
+        case H_PITCH:
+            hatom_setlong(res, a1->h_w.w_pitch.getWhiteKeyJI());
+            break;
+        case H_LONG:
+        case H_RAT:
+        case H_DOUBLE:
+            hatom_setlong(res, t_pitch::fromMC(hatom_getdouble(a1)).getWhiteKeyJI());
+            break;
+        default:
+            hatom_setlong(res, 0);
+            break;
+    }
+}
+
+void hatom_fn_et(t_hatom *a1, t_hatom *res)
+{
+    switch (a1->h_type) { // TODO: @Andrea, check if p.getWhiteKeyET() is OK (was: p.degree())
+        case H_PITCH:
+            hatom_setpitch(res, a1->h_w.w_pitch.getDisplayPitchAsET());
+            break;
+        case H_LONG:
+        case H_RAT:
+        case H_DOUBLE:
+            hatom_setpitch(res, t_pitch::fromMC(hatom_getdouble(a1)).getDisplayPitchAsET());
+            break;
+        default:
+            hatom_setlong(res, 0);
+            break;
+    }
+}
+
+void hatom_fn_ji(t_hatom *a1, t_hatom *res)
+{
+    switch (a1->h_type) { // TODO: @Andrea, check if p.getWhiteKeyET() is OK (was: p.degree())
+        case H_PITCH:
+            hatom_setpitch(res, a1->h_w.w_pitch.getDisplayPitchAsJI());
+            break;
+        case H_LONG:
+        case H_RAT:
+        case H_DOUBLE:
+            hatom_setpitch(res, t_pitch::fromMC(hatom_getdouble(a1)).getDisplayPitchAsJI());
+            break;
+        default:
+            hatom_setlong(res, 0);
+            break;
+    }
+}
+
+void hatom_fn_jiratio(t_hatom *a1, t_hatom *res)
+{
+    switch (a1->h_type) { // TODO: @Andrea, check if p.getWhiteKeyET() is OK (was: p.degree())
+        case H_PITCH:
+            hatom_setrational(res, a1->h_w.w_pitch.getJIRatio());
+            break;
+        case H_LONG:
+        case H_RAT:
+        case H_DOUBLE:
+            hatom_setrational(res, t_pitch::fromMC(hatom_getdouble(a1)).getJIRatio());
             break;
         default:
             hatom_setlong(res, 0);
@@ -177,12 +290,80 @@ void hatom_fn_octave(t_hatom *a1, t_hatom *res)
 {
     switch (a1->h_type) {
         case H_PITCH:
-            hatom_setlong(res, a1->h_w.w_pitch.octave());
+            hatom_setlong(res, a1->h_w.w_pitch.getOctave());
             break;
         case H_LONG:
         case H_RAT:
         case H_DOUBLE:
-            hatom_setlong(res, t_pitch::fromMC(hatom_getdouble(a1)).octave());
+            hatom_setlong(res, t_pitch::fromMC(hatom_getdouble(a1)).getOctave());
+            break;
+        default:
+            hatom_setlong(res, 0);
+            break;
+    }
+}
+
+void hatom_fn_jiplof(t_hatom *a1, t_hatom *res)
+{
+    switch (a1->h_type) {
+        case H_PITCH:
+            hatom_setlong(res, a1->h_w.w_pitch.getPlofJI());
+            break;
+        case H_LONG:
+        case H_RAT:
+        case H_DOUBLE:
+            hatom_setlong(res, t_pitch::fromMC(hatom_getdouble(a1)).getPlofJI());
+            break;
+        default:
+            hatom_setlong(res, 0);
+            break;
+    }
+}
+
+void hatom_fn_etplof(t_hatom *a1, t_hatom *res)
+{
+    switch (a1->h_type) {
+        case H_PITCH:
+            hatom_setlong(res, a1->h_w.w_pitch.getPlofET());
+            break;
+        case H_LONG:
+        case H_RAT:
+        case H_DOUBLE:
+            hatom_setlong(res, t_pitch::fromMC(hatom_getdouble(a1)).getPlofET());
+            break;
+        default:
+            hatom_setlong(res, 0);
+            break;
+    }
+}
+
+void hatom_fn_jisharps(t_hatom *a1, t_hatom *res)
+{
+    switch (a1->h_type) {
+        case H_PITCH:
+            hatom_setlong(res, a1->h_w.w_pitch.getSharpsJI());
+            break;
+        case H_LONG:
+        case H_RAT:
+        case H_DOUBLE:
+            hatom_setlong(res, t_pitch::fromMC(hatom_getdouble(a1)).getSharpsJI());
+            break;
+        default:
+            hatom_setlong(res, 0);
+            break;
+    }
+}
+
+void hatom_fn_etsharps(t_hatom *a1, t_hatom *res)
+{
+    switch (a1->h_type) {
+        case H_PITCH:
+            hatom_setlong(res, a1->h_w.w_pitch.getSharpsET());
+            break;
+        case H_LONG:
+        case H_RAT:
+        case H_DOUBLE:
+            hatom_setlong(res, t_pitch::fromMC(hatom_getdouble(a1)).getSharpsET());
             break;
         default:
             hatom_setlong(res, 0);
@@ -193,19 +374,25 @@ void hatom_fn_octave(t_hatom *a1, t_hatom *res)
 void hatom_fn_alter(t_hatom *a1, t_hatom *res)
 {
     switch (a1->h_type) {
-        case H_PITCH:
-            hatom_setrational(res, a1->h_w.w_pitch.alter());
+        case H_PITCH: // TODO: @Andrea, check if getAlterET() is OK, was: alter()
+            hatom_setrational(res, a1->h_w.w_pitch.getAlterET());
             break;
         case H_LONG:
         case H_RAT:
         case H_DOUBLE:
-            hatom_setrational(res, t_pitch::fromMC(hatom_getdouble(a1)).alter());
+            hatom_setrational(res, t_pitch::fromMC(hatom_getdouble(a1)).getAlterET());
             break;
         default:
             hatom_setlong(res, 0);
             break;
     }
 }
+
+void hatom_fn_etalter(t_hatom *a1, t_hatom *res)
+{
+    hatom_fn_alter(a1, res);
+}
+
 
 void hatom_fn_makepitch(t_hatom *a1, t_hatom *a2, t_hatom *a3, t_hatom *res)
 {
@@ -232,14 +419,81 @@ void hatom_fn_makepitchsc(t_hatom *a1, t_hatom *a2, t_hatom *res)
     hatom_setpitch(res, t_pitch(smc));
 }
 
+void hatom_fn_makepitchji(t_hatom *h1, t_hatom *h2, t_hatom *h3, t_hatom *h4, t_hatom *res)
+{
+    const t_int8 whitekeyJI = (t_int8) hatom_getlong(h1);
+    const t_int8 sharps = (t_int8) hatom_getlong(h2);
+    const t_int8 octave = (t_int8) hatom_getlong(h3);
+    const t_shortRational ratio = (t_shortRational) hatom_getrational(h4);
+    hatom_setpitch(res,
+                   t_pitch(whitekeyJI, sharps, 0, std::vector<t_int8>(), std::vector<t_int8>(), ratio, octave));
+}
+
 void hatom_fn_cents(t_hatom *a1, t_hatom *res)
 {
     if (hatom_gettype(a1) == H_PITCH) {
-        hatom_setlong(res, a1->h_w.w_pitch.toMC());
+        hatom_setlong(res, a1->h_w.w_pitch.toMCdouble());
     } else {
         *res = *a1;
     }
 }
+
+
+template<int maxSize>
+std::vector<t_int8> llll_to_int8Vector(t_llll *ll)
+{
+    auto c = std::vector<t_int8>();
+    if (ll && ll->l_size) {
+        if (ll->l_depth > 1) {
+            ll = llll_clone(ll);
+            llll_flat(ll);
+        } else {
+            llll_retain(ll);
+        }
+        t_llllelem *el;
+        int count;
+        for (el = ll->l_head, count = 0; el && count < maxSize; el = el->l_next, count++) {
+            t_atom_long l = hatom_getlong(&el->l_hatom);
+            c.push_back((t_int8) l);
+        }
+        llll_release(ll);
+    }
+    return c;
+}
+
+
+void hatom_fn_makepitch_ext(t_hatom *whitekeyET,    // normally integer
+                    t_hatom *alterET,       // normally rational
+                    t_hatom *octave,        // normally integer
+                    t_hatom *whitekeyJI,    // normally integer
+                    t_hatom *sharpsJI,      // normally integer
+                    t_hatom *plofJI,        // normally integer
+                    t_hatom *commas,        // normally flat llll of integers passed as a H_OBJ
+                    t_hatom *ratio,         // normally rational
+                    t_hatom *jiexps,         // normally flat llll of integers passed as a H_OBJ
+                    t_hatom *jilimit,       // normally integer
+                    t_hatom *mcthresh,      // normally double
+                    t_hatom *res
+                    )
+{
+    t_atom_short wkET = (t_atom_short) hatom_getlong(whitekeyET);
+    t_rational aET = hatom_getrational(alterET);
+    t_atom_short o = (t_atom_short) hatom_getlong(octave);
+    t_atom_short wkJI = (t_atom_short) hatom_getlong(whitekeyJI);
+    t_atom_short sJI = (t_atom_short) hatom_getlong(sharpsJI);
+    t_atom_short pJI = (t_atom_short) hatom_getlong(plofJI);
+    t_rational r = hatom_getrational(ratio);
+    t_atom_long l = hatom_getlong(jilimit);
+    double t = hatom_getdouble(mcthresh);
+    auto c = llll_to_int8Vector<BACH_PRIMES_JI_SIZE - 2>(static_cast<t_llll*>(hatom_getobj(commas)));
+    auto m = llll_to_int8Vector<BACH_PRIMES_JI_SIZE>(static_cast<t_llll*>(hatom_getobj(jiexps)));
+    
+    const t_pitch p(wkET, aET, o);
+    const t_pitch q(wkJI, sJI, pJI, c, m, r, 0, l, t);
+    hatom_setpitch(res, p + q);
+}
+
+
 
 void hatom_fn_random(t_hatom *a1, t_hatom *a2, t_hatom *res)
 {
@@ -255,6 +509,23 @@ void hatom_fn_random(t_hatom *a1, t_hatom *a2, t_hatom *res)
     t_atom_long randRange = randZeroOne * range;
     t_atom_long r = randRange + d1;
     hatom_setlong(res, r);
+}
+
+void hatom_fn_random_seed(t_hatom *a1, t_hatom *a2, t_hatom *a3, t_hatom *res)
+{
+    std::default_random_engine engine;
+    t_atom_long s = hatom_getlong(a3);
+    engine.seed(s ? (int) s : std::random_device()());
+    
+    t_atom_long d1 = hatom_getlong(a1);
+    t_atom_long d2 = hatom_getlong(a2);
+    if (d1 > d2) {
+        t_atom_long swap = d1;
+        d1 = d2;
+        d2 = swap;
+    }
+    std::uniform_int_distribution<t_atom_long> distribution(d1, d2);
+    hatom_setlong(res, distribution(engine));
 }
 
 void hatom_fn_pow(t_hatom *h1, t_hatom *h2, t_hatom *res)
@@ -471,15 +742,37 @@ void hatom_fn_max(t_hatom *a1, t_hatom *a2, t_hatom *res)
         *res = *a2;
 }
 
+void hatom_fn_fold(t_hatom *h1, t_hatom *h2, t_hatom *res)
+{
+    const t_int32 t1 = hatom_gettype(h1);
+    const t_int32 t2 = hatom_gettype(h2);
+    
+    if (!(hatom_type_is_number(t1))) {
+        *res = *h1;
+    } else if (!(hatom_type_is_number(t2))) {
+        *res = *h2;
+    } else if (t1 == H_PITCH || t2 == H_PITCH || t1 == H_DOUBLE || t2 == H_DOUBLE) { // pp -> pitch
+        const double d1 = hatom_getdouble(h1);
+        const double d2 = hatom_getdouble(h2);
+        const double r = fold(d1, d2);
+        hatom_setdouble(res, r);
+    } else {
+        const t_rational r1 = hatom_getrational(h1);
+        const t_rational r2 = hatom_getrational(h2);
+        const t_rational r = r1.fold(r2);
+        hatom_setrational(res, r);
+    }
+}
+
 void hatom_fn_approx(t_hatom *a1, t_hatom *a2, t_hatom *res)
 {
     switch (hatom_gettype(a1)) {
         case H_PITCH: {
             t_pitch p = hatom_getpitch(a1);
-            if (hatom_gettype(a2) == H_LONG)
-                hatom_setpitch(res, p.approx(hatom_getlong(a2)));
+            if (hatom_gettype(a2) == H_LONG) // TODO: @Andrea, check if p.approxET() is OK (was: p.approx())
+                hatom_setpitch(res, p.approxET(hatom_getlong(a2)));
             else
-                hatom_setpitch(res, p.approx(t_shortRational(hatom_getrational(a2))));
+                hatom_setpitch(res, p.approxET(t_shortRational(hatom_getrational(a2))));
             break;
         }
         case H_DOUBLE:
@@ -495,6 +788,12 @@ void hatom_fn_enharm(t_hatom *a1, t_hatom *a2, t_hatom *res)
 {
     t_pitch p = hatom_getpitch(a1);
     hatom_setpitch(res, p.enharm(hatom_getlong(a2)));
+}
+
+void hatom_fn_pitchji(t_hatom *a1, t_hatom *res)
+{
+    t_rational r = hatom_getrational(a1);
+    hatom_setpitch(res, t_pitch(r));
 }
 
 void hatom_op_uminus(t_hatom *h1, t_hatom *res)
@@ -517,6 +816,50 @@ void hatom_op_uminus(t_hatom *h1, t_hatom *res)
         default:
             *res = *h1;
     }
+}
+
+void hatom_op_t(t_hatom *h1, t_hatom *res)
+{
+    t_pitch p;
+    switch (hatom_gettype(h1)) {
+        case H_DOUBLE:
+            p.setET(0, t_tinyRational(h1->h_w.w_double));
+            break;
+        case H_RAT:
+            p.setET(0, t_tinyRational(h1->h_w.w_rat));
+            break;
+        case H_LONG:
+            p.setET(0, t_tinyRational(h1->h_w.w_long));
+            break;
+        case H_PITCH:
+            p.setET(0, h1->h_w.w_pitch.toMCrat());
+            break;
+        default:
+            p.setET(0);
+    }
+    hatom_setpitch(res, p);
+}
+
+void hatom_op_r(t_hatom *h1, t_hatom *res)
+{
+    t_pitch p;
+    switch (hatom_gettype(h1)) {
+        case H_DOUBLE:
+            p.setJI(t_rational(h1->h_w.w_double));
+            break;
+        case H_RAT:
+            p.setJI(t_rational(h1->h_w.w_rat));
+            break;
+        case H_LONG:
+            p.setJI(t_rational(h1->h_w.w_long));
+            break;
+        case H_PITCH:
+            p.setJI(h1->h_w.w_pitch.toMCrat());
+            break;
+        default:
+            p.setET(0);
+    }
+    hatom_setpitch(res, p);
 }
 
 void hatom_op_plus_numbersonly(t_hatom *h1, t_hatom *h2, t_hatom *res)
@@ -1014,3 +1357,20 @@ void hatom_op_le(t_hatom *h1, t_hatom *h2, t_hatom *res)
     else
         hatom_setlong(res, llll_leq_hatom(h1, h2));
 }
+
+t_llll *t_int8Vector2Llll(const std::vector<int8_t> &v) {
+    t_llll *ll = llll_get();
+    for (const int i : v) {
+        llll_appendlong(ll, i);
+    }
+    return ll;
+}
+
+t_llll *getHEJICommas(const t_pitch &p) {
+    return t_int8Vector2Llll(p.getHEJICommas());
+}
+
+t_llll *getJiexps(const t_pitch &p) {
+    return t_int8Vector2Llll(p.getExponents());
+}
+

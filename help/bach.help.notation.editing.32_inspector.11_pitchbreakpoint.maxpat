@@ -59,7 +59,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 373.0, 205.5, 228.0, 40.0 ],
 					"text" : "Slope of the previous duration line segment (-1 to 1, 0 being linear)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -76,7 +76,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 369.0, 183.25, 241.0, 25.0 ],
 					"text" : "Velocity (if breakpoints have velocity)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -93,7 +93,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 412.0, 162.25, 176.0, 25.0 ],
 					"text" : "Absolute pitch (midicents)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -110,7 +110,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 399.0, 143.25, 204.0, 25.0 ],
 					"text" : "Pitch difference with main note",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -127,7 +127,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 412.0, 122.25, 197.0, 25.0 ],
 					"text" : "Absolute onset (milliseconds)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -144,7 +144,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 382.0, 100.25, 232.0, 25.0 ],
 					"text" : "Relative breakpoint position (0 to 1)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -163,7 +163,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 101.5, 250.5, 174.0, 55.0 ],
 					"text" : "These are instructions to navigate in the inspector",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

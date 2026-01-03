@@ -1,7 +1,7 @@
 /*
  *  builtInFunctionWithFindFn.cpp
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -29,7 +29,7 @@ long t_builtInFunctionWithFindFn::lambdaFunction(t_fnData *lambdaData, t_llll *l
 {
     t_function *fn = lambdaData->func;
     t_execEnv *context = &lambdaData->context;
-    context->argv[1] = ll;
+    context->argv[1] = llll_retain(ll);
     context->resetFnNamedArgs(fn, 2);
     t_llll *resLl = fn->call(lambdaData->context);
     long res = llll_istrue(resLl);

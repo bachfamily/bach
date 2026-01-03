@@ -1,7 +1,7 @@
 /*
  *  llll_commonsyms.h
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -123,6 +123,8 @@ typedef struct _llllobj_common_symbols_table
 	t_symbol	*s_onsets;
 	t_symbol	*s_cent;
 	t_symbol	*s_cents;
+    t_symbol    *s_midinote;
+    t_symbol    *s_frequency;
 	t_symbol	*s_deltacents;
 	t_symbol	*s_duration;
 	t_symbol	*s_durations;
@@ -366,6 +368,12 @@ typedef struct _llllobj_common_symbols_table
 	t_symbol	*s_voice;
 	t_symbol	*s_pim;
 	t_symbol	*s_stafflines;
+    t_symbol    *s_notationstyle;
+    t_symbol    *s_notationstyles;
+    t_symbol    *s_et;
+    t_symbol    *s_ji;
+    t_symbol    *s_linpitch;
+    t_symbol    *s_linfreq;
 	t_symbol	*s_timesig;
 	t_symbol	*s_role;
 	t_symbol	*s_loop;
@@ -421,6 +429,11 @@ typedef struct _llllobj_common_symbols_table
 	t_symbol	*s_active;
 	t_symbol	*s_openslot;
 	t_symbol	*s_sample;
+    
+    t_symbol    *s_repeatstart;
+    t_symbol    *s_repeatend;
+    t_symbol    *s_repeatnum;
+    t_symbol    *s_repeatendinglength;
 
 	t_symbol	*s_left;
 	t_symbol	*s_right;
@@ -538,6 +551,8 @@ typedef struct _llllobj_common_symbols_table
 #define _llllobj_sym_onsets			(_llllobj_common_symbols->s_onsets)
 #define _llllobj_sym_cent			(_llllobj_common_symbols->s_cent)
 #define _llllobj_sym_cents			(_llllobj_common_symbols->s_cents)
+#define _llllobj_sym_midinote       (_llllobj_common_symbols->s_midinote)
+#define _llllobj_sym_frequency      (_llllobj_common_symbols->s_frequency)
 #define _llllobj_sym_deltacents		(_llllobj_common_symbols->s_deltacents)
 #define _llllobj_sym_duration		(_llllobj_common_symbols->s_duration)
 #define _llllobj_sym_durations		(_llllobj_common_symbols->s_durations)
@@ -784,6 +799,12 @@ typedef struct _llllobj_common_symbols_table
 #define _llllobj_sym_voice			(_llllobj_common_symbols->s_voice)
 #define _llllobj_sym_pim			(_llllobj_common_symbols->s_pim)
 #define _llllobj_sym_stafflines		(_llllobj_common_symbols->s_stafflines)
+#define _llllobj_sym_notationstyle  (_llllobj_common_symbols->s_notationstyle)
+#define _llllobj_sym_notationstyles  (_llllobj_common_symbols->s_notationstyles)
+#define _llllobj_sym_et             (_llllobj_common_symbols->s_et)
+#define _llllobj_sym_ji             (_llllobj_common_symbols->s_ji)
+#define _llllobj_sym_linpitch       (_llllobj_common_symbols->s_linpitch)
+#define _llllobj_sym_linfreq        (_llllobj_common_symbols->s_linfreq)
 #define _llllobj_sym_timesig		(_llllobj_common_symbols->s_timesig)
 #define _llllobj_sym_role			(_llllobj_common_symbols->s_role)
 #define _llllobj_sym_loop			(_llllobj_common_symbols->s_loop)
@@ -840,6 +861,11 @@ typedef struct _llllobj_common_symbols_table
 #define _llllobj_sym_active	(_llllobj_common_symbols->s_active)
 #define _llllobj_sym_openslot	(_llllobj_common_symbols->s_openslot)
 #define _llllobj_sym_sample	(_llllobj_common_symbols->s_sample)
+
+#define _llllobj_sym_repeatstart      (_llllobj_common_symbols->s_repeatstart)
+#define _llllobj_sym_repeatend        (_llllobj_common_symbols->s_repeatend)
+#define _llllobj_sym_repeatnum        (_llllobj_common_symbols->s_repeatnum)
+#define _llllobj_sym_repeatendinglength     (_llllobj_common_symbols->s_repeatendinglength)
 
 #define _llllobj_sym_left	(_llllobj_common_symbols->s_left)
 #define _llllobj_sym_right	(_llllobj_common_symbols->s_right)

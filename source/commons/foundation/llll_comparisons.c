@@ -1,7 +1,7 @@
 /*
  *  llll_comparisons.c
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -56,7 +56,7 @@ long llll_leq_hatom(t_hatom *a_hatom, t_hatom *b_hatom)
                             return a_hatom->h_w.w_long <= b_hatom->h_w.w_double;
                             break;
                         case H_PITCH:
-                            return a_hatom->h_w.w_long <= b_hatom->h_w.w_pitch.toMC();
+                            return a_hatom->h_w.w_long <= b_hatom->h_w.w_pitch.toMCdouble();
                             break;
                     }
                     break;
@@ -72,7 +72,7 @@ long llll_leq_hatom(t_hatom *a_hatom, t_hatom *b_hatom)
                             return a_hatom->h_w.w_rat.r_num <= b_hatom->h_w.w_double * a_hatom->h_w.w_rat.r_den;
                             break;
                         case H_PITCH:
-                            return a_hatom->h_w.w_rat <= b_hatom->h_w.w_pitch.toMC();
+                            return (double) a_hatom->h_w.w_rat <= b_hatom->h_w.w_pitch.toMCdouble();
                             break;
                     }
                     break;
@@ -88,20 +88,20 @@ long llll_leq_hatom(t_hatom *a_hatom, t_hatom *b_hatom)
                             return a_hatom->h_w.w_double <= b_hatom->h_w.w_double;
                             break;
                         case H_PITCH:
-                            return a_hatom->h_w.w_double <= double(b_hatom->h_w.w_pitch.toMC());
+                            return a_hatom->h_w.w_double <= double(b_hatom->h_w.w_pitch.toMCdouble());
                             break;
                     }
                     break;
                 case H_PITCH:
                     switch (b_type) {
                         case H_LONG:
-                            return a_hatom->h_w.w_pitch.toMC() <= b_hatom->h_w.w_long;
+                            return a_hatom->h_w.w_pitch.toMCdouble() <= b_hatom->h_w.w_long;
                             break;
                         case H_RAT:
-                            return a_hatom->h_w.w_pitch.toMC() <= b_hatom->h_w.w_rat;
+                            return a_hatom->h_w.w_pitch.toMCdouble() <= (double) b_hatom->h_w.w_rat;
                             break;
                         case H_DOUBLE:
-                            return double(a_hatom->h_w.w_pitch.toMC()) <= double(b_hatom->h_w.w_double);
+                            return double(a_hatom->h_w.w_pitch.toMCdouble()) <= double(b_hatom->h_w.w_double);
                             break;
                         case H_PITCH:
                             return a_hatom->h_w.w_pitch <= b_hatom->h_w.w_pitch;

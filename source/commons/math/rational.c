@@ -1,7 +1,7 @@
 /*
  *  rational.c
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -21,6 +21,8 @@
 #include "stdlib.h"
 #include "math/rational.h"
 #include "math/llll_math.h"
+#include <algorithm>
+
 
 char fsign(double number){
 	return (number > 0 ? 1 : (number == 0 ? 0 : -1));
@@ -43,6 +45,22 @@ long positive_mod(long num, long mod)
     return ((num % mod) + mod) % mod;
 }
 
+
+t_atom_short positive_mod(t_atom_short num, t_atom_short mod)
+{
+    if (num >= 0)
+        return num % mod;
+    
+    return ((num % mod) + mod) % mod;
+}
+
+t_int8 positive_mod(t_int8 num, t_int8 mod)
+{
+    if (num >= 0)
+        return num % mod;
+    
+    return ((num % mod) + mod) % mod;
+}
 
 t_rational urrat2rat(t_urrational urrat)
 {
@@ -437,6 +455,15 @@ double rat2double(t_rational rat) // conversion rational->double
 	return ((double)rat.r_num) / rat.r_den;
 }
 
+double rat2double(t_shortRational rat) // conversion rational->double
+{
+    return ((double)rat.r_num) / rat.r_den;
+}
+
+double rat2double(t_tinyRational rat) // conversion rational->double
+{
+    return ((double)rat.r_num) / rat.r_den;
+}
 
 double urrat2double(t_urrational urrat) // conversion unreduced rational->double
 {
@@ -530,11 +557,522 @@ t_rational rat_rat_diff_integer_and_remainders(t_atom_long int1, t_rational rem1
 	return rat_long_sum(diff_rem, diff_int);
 }
 
+/*
+// leave maxnum == 0 for not-applicable, maxden must be > 0 for the moment
+t_rational approx_rat_with_rat_maxnum_maxden(t_rational number, t_atom_long maxnum, t_atom_long maxden, bool log_error = false)
+{
+    if ((maxden == 0 || number.r_den <= maxden) && (maxnum == 0 || abs(number.r_num) <= maxnum)) {
+        return number;
+    } else {
+        int sign = number.r_num >= 0 ? 1 : -1;
+        double r = rat2double(rat_abs(number));
+        
+        double err_best = 0;
+        long d_best = 0;
+        for (long d = 1; d < maxden; d++) {
+            long n = (long)round(r * d);
+            double err = log_error ? fabs(log(n/d) - log(r)) : fabs(n/d - r);
+            if (maxnum == 0 || n < maxnum) {
+                if (d_best == 0 || err < err_best) {
+                    err_best = err;
+                    d_best = d;
+                }
+            }
+        }
+        
+        if (d_best == 0) {
+            return genrat(0, 1);
+        } else {
+            return genrat(sign * (long)round(r*d_best), d_best);
+        }
+    }
+}
+
+// leave maxnum == 0 for not-applicable, maxden must be > 0 for the moment
+t_rational approx_double_with_rat_maxnum_maxden(double number, t_atom_long maxnum, t_atom_long maxden, bool log_error = false)
+{
+    int sign = number >= 0 ? 1 : -1;
+    double r = fabs(number);
+    
+    double err_best = 0;
+    long d_best = 0;
+    for (long d = 1; d < maxden; d++) {
+        long n = (long)round(r * d);
+        double err = log_error ? fabs(log(n/d) - log(r)) : fabs(n/d - r);
+        if (maxnum == 0 || n < maxnum) {
+            if (d_best == 0 || err < err_best) {
+                err_best = err;
+                d_best = d;
+            }
+        }
+    }
+    
+    if (d_best == 0) {
+        return genrat(0, 1);
+    } else {
+        return genrat(sign * (long)round(r*d_best), d_best);
+    }
+}
+ */
+
+
+bool check_if_number_only_has_selected_primes(long n, const std::vector<int> &primes)
+{
+    if (n == 0)
+        return true;
+    
+    for (auto piter = primes.begin(); piter != primes.end(); ++piter) {
+        int p = *piter; // current prime
+        while (n % p == 0)
+            n /= p;
+    }
+    return n != 1 ? false : true;
+}
+
+double approximation_compute_error(long num, long den, double target, bool log_error)
+{
+    double err = 0;
+    if (log_error) {
+        err = (log2((num*1./den)/target)*1200.);
+    } else {
+        err = (num*1./den - target);
+    }
+    return err;
+}
+
+// assumes num > 0
+bool check_approximation(long num, long den, double target, bool remove_zero, double err_thresh, bool log_error, const std::vector<int> &allowed_primes)
+{
+    if (remove_zero && num == 0)
+        return false;
+    
+    if (err_thresh > 0) {
+        double err = approximation_compute_error(num, den, target, log_error);
+//        printf("%ld/%ld: err = %.5f\n", num, den, err);
+        if (fabs(err) > err_thresh)
+            return false;
+    }
+    
+    if (allowed_primes.size() > 0 && 
+        (!check_if_number_only_has_selected_primes(num, allowed_primes) || !check_if_number_only_has_selected_primes(den, allowed_primes)))
+        return false;
+
+    return true;
+}
+
+std::vector<t_rational> get_convergents_ext_and_continued_fraction(std::vector<long> &continuedfraction, std::vector<double> &errors, double num, long howmany, bool remove_zero, double err_thresh, bool log_error, bool check_for_exact_den_equality, long den_stop, bool includeSemiconvergents, const std::vector<int> &allowed_primes, long stop_at_this_an, long max_iter, bool also_fill_continuedfraction_and_errors)
+{
+    long a0 = (long)floor(num);
+    std::vector<t_rational> convs;
+    
+    long p0 = a0;
+    long q0 = 1;
+    long p1 = a0 * (long)floor(1. / (num - a0)) + 1;
+    long q1 = (long)floor(1 / (num - a0));
+    long iter = 0;
+    
+    if (convs.size() < howmany) {
+        if (check_approximation(p0, q0, num, remove_zero, err_thresh, log_error, allowed_primes)) {
+            //        printf("convergent 1: %ld/%ld\n", p0, q0);
+            convs.push_back(genrat(p0, q0));
+            if (also_fill_continuedfraction_and_errors) {
+                errors.push_back(approximation_compute_error(p0, q0, num, log_error));
+            }
+        }
+        if (also_fill_continuedfraction_and_errors) {
+            continuedfraction.push_back(p0);
+        }
+    }
+    
+    if (check_for_exact_den_equality && q0 == den_stop)
+        return convs;
+    
+    if (num == a0)
+        return convs;
+
+    double x = 1. / (num - a0);
+    long a1 = (long)floor(x);
+
+    if (stop_at_this_an != 0 && a1 > stop_at_this_an)
+        return convs;
+    
+    if (includeSemiconvergents) {
+        for (long j = 1; j < a1; j++) {
+            long p = j * p0 + 1;
+            long q = j * q0 + 0;
+            if (check_approximation(p, q, num, remove_zero, err_thresh, log_error, allowed_primes)) {
+                convs.push_back(genrat(p, q));
+                if (also_fill_continuedfraction_and_errors) {
+                    errors.push_back(approximation_compute_error(p, q, num, log_error));
+                }
+                if (convs.size() >= howmany)
+                    break;
+            }
+        }
+    }
+    iter++;
+
+    if (convs.size() < howmany && (max_iter == 0 || iter <= max_iter)) {
+        if (check_approximation(p1, q1, num, remove_zero, err_thresh, log_error, allowed_primes)) {
+            //        printf("convergent 2: %ld/%ld\n", p1, q1);
+            convs.push_back(genrat(p1, q1));
+            if (also_fill_continuedfraction_and_errors) {
+                errors.push_back(approximation_compute_error(p1, q1, num, log_error));
+            }
+        }
+        if (also_fill_continuedfraction_and_errors) {
+            continuedfraction.push_back(a1);
+        }
+    }
+    iter++;
+
+    if (check_for_exact_den_equality && q1 == den_stop)
+        return convs;
+    
+    if (x == a1)
+        return convs;
+
+    x = 1. / (x - a1);
+
+//    long i = 3;
+    while (convs.size() < howmany) {
+        long an = (long)floor(x);
+        
+        if (stop_at_this_an != 0 && an > stop_at_this_an)
+            break;
+        
+        if (includeSemiconvergents) {
+            for (long j = 1; j < an; j++) {
+                long p = j * p1 + p0;
+                long q = j * q1 + q0;
+                if (check_approximation(p, q, num, remove_zero, err_thresh, log_error, allowed_primes)) {
+                    convs.push_back(genrat(p, q));
+                    if (also_fill_continuedfraction_and_errors) {
+                        errors.push_back(approximation_compute_error(p, q, num, log_error));
+                    }
+                    if (convs.size() >= howmany)
+                        break;
+                }
+            }
+        }
+
+        // cfr: https://www.math.ru.nl/~bosma/Students/CF.pdf
+        //        pn/qn = (an * pn-1 + pn-2) / (an * qn-1 + qn-2)
+        long p = an * p1 + p0;
+        long q = an * q1 + q0;
+                
+        if (convs.size() < howmany && (max_iter == 0 || iter <= max_iter)) {
+            if (check_approximation(p, q, num, remove_zero, err_thresh, log_error, allowed_primes)) {
+                //            printf("convergent %ld: %ld/%ld\n", i, p, q);
+                convs.push_back(genrat(p, q));
+                if (also_fill_continuedfraction_and_errors) {
+                    errors.push_back(approximation_compute_error(p, q, num, log_error));
+                }
+            }
+            if (also_fill_continuedfraction_and_errors) {
+                continuedfraction.push_back(an);
+            }
+        }
+        iter++;
+        
+        if (max_iter > 0 && iter > max_iter)
+            break;
+
+        if (q < 0 || p < 0) // overflow...
+            break;
+        
+        if ((check_for_exact_den_equality && q == den_stop) ||
+            (!check_for_exact_den_equality && p*1./q == num))  // Exact approximation
+//            (!check_for_exact_den_equality && x == an))  // Exact approximation
+            break;
+
+        p0 = p1;
+        p1 = p;
+        
+        q0 = q1;
+        q1 = q;
+
+        x = 1. / (x - an);
+
+//        i++;
+    }
+    
+    return convs;
+}
+
+std::vector<t_rational> get_convergents_ext(double num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0, bool check_for_exact_den_equality = false, long den_stop = 0, bool includeSemiconvergents = 0, const std::vector<int> &allowed_primes = {}, long stop_at_this_an = 1000, long max_iter = 0)
+{
+    std::vector<long> continuedfraction;
+    std::vector<double> error;
+    return get_convergents_ext_and_continued_fraction(continuedfraction, error, num, howmany, remove_zero, err_thresh, log_error, check_for_exact_den_equality, den_stop, includeSemiconvergents, allowed_primes, stop_at_this_an, max_iter, false);
+}
+
+std::vector<t_rational> get_convergents(double num, long howmany, bool remove_zero, double err_thresh, bool log_error, bool includeSemiconvergents, const std::vector<int> &allowed_primes, long stop_at_this_an, long max_iter)
+{
+    return get_convergents_ext(num, howmany, remove_zero, err_thresh, log_error, false, 0, includeSemiconvergents, allowed_primes, stop_at_this_an, max_iter);
+}
+
+std::vector<t_rational> get_convergents(t_rational num, long howmany, bool remove_zero, double err_thresh, bool log_error, bool includeSemiconvergents, const std::vector<int> &allowed_primes, long stop_at_this_an, long max_iter)
+{
+    return get_convergents_ext((double)num, howmany, remove_zero, err_thresh, log_error, true, num.r_den, includeSemiconvergents, allowed_primes, stop_at_this_an, max_iter);
+}
+
+std::vector<t_rational> get_convergents(t_shortRational num, long howmany, bool remove_zero, double err_thresh, bool log_error, bool includeSemiconvergents, const std::vector<int> &allowed_primes, long stop_at_this_an, long max_iter)
+{
+    return get_convergents_ext((double)num, howmany, remove_zero, err_thresh, log_error, true, num.r_den, includeSemiconvergents, allowed_primes, stop_at_this_an, max_iter);
+}
+
+std::vector<t_rational> get_convergents(t_tinyRational num, long howmany, bool remove_zero, double err_thresh, bool log_error, bool includeSemiconvergents, const std::vector<int> &allowed_primes, long stop_at_this_an, long max_iter)
+{
+    return get_convergents_ext((double)num, howmany, remove_zero, err_thresh, log_error, true, num.r_den, includeSemiconvergents, allowed_primes, stop_at_this_an, max_iter);
+}
+
+
+bool sortByDenominator(t_rational i1, t_rational i2)
+{
+    return (i1.den() <= i2.den());
+}
+
+// naive way, but it was faster than the smarter ones I had found
+long approximate_long_with_combination_of_primes3(long l, const std::vector<int> &primes)
+{
+    long cand1 = 0, cand2 = 0;
+    
+    if (l == 0)
+        return 0;
+    
+    long n = l;
+    while (true) {
+        if (check_if_number_only_has_selected_primes(n, primes)) {
+            cand1 = n;
+            break;
+        }
+        n++;
+    }
+    
+    n = l;
+    while (n >= 0) {
+        if (check_if_number_only_has_selected_primes(n, primes)) {
+            cand2 = n;
+            break;
+        }
+        n--;
+    }
+    
+    if (cand1 == 0)
+        return cand2;
+    
+    if (cand2 == 0)
+        return cand1;
+
+    return (abs(cand1-l) < abs(cand2-l) ? cand1 : cand2);
+}
+
+double rational_get_tenney_height(t_rational r)
+{
+    rat_reduce(&r);
+    return log2(r.num() * r.den());
+}
+
+long rational_get_jilimit(t_rational r)
+{
+    if (r.r_num == 0)
+        return 1;
+    
+    t_rational s = r;
+    rat_reduce(&s);
+    long num = s.num();
+    long den = s.den();
+    
+    long max_p = 1;
+    for (long i = 0; i < BACH_PRIMES_TABLE_SIZE; i++) {
+        long p = primes[i];
+        while (num % p == 0) {
+            num /= p;
+            max_p = p;
+        }
+        if (num == 1)
+            break;
+    }
+
+    long max_q = 1;
+    for (long i = 0; i < BACH_PRIMES_TABLE_SIZE; i++) {
+        long q = primes[i];
+        while (den % q == 0) {
+            den /= q;
+            max_q = q;
+        }
+        if (den == 1)
+            break;
+    }
+    
+    return MAX(max_p, max_q);
+}
+
+std::vector<t_rational> rational_approximation_with_primes(double v, const std::vector<int> &allowed_primes,
+                                                           double err_thresh, bool log_error, long maxden,
+                                                           const double bestErrorRelativeTolerance, // keep the ones < bestErrorRelativeTolerance * best_error_so_far,
+                                                           const double tenneyHeightFactor,
+                                                           const double tenneyHeightExp // keep the ones whose error is < tenneyHeightFactor * exp(-tenneyHeightExp * tenneyHeight)
+                                                           )
+{
+    std::vector<t_rational> appr;
+    std::vector<int> maxexp;
+    long N = allowed_primes.size();
+    for (auto piter = allowed_primes.begin(); piter != allowed_primes.end(); ++piter) {
+        int p = *piter; // current prime
+        maxexp.push_back((int)(log(maxden)/log(p)));
+    }
+    
+    std::vector<int> currexp(allowed_primes.size(), 0);
+    long c = N-1;
+    while (true) {
+        long den = 1;
+        long overflow_culprit = N; // means no overflow
+        for (long i = 0; i < N; i++) {
+            for (long j = 0; j < currexp[i]; j++)
+                den *= allowed_primes[i];
+            if (den > maxden) {
+                if (i < overflow_culprit)
+                    overflow_culprit = i;
+                break;
+            }
+        }
+        
+        if (overflow_culprit == N) { // no overflow
+            std::vector<int> allowed_primes_wk;
+            for (auto& p: allowed_primes) {
+                if (den % p != 0)
+                    allowed_primes_wk.push_back(p);
+            }
+            
+            if (allowed_primes_wk.size() > 0) {
+                //            long num = (long) round(v * den);
+                long num = approximate_long_with_combination_of_primes3((long)(double)round(v * den), allowed_primes_wk);
+                if (num != 0 && check_approximation(num, den, v, true, err_thresh, log_error, {})) {
+                    appr.push_back(genrat(num, den));
+                }
+            }
+        } else {
+            c = overflow_culprit-1;
+        }
+        
+    
+        currexp[c] += 1;
+        while (currexp[c] > maxexp[c]) {
+            c--;
+            if (c < 0)
+                goto end;
+            currexp[c] += 1;
+        }
+        for (long d = c+1; d < N; d++)
+            currexp[d] = 0;
+        c = N-1;
+    }
+    
+end:
+    
+    // sort by denominator
+    sort(appr.begin(), appr.end(), sortByDenominator);
+    
+    // only keep some of them
+    
+    double best_error = -1;
+    std::vector<t_rational>::iterator iter;
+    for (iter = appr.begin(); iter != appr.end(); ) {
+        auto curr_pair = *iter;
+        double error = 1200 * fabs(log2((curr_pair.num() * 1. / curr_pair.den()) / v));
+        double tenneyHeight = rational_get_tenney_height(curr_pair);
+        bool keep = false;
+        if (best_error == -1) {
+            keep = true;
+        } else if (error < best_error * bestErrorRelativeTolerance) {
+            keep = true;
+        } else if (error < tenneyHeightFactor*exp(-tenneyHeightExp * tenneyHeight)) {
+            keep = true;
+        }
+
+        if (best_error < 0 || error < best_error) {
+            best_error = error;
+        }
+
+        if (keep) {
+            ++iter;
+        } else {
+            iter = appr.erase(iter);
+        }
+    }
+    
+    return appr;
+}
+
+
+
+auto tenney_comparison_function(double target_r)
+{
+    return [target_r](t_rational a, t_rational b) {
+        double err_a = fabs(1200.*log2((double)a/target_r));
+        double err_b = fabs(1200.*log2((double)b/target_r));
+        double tenney_a = rational_get_tenney_height(a);
+        double tenney_b = rational_get_tenney_height(b);
+        const double epsilon = 0.001;
+        if (err_a < epsilon && err_b > epsilon)
+            return true;
+        if (err_a > epsilon && err_b < epsilon)
+            return false;
+        double weight_a = err_a + tenney_a * 10.;
+        double weight_b = err_b + tenney_b * 10.;
+        return weight_a <= weight_b;
+    };
+}
+
+void tenney_sort(std::vector<t_rational> candidate_approx, double target)
+{
+    std::sort(candidate_approx.begin(), candidate_approx.end(), tenney_comparison_function(target));
+}
+
+t_rational get_best_jilimited_approximation(double num, long jilimit, double mc_thresh)
+{
+    std::vector<int> allowed_primes;
+    for (long i = 0; i < BACH_PRIMES_JI_SIZE; i++) {
+        if (primes[i] <= jilimit)
+            allowed_primes.push_back(primes[i]);
+        else
+            break;
+    }
+    
+    // let's start with convergents
+    std::vector<t_rational> convergents = get_convergents(num, 20, true, mc_thresh, true, true, allowed_primes, 1000, 0);
+
+    tenney_sort(convergents, num);
+
+    if (convergents.size() > 0) // found!
+        return convergents[0];
+
+    // if not found, let's move to a more precise search
+    long numiter = 0;
+    long maxden = 20;
+    while (numiter < 10) {
+        std::vector<t_rational> approx = rational_approximation_with_primes(num, allowed_primes, mc_thresh, true, maxden);
+        if (approx.size() > 0) // found!
+            return approx[0];
+
+        maxden *= 2;
+        numiter++;
+    }
+    
+    return genrat(1, 1);
+    
+}
+
+
+
+
 
 // leave direction = 0 and error = NULL for default approximation
 // if direction = 1, it ceils, if direction = -1 it floors. 
 // if (error), it puts into *error the error.
-t_urrational approx_double_with_rat_fixed_den_no_reduce(double number, t_atom_long den, char direction, double *error) {
+t_urrational approx_double_with_rat_fixed_den_no_reduce(double number, t_atom_long den, char direction, double *error, bool log_error) {
 //	number \approx num/den; easy-bisy version...
 	t_urrational outrat;
 	outrat.r_den = den;
@@ -545,23 +1083,36 @@ t_urrational approx_double_with_rat_fixed_den_no_reduce(double number, t_atom_lo
 	else 
 		outrat.r_num =  (t_atom_long) round(number * den);
 	
-	if (error)
-		*error = number - urrat2double(outrat);
+    if (error) {
+        if (log_error) {
+            *error = 1200 * log2(urrat2double(outrat)/number); // error in cents
+        } else {
+            *error = urrat2double(outrat) - number;
+        }
+    }
 	
 	return outrat;
 }
 
-t_rational approx_double_with_rat_fixed_den(double number, t_atom_long den, char direction, double *error) {
-	t_urrational urrat = approx_double_with_rat_fixed_den_no_reduce(number, den, direction, error);
+t_rational get_best_jilimited_approximation(t_rational r, long jilimit, double mc_thresh)
+{
+    if (rational_get_jilimit(r) <= jilimit)
+        return r;
+    else
+        return get_best_jilimited_approximation((double)r, jilimit, mc_thresh);
+}
+
+t_rational approx_double_with_rat_fixed_den(double number, t_atom_long den, char direction, double *error, bool log_error) {
+	t_urrational urrat = approx_double_with_rat_fixed_den_no_reduce(number, den, direction, error, log_error);
 	return urrat2rat(urrat);
 }
 
-t_rational approx_double_with_rat_best_match(double number, t_atom_long max_den, char direction, double *error) {
+t_rational approx_double_with_rat_up_to_maxden(double number, t_atom_long max_den, char direction, double *error, bool log_error) {
 	t_atom_long i;
 	double local_error = 1., global_error = 1., abs_global_error = 1.;
 	t_urrational global_candidate = rat2urrat(long2rat(1));
 	for (i = 1; i <= max_den; i++) {
-		t_urrational local_candidate = approx_double_with_rat_fixed_den_no_reduce(number, i, direction, &local_error);
+		t_urrational local_candidate = approx_double_with_rat_fixed_den_no_reduce(number, i, direction, &local_error, log_error);
 		double fabs_local_error = fabs(local_error);
 		if (fabs_local_error < abs_global_error) {
 			global_error = local_error;
@@ -577,7 +1128,7 @@ t_rational approx_double_with_rat_best_match(double number, t_atom_long max_den,
 }
 
 t_rational approx_double_with_rat_up_to_tolerance(double number, double tolerance, t_atom_long max_den, char direction, char tolerance_is_ratio,
-												  double *error, char *found) {
+												  double *error, char *found, bool log_error) {
 	t_atom_long i = 1;
 	double local_error = 1., global_error = 1.;
 	t_urrational global_candidate = rat2urrat(long2rat(1));
@@ -591,7 +1142,7 @@ t_rational approx_double_with_rat_up_to_tolerance(double number, double toleranc
 			local_tolerance = MAX(local_tolerance, CONST_EPSILON_FOR_DOUBLE2RAT_APPROXIMATION);
 		}
 		
-		t_urrational local_candidate = approx_double_with_rat_fixed_den_no_reduce(number, i, direction, &local_error);
+		t_urrational local_candidate = approx_double_with_rat_fixed_den_no_reduce(number, i, direction, &local_error, log_error);
 		double fabs_local_error = fabs(local_error);
 		if (fabs_local_error < fabs_global_error) {
 			global_error = local_error;
@@ -701,7 +1252,7 @@ t_rational approx_double_with_rat_smart_permanence(double number, double max_err
 
 
 t_rational approx_double_with_rat_smart_permanence(double number, double tolerance, t_atom_long max_den, 
-												   char direction, char tolerance_is_ratio, double *error, char *found) {
+												   char direction, char tolerance_is_ratio, double *error, char *found, bool log_error) {
 	t_atom_long i;
 	t_atom_long prev_i = 0;
 	double local_error = 1., global_error = 1., fabs_global_error = 1.;
@@ -715,7 +1266,7 @@ t_rational approx_double_with_rat_smart_permanence(double number, double toleran
 		*found = false;
 
 	for (i = 1; i <= max_den; i++) {
-		t_urrational local_candidate = approx_double_with_rat_fixed_den_no_reduce(number, i, direction, &local_error);
+		t_urrational local_candidate = approx_double_with_rat_fixed_den_no_reduce(number, i, direction, &local_error, log_error);
 		double fabs_local_error = fabs(local_error);
 		if (fabs_local_error < fabs_global_error) {
 			// checking previous permanence denominator
@@ -770,11 +1321,11 @@ t_rational approx_double_with_rat_smart_permanence(double number, double toleran
 			local_tolerance = MAX(local_tolerance, CONST_EPSILON_FOR_DOUBLE2RAT_APPROXIMATION);
 		}
 		
-		dev_post("Approximation %ld/%ld, with error %.5f", global_candidate.r_num, global_candidate.r_den, global_error);
+//		dev_post("Approximation %ld/%ld, with error %.5f", global_candidate.r_num, global_candidate.r_den, global_error);
 		if (fabs_global_error <= local_tolerance) {
 			double this_weight = log((double)max_den + 1 - prev_i)/log((double)prev_i); // weight calculation
-			dev_post("   Within tolerance! With permanence %ld and weight %.4f", 
-				 global_candidate.r_num, global_candidate.r_den, global_error, max_den + 1 - prev_i, this_weight);
+//			dev_post("   Within tolerance! With permanence %ld and weight %.4f",
+//				 global_candidate.r_num, global_candidate.r_den, global_error, max_den + 1 - prev_i, this_weight);
 			if (this_weight > best_weight) {
 				
 				best_weight = this_weight;
@@ -846,12 +1397,14 @@ void rat_dx2x(long num_rationals, t_rational *rationals, t_rational start_ration
 	}
 }
 
-// rational "approximation"
+// rational "approximation": legacy algorithm not that good
 t_rational approx_rat_with_rat(t_rational rat, t_atom_long max_num, t_atom_long max_den){
 	return approx_rat_with_rat_notify(rat, max_num, max_den, NULL);
 }
 
-t_rational approx_rat_with_rat_notify(t_rational rat, t_atom_long max_num, t_atom_long max_den, char *changed){
+// rational "approximation": legacy algorithm not that good
+t_rational approx_rat_with_rat_notify(t_rational rat, t_atom_long max_num, t_atom_long max_den, char *changed)
+{
 	// not the best algorithm at all. to be changed
 
 	t_rational rat_out;
@@ -881,13 +1434,34 @@ t_rational approx_rat_with_rat_notify(t_rational rat, t_atom_long max_num, t_ato
 
 }
 
-t_rational approx_rat_with_rat_fixed_den(t_rational rat, t_atom_long den){
+t_rational approx_rat_with_rat_fixed_den(t_rational rat, t_atom_long den)
+{
 	t_rational rat_out;
 
 	rat_out.r_den = den;
 	rat_out.r_num =  (t_atom_long) round(rat2double(rat) * den);
 	
 	return rat_out;
+}
+
+t_shortRational approx_rat_with_rat_fixed_den(t_shortRational rat, t_atom_short den)
+{
+    t_shortRational rat_out;
+
+    rat_out.r_den = den;
+    rat_out.r_num =  (t_atom_short) round(rat2double(rat) * den);
+    
+    return rat_out;
+}
+
+t_tinyRational approx_rat_with_rat_fixed_den(t_tinyRational rat, t_atom_short den)
+{
+    t_tinyRational rat_out;
+
+    rat_out.r_den = den;
+    rat_out.r_num =  (t_int8) round(rat2double(rat) * den);
+    
+    return rat_out;
 }
 
 t_rational ceil_rat_with_rat_fixed_den(t_rational rat, t_atom_long den){
@@ -1005,14 +1579,29 @@ t_atom_long ipow(t_atom_long num, int power)
 	return tmp;
 }
 
-t_rational rat_long_pow(t_rational rat, t_atom_long num) 
+t_rational rat_long_pow(t_rational base, t_atom_long power)
 {
 	t_rational res;
-	res.r_num = ipow(num > 0 ? rat.r_num : rat.r_den, num > 0 ? num : -num);
-	res.r_den = ipow(num > 0 ? rat.r_den : rat.r_num, num > 0 ? num : -num);
+    if (power == 0)
+        return long2rat(1);
+	res.r_num = ipow(power > 0 ? base.r_num : base.r_den, power > 0 ? power : -power);
+	res.r_den = ipow(power > 0 ? base.r_den : base.r_num, power > 0 ? power : -power);
     if (res.r_den == 0)
         res = t_rational(0, 1);
 	// no need of reducing anything, if the incoming rational is already reduced
 	return res;
+}
+
+t_rational long_long_pow(long base, t_atom_long power)
+{
+    t_rational res;
+    if (power == 0)
+        return long2rat(1);
+    res.r_num = ipow(power > 0 ? base : 1, power > 0 ? power : -power);
+    res.r_den = ipow(power > 0 ? 1 : base, power > 0 ? power : -power);
+    if (res.r_den == 0)
+        res = t_rational(0, 1);
+    // no need of reducing anything, if the incoming rational is already reduced
+    return res;
 }
 

@@ -2,41 +2,16 @@
 	"patcher" : 	{
 		"fileversion" : 1,
 		"appversion" : 		{
-			"major" : 8,
+			"major" : 9,
 			"minor" : 0,
-			"revision" : 6,
+			"revision" : 0,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 89.0, 165.0, 617.0, 539.0 ],
-		"bglocked" : 0,
-		"openinpresentation" : 0,
-		"default_fontsize" : 13.0,
-		"default_fontface" : 0,
-		"default_fontname" : "Arial",
-		"gridonopen" : 1,
+		"rect" : [ 372.0, 202.0, 617.0, 539.0 ],
 		"gridsize" : [ 15.0, 15.0 ],
-		"gridsnaponopen" : 1,
-		"objectsnaponopen" : 1,
-		"statusbarvisible" : 2,
-		"toolbarvisible" : 1,
-		"lefttoolbarpinned" : 0,
-		"toptoolbarpinned" : 0,
-		"righttoolbarpinned" : 0,
-		"bottomtoolbarpinned" : 0,
-		"toolbars_unpinned_last_save" : 0,
-		"tallnewobj" : 0,
-		"boxanimatetime" : 200,
-		"enablehscroll" : 1,
-		"enablevscroll" : 1,
-		"devicewidth" : 0.0,
-		"description" : "",
-		"digest" : "",
-		"tags" : "",
-		"style" : "",
-		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
 					"bubble" : 1,
@@ -46,7 +21,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 60.0, 359.0, 128.0, 25.0 ],
+					"patching_rect" : [ 79.0, 359.0, 128.0, 25.0 ],
 					"text" : "Click repeatedly..."
 				}
 
@@ -57,12 +32,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-18",
-					"linecount" : 6,
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 301.0, 359.0, 196.0, 98.0 ],
-					"text" : "Another fun, but hardly useful, fact: functions can return functions.\nBy the way, here's how we define and call functions with no arguments."
+					"patching_rect" : [ 319.0, 388.5, 251.0, 40.0 ],
+					"text" : "Another fun, but hardly useful, fact: functions can return functions."
 				}
 
 			}
@@ -72,7 +47,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 435.0, 98.0, 23.0 ],
+					"patching_rect" : [ 6.0, 435.0, 98.0, 22.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -84,14 +59,14 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 360.0, 48.0, 23.0 ],
-					"text" : "3.1415"
+					"patching_rect" : [ 6.0, 360.0, 63.0, 22.0 ],
+					"text" : "3.141592"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "$funfun = ( -> (cos sin):random(1, 2)) ; $funfun()($x1) ",
+					"code" : "$funfun = ( $ -> (cos sin):random(1, 2)) ; $funfun()($x1) ",
 					"fontsize" : 13.0,
 					"id" : "obj-21",
 					"linecount" : 2,
@@ -99,13 +74,13 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 389.5, 292.0, 38.0 ],
+					"patching_rect" : [ 6.0, 389.5, 299.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
-						"versionnumber" : 80005
+						"versionnumber" : 80900
 					}
 ,
-					"text" : "bach.eval $funfun = ( -> (cos sin):random(1\\, 2)) \\; $funfun()($x1) @out m"
+					"text" : "bach.eval $funfun = ( $ -> (cos sin):random(1\\, 2)) \\; $funfun()($x1) @out m"
 				}
 
 			}
@@ -130,7 +105,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 320.0, 98.0, 23.0 ],
+					"patching_rect" : [ 6.0, 320.0, 98.0, 22.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -142,7 +117,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 258.0, 48.0, 23.0 ],
+					"patching_rect" : [ 6.0, 258.0, 48.0, 22.0 ],
 					"text" : "3.1415"
 				}
 
@@ -187,7 +162,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 224.0, 98.0, 23.0 ],
+					"patching_rect" : [ 6.0, 224.0, 98.0, 22.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -199,7 +174,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 142.0, 29.5, 23.0 ],
+					"patching_rect" : [ 6.0, 142.0, 29.5, 22.0 ],
 					"text" : "10"
 				}
 
@@ -230,7 +205,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 107.0, 98.0, 23.0 ],
+					"patching_rect" : [ 6.0, 107.0, 98.0, 22.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -242,7 +217,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 48.0, 48.0, 23.0 ],
+					"patching_rect" : [ 6.0, 48.0, 48.0, 22.0 ],
 					"text" : "10 100"
 				}
 
@@ -399,6 +374,7 @@
 
 			}
  ],
+		"originid" : "pat-191",
 		"dependency_cache" : [ 			{
 				"name" : "bach.eval.mxo",
 				"type" : "iLaX"

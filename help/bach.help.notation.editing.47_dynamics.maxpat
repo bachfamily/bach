@@ -53,7 +53,7 @@
 					"presentation_rect" : [ 29.0, 424.0, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "This marking is in reality \"pp<\" to build a crescendo till next marking",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -74,7 +74,7 @@
 					"presentation_rect" : [ 33.0, 397.0, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "Double click on a dynamic marking to edit it",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -122,7 +122,7 @@
 					"patching_rect" : [ 6.0, 73.0, 300.0, 69.0 ],
 					"style" : "",
 					"text" : "Select a chord, and press Cmd+Shift+D (mac) or Ctrl+Shift+D (win) to start editing its dynamics.\nEnter the dynamic as symbol, e.g. \"mp\"",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -140,7 +140,7 @@
 					"patching_rect" : [ 292.0, 73.0, 194.0, 69.0 ],
 					"style" : "",
 					"text" : "If you want to move to the next chord, use the Tab key, use Shift+Tab to move to the previous chord",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -158,7 +158,7 @@
 					"patching_rect" : [ 469.0, 73.0, 135.0, 54.0 ],
 					"style" : "",
 					"text" : "Press the Esc key once you have finished",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

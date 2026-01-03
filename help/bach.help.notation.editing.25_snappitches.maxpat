@@ -43,7 +43,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 14.0, 315.0, 139.0, 98.0 ],
 					"text" : "To snap again a pitch to the microtonal grid, you can use Cmd+Shift+R (mac) or Ctrl+Shift+R (win).",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -63,7 +63,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 157.0, 315.0, 206.0, 84.0 ],
 					"text" : "If \"snappitch\" is 0, if you drag the note, look at the \"Cents\" number in the upper legend: now it can assume numbers outside the grid.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -113,7 +113,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 53.0, 121.0, 228.0, 84.0 ],
 					"text" : "Select a note and drag it up or down: if \"snappitch\" is set to 1 (default), it will only assume cents values on the chosen microtonal grid.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

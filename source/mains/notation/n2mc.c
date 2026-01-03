@@ -1,7 +1,7 @@
 /*
  *  n2mc.c
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -171,12 +171,13 @@ long substitute_names_with_mc_fn(void *data, t_hatom *a, const t_llll *address){
         else
             hatom_setdouble(a, screen_mc + rat2double(acc_part));
     } else if (hatom_gettype(a) == H_PITCH) {
+        t_n2mc *x = (t_n2mc *) data;
         t_pitch p = hatom_getpitch(a);
-        t_rational mc = p.toMC();
-        if (mc.r_den == 1)
-            hatom_setlong(a, mc.r_num);
-        else
-            hatom_setdouble(a, rat2double(mc));
+        if (x->middle_c_octave != 5) {
+            p += t_pitch(0, long2rat(0), 5 - x->middle_c_octave);
+        }
+        double mc = p.toMCdouble();
+        hatom_setdouble(a, mc);
     }
     return 0;
 }

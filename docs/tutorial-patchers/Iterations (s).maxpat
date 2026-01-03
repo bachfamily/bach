@@ -1044,7 +1044,7 @@
 					"patching_rect" : [ 432.0, 483.0, 186.0, 20.0 ],
 					"style" : "",
 					"text" : "By the way, how do I \"route\" lllls?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

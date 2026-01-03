@@ -1,7 +1,7 @@
 /*
  *  hatom.h
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -148,6 +148,7 @@ typedef union _hword
 #else
     t_uint64 w_whole;                // only used to hackily access the whole 64-bit field; probably deprecable
 #endif
+    
 } t_hword;
 
 
@@ -313,7 +314,7 @@ t_function *hatom_getfunc(const t_hatom *h);
 void hatom_setlong(t_hatom *h, const t_atom_long l);
 void hatom_setrational(t_hatom *h, const t_rational &r); // first, the given rational is reduced. Then, if the denominator appears to be 1 or -1 a long is stored instead
 void hatom_setpitch(t_hatom *h, const t_pitch &p);
-void hatom_setpitch_from_elems(t_hatom *h, t_atom_short degree, t_shortRational &alter, t_atom_short octave);
+void hatom_setpitch_from_elems(t_hatom *h, const t_atom_short degree, const t_shortRational &alter, const t_shortRational &r, const t_atom_short octave);
 void hatom_setrational_from_elems(t_hatom *h, t_atom_long num, t_atom_long den); // as above
 void hatom_setdouble(t_hatom *h, const double d);
 void hatom_setsym(t_hatom *h, const t_symbol *s);

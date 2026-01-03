@@ -232,7 +232,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 312.0, 457.0, 231.0, 33.0 ],
 					"text" : "Ok. Still, that'd be so handy to have the units of measurement for all this stuff...",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}

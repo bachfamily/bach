@@ -1,7 +1,7 @@
 /*
  *  bach_codableobj.hpp
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -78,6 +78,7 @@ typedef struct _codableobj
     t_bool c_allGVTrigger;
     long c_allGVPriority;
     
+    long c_bellversion;
     t_bool c_ready;
     
 } t_codableobj;
@@ -89,6 +90,20 @@ void codableclass_add_extended_methods_and_attrs(t_class *c);
 
 
 t_mainFunction *codableobj_parse_buffer(t_codableobj *x,
+                                        long *codeac,
+                                        t_atom_long *dataInlets = nullptr,
+                                        t_atom_long *dataOutlets = nullptr,
+                                        t_atom_long *directInlets = nullptr,
+                                        t_atom_long *directOutlets = nullptr);
+
+t_mainFunction *codableobj_parse_buffer_antlr(t_codableobj *x,
+                                        long *codeac,
+                                        t_atom_long *dataInlets = nullptr,
+                                        t_atom_long *dataOutlets = nullptr,
+                                        t_atom_long *directInlets = nullptr,
+                                        t_atom_long *directOutlets = nullptr);
+
+t_mainFunction *codableobj_parse_buffer_v3(t_codableobj *x,
                                         long *codeac,
                                         t_atom_long *dataInlets = nullptr,
                                         t_atom_long *dataOutlets = nullptr,
@@ -135,6 +150,8 @@ void codableobj_readappend(t_codableobj *x, t_symbol *s);
 void codableobj_forcereadappend(t_codableobj *x, t_symbol *s);
 
 void codableobj_write(t_codableobj *x, t_symbol *s);
+
+void codableobj_fetch_bellversion(t_codableobj *x, long ac, t_atom *av);
 
 long codableobj_getCodeFromAtomsWithSeparators(t_codableobj *x, long ac, t_atom *av);
 long codableobj_getCodeFromAtoms(t_codableobj *x, long ac, t_atom *av);

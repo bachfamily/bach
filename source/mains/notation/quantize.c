@@ -1,7 +1,7 @@
 /*
  *  quantize.c
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -3395,7 +3395,7 @@ t_quantize *quantize_new(t_symbol *s, short ac, t_atom *av)
         /// Articulations handling
         x->articulations_typo_preferences.num_articulations = k_NUM_STANDARD_ARTICULATIONS;
         x->articulations_typo_preferences.artpref = (t_articulation_preferences *)bach_newptrclear(CONST_MAX_ARTICULATIONS * sizeof(t_articulation_preferences));
-        load_articulations_typo_preferences(&x->articulations_typo_preferences, gensym("November for bach"));
+        load_articulations_typo_preferences(NULL, &x->articulations_typo_preferences, gensym(BACH_DEFAULT_NOTATION_FONT));
         
         
         attr_args_process(x, ac, av);

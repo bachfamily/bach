@@ -2,41 +2,16 @@
 	"patcher" : 	{
 		"fileversion" : 1,
 		"appversion" : 		{
-			"major" : 8,
+			"major" : 9,
 			"minor" : 0,
-			"revision" : 6,
+			"revision" : 0,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
 		"classnamespace" : "box",
 		"rect" : [ 89.0, 165.0, 617.0, 539.0 ],
-		"bglocked" : 0,
-		"openinpresentation" : 0,
-		"default_fontsize" : 13.0,
-		"default_fontface" : 0,
-		"default_fontname" : "Arial",
-		"gridonopen" : 1,
 		"gridsize" : [ 15.0, 15.0 ],
-		"gridsnaponopen" : 1,
-		"objectsnaponopen" : 1,
-		"statusbarvisible" : 2,
-		"toolbarvisible" : 1,
-		"lefttoolbarpinned" : 0,
-		"toptoolbarpinned" : 0,
-		"righttoolbarpinned" : 0,
-		"bottomtoolbarpinned" : 0,
-		"toolbars_unpinned_last_save" : 0,
-		"tallnewobj" : 0,
-		"boxanimatetime" : 200,
-		"enablehscroll" : 1,
-		"enablevscroll" : 1,
-		"devicewidth" : 0.0,
-		"description" : "",
-		"digest" : "",
-		"tags" : "",
-		"style" : "",
-		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
 					"code" : "L = L.left(-1) ",
@@ -46,7 +21,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 338.0, 423.0, 138.0, 23.0 ],
+					"patching_rect" : [ 338.0, 386.0, 138.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
 						"versionnumber" : 80001
@@ -66,7 +41,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 195.0, 400.0, 338.0, 40.0 ],
+					"patching_rect" : [ 195.0, 363.0, 338.0, 40.0 ],
 					"text" : "There is also an assigning version of the dot operator. This is equivalent to:"
 				}
 
@@ -77,7 +52,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 438.0, 98.0, 23.0 ],
+					"patching_rect" : [ 6.0, 401.0, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -90,7 +65,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "bang" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 6.0, 380.0, 24.0, 24.0 ]
+					"patching_rect" : [ 6.0, 343.0, 24.0, 24.0 ]
 				}
 
 			}
@@ -103,7 +78,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 256.0, 247.5, 277.0, 36.0 ],
+					"patching_rect" : [ 256.0, 235.0, 277.0, 36.0 ],
 					"text" : "For comparison, the example above, rewritten with regular function-calls, would look like this:",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -118,7 +93,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 408.5, 180.0, 23.0 ],
+					"patching_rect" : [ 6.0, 372.0, 180.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
 						"versionnumber" : 80001
@@ -137,7 +112,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 341.5, 225.0, 23.0 ],
+					"patching_rect" : [ 6.0, 307.0, 225.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
 						"versionnumber" : 80001
@@ -156,7 +131,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 256.0, 280.0, 198.0, 23.0 ],
+					"patching_rect" : [ 256.0, 267.0, 198.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
 						"versionnumber" : 80001
@@ -219,7 +194,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 256.0, 190.0, 292.0, 54.0 ],
+					"patching_rect" : [ 256.0, 177.0, 292.0, 54.0 ],
 					"text" : "Dataflow-style function calls can make chains of calls more readable, and more similar to how they would be expressed by patching."
 				}
 
@@ -230,7 +205,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 254.0, 98.0, 23.0 ],
+					"patching_rect" : [ 6.0, 241.0, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -242,7 +217,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 176.0, 99.0, 23.0 ],
+					"patching_rect" : [ 6.0, 163.0, 99.0, 23.0 ],
 					"text" : "1 2 3 [4 5 6] 7 8"
 				}
 
@@ -256,7 +231,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 205.5, 243.0, 23.0 ],
+					"patching_rect" : [ 6.0, 193.0, 243.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
 						"versionnumber" : 80001
@@ -443,6 +418,7 @@
 
 			}
  ],
+		"originid" : "pat-177",
 		"dependency_cache" : [ 			{
 				"name" : "bach.eval.mxo",
 				"type" : "iLaX"

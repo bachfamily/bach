@@ -50,7 +50,7 @@
 					"patching_rect" : [ 299.0, 32.0, 312.0, 54.0 ],
 					"style" : "",
 					"text" : "To select a marker with a selection rectangle, reach the uppermost point of the notation object corresponding to the marker line",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -68,7 +68,7 @@
 					"patching_rect" : [ 15.0, 236.0, 472.0, 36.0 ],
 					"style" : "",
 					"text" : "Cmd+click (win) or Ctrl+click (mac) on a marker to delete it.\nAlternatively, select it and press Backspace.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -103,7 +103,7 @@
 					"patching_rect" : [ 342.0, 333.0, 249.0, 54.0 ],
 					"style" : "",
 					"text" : "Ctrl+click (mac) or Shift+Ctrl+click (win) on a marker, outside the staff, to switch attachment",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -121,7 +121,7 @@
 					"patching_rect" : [ 15.0, 163.0, 569.0, 36.0 ],
 					"style" : "",
 					"text" : "Click on a marker and drag to move it.\nIf you keep Cmd+Shift (mac) or Ctrl+Shift (win) key pressed, it allows you to fine edit the position.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -141,7 +141,7 @@
 					"patching_rect" : [ 223.0, 278.0, 234.0, 55.0 ],
 					"style" : "",
 					"text" : "Shift+Ctrl+Alt+click outside the staff to define a millisecond-attached marker",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -160,7 +160,7 @@
 					"patching_rect" : [ 6.0, 63.0, 179.0, 40.0 ],
 					"style" : "",
 					"text" : "Shift+Alt+click to define a new marker",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -180,7 +180,7 @@
 					"patching_rect" : [ 15.0, 278.0, 228.0, 55.0 ],
 					"style" : "",
 					"text" : "Shift+Alt+click outside the staff to define a measure-attached marker",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -223,7 +223,7 @@
 					"patching_rect" : [ 15.0, 199.0, 392.0, 36.0 ],
 					"style" : "",
 					"text" : "Alt+click&drag to copy a marker into a new one with unique name\nDoubleclick on a marker name to edit it.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

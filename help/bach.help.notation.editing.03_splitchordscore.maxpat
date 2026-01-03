@@ -44,7 +44,7 @@
 					"patching_rect" : [ 328.0, 187.0, 279.0, 84.0 ],
 					"presentation_rect" : [ 343.0, 185.0, 0.0, 0.0 ],
 					"text" : "You can add the Alt key to split tied sequence chordwise: select the two tied notes and press Cmd+Alt+2 (mac) or Ctrl+Alt+2 (win) to split each one singularly",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -64,7 +64,7 @@
 					"patching_rect" : [ 328.0, 145.0, 279.0, 55.0 ],
 					"presentation_rect" : [ 364.0, 244.0, 0.0, 0.0 ],
 					"text" : "When you select a tied sequence press Cmd+2, the sequence is split in its entirety",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -131,7 +131,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 83.0, 226.0, 230.0, 69.0 ],
 					"text" : "Select one of the newly created halves, and press Cmd+4 (mac) or Ctrl+4 (win), to split it into 4 quavers.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -149,7 +149,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 92.0, 583.0, 36.0 ],
 					"text" : "To split an existing chord, select it and press Cmd+<number> (mac) or Ctrl+<number> (win), where <number> is the number of parts in which you need to split it (1 to 9)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -169,7 +169,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 50.0, 131.0, 183.0, 69.0 ],
 					"text" : "Select this chord, and press Cmd+2 (mac) or Ctrl+2 (win) to split it into two chords.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -276,7 +276,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 83.0, 283.0, 230.0, 69.0 ],
 					"text" : "Always Cmd+click (mac) or Ctrl+click (win) on a notehead to turn it into a rest (and viceversa)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

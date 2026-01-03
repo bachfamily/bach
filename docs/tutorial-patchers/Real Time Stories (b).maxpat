@@ -704,7 +704,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 543.0, 524.0, 212.0, 33.0 ],
 					"text" : "Well, default durations really suck. Could we do it better please?",
-					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+					"textcolor" : [ 0.502, 0.557, 0.702, 1.0 ]
 				}
 
 			}
