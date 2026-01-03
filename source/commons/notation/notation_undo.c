@@ -717,6 +717,9 @@ void undo_op_to_string(long undo_op, char *buf)
         case k_UNDO_OP_MERGE:
             sprintf(buf, "Merge");
             break;
+        case k_UNDO_OP_GLUE:
+            sprintf(buf, "Glue");
+            break;
         case k_UNDO_OP_OVERTYPE:
             sprintf(buf, "Overtype");
             break;
