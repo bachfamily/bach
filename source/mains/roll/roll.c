@@ -10687,7 +10687,149 @@ void roll_addchord_from_values(t_roll *x, t_symbol *s, long argc, t_atom *argv){
     }
 } 
 
+
 char merge(t_roll *x, double threshold_ms, double threshold_cents, char gathering_policy_ms, char gathering_policy_cents, char only_selected, char markers_also)
+{
+    char changed = 0;
+    t_rollvoice *voice;    t_chord *chord; t_note *note;
+
+    for (voice = x->firstvoice; voice && (voice->v_ob.number < x->r_ob.num_voices); voice = voice->next) {
+        for (chord = voice->firstchord; chord; chord = chord->next){
+
+            if (only_selected && !notation_item_is_globally_selected((t_notation_obj *)x, (t_notation_item *)chord))
+                continue;
+            
+            if (threshold_ms >= 0.) { // time merging
+                long count = 1;
+                double gathering_average_onset = chord->onset;
+                double last_onset = chord->onset;
+                t_chord *chord2 = chord->next;
+                char merged = false;
+                while (chord2 && (chord2->onset - chord->onset <= threshold_ms)) {
+                    if (!only_selected || notation_item_is_globally_selected((t_notation_obj *)x, (t_notation_item *)chord2)) {
+                        t_chord *chord_to_merge;
+                        count++;
+                        gathering_average_onset += chord2->onset;
+                        last_onset = chord2->onset;
+                        // we merge the chord to the first one
+                        chord_to_merge = clone_chord((t_notation_obj *) x, chord2, k_CLONE_FOR_ORIGINAL);
+                        merge_chords(x, chord, chord_to_merge, false, true, true);
+                        chord_delete((t_notation_obj *)x, chord2, NULL, false);
+                        merged = true;
+                    }
+                    chord2 = chord2->next;
+                }
+
+                if (merged)
+                    check_correct_scheduling((t_notation_obj *)x, false);
+
+                gathering_average_onset /= count;
+                if (count > 1) {
+                    changed = 1;
+                    chord_set_recompute_parameters_flag((t_notation_obj *)x, chord);
+                    //  we change the onset of the first chord
+                    if (gathering_policy_ms > 0) // align to last
+                        chord->onset = last_onset;
+                    else if (gathering_policy_ms == 0) // align to average
+                        chord->onset = gathering_average_onset;
+                    // else: nothing to do: it stays aligned to first chord
+                }
+            }
+            
+            if (threshold_cents >= 0.) { // pitch merging
+                note = chord->firstnote;
+                while (note) {
+                    t_note *note2;
+                    long count_note = 1;
+                    double gathering_average_pitch = note->midicents;
+                    double gathering_average_velocity = note->velocity;
+                    double last_pitch = note->midicents;
+                    double last_velocity = note->velocity;
+                    note2 = note->next;
+                    while (note2 && (note2->midicents - note->midicents <= threshold_cents)) {
+                        count_note++;
+                        gathering_average_pitch += note2->midicents;
+                        gathering_average_velocity += note2->velocity;
+                        last_pitch = note2->midicents;
+                        last_velocity = note2->velocity;
+                        
+                        // we delete the note
+                        note_delete((t_notation_obj *)x, note2, false);
+                        note2 = note2->next;
+                    }
+                    gathering_average_pitch /= count_note;
+                    gathering_average_velocity /= count_note;
+                    if (count_note > 1) {
+                        changed = 1;
+                        chord_set_recompute_parameters_flag((t_notation_obj *)x, chord);
+                        //  we change the pitch of the first note
+                        if (gathering_policy_cents > 0) { // align to last pitch
+                            note->midicents = last_pitch;
+                            note_set_velocity((t_notation_obj *)x, note, last_velocity);
+                        }
+                        else if (gathering_policy_cents == 0) { // align to average pitch
+                            note->midicents = gathering_average_pitch;
+                            note_set_velocity((t_notation_obj *)x, note, gathering_average_velocity);
+                        }
+                        // else: nothing to do: it stays aligned to first pitch
+                    }
+                    
+                    note = note->next;
+                
+                }
+            }
+        }
+    }
+    
+    // markers!
+    if (markers_also) {
+        t_marker *marker;
+        if (threshold_ms >= 0.) { // time merging
+            for (marker = x->r_ob.firstmarker; marker; marker = marker->next) {
+                long count = 1;
+                double gathering_average_onset = marker->position_ms;
+                double last_onset = marker->position_ms;
+                t_marker *marker2 = marker->next;
+                char merged = false;
+                while (marker2 && (marker2->position_ms - marker->position_ms <= threshold_ms)) {
+                    if (!only_selected || notation_item_is_globally_selected((t_notation_obj *)x, (t_notation_item *)marker2)) {
+                        t_marker *marker_to_merge;
+                        count++;
+                        gathering_average_onset += marker2->position_ms;
+                        last_onset = marker2->position_ms;
+                        // we merge the chord to the first one
+                        delete_marker((t_notation_obj *)x, marker2);
+                        merged = true;
+                    }
+                    marker2 = marker2->next;
+                }
+                
+                if (merged)
+                    check_correct_scheduling((t_notation_obj *)x, false);
+                
+                gathering_average_onset /= count;
+                if (count > 1) {
+                    changed = 1;
+                    //  we change the onset of the first chord
+                    if (gathering_policy_ms > 0) // align to last
+                        marker->position_ms = last_onset;
+                    else if (gathering_policy_ms == 0) // align to average
+                        marker->position_ms = gathering_average_onset;
+                    // else: nothing to do: it stays aligned to first chord
+                }
+            }
+        }
+    }
+    
+    if (changed) {
+        update_all_accidentals_if_needed((t_notation_obj *)x);
+        recompute_total_length((t_notation_obj *)x);
+    }
+    
+    return changed;
+}
+
+char glue(t_roll *x, double threshold_ms, double threshold_cents, char gathering_policy_ms, char gathering_policy_cents, char only_selected)
 {
     char changed = 0;
     for (t_rollvoice *voice = x->firstvoice; voice && (voice->v_ob.number < x->r_ob.num_voices); voice = voice->next) {
@@ -10708,7 +10850,6 @@ char merge(t_roll *x, double threshold_ms, double threshold_cents, char gatherin
                                 // gotta glue with this note
                                 changed = true;
                                 
-                                
                                 if (chord2->num_notes == 1) {
                                     chord_delete((t_notation_obj *)x, chord2, NULL, false);
                                 } else {
@@ -10723,99 +10864,12 @@ char merge(t_roll *x, double threshold_ms, double threshold_cents, char gatherin
                         break; // nothing more to glue
                     }
                 }
-                
-                if (changed) {
-                    check_correct_scheduling((t_notation_obj *)x, false);
-                    recompute_total_length((t_notation_obj *)x);
-                }
-
-
-                
-                
-                if (threshold_ms >= 0.) { // time merging
-                    long count = 1;
-                    double gathering_average_onset = chord->onset;
-                    double last_onset = chord->onset;
-                    t_chord *chord2 = chord->next;
-                    char merged = false;
-                    while (chord2 && (chord2->onset - chord->onset <= threshold_ms)) {
-                        if (!only_selected || notation_item_is_globally_selected((t_notation_obj *)x, (t_notation_item *)chord2)) {
-                            t_chord *chord_to_merge;
-                            count++;
-                            gathering_average_onset += chord2->onset;
-                            last_onset = chord2->onset;
-                            // we merge the chord to the first one
-                            chord_to_merge = clone_chord((t_notation_obj *) x, chord2, k_CLONE_FOR_ORIGINAL);
-                            merge_chords(x, chord, chord_to_merge, false, true, true);
-                            chord_delete((t_notation_obj *)x, chord2, NULL, false);
-                            merged = true;
-                        }
-                        chord2 = chord2->next;
-                    }
-                    
-                    if (merged)
-                        check_correct_scheduling((t_notation_obj *)x, false);
-                    
-                    gathering_average_onset /= count;
-                    if (count > 1) {
-                        changed = 1;
-                        chord_set_recompute_parameters_flag((t_notation_obj *)x, chord);
-                        //  we change the onset of the first chord
-                        if (gathering_policy_ms > 0) // align to last
-                            chord->onset = last_onset;
-                        else if (gathering_policy_ms == 0) // align to average
-                            chord->onset = gathering_average_onset;
-                        // else: nothing to do: it stays aligned to first chord
-                    }
-                }
-                
-                if (threshold_cents >= 0.) { // pitch merging
-                    note = chord->firstnote;
-                    while (note) {
-                        t_note *note2;
-                        long count_note = 1;
-                        double gathering_average_pitch = note->midicents;
-                        double gathering_average_velocity = note->velocity;
-                        double last_pitch = note->midicents;
-                        double last_velocity = note->velocity;
-                        note2 = note->next;
-                        while (note2 && (note2->midicents - note->midicents <= threshold_cents)) {
-                            count_note++;
-                            gathering_average_pitch += note2->midicents;
-                            gathering_average_velocity += note2->velocity;
-                            last_pitch = note2->midicents;
-                            last_velocity = note2->velocity;
-                            
-                            // we delete the note
-                            note_delete((t_notation_obj *)x, note2, false);
-                            note2 = note2->next;
-                        }
-                        gathering_average_pitch /= count_note;
-                        gathering_average_velocity /= count_note;
-                        if (count_note > 1) {
-                            changed = 1;
-                            chord_set_recompute_parameters_flag((t_notation_obj *)x, chord);
-                            //  we change the pitch of the first note
-                            if (gathering_policy_cents > 0) { // align to last pitch
-                                note->midicents = last_pitch;
-                                note_set_velocity((t_notation_obj *)x, note, last_velocity);
-                            }
-                            else if (gathering_policy_cents == 0) { // align to average pitch
-                                note->midicents = gathering_average_pitch;
-                                note_set_velocity((t_notation_obj *)x, note, gathering_average_velocity);
-                            }
-                            // else: nothing to do: it stays aligned to first pitch
-                        }
-                        
-                        note = note->next;
-                        
-                    }
-                }
             }
         }
     }
     
     if (changed) {
+        check_correct_scheduling((t_notation_obj *)x, false);
         update_all_accidentals_if_needed((t_notation_obj *)x);
         recompute_total_length((t_notation_obj *)x);
     }
