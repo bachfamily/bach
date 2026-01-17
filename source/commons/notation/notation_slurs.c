@@ -567,6 +567,32 @@ t_llll *chord_get_slurs_as_llll(t_chord *ch, char prepend_slurs_symbol)
     return out;
 }
 
+t_llll *chord_get_slurs_end_as_llll(t_chord *ch, char prepend_slurs_symbol)
+{
+    t_llll *out = llll_get();
+    if (prepend_slurs_symbol)
+        llll_appendsym(out, _llllobj_sym_slurs);
+    if (ch) {
+        for (long i = 0; i < ch->num_slurs_from; i++) {
+            bool need_llll = ((ch->slur_from[i]->r_it.names && ch->slur_from[i]->r_it.names->l_size > 0) ||
+                              ch->slur_from[i]->direction != 0);
+            if (need_llll) {
+                t_llll *subll = llll_get();
+                llll_appendlong(subll, -slur_get_length_in_chords(ch->slur_from[i]));
+                if (ch->slur_from[i]->r_it.names && ch->slur_from[i]->r_it.names->l_size > 0)
+                    llll_appendllll(subll, get_names_as_llll((t_notation_item *)ch->slur_from[i], true));
+                if (ch->slur_from[i]->direction != 0)
+                    llll_appendllll(subll, symbol_and_long_to_llll(_llllobj_sym_direction, ch->slur_from[i]->direction));
+                llll_appendllll(out, subll);
+            } else {
+                llll_appendlong(out, -slur_get_length_in_chords(ch->slur_from[i]));
+            }
+        }
+    }
+    return out;
+}
+
+
 
 void slur_region_preselect_chords(t_notation_obj *r_ob, t_slur *slur)
 {

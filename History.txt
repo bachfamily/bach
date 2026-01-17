@@ -107,7 +107,7 @@ VERSION NOTES:
     á New @playheadnotify attribute to notify playhead position during playback
     á New @annotationsvadj attribute to adjust vertical position of annotations globally
     á With respect to development prerelease, fixed bug with slurs causing potential crashes when more than 2 slurs started on a chord
-    á New @playslurs attribute, defining the way slurs are output during evaluation/playback
+    á New @playslurs and @playslursend attributes, defining the way slurs are output during evaluation/playback
     á Fixed bug potentially causing crashes when changing background color often
     á Fixed bug causing wrong refresh with dynamics2velocities when velocity was mapped on notehead size
     á Improved lyrics alignment
