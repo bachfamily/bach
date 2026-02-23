@@ -1395,8 +1395,8 @@ void t_strParser::parse(const char *buf, t_llll **ll, t_llll_stack *stack, long 
     parserpost("strparser: parsing %s", buf);
     if (!big) {
         YY_BUFFER_STATE bp;
-        bp = strparser_scan_string((yyscan_t) this, buf);
-        strparser_parse((yyscan_t) this, ll, stack, depth);
+        bp = strparser_scan_string((yyscan_t) globalsPtr, buf);
+        strparser_parse((yyscan_t) globalsPtr, ll, stack, depth);
         reset();
     } else {
         yyscan_t myscanner;

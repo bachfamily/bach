@@ -3084,19 +3084,19 @@ t_exprParser::t_exprParser(t_exprparser_data *data) : t_parser()
     /* By setting to 0xAA, we expose bugs in
      yy_init_globals. Leave at 0x00 for releases. */
     reset();
-    exprparser_set_extra (data, (yyscan_t) this);
+    exprparser_set_extra (data, (yyscan_t) globalsPtr);
 }
 
 void t_exprParser::setBuffer(char *buf)
 {
     parserpost("exprparser: setting to buffer %s", buf);
-    buffer = yy_scan_string(buf, (yyscan_t) this);
-    yy_switch_to_buffer((YY_BUFFER_STATE) buffer, (yyscan_t) this);
+    buffer = yy_scan_string(buf, (yyscan_t) globalsPtr);
+    yy_switch_to_buffer((YY_BUFFER_STATE) buffer, (yyscan_t) globalsPtr);
 }
 
 void t_exprParser::setStartCondition(int condition)
 {
-    struct yyguts_t *yyg = (struct yyguts_t*) this;
+    struct yyguts_t *yyg = (struct yyguts_t*) globalsPtr;
     BEGIN condition;
 }
 
@@ -3104,18 +3104,20 @@ void t_exprParser::reset()
 {
     t_parser::reset();
     //memset(this,0x00,sizeof(struct yyguts_t));
-    yy_init_globals ((yyscan_t) this);
-    
+    yy_init_globals ((yyscan_t) globalsPtr);
+
 }
 
 int t_exprParser::lex()
 {
-    return exprparser_lex((yyscan_t) this);
+    return exprparser_lex((yyscan_t) globalsPtr);
 }
 
 void *exprparser_alloc(size_t bytes, void *yyscanner)
 {
-    void *b = ((t_exprParser *) yyscanner)->getPtr(bytes);
+    t_exprparser_data* extra = exprparser_get_extra(yyscanner);
+    //t_exprParser *theParser = *((t_exprParser **) yyscanner - sizeof(t_exprParser *));
+    void *b = extra->theParser->getPtr(bytes);
     parserpost(" exprparser_alloc: %d bytes requested, returning %p", bytes, b);
     return b;
 }

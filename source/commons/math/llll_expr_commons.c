@@ -121,15 +121,13 @@ t_max_err lexpr_init(t_lexpr *this_lexpr, short ac, t_atom *av, long subs_count,
         return MAX_ERR_GENERIC;
     }
     
-    
-    
     exprparser_data.numvars = &numvars;
     exprparser_data.subs_count = subs_count;
     exprparser_data.substitutions = substitutions;
     exprparser_data.offending = &offending;
     
     t_exprParser exprParser(&exprparser_data);
-    
+    exprparser_data.theParser = &exprParser;
     
     lexs[0].l_type = L_NONE;
     this_lex = lexs + 1;

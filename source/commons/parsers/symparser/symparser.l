@@ -298,8 +298,8 @@ t_symParser::t_symParser(long ignore) : t_parser()
 void t_symParser::reset()
 {
     t_parser::reset();
-    memset(this,0x00,sizeof(struct yyguts_t));
-    //yy_init_globals ((yyscan_t) this);
+    memset(globalsPtr,0x00,sizeof(struct yyguts_t));
+    //yy_init_globals ((yyscan_t) globalsPtr);
 }
 
 YY_BUFFER_STATE symparser_scan_string(yyscan_t myscanner, char *buf)

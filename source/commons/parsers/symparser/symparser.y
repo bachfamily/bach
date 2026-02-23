@@ -136,9 +136,9 @@ term: BACH_LONG {
 void t_symParser::parse(char *buf, t_llll **ll, t_llll_stack *stack, long *depth)
 {
     YY_BUFFER_STATE bp;
- 	bp = symparser_scan_string((yyscan_t) this, buf);
-    symparser_parse((yyscan_t) this, ll, stack, depth);
-    symparser_flush_and_delete_buffer((yyscan_t) this, bp);
+ 	bp = symparser_scan_string((yyscan_t) globalsPtr, buf);
+    symparser_parse((yyscan_t) globalsPtr, ll, stack, depth);
+    symparser_flush_and_delete_buffer((yyscan_t) globalsPtr, bp);
     reset();
 }
 

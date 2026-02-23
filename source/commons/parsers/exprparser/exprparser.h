@@ -34,6 +34,7 @@
 #endif
 
 typedef struct _exprparser_data {
+    t_parser *theParser;
     t_lexpr_lexeme *lexeme;
     short *numvars;
     long subs_count;

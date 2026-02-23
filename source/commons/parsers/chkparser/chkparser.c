@@ -2402,17 +2402,17 @@ void t_chkParser::reset()
     /* By setting to 0xAA, we expose bugs in
      yy_init_globals. Leave at 0x00 for releases. */
     size_t s = sizeof(struct yyguts_t);
-    memset(this,0x00,s);
-    //yy_init_globals ((yyscan_t) this);
+    memset(globalsPtr, 0x00, s);
+    //yy_init_globals ((yyscan_t) globalsPtr);
 }
 
 long t_chkParser::parse(const char *buf)
 {
     parserpost("chkparser: parsing %s", buf);
     long type;
-    YY_BUFFER_STATE bp = chkparser__scan_string(buf, (yyscan_t) this);
-    chkparser__switch_to_buffer(bp, (yyscan_t) this);
-    type = chkparser_lex((yyscan_t) this);
+    YY_BUFFER_STATE bp = chkparser__scan_string(buf, (yyscan_t) globalsPtr);
+    chkparser__switch_to_buffer(bp, (yyscan_t) globalsPtr);
+    type = chkparser_lex((yyscan_t) globalsPtr);
     reset();
     return type != H_NOTHING ? type : H_SYM;
 }

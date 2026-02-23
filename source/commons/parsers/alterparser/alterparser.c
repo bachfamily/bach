@@ -2231,34 +2231,34 @@ t_alterParser::t_alterParser() : t_parser()
     setBasePtr();
     
     reset();
-    alterparser_set_extra (a, (yyscan_t) this);
+    alterparser_set_extra (a, (yyscan_t) globalsPtr);
 }
 
 void t_alterParser::reset()
 {
     t_parser::reset();
     //memset(this,0x00,sizeof(struct yyguts_t));
-    yy_init_globals ((yyscan_t) this);
+    yy_init_globals ((yyscan_t) globalsPtr);
     
 }
 
 t_shortRational t_alterParser::parse(char *buf)
 {
     parserpost("alterparser: parsing %s", buf);
-    YY_BUFFER_STATE bp = yy_scan_string(buf, (yyscan_t) this);
-    yy_switch_to_buffer(bp, (yyscan_t) this);
-    switch (yylex((yyscan_t) this)) {
+    YY_BUFFER_STATE bp = yy_scan_string(buf, (yyscan_t) globalsPtr);
+    yy_switch_to_buffer(bp, (yyscan_t) globalsPtr);
+    switch (yylex((yyscan_t) globalsPtr)) {
         case A_ERROR:
         case A_END:
             *a = t_pitch::illegal;
             break;
         case A_MORE:
-            if (yylex((yyscan_t) this) != A_END)
+            if (yylex((yyscan_t) globalsPtr) != A_END)
                 *a = t_pitch::illegal;
             break;
     }
-    yy_flush_buffer(bp, (yyscan_t) this);
-    yy_delete_buffer(bp, (yyscan_t) this);
+    yy_flush_buffer(bp, (yyscan_t) globalsPtr);
+    yy_delete_buffer(bp, (yyscan_t) globalsPtr);
     return *a;
 }
 

@@ -43,7 +43,6 @@
  l = llll (clone)
  */
 
-
 #define MULTI_FIND_PILE_SIZE_STEP (64)
 
 
@@ -276,7 +275,6 @@ t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, long flag
     t_atom_long outsize;
     t_atom *new_out, *this_out;
     t_chkParser chkParser;
-    
     if (*out == NULL) {
         *out = (t_atom *) bach_newptr(ATOM_LIST_LENGTH_STEP * sizeof (t_atom));
         outsize = ATOM_LIST_LENGTH_STEP;

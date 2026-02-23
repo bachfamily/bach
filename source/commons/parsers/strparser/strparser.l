@@ -341,8 +341,8 @@ void t_strParser::reset()
 {
     t_parser::reset();
     /* By setting to 0xAA, we expose bugs in yy_init_globals. Leave at 0x00 for releases. */
-    memset(this,0x00,sizeof(struct yyguts_t));
-    //yy_init_globals ((yyscan_t) this);
+    memset(globalsPtr,0x00,sizeof(struct yyguts_t));
+    //yy_init_globals ((yyscan_t) globalsPtr);
 }
 
 YY_BUFFER_STATE strparser_scan_string(yyscan_t myscanner, const char *buf)

@@ -2428,7 +2428,7 @@ t_pitchParser::t_pitchParser() : t_parser()
     
     reset();
     
-    pitchparser_set_extra (p, (yyscan_t) this);
+    pitchparser_set_extra (p, (yyscan_t) globalsPtr);
     
 }
 
@@ -2436,27 +2436,27 @@ void t_pitchParser::reset()
 {
     t_parser::reset();
     //memset(this,0x00,sizeof(struct yyguts_t));
-    yy_init_globals ((yyscan_t) this);
-    
+    yy_init_globals ((yyscan_t) globalsPtr);
+
 }
 
 t_pitch t_pitchParser::parse(char *buf)
 {
     parserpost("pitchparser: parsing %s", buf);
-    YY_BUFFER_STATE bp = yy_scan_string(buf, (yyscan_t) this);
-    yy_switch_to_buffer(bp, (yyscan_t) this);
-    switch (yylex((yyscan_t) this)) {
+    YY_BUFFER_STATE bp = yy_scan_string(buf, (yyscan_t) globalsPtr);
+    yy_switch_to_buffer(bp, (yyscan_t) globalsPtr);
+    switch (yylex((yyscan_t) globalsPtr)) {
         case P_ERROR:
         case P_END:
             *p = t_pitch::NaP;
             break;
         case P_MORE:
-            if (yylex((yyscan_t) this) != P_END)
+            if (yylex((yyscan_t) globalsPtr) != P_END)
                 *p = t_pitch::NaP;
             break;
     }
-    yy_flush_buffer(bp, (yyscan_t) this);
-    yy_delete_buffer(bp, (yyscan_t) this);
+    yy_flush_buffer(bp, (yyscan_t) globalsPtr);
+    yy_delete_buffer(bp, (yyscan_t) globalsPtr);
     return *p;
 }
 
