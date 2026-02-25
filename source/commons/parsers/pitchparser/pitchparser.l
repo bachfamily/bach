@@ -64,118 +64,118 @@ JIPITCHR ({INTEGER}([/]{INTEGER})?r)
 
 %}
 
-%option extra-type = "t_pitch *"
+%option extra-type = "pitchparserData *"
 
 %%
 
 %{
-    t_pitch *p = yyextra;
+    pitchparserData *data = yyextra;
 %}
 
 
 ^[-+]?{ETPITCHBASE}[-+]{ETPITCHT}[-+]({JIPITCHBASE}|{JIPITCHCOMMAS})[-+]{JIPITCHR} {
     const char *next;
-    *p = t_parser::eatPitchETBaseComp(yytext, &next);
-    *p += t_parser::eatPitchETTComp(next, &next);
-    *p += t_parser::eatPitchJIBaseComp(next, &next);
-    *p += t_parser::eatPitchJIRComp(next);
+    data->pitch = t_parser::eatPitchETBaseComp(yytext, &next);
+    data->pitch += t_parser::eatPitchETTComp(next, &next);
+    data->pitch += t_parser::eatPitchJIBaseComp(next, &next);
+    data->pitch += t_parser::eatPitchJIRComp(next);
     return P_MORE;
 }
 
 ^[-+]?{ETPITCHT}[-+]({JIPITCHBASE}|{JIPITCHCOMMAS})[-+]{JIPITCHR} {
     const char *next;
-    *p = t_parser::eatPitchETTComp(yytext, &next);
-    *p += t_parser::eatPitchJIBaseComp(next, &next);
-    *p += t_parser::eatPitchJIRComp(next);
+    data->pitch = t_parser::eatPitchETTComp(yytext, &next);
+    data->pitch += t_parser::eatPitchJIBaseComp(next, &next);
+    data->pitch += t_parser::eatPitchJIRComp(next);
     return P_MORE;
 }
 
 ^[-+]?{ETPITCHBASE}[-+]({JIPITCHBASE}|{JIPITCHCOMMAS})[-+]{JIPITCHR} {
     const char *next;
-    *p = t_parser::eatPitchETBaseComp(yytext, &next);
-    *p += t_parser::eatPitchJIBaseComp(next, &next);
-    *p += t_parser::eatPitchJIRComp(next);
+    data->pitch = t_parser::eatPitchETBaseComp(yytext, &next);
+    data->pitch += t_parser::eatPitchJIBaseComp(next, &next);
+    data->pitch += t_parser::eatPitchJIRComp(next);
     return P_MORE;
 }
 
 ^[-+]?{ETPITCHBASE}[-+]{ETPITCHT}[-+]{JIPITCHR} {
     const char *next;
-    *p = t_parser::eatPitchETBaseComp(yytext, &next);
-    *p += t_parser::eatPitchETTComp(next, &next);
-    *p += t_parser::eatPitchJIRComp(next);
+    data->pitch = t_parser::eatPitchETBaseComp(yytext, &next);
+    data->pitch += t_parser::eatPitchETTComp(next, &next);
+    data->pitch += t_parser::eatPitchJIRComp(next);
     return P_MORE;
 }
 
 ^[-+]?{ETPITCHBASE}[-+]{ETPITCHT}[-+]({JIPITCHBASE}|{JIPITCHCOMMAS}) {
     const char *next;
-    *p = t_parser::eatPitchETBaseComp(yytext, &next);
-    *p += t_parser::eatPitchETTComp(next, &next);
-    *p += t_parser::eatPitchJIBaseComp(next, &next);
+    data->pitch = t_parser::eatPitchETBaseComp(yytext, &next);
+    data->pitch += t_parser::eatPitchETTComp(next, &next);
+    data->pitch += t_parser::eatPitchJIBaseComp(next, &next);
     return P_MORE;
 }
 
 ^[-+]?({JIPITCHBASE}|{JIPITCHCOMMAS})[-+]{JIPITCHR} {
     const char *next;
-    *p = t_parser::eatPitchJIBaseComp(yytext, &next);
-    *p += t_parser::eatPitchJIRComp(next);
+    data->pitch = t_parser::eatPitchJIBaseComp(yytext, &next);
+    data->pitch += t_parser::eatPitchJIRComp(next);
     return P_MORE;
 }
 
 ^[-+]?{ETPITCHT}[-+]{JIPITCHR} {
     const char *next;
-    *p = t_parser::eatPitchETTComp(yytext, &next);
-    *p += t_parser::eatPitchJIRComp(next);
+    data->pitch = t_parser::eatPitchETTComp(yytext, &next);
+    data->pitch += t_parser::eatPitchJIRComp(next);
     return P_MORE;
 }
 
 ^[-+]?{ETPITCHT}[-+]({JIPITCHBASE}|{JIPITCHCOMMAS}) {
     const char *next;
-    *p = t_parser::eatPitchETTComp(yytext, &next);
-    *p += t_parser::eatPitchJIBaseComp(next, &next);
+    data->pitch = t_parser::eatPitchETTComp(yytext, &next);
+    data->pitch += t_parser::eatPitchJIBaseComp(next, &next);
     return P_MORE;
 }
 
 ^[-+]?{ETPITCHBASE}[-+]{JIPITCHR} {
     const char *next;
-    *p = t_parser::eatPitchETBaseComp(yytext, &next);
-    *p += t_parser::eatPitchJIRComp(next);
+    data->pitch = t_parser::eatPitchETBaseComp(yytext, &next);
+    data->pitch += t_parser::eatPitchJIRComp(next);
     return P_MORE;
 }
 
 ^[-+]?{ETPITCHBASE}[-+]({JIPITCHBASE}|{JIPITCHCOMMAS}) {
     const char *next;
-    *p = t_parser::eatPitchETBaseComp(yytext, &next);
-    *p += t_parser::eatPitchJIBaseComp(next, &next);
+    data->pitch = t_parser::eatPitchETBaseComp(yytext, &next);
+    data->pitch += t_parser::eatPitchJIBaseComp(next, &next);
     return P_MORE;
 }
 
 ^[-+]?{ETPITCHBASE}[-+]{ETPITCHT} {
     const char *next;
-    *p = t_parser::eatPitchETBaseComp(yytext, &next);
-    *p += t_parser::eatPitchETTComp(next, &next);
+    data->pitch = t_parser::eatPitchETBaseComp(yytext, &next);
+    data->pitch += t_parser::eatPitchETTComp(next, &next);
     return P_MORE;
 }
 
 ^[-+]?{ETPITCHBASE} {
     const char *next;
-    *p = t_parser::eatPitchETBaseComp(yytext, &next);
+    data->pitch = t_parser::eatPitchETBaseComp(yytext, &next);
     return P_MORE;
 }
 
 ^[-+]?{ETPITCHT} {
     const char *next;
-    *p = t_parser::eatPitchETTComp(yytext, &next);
+    data->pitch = t_parser::eatPitchETTComp(yytext, &next);
     return P_MORE;
 }
 
 ^[-+]?({JIPITCHBASE}|{JIPITCHCOMMAS}) {
     const char *next;
-    *p = t_parser::eatPitchJIBaseComp(yytext, &next);
+    data->pitch = t_parser::eatPitchJIBaseComp(yytext, &next);
     return P_MORE;
 }
 
 ^[-+]?{JIPITCHR} {
-    *p = t_parser::eatPitchJIRComp(yytext);
+    data->pitch = t_parser::eatPitchJIRComp(yytext);
     return P_MORE;
 }
 
@@ -202,17 +202,15 @@ int main(int argc, char **argv)
 t_pitchParser::t_pitchParser() : t_parser()
 {
     
-    p = new(t_pitch);
-    
-    struct yyguts_t dummy_yyguts;
-    pitchparser_set_extra(p, &dummy_yyguts);
-    
+    //struct yyguts_t dummy_yyguts;
+    //pitchparser_set_extra(p, &dummy_yyguts);
+    data.theParser = this;
     setPtr(sizeof(struct yyguts_t));
     setBasePtr();
     
     reset();
     
-    pitchparser_set_extra (p, (yyscan_t) globalsPtr);
+    pitchparser_set_extra (&data, (yyscan_t) globalsPtr);
     
 }
 
@@ -220,9 +218,9 @@ t_pitchParser::t_pitchParser() : t_parser()
 void t_pitchParser::reset()
 {
     t_parser::reset();
-    //memset(this,0x00,sizeof(struct yyguts_t));
+    memset(globalsPtr,0x00,sizeof(struct yyguts_t));
     yy_init_globals ((yyscan_t) globalsPtr);
-
+    pitchparser_set_extra(&data, (yyscan_t) globalsPtr);
 }
 
 t_pitch t_pitchParser::parse(char *buf)
@@ -233,24 +231,26 @@ t_pitch t_pitchParser::parse(char *buf)
     switch (yylex((yyscan_t) globalsPtr)) {
         case P_ERROR:
         case P_END:
-            *p = t_pitch::NaP;
+            data.pitch = t_pitch::NaP;
             break;
         case P_MORE:
             if (yylex((yyscan_t) globalsPtr) != P_END)
-                *p = t_pitch::NaP;
+            data.pitch = t_pitch::NaP;
             break;
     }
     yy_flush_buffer(bp, (yyscan_t) globalsPtr);
     yy_delete_buffer(bp, (yyscan_t) globalsPtr);
-    return *p;
+    return data.pitch;
 }
 
 
 
 void *pitchparser_alloc(size_t bytes, void *yyscanner)
 {
-    void *b = ((t_pitchParser *) yyscanner)->getPtr(bytes);
-    parserpost(" pitchparser_alloc: %d bytes requested, returning %p", bytes, b);
+    pitchparserData* data = pitchparser_get_extra(yyscanner);
+
+    void *b = data->theParser->getPtr(bytes);
+    parserpost(" alterparser_alloc: %d bytes requested, returning %p", bytes, b);
     return b;
 }
 

@@ -32,53 +32,36 @@
 
 #define YY_FATAL_ERROR(msg) t_parser::fatalError(msg)
 
+extern class t_mempool *theMempool;
+
+class t_mempool {
+//private:
+public:
+    static const size_t poolSize = 0x10000;
+    static const int nPools = 16;
+    char pool[nPools][poolSize];
+    t_int32_atomic isFree[nPools];
+private:
+    t_mempool() {
+        for (int i = 0; i < nPools; ++i) {
+            isFree[i] = 0;
+        }
+    };
+public:
+    static char* getPool();
+    static void freePool(const char *whichPool);
+};
+
+
 
 class t_parser {
-    
-private:
-    
-    class t_mempool {
-    //private:
-    public:
-        static const size_t poolSize = 0x10000;
-        static const int nPools = 16;
-        char pool[nPools][poolSize];
-        t_int32_atomic isFree[nPools];
-    public:
-        t_mempool() {
-            for (int i = 0; i < nPools; ++i) {
-                isFree[i] = 0;
-            }
-        };
-        char* getPool() {
-            int i;
-            for (i = 0; i < nPools; i = (i + 1) % nPools) {
-                if (ATOMIC_INCREMENT_32(isFree + i) > 1) {
-                    ATOMIC_DECREMENT_32(isFree + i);
-                } else {
-                    break;
-                }
-            }
-            return pool[i];
-        }
-        
-        void freePool(const char *whichPool) {
-            const size_t dist = whichPool - pool[0];
-            const size_t idx = dist / poolSize;
-            ATOMIC_DECREMENT_32(idx);
-        }
-        
-    };
-    
     
 protected:
     //t_parser *self;
     char *globalsPtr;
     char *baseWorkSpacePtr;
     char *currentWorkSpacePtr;
-    
-    t_mempool mempool;
-    
+        
     static t_pitch adjustPitchSign(t_pitch p, long s)
     {
         if (s == 1)
@@ -102,7 +85,11 @@ protected:
 protected:
     t_parser() {
         //self = this;
-        currentWorkSpacePtr = globalsPtr = mempool.getPool();
+        currentWorkSpacePtr = globalsPtr = t_mempool::getPool();
+    }
+    
+    virtual ~t_parser() {
+        t_mempool::freePool(globalsPtr);
     }
 public:
     
@@ -138,7 +125,7 @@ public:
     
     // nothing to do, because our mempool is stack-allocated
     void freePtr(const void *ptr) {
-        mempool.freePool(static_cast<const char*>(ptr));
+        t_mempool::freePool(static_cast<const char*>(ptr));
     }
     
     
@@ -318,7 +305,8 @@ public:
     {
         error("%s", msg);
     }
-
+    
 };
+
 
 #endif /* bach_parser_hpp */

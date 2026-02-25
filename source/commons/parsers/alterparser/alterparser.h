@@ -32,13 +32,18 @@
 #endif
 #endif
 
+class alterparserData {
+public:
+    t_shortRational alter;
+    class t_alterParser *theParser;
+};
 
 class t_alterParser : public t_parser {
 private:
-    t_shortRational *a;
+    alterparserData data;
 public:
     t_alterParser();
-    ~t_alterParser() { delete a; };
+    ~t_alterParser() { };
     t_shortRational parse(char *buf);
     void reset();
 };

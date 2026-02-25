@@ -501,9 +501,10 @@ int main(int argc, char **argv)
 
 t_exprParser::t_exprParser(t_exprparser_data *data) : t_parser()
 {
+    /*
     struct yyguts_t dummy_yyguts;
     exprparser_set_extra(data, &dummy_yyguts);
-    
+    */
     setPtr(sizeof(struct yyguts_t));
     setBasePtr();
 
@@ -529,9 +530,10 @@ void t_exprParser::setStartCondition(int condition)
 void t_exprParser::reset()
 {
     t_parser::reset();
-    //memset(this,0x00,sizeof(struct yyguts_t));
+    t_exprparser_data* extra = exprparser_get_extra(globalsPtr);
+    memset(globalsPtr,0x00,sizeof(struct yyguts_t));
     yy_init_globals ((yyscan_t) globalsPtr);
-
+    exprparser_set_extra(extra, (yyscan_t) globalsPtr);
 }
 
 int t_exprParser::lex()

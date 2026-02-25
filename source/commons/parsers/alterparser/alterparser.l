@@ -58,47 +58,47 @@ ACCIDENTAL ([n#bxdq+-\^v]+)
     
 %}
 
-%option extra-type = "t_shortRational *"
+%option extra-type = "alterparserData *"
 
 %%
 
 %{
-    t_shortRational *a = yyextra;
+    alterparserData *data = yyextra;
 %}
 
 ^{ACCIDENTAL} {
     char *next = yytext;
-    *a = t_pitch::text2alter_legacy(&next);
-    parserpost(" lex: ALTER: %ld/%ld\n", a->num(), a->den());
+    data->alter = t_pitch::text2alter_legacy(&next);
+    parserpost(" lex: ALTER: %ld/%ld\n", data->alter->num(), data->alter->den());
     return A_MORE;
 }
 
 {ACCIDENTAL}[-+]{UINT}+t {
     char *next = yytext;
-    *a = t_pitch::text2alter_legacy(&next);
-    *a += t_shortRational(strtol(next, NULL, 10), 1);
-    parserpost(" lex: ALTER: %ld/%ld\n", a->num(), a->den());
+    data->alter = t_pitch::text2alter_legacy(&next);
+    data->alter += t_shortRational(strtol(next, NULL, 10), 1);
+    parserpost(" lex: ALTER: %ld/%ld\n", data->alter->num(), data->alter->den());
     return A_MORE;
 }
 
 {ACCIDENTAL}[-+]{UINT}[/][-+]?{UINT}t {
     char *next = yytext;
-    *a = t_pitch::text2alter_legacy(&next);
-    *a += t_shortRational(strtol(next, &next, 10), strtol(next + 1, NULL, 10));
-    parserpost(" lex: ALTER: %ld/%ld\n", a->num(), a->den());
+    data->alter = t_pitch::text2alter_legacy(&next);
+    data->alter += t_shortRational(strtol(next, &next, 10), strtol(next + 1, NULL, 10));
+    parserpost(" lex: ALTER: %ld/%ld\n", data->alter->num(), data->alter->den());
     return A_MORE;
 }
 
 [-+]?{UINT}+t {
-    *a = t_shortRational(strtol(yytext, NULL, 10), 1);
-    parserpost(" lex: ALTER: %ld/%ld\n", a->num(), a->den());
+    data->alter = t_shortRational(strtol(yytext, NULL, 10), 1);
+    parserpost(" lex: ALTER: %ld/%ld\n", data->alter->num(), data->alter->den());
     return A_MORE;
 }
 
 [-+]{UINT}[/][-+]?{UINT}t {
     char *next = yytext;
-    *a = t_shortRational(strtol(next, &next, 10), strtol(next + 1, NULL, 10));
-    parserpost(" lex: ALTER: %ld/%ld\n", a->num(), a->den());
+    data->alter = t_shortRational(strtol(next, &next, 10), strtol(next + 1, NULL, 10));
+    parserpost(" lex: ALTER: %ld/%ld\n", data->alter->->num(), data->alter->->den());
     return A_MORE;
 }
 
@@ -123,26 +123,24 @@ int main(int argc, char **argv)
 
 t_alterParser::t_alterParser() : t_parser()
 {
-    
-    a = new(t_shortRational);
-    
-    struct yyguts_t dummy_yyguts;
-    alterparser_set_extra(a, &dummy_yyguts);
-    
+        
+    //struct yyguts_t dummy_yyguts;
+    //alterparser_set_extra(a, &dummy_yyguts);
+    data.theParser = this;
     setPtr(sizeof(struct yyguts_t));
     setBasePtr();
     
     reset();
-    alterparser_set_extra (a, (yyscan_t) globalsPtr);
+    alterparser_set_extra (&data, (yyscan_t) globalsPtr);
 }
 
 
 void t_alterParser::reset()
 {
     t_parser::reset();
-    //memset(this,0x00,sizeof(struct yyguts_t));
+    memset(globalsPtr,0x00,sizeof(struct yyguts_t));
     yy_init_globals ((yyscan_t) globalsPtr);
-    
+    alterparser_set_extra(&data, (yyscan_t) globalsPtr);
 }
 
 t_shortRational t_alterParser::parse(char *buf)
@@ -153,24 +151,24 @@ t_shortRational t_alterParser::parse(char *buf)
     switch (yylex((yyscan_t) globalsPtr)) {
         case A_ERROR:
         case A_END:
-            *a = t_pitch::illegal;
+            data.alter = t_pitch::illegal;
             break;
         case A_MORE:
             if (yylex((yyscan_t) globalsPtr) != A_END)
-                *a = t_pitch::illegal;
+                data.alter = t_pitch::illegal;
             break;
     }
     yy_flush_buffer(bp, (yyscan_t) globalsPtr);
     yy_delete_buffer(bp, (yyscan_t) globalsPtr);
-    return *a;
+    return data.alter;
 }
-
-
 
 
 void *alterparser_alloc(size_t bytes, void *yyscanner)
 {
-    void *b = ((t_alterParser *) yyscanner)->getPtr(bytes);
+    alterparserData* data = alterparser_get_extra(yyscanner);
+
+    void *b = data->theParser->getPtr(bytes);
     parserpost(" alterparser_alloc: %d bytes requested, returning %p", bytes, b);
     return b;
 }

@@ -1801,9 +1801,7 @@ static const flex_int16_t yy_chk[3449] =
 #include <unistd.h>
 #endif
 
-#ifndef YY_EXTRA_TYPE
-#define YY_EXTRA_TYPE void *
-#endif
+#define YY_EXTRA_TYPE t_parser *
 
 /* Holds the entire state of the reentrant scanner. */
 struct yyguts_t
@@ -3714,9 +3712,11 @@ t_strParser::t_strParser(t_bool bigString, long ignore) : t_parser()
         setPtr(sizeof(struct yyguts_t));
         setBasePtr();
         reset();
+        strparser_set_extra(this, (yyscan_t) globalsPtr);
     }
     big = bigString; 
     startCondition = ignore;
+
 }
 
 void t_strParser::reset()
@@ -3724,7 +3724,8 @@ void t_strParser::reset()
     t_parser::reset();
     /* By setting to 0xAA, we expose bugs in yy_init_globals. Leave at 0x00 for releases. */
     memset(globalsPtr,0x00,sizeof(struct yyguts_t));
-    //yy_init_globals ((yyscan_t) globalsPtr);
+    yy_init_globals ((yyscan_t) globalsPtr);
+    strparser_set_extra(this, (yyscan_t) globalsPtr);
 }
 
 YY_BUFFER_STATE strparser_scan_string(yyscan_t myscanner, const char *buf)
@@ -3770,8 +3771,8 @@ void *strparser_alloc(size_t bytes, void *yyscanner)
     } else if (((t_strParser *) yyscanner)->isBig()) {
         b = bach_newptr(bytes);
     } else {
-        b = ((t_strParser *) yyscanner)->getPtr(bytes);
-    }
+        t_parser *theParser = strparser_get_extra(yyscanner);
+        b = theParser->getPtr(bytes);    }
     parserpost(" strparser_alloc: %d bytes requested, returning %p", bytes, b);
     return b;
 }

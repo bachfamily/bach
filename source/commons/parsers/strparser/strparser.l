@@ -65,6 +65,8 @@ ESCAPES ("\\\\"|"\\ "|"\\\t"|"\\\n"|"\\,"|"\\;"|"\\\"")
     #define YY_NO_UNISTD_H
 %}
 
+%option extra-type = "t_parser *"
+
 %%
 
 <INITIAL,NO_b,NO_e,NO_be,NO_l,NO_bl,NO_el,NO_bel,NO_p,NO_bp,NO_ep,NO_bep,NO_lp,NO_blp,NO_elp,NO_belp,NO_r,NO_br,NO_er,NO_ber,NO_lr,NO_blr,NO_elr,NO_belr,NO_pr,NO_bpr,NO_epr,NO_bepr,NO_lpr,NO_blpr,NO_elpr,NO_belpr,NO_s,NO_bs,NO_es,NO_bes,NO_ls,NO_bls,NO_els,NO_bels,NO_ps,NO_bps,NO_eps,NO_beps,NO_lps,NO_blps,NO_elps,NO_belps,NO_rs,NO_brs,NO_ers,NO_bers,NO_lrs,NO_blrs,NO_elrs,NO_belrs,NO_prs,NO_bprs,NO_eprs,NO_beprs,NO_lprs,NO_blprs,NO_elprs,NO_belprs>{
@@ -332,9 +334,11 @@ t_strParser::t_strParser(t_bool bigString, long ignore) : t_parser()
         setPtr(sizeof(struct yyguts_t));
         setBasePtr();
         reset();
+        strparser_set_extra(this, (yyscan_t) globalsPtr);
     }
     big = bigString; 
     startCondition = ignore;
+
 }
 
 void t_strParser::reset()
@@ -342,7 +346,8 @@ void t_strParser::reset()
     t_parser::reset();
     /* By setting to 0xAA, we expose bugs in yy_init_globals. Leave at 0x00 for releases. */
     memset(globalsPtr,0x00,sizeof(struct yyguts_t));
-    //yy_init_globals ((yyscan_t) globalsPtr);
+    yy_init_globals ((yyscan_t) globalsPtr);
+    strparser_set_extra(this, (yyscan_t) globalsPtr);
 }
 
 YY_BUFFER_STATE strparser_scan_string(yyscan_t myscanner, const char *buf)
@@ -388,8 +393,8 @@ void *strparser_alloc(size_t bytes, void *yyscanner)
     } else if (((t_strParser *) yyscanner)->isBig()) {
         b = bach_newptr(bytes);
     } else {
-        b = ((t_strParser *) yyscanner)->getPtr(bytes);
-    }
+        t_parser *theParser = strparser_get_extra(yyscanner);
+        b = theParser->getPtr(bytes);    }
     parserpost(" strparser_alloc: %d bytes requested, returning %p", bytes, b);
     return b;
 }

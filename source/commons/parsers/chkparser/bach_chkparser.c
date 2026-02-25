@@ -754,9 +754,7 @@ static const flex_int16_t yy_chk[281] =
 #include <unistd.h>
 #endif
 
-#ifndef YY_EXTRA_TYPE
-#define YY_EXTRA_TYPE void *
-#endif
+#define YY_EXTRA_TYPE t_parser *
 
 /* Holds the entire state of the reentrant scanner. */
 struct yyguts_t
@@ -2390,20 +2388,18 @@ int main(int argc, char **argv)
 
 t_chkParser::t_chkParser() : t_parser()
 {
-    size_t s = sizeof(struct yyguts_t);
-    setPtr(s);
+    setPtr(sizeof(struct yyguts_t));
     setBasePtr();
     reset();
+    chkparser_set_extra(this, (yyscan_t) globalsPtr);
 }
 
 void t_chkParser::reset()
 {
     t_parser::reset();
-    /* By setting to 0xAA, we expose bugs in
-     yy_init_globals. Leave at 0x00 for releases. */
-    size_t s = sizeof(struct yyguts_t);
-    memset(globalsPtr, 0x00, s);
-    //yy_init_globals ((yyscan_t) globalsPtr);
+    memset(globalsPtr,0x00,sizeof(struct yyguts_t));
+    yy_init_globals ((yyscan_t) globalsPtr);
+    chkparser_set_extra(this, (yyscan_t) globalsPtr);
 }
 
 long t_chkParser::parse(const char *buf)
@@ -2443,8 +2439,9 @@ t_symbol *t_chkParser::addQuoteIfNeeded(t_symbol *s)
 
 void *chkparser_alloc(size_t bytes, void *yyscanner)
 {
-    void *b = ((t_chkParser *) yyscanner)->getPtr(bytes);
-    parserpost(" chkparser_alloc: %d bytes requested, returning %p", bytes, b);
+    t_parser *theParser = chkparser_get_extra(yyscanner);
+    void *b = theParser->getPtr(bytes);
+    parserpost(" symparser_alloc: %d bytes requested, returning %p", bytes, b);
     return b;
 }
 

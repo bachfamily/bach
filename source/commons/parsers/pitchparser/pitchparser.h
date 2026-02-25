@@ -32,12 +32,18 @@
 #endif
 #endif
 
+class pitchparserData {
+public:
+    t_pitch pitch;
+    class t_pitchParser *theParser;
+};
+
 class t_pitchParser : public t_parser {
 private:
-    t_pitch *p;
+    pitchparserData data;
 public:
     t_pitchParser();
-    ~t_pitchParser() { delete p; };
+    ~t_pitchParser() { };
     t_pitch parse(char *buf);
     void reset();
 };

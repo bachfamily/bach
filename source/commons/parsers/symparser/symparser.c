@@ -1443,9 +1443,7 @@ static const flex_int16_t yy_chk[1937] =
 #include <unistd.h>
 #endif
 
-#ifndef YY_EXTRA_TYPE
-#define YY_EXTRA_TYPE void *
-#endif
+#define YY_EXTRA_TYPE t_parser *
 
 /* Holds the entire state of the reentrant scanner. */
 struct yyguts_t
@@ -3320,13 +3318,15 @@ t_symParser::t_symParser(long ignore) : t_parser()
     setBasePtr();
     reset();
     startCondition = ignore;
+    symparser_set_extra(this, (yyscan_t) globalsPtr);
 }
 
 void t_symParser::reset()
 {
     t_parser::reset();
     memset(globalsPtr,0x00,sizeof(struct yyguts_t));
-    //yy_init_globals ((yyscan_t) globalsPtr);
+    yy_init_globals ((yyscan_t) globalsPtr);
+    symparser_set_extra(this, (yyscan_t) globalsPtr);
 }
 
 YY_BUFFER_STATE symparser_scan_string(yyscan_t myscanner, char *buf)
@@ -3346,7 +3346,8 @@ void symparser_flush_and_delete_buffer(yyscan_t myscanner, YY_BUFFER_STATE bp)
 
 void *symparser_alloc(size_t bytes, void *yyscanner)
 {
-    void *b = ((t_symParser *) yyscanner)->getPtr(bytes);
+    t_parser *theParser = symparser_get_extra(yyscanner);
+    void *b = theParser->getPtr(bytes);
     parserpost(" symparser_alloc: %d bytes requested, returning %p", bytes, b);
     return b;
 }

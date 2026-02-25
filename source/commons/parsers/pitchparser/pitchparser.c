@@ -806,7 +806,7 @@ static const flex_int16_t yy_chk[412] =
 #include <unistd.h>
 #endif
 
-#define YY_EXTRA_TYPE t_pitch *
+#define YY_EXTRA_TYPE pitchparserData *
 
 /* Holds the entire state of the reentrant scanner. */
 struct yyguts_t
@@ -1056,7 +1056,7 @@ YY_DECL
 
 	{
 
-    t_pitch *p = yyextra;
+    pitchparserData *data = yyextra;
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1114,10 +1114,10 @@ case 1:
 YY_RULE_SETUP
 {
     const char *next;
-    *p = t_parser::eatPitchETBaseComp(yytext, &next);
-    *p += t_parser::eatPitchETTComp(next, &next);
-    *p += t_parser::eatPitchJIBaseComp(next, &next);
-    *p += t_parser::eatPitchJIRComp(next);
+    data->pitch = t_parser::eatPitchETBaseComp(yytext, &next);
+    data->pitch += t_parser::eatPitchETTComp(next, &next);
+    data->pitch += t_parser::eatPitchJIBaseComp(next, &next);
+    data->pitch += t_parser::eatPitchJIRComp(next);
     return P_MORE;
 }
 	YY_BREAK
@@ -1125,9 +1125,9 @@ case 2:
 YY_RULE_SETUP
 {
     const char *next;
-    *p = t_parser::eatPitchETTComp(yytext, &next);
-    *p += t_parser::eatPitchJIBaseComp(next, &next);
-    *p += t_parser::eatPitchJIRComp(next);
+    data->pitch = t_parser::eatPitchETTComp(yytext, &next);
+    data->pitch += t_parser::eatPitchJIBaseComp(next, &next);
+    data->pitch += t_parser::eatPitchJIRComp(next);
     return P_MORE;
 }
 	YY_BREAK
@@ -1135,9 +1135,9 @@ case 3:
 YY_RULE_SETUP
 {
     const char *next;
-    *p = t_parser::eatPitchETBaseComp(yytext, &next);
-    *p += t_parser::eatPitchJIBaseComp(next, &next);
-    *p += t_parser::eatPitchJIRComp(next);
+    data->pitch = t_parser::eatPitchETBaseComp(yytext, &next);
+    data->pitch += t_parser::eatPitchJIBaseComp(next, &next);
+    data->pitch += t_parser::eatPitchJIRComp(next);
     return P_MORE;
 }
 	YY_BREAK
@@ -1145,9 +1145,9 @@ case 4:
 YY_RULE_SETUP
 {
     const char *next;
-    *p = t_parser::eatPitchETBaseComp(yytext, &next);
-    *p += t_parser::eatPitchETTComp(next, &next);
-    *p += t_parser::eatPitchJIRComp(next);
+    data->pitch = t_parser::eatPitchETBaseComp(yytext, &next);
+    data->pitch += t_parser::eatPitchETTComp(next, &next);
+    data->pitch += t_parser::eatPitchJIRComp(next);
     return P_MORE;
 }
 	YY_BREAK
@@ -1155,9 +1155,9 @@ case 5:
 YY_RULE_SETUP
 {
     const char *next;
-    *p = t_parser::eatPitchETBaseComp(yytext, &next);
-    *p += t_parser::eatPitchETTComp(next, &next);
-    *p += t_parser::eatPitchJIBaseComp(next, &next);
+    data->pitch = t_parser::eatPitchETBaseComp(yytext, &next);
+    data->pitch += t_parser::eatPitchETTComp(next, &next);
+    data->pitch += t_parser::eatPitchJIBaseComp(next, &next);
     return P_MORE;
 }
 	YY_BREAK
@@ -1165,8 +1165,8 @@ case 6:
 YY_RULE_SETUP
 {
     const char *next;
-    *p = t_parser::eatPitchJIBaseComp(yytext, &next);
-    *p += t_parser::eatPitchJIRComp(next);
+    data->pitch = t_parser::eatPitchJIBaseComp(yytext, &next);
+    data->pitch += t_parser::eatPitchJIRComp(next);
     return P_MORE;
 }
 	YY_BREAK
@@ -1174,8 +1174,8 @@ case 7:
 YY_RULE_SETUP
 {
     const char *next;
-    *p = t_parser::eatPitchETTComp(yytext, &next);
-    *p += t_parser::eatPitchJIRComp(next);
+    data->pitch = t_parser::eatPitchETTComp(yytext, &next);
+    data->pitch += t_parser::eatPitchJIRComp(next);
     return P_MORE;
 }
 	YY_BREAK
@@ -1183,8 +1183,8 @@ case 8:
 YY_RULE_SETUP
 {
     const char *next;
-    *p = t_parser::eatPitchETTComp(yytext, &next);
-    *p += t_parser::eatPitchJIBaseComp(next, &next);
+    data->pitch = t_parser::eatPitchETTComp(yytext, &next);
+    data->pitch += t_parser::eatPitchJIBaseComp(next, &next);
     return P_MORE;
 }
 	YY_BREAK
@@ -1192,8 +1192,8 @@ case 9:
 YY_RULE_SETUP
 {
     const char *next;
-    *p = t_parser::eatPitchETBaseComp(yytext, &next);
-    *p += t_parser::eatPitchJIRComp(next);
+    data->pitch = t_parser::eatPitchETBaseComp(yytext, &next);
+    data->pitch += t_parser::eatPitchJIRComp(next);
     return P_MORE;
 }
 	YY_BREAK
@@ -1201,8 +1201,8 @@ case 10:
 YY_RULE_SETUP
 {
     const char *next;
-    *p = t_parser::eatPitchETBaseComp(yytext, &next);
-    *p += t_parser::eatPitchJIBaseComp(next, &next);
+    data->pitch = t_parser::eatPitchETBaseComp(yytext, &next);
+    data->pitch += t_parser::eatPitchJIBaseComp(next, &next);
     return P_MORE;
 }
 	YY_BREAK
@@ -1210,8 +1210,8 @@ case 11:
 YY_RULE_SETUP
 {
     const char *next;
-    *p = t_parser::eatPitchETBaseComp(yytext, &next);
-    *p += t_parser::eatPitchETTComp(next, &next);
+    data->pitch = t_parser::eatPitchETBaseComp(yytext, &next);
+    data->pitch += t_parser::eatPitchETTComp(next, &next);
     return P_MORE;
 }
 	YY_BREAK
@@ -1219,7 +1219,7 @@ case 12:
 YY_RULE_SETUP
 {
     const char *next;
-    *p = t_parser::eatPitchETBaseComp(yytext, &next);
+    data->pitch = t_parser::eatPitchETBaseComp(yytext, &next);
     return P_MORE;
 }
 	YY_BREAK
@@ -1227,7 +1227,7 @@ case 13:
 YY_RULE_SETUP
 {
     const char *next;
-    *p = t_parser::eatPitchETTComp(yytext, &next);
+    data->pitch = t_parser::eatPitchETTComp(yytext, &next);
     return P_MORE;
 }
 	YY_BREAK
@@ -1235,14 +1235,14 @@ case 14:
 YY_RULE_SETUP
 {
     const char *next;
-    *p = t_parser::eatPitchJIBaseComp(yytext, &next);
+    data->pitch = t_parser::eatPitchJIBaseComp(yytext, &next);
     return P_MORE;
 }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
 {
-    *p = t_parser::eatPitchJIRComp(yytext);
+    data->pitch = t_parser::eatPitchJIRComp(yytext);
     return P_MORE;
 }
 	YY_BREAK
@@ -2418,26 +2418,24 @@ int main(int argc, char **argv)
 t_pitchParser::t_pitchParser() : t_parser()
 {
     
-    p = new(t_pitch);
-    
-    struct yyguts_t dummy_yyguts;
-    pitchparser_set_extra(p, &dummy_yyguts);
-    
+    //struct yyguts_t dummy_yyguts;
+    //pitchparser_set_extra(p, &dummy_yyguts);
+    data.theParser = this;
     setPtr(sizeof(struct yyguts_t));
     setBasePtr();
     
     reset();
     
-    pitchparser_set_extra (p, (yyscan_t) globalsPtr);
+    pitchparser_set_extra (&data, (yyscan_t) globalsPtr);
     
 }
 
 void t_pitchParser::reset()
 {
     t_parser::reset();
-    //memset(this,0x00,sizeof(struct yyguts_t));
+    memset(globalsPtr,0x00,sizeof(struct yyguts_t));
     yy_init_globals ((yyscan_t) globalsPtr);
-
+    pitchparser_set_extra(&data, (yyscan_t) globalsPtr);
 }
 
 t_pitch t_pitchParser::parse(char *buf)
@@ -2448,22 +2446,24 @@ t_pitch t_pitchParser::parse(char *buf)
     switch (yylex((yyscan_t) globalsPtr)) {
         case P_ERROR:
         case P_END:
-            *p = t_pitch::NaP;
+            data.pitch = t_pitch::NaP;
             break;
         case P_MORE:
             if (yylex((yyscan_t) globalsPtr) != P_END)
-                *p = t_pitch::NaP;
+            data.pitch = t_pitch::NaP;
             break;
     }
     yy_flush_buffer(bp, (yyscan_t) globalsPtr);
     yy_delete_buffer(bp, (yyscan_t) globalsPtr);
-    return *p;
+    return data.pitch;
 }
 
 void *pitchparser_alloc(size_t bytes, void *yyscanner)
 {
-    void *b = ((t_pitchParser *) yyscanner)->getPtr(bytes);
-    parserpost(" pitchparser_alloc: %d bytes requested, returning %p", bytes, b);
+    pitchparserData* data = pitchparser_get_extra(yyscanner);
+
+    void *b = data->theParser->getPtr(bytes);
+    parserpost(" alterparser_alloc: %d bytes requested, returning %p", bytes, b);
     return b;
 }
 

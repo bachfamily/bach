@@ -579,9 +579,7 @@ void yyfree ( void * , yyscan_t yyscanner );
 #include <unistd.h>
 #endif
 
-#ifndef YY_EXTRA_TYPE
-#define YY_EXTRA_TYPE void *
-#endif
+#define YY_EXTRA_TYPE t_parser *
 
 int yylex_init (yyscan_t* scanner);
 

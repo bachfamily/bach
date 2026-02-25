@@ -243,6 +243,7 @@
 		007F94612C41C04D007892C4 /* pitchLexer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 007F94592C41C04C007892C4 /* pitchLexer.cpp */; };
 		007F94622C41C04D007892C4 /* pitchParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 007F945A2C41C04C007892C4 /* pitchParser.cpp */; };
 		007F94632C41C04D007892C4 /* pitchParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 007F945B2C41C04C007892C4 /* pitchParser.h */; };
+		0080A95F2F4DF4A2004903A1 /* bach_parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0080A95E2F4DF4A2004903A1 /* bach_parser.cpp */; };
 		00992C182C2EE6CC00DA02CD /* ActionTransition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 00992AD92C2EE6CC00DA02CD /* ActionTransition.cpp */; };
 		00992C192C2EE6CC00DA02CD /* ActionTransition.h in Headers */ = {isa = PBXBuildFile; fileRef = 00992ADA2C2EE6CC00DA02CD /* ActionTransition.h */; };
 		00992C1A2C2EE6CC00DA02CD /* AmbiguityInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 00992ADB2C2EE6CC00DA02CD /* AmbiguityInfo.cpp */; };
@@ -3312,6 +3313,7 @@
 		007F94592C41C04C007892C4 /* pitchLexer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pitchLexer.cpp; sourceTree = "<group>"; };
 		007F945A2C41C04C007892C4 /* pitchParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pitchParser.cpp; sourceTree = "<group>"; };
 		007F945B2C41C04C007892C4 /* pitchParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pitchParser.h; sourceTree = "<group>"; };
+		0080A95E2F4DF4A2004903A1 /* bach_parser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = bach_parser.cpp; sourceTree = "<group>"; };
 		00812FAD27C8B9B400521C7D /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		00992AD42C2EE6CC00DA02CD /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		00992AD52C2EE6CC00DA02CD /* misc.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = misc.xml; sourceTree = "<group>"; };
@@ -7058,6 +7060,7 @@
 				918055DC1F55C61500BCB4AB /* strparser */,
 				91B62BAD1F4EFC4900B9FC63 /* symparser */,
 				91BCCC421F56CE2B002D8BE2 /* chkparser */,
+				0080A95E2F4DF4A2004903A1 /* bach_parser.cpp */,
 			);
 			path = parsers;
 			sourceTree = "<group>";
@@ -14554,6 +14557,7 @@
 				91812A811611B29E00473F86 /* mxml-set.c in Sources */,
 				91812A821611B29E00473F86 /* mxml-string.c in Sources */,
 				00992C4D2C2EE6CC00DA02CD /* LexerCustomAction.cpp in Sources */,
+				0080A95F2F4DF4A2004903A1 /* bach_parser.cpp in Sources */,
 				91071DB12100DB5900452762 /* bach_codableobj.cpp in Sources */,
 				00992C8B2C2EE6CC00DA02CD /* SingletonPredictionContext.cpp in Sources */,
 				91812A871611B29E00473F86 /* notation_files.c in Sources */,
