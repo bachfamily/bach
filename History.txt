@@ -107,7 +107,7 @@ VERSION NOTES:
     แ New @playheadnotify attribute to notify playhead position during playback
     แ New @annotationsvadj attribute to adjust vertical position of annotations globally
     แ With respect to development prerelease, fixed bug with slurs causing potential crashes when more than 2 slurs started on a chord
-    แ New @playslurs attribute, defining the way slurs are output during evaluation/playback
+    แ New @playslurs and @playslursend attributes, defining the way slurs are output during evaluation/playback
     แ Fixed bug potentially causing crashes when changing background color often
     แ Fixed bug causing wrong refresh with dynamics2velocities when velocity was mapped on notehead size
     แ Improved lyrics alignment
@@ -116,12 +116,15 @@ VERSION NOTES:
     แ @stafflineswidth and @scalablestafflineswidth: new attributes for roll/score
     แ Fixed bug causing crashes with highlighted playback and no fade-domain
     แสAdded parameter to "distribute" message to warp the distribution
+    แ Fixed bug with deleting breakpoints possibly causing issues in several places
     
 - bach.roll, bach.score, bach.score2roll:
     Now user-defined pitches are correctly preserved
 
-- bach.roll:  Improved intelligent ruler
-              exportmidi: added "defaulttempo" message attribute
+- bach.roll:
+    แ Improved intelligent ruler
+    แ exportmidi: added "defaulttempo" message attribute
+    แ New "glue" message (similar to "merge")
 
 - bach.score:
     แ Fixed bug causing crashes with wrong select syntax (e.g., unbalanced parentheses)

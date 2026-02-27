@@ -1887,6 +1887,7 @@ typedef enum _undo_operations
     k_UNDO_OP_CHANGE_MARKER_ATTACHMENT,
     k_UNDO_OP_GLUE_CHORD,
     k_UNDO_OP_MERGE,
+    k_UNDO_OP_GLUE,
     k_UNDO_OP_OVERTYPE,
     k_UNDO_OP_ALIGN_SELECTION,
     k_UNDO_OP_EQUALLY_RESPACE_SELECTION,
@@ -5049,6 +5050,7 @@ typedef struct _notation_obj
     char        play_tempi;                 ///< Send tempi during play
     char        play_measures;              ///< Send measure start barlines during play
     char        play_slurs;                 ///< Send slur information during playback
+    char        play_slurs_end;             ///< Also send information about slur end (as a negative number, e.g.: -3 means: a slur has ended which started 3 chords ago)
 
     void        *m_clock;                            ///< The clock for the play and task routine
     t_symbol    *setclock;                            ///< The setclock, to handle the change of clock speed

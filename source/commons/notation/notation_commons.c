@@ -28698,13 +28698,23 @@ char note_delete_breakpoints(t_notation_obj *r_ob, t_note *note){
 //delete the breakpoints of a given note
     char changed = 0;
     t_bpt *bpt = note->firstbreakpoint;
-    while (bpt) { // cycle on the selected items
+    if (bpt)
+        bpt = bpt->next;
+    while (bpt && bpt->next) { // cycle on the selected items
+        t_bpt *nextbpt = bpt->next;
         delete_breakpoint(r_ob, bpt);
         changed = 1;
-        bpt = bpt->next;
+        bpt = nextbpt;
     }
-    if (note->firstbreakpoint)
-        note->firstbreakpoint->velocity = note->lastbreakpoint->velocity = note->velocity;
+    if (note->lastbreakpoint) {
+        note->lastbreakpoint->delta_mc = 0;
+        note->lastbreakpoint->velocity = note->velocity;
+    }
+    if (note->firstbreakpoint) {
+        note->firstbreakpoint->velocity = note->velocity;
+        note->firstbreakpoint->delta_mc = 0;
+    }
+    note->num_breakpoints = 2;
     return changed;
 }
 
@@ -29528,9 +29538,16 @@ void rescale_breakpoints(t_notation_obj *r_ob, t_note *receiver, double relative
 
 char is_breakpoint_useless(t_notation_obj *r_ob, t_bpt *bpt)
 {
-    if (bpt->prev && bpt->next && bpt->prev->delta_mc == bpt->delta_mc && bpt->delta_mc == bpt->next->delta_mc &&
-        (!r_ob->breakpoints_have_velocity || (bpt->prev->velocity == bpt->velocity && bpt->velocity == bpt->next->velocity)))
-        return true;
+    if (bpt->prev && bpt->next && bpt->prev->delta_mc == bpt->delta_mc) {
+        if (bpt->prev->rel_x_pos == bpt->rel_x_pos) {
+            if (!r_ob->breakpoints_have_velocity || (bpt->prev->velocity == bpt->velocity))
+                return true;
+        }
+        if (bpt->delta_mc == bpt->next->delta_mc) {
+            if (!r_ob->breakpoints_have_velocity || (bpt->prev->velocity == bpt->velocity && bpt->velocity == bpt->next->velocity))
+                return true;
+        }
+    }
     return false;
 }
 
@@ -30766,6 +30783,13 @@ t_llll* get_rollnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_c
             (r_ob->play_slurs == 4))
             llll_appendllll(out_llll, chord_get_slurs_as_llll(note->parent, true));
     }
+
+    if (r_ob->play_slurs_end && note->parent && note->parent->num_slurs_from > 0 && (mode == k_CONSIDER_FOR_EVALUATION || mode == k_CONSIDER_FOR_PLAYING || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_PLAYING_AND_ALLOW_PARTIAL_LOOPED_NOTES) && r_ob->play_slurs >= 2) {
+        if ((r_ob->play_slurs == 2 && !note->next) ||
+            (r_ob->play_slurs == 3 && !note->prev) ||
+            (r_ob->play_slurs == 4))
+            llll_appendllll(out_llll, chord_get_slurs_as_llll(note->parent, true));
+    }
     
     if (mode == k_CONSIDER_FOR_SAMPLING)
         llll_append_notationitem_global_flag(r_ob, out_llll, (t_notation_item *)note);
@@ -31017,6 +31041,12 @@ t_llll* get_rollchord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_dat
           ((mode != k_CONSIDER_FOR_EVALUATION && mode != k_CONSIDER_FOR_PLAYING && mode != k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE && mode != k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE && mode != k_CONSIDER_FOR_PLAYING_AND_ALLOW_PARTIAL_LOOPED_NOTES) || r_ob->play_slurs >= 1)))
         llll_appendllll(out_llll, chord_get_slurs_as_llll(chord, true));
 
+    if (r_ob->play_slurs_end &&
+        (chord->num_slurs_from > 0 && mode != k_CONSIDER_FOR_EXPORT_OM && mode != k_CONSIDER_FOR_EXPORT_PWGL &&
+          ((mode != k_CONSIDER_FOR_EVALUATION && mode != k_CONSIDER_FOR_PLAYING && mode != k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE && mode != k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE && mode != k_CONSIDER_FOR_PLAYING_AND_ALLOW_PARTIAL_LOOPED_NOTES) || r_ob->play_slurs >= 1)))
+        llll_appendllll(out_llll, chord_get_slurs_end_as_llll(chord, true));
+
+    
     llll_append_notationitem_flag(r_ob, out_llll, (t_notation_item *)chord);
 
     if (mode == k_CONSIDER_FOR_UNDO) 
@@ -31100,6 +31130,14 @@ t_llll* get_scorenote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_
             (r_ob->play_slurs == 4))
             llll_appendllll(out_llll, chord_get_slurs_as_llll(note->parent, true));
     }
+
+    if (r_ob->play_slurs_end && note->parent && note->parent->num_slurs_from > 0 && (mode == k_CONSIDER_FOR_EVALUATION || mode == k_CONSIDER_FOR_PLAYING || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_PLAYING_AND_ALLOW_PARTIAL_LOOPED_NOTES) && r_ob->play_slurs >= 2) {
+        if ((r_ob->play_slurs == 2 && !note->next) ||
+            (r_ob->play_slurs == 3 && !note->prev) ||
+            (r_ob->play_slurs == 4))
+            llll_appendllll(out_llll, chord_get_slurs_end_as_llll(note->parent, true));
+    }
+
     
     llll_append_notationitem_flag(r_ob, out_llll, (t_notation_item *)note);
 
@@ -31937,7 +31975,11 @@ t_llll* get_scorechord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_da
         (chord->num_slurs_to > 0 && mode != k_CONSIDER_FOR_EXPORT_OM && mode != k_CONSIDER_FOR_EXPORT_PWGL &&
          ((mode != k_CONSIDER_FOR_PLAYING && mode != k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE && mode != k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE && mode != k_CONSIDER_FOR_PLAYING_AND_ALLOW_PARTIAL_LOOPED_NOTES) || r_ob->play_slurs >= 1)))
         llll_appendllll(out_llll, chord_get_slurs_as_llll(chord, true));
-    
+
+    if (r_ob->play_slurs_end && chord->num_slurs_from > 0 && mode != k_CONSIDER_FOR_EXPORT_OM && mode != k_CONSIDER_FOR_EXPORT_PWGL &&
+         ((mode != k_CONSIDER_FOR_PLAYING && mode != k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE && mode != k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE && mode != k_CONSIDER_FOR_PLAYING_AND_ALLOW_PARTIAL_LOOPED_NOTES) || r_ob->play_slurs >= 1))
+        llll_appendllll(out_llll, chord_get_slurs_end_as_llll(chord, true));
+
     llll_append_notationitem_flag(r_ob, out_llll, (t_notation_item *)chord);
 
     if (mode == k_CONSIDER_FOR_UNDO) 
