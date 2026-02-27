@@ -1801,7 +1801,7 @@ static const flex_int16_t yy_chk[3449] =
 #include <unistd.h>
 #endif
 
-#define YY_EXTRA_TYPE t_parser *
+#define YY_EXTRA_TYPE t_strParser *
 
 /* Holds the entire state of the reentrant scanner. */
 struct yyguts_t
@@ -3731,7 +3731,8 @@ void t_strParser::reset()
 YY_BUFFER_STATE strparser_scan_string(yyscan_t myscanner, const char *buf)
 {
     struct yyguts_t *yyg = (struct yyguts_t*) myscanner;
-    BEGIN ((t_strParser *) myscanner)->getStartCondition();
+    t_strParser *theParser = strparser_get_extra(myscanner);
+    BEGIN theParser->getStartCondition();
     YY_BUFFER_STATE bp = strparser__scan_string(buf,myscanner);
     strparser__switch_to_buffer(bp,myscanner);
     return bp;
@@ -3768,18 +3769,18 @@ void *strparser_alloc(size_t bytes, void *yyscanner)
     void *b;
     if (!yyscanner) {
         b = bach_newptr(sizeof(t_strParser)); // it's much more than we actually need, but this lets us define a valid "big" field
-    } else if (((t_strParser *) yyscanner)->isBig()) {
-        b = bach_newptr(bytes);
     } else {
-        t_parser *theParser = strparser_get_extra(yyscanner);
-        b = theParser->getPtr(bytes);    }
+        t_strParser *theParser = strparser_get_extra(yyscanner);
+        b = theParser->isBig() ? bach_newptr(bytes) : theParser->getPtr(bytes);
+    }
     parserpost(" strparser_alloc: %d bytes requested, returning %p", bytes, b);
     return b;
 }
 
 void *strparser_realloc(void *ptr, size_t bytes, void *yyscanner)
 {
-    if (((t_strParser *) yyscanner)->isBig()) {
+    t_strParser *theParser = strparser_get_extra(yyscanner);
+    if (theParser->isBig()) {
         void *b = bach_resizeptr(ptr, bytes);
         parserpost(" strparser_realloc: %d bytes requested for pointer %p, returning %p", bytes, ptr, b);
         return b;
@@ -3791,7 +3792,8 @@ void *strparser_realloc(void *ptr, size_t bytes, void *yyscanner)
 
 void strparser_free(void *ptr,void *yyscanner)
 {
-    if (((t_strParser *) yyscanner)->isBig()) {
+    t_strParser *theParser = strparser_get_extra(yyscanner);
+    if (theParser->isBig()) {
         parserpost(" strparser_free: freeing %p", ptr);
         bach_freeptr(ptr);
     } else {
