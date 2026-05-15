@@ -134,7 +134,9 @@ VERSION NOTES:
     á XML export: added "voice" tag to ensure correct behaviour with Dorico
                   fixed crash happening when importing files without "attributes" tag
 
-- bach.slot: fixed bug: now insertslotitem & similar messages work as expected
+- bach.slot: 
+    á fixed bug: now insertslotitem & similar messages work as expected
+    á removed irrelevant attributes from inspector
 
 - bach.n2mc: fixed @middlecoctave not working for pitches
 

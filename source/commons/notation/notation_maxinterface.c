@@ -1893,6 +1893,7 @@ void notation_class_add_slots_attributes(t_class *c, char obj_type){
     CLASS_ATTR_DOUBLE(c,"slotfunctionptradius",0, t_notation_obj, function_slot_pt_uradius);
     CLASS_ATTR_STYLE_LABEL(c,"slotfunctionptradius",0,"text","Function Slot Point Radius");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"slotfunctionptradius", 0, "1.3");
+    CLASS_ATTR_FILTER_MIN(c, "slotfunctionptradius", 0.);
     // @description Sets the size of the radius of breakpoints inside slots of type function
     // (rescaled according to the <m>vzoom</m>).
 
