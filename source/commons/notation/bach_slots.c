@@ -10763,7 +10763,7 @@ void notationobj_sel_change_slot_item_from_params(t_notation_obj *r_ob, t_llll *
                 t_note *nt = (t_note *) curr_it;
                 if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
                     if (voice < 0 || voice == notation_item_get_voicenumber(r_ob, (t_notation_item *)nt)) {
-                        undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)nt->parent, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+                        undo_tick_create_for_selected_notation_item(r_ob, r_ob->obj_type == k_NOTATION_OBJECT_SLOT ? (t_notation_item *)nt : (t_notation_item *)nt->parent, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                         note_change_slot_item(r_ob, nt, slotnum, position, args, mode, modify, thresh);
                         changed = 1;
                     }
