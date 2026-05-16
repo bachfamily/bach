@@ -1893,6 +1893,7 @@ void notation_class_add_slots_attributes(t_class *c, char obj_type){
     CLASS_ATTR_DOUBLE(c,"slotfunctionptradius",0, t_notation_obj, function_slot_pt_uradius);
     CLASS_ATTR_STYLE_LABEL(c,"slotfunctionptradius",0,"text","Function Slot Point Radius");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"slotfunctionptradius", 0, "1.3");
+    CLASS_ATTR_FILTER_MIN(c, "slotfunctionptradius", 0.);
     // @description Sets the size of the radius of breakpoints inside slots of type function
     // (rescaled according to the <m>vzoom</m>).
 
@@ -2170,74 +2171,77 @@ void notation_class_add_color_attributes(t_class *c, char obj_type)
 void notation_class_add_appearance_attributes(t_class *c, char obj_type){
 	CLASS_STICKY_ATTR(c,"category",0,"Appearance");
 
-    CLASS_ATTR_CHAR(c,"pianorolltype",0, t_notation_obj, pianoroll_display_type);
-    CLASS_ATTR_STYLE_LABEL(c,"pianorolltype",0,"enumindex","Piano Roll Display Type");
-    CLASS_ATTR_ENUMINDEX(c,"pianorolltype", 0, "Background Stripes White-Key Lines Black-Key Lines C-Lines");
-    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"pianorolltype",0,"0");
-    // @exclude bach.slot
-    // Sets the type of piano roll display for voices whose notation style is set to "linear".
-    
-    CLASS_ATTR_CHAR(c,"pianorollkeyboardtype",0, t_notation_obj, pianoroll_keyboard_type);
-    CLASS_ATTR_STYLE_LABEL(c,"pianorollkeyboardtype",0,"enumindex","Piano Roll Keyboard Type");
-    CLASS_ATTR_ENUMINDEX(c,"pianorollkeyboardtype", 0, "Classic Uniform");
-    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"pianorollkeyboardtype",0,"0");
-    // @exclude bach.slot
-    // Sets the type of piano roll keyboard for voices whose notation style is set to "linear".
-    
-    CLASS_ATTR_DOUBLE(c, "markerwidth", 0, t_notation_obj, markers_line_width);
-    CLASS_ATTR_STYLE_LABEL(c,"markerwidth",0,"text","Marker Line Width");
-    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"markerwidth",0,"1.5");
-    // @exclude bach.slot
-    // Sets the line width for markers.
-
-    CLASS_ATTR_DOUBLE(c, "stafflineswidth", 0, t_notation_obj, stafflines_width);
-    CLASS_ATTR_STYLE_LABEL(c,"stafflineswidth",0,"text","Staff Lines Width");
-    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"stafflineswidth",0,"1.");
-    // @exclude bach.slot
-    // Sets the line width for staff lines. By default this width is fixed, meaning
-    // that it does not scale with <m>vzoom</m>. You can tie the width to <m>vzoom</m>
-
-    CLASS_ATTR_CHAR(c, "scalablestafflineswidth", 0, t_notation_obj, stafflines_width_scales_with_zoom);
-    CLASS_ATTR_STYLE_LABEL(c,"scalablestafflineswidth",0,"onoff","Staff Lines Scale With Vertical Zoom");
-    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"scalablestafflineswidth",0,"0");
-    // @exclude bach.slot
-    // Toggles the ability to scale staff line width for staff lines with vertical zoom. By default it is off.
-
-    CLASS_ATTR_CHAR(c, "markerspan", 0, t_notation_obj, markers_span);
-    CLASS_ATTR_STYLE_LABEL(c,"markerspan",0,"enumindex","Marker Vertical Span");
-    CLASS_ATTR_ENUMINDEX(c,"markerspan", 0, "PlayHead Above First Staff Till Last Staff Between Staves");
-    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"markerspan",0,"0");
-    // @exclude bach.slot
-    // Sets the type of vertical span of markers: <br />
-    // - Playhead (0): like the playhead cursor (default)
-    // - Above First Staff (1): only above first staff
-    // - Till Last Staff (2): only clip to first staff
-    // - Between Staves (3): only between staves, like a barline
-
-    
-    if (obj_type == k_NOTATION_OBJECT_SCORE) {
-        CLASS_ATTR_CHAR(c,"shiftunisons",0, t_notation_obj, shift_voiceensemble_unisons);
-        CLASS_ATTR_STYLE_LABEL(c,"shiftunisons",0,"enumindex","Shift Unisons in Different Parts");
-        CLASS_ATTR_ENUMINDEX(c,"shiftunisons", 0, "Never Only With Equal Notehead Always");
-        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"shiftunisons",0,"1");
-        // @exclude bach.slot, bach.roll
-        // Handles the way unisons are adjusted when in different parts: 0 = don't adjust; 1 = shift notes when
-        // they have equal notehead; 2 = always shift notes.
+    if (obj_type != k_NOTATION_OBJECT_SLOT) {
+        
+        CLASS_ATTR_CHAR(c,"pianorolltype",0, t_notation_obj, pianoroll_display_type);
+        CLASS_ATTR_STYLE_LABEL(c,"pianorolltype",0,"enumindex","Piano Roll Display Type");
+        CLASS_ATTR_ENUMINDEX(c,"pianorolltype", 0, "Background Stripes White-Key Lines Black-Key Lines C-Lines");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"pianorolltype",0,"0");
+        // @exclude bach.slot
+        // Sets the type of piano roll display for voices whose notation style is set to "linear".
+        
+        CLASS_ATTR_CHAR(c,"pianorollkeyboardtype",0, t_notation_obj, pianoroll_keyboard_type);
+        CLASS_ATTR_STYLE_LABEL(c,"pianorollkeyboardtype",0,"enumindex","Piano Roll Keyboard Type");
+        CLASS_ATTR_ENUMINDEX(c,"pianorollkeyboardtype", 0, "Classic Uniform");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"pianorollkeyboardtype",0,"0");
+        // @exclude bach.slot
+        // Sets the type of piano roll keyboard for voices whose notation style is set to "linear".
+        
+        CLASS_ATTR_DOUBLE(c, "markerwidth", 0, t_notation_obj, markers_line_width);
+        CLASS_ATTR_STYLE_LABEL(c,"markerwidth",0,"text","Marker Line Width");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"markerwidth",0,"1.5");
+        // @exclude bach.slot
+        // Sets the line width for markers.
+        
+        CLASS_ATTR_DOUBLE(c, "stafflineswidth", 0, t_notation_obj, stafflines_width);
+        CLASS_ATTR_STYLE_LABEL(c,"stafflineswidth",0,"text","Staff Lines Width");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"stafflineswidth",0,"1.");
+        // @exclude bach.slot
+        // Sets the line width for staff lines. By default this width is fixed, meaning
+        // that it does not scale with <m>vzoom</m>. You can tie the width to <m>vzoom</m>
+        
+        CLASS_ATTR_CHAR(c, "scalablestafflineswidth", 0, t_notation_obj, stafflines_width_scales_with_zoom);
+        CLASS_ATTR_STYLE_LABEL(c,"scalablestafflineswidth",0,"onoff","Staff Lines Scale With Vertical Zoom");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"scalablestafflineswidth",0,"0");
+        // @exclude bach.slot
+        // Toggles the ability to scale staff line width for staff lines with vertical zoom. By default it is off.
+        
+        CLASS_ATTR_CHAR(c, "markerspan", 0, t_notation_obj, markers_span);
+        CLASS_ATTR_STYLE_LABEL(c,"markerspan",0,"enumindex","Marker Vertical Span");
+        CLASS_ATTR_ENUMINDEX(c,"markerspan", 0, "PlayHead Above First Staff Till Last Staff Between Staves");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"markerspan",0,"0");
+        // @exclude bach.slot
+        // Sets the type of vertical span of markers: <br />
+        // - Playhead (0): like the playhead cursor (default)
+        // - Above First Staff (1): only above first staff
+        // - Till Last Staff (2): only clip to first staff
+        // - Between Staves (3): only between staves, like a barline
+        
+        
+        if (obj_type == k_NOTATION_OBJECT_SCORE) {
+            CLASS_ATTR_CHAR(c,"shiftunisons",0, t_notation_obj, shift_voiceensemble_unisons);
+            CLASS_ATTR_STYLE_LABEL(c,"shiftunisons",0,"enumindex","Shift Unisons in Different Parts");
+            CLASS_ATTR_ENUMINDEX(c,"shiftunisons", 0, "Never Only With Equal Notehead Always");
+            CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"shiftunisons",0,"1");
+            // @exclude bach.slot, bach.roll
+            // Handles the way unisons are adjusted when in different parts: 0 = don't adjust; 1 = shift notes when
+            // they have equal notehead; 2 = always shift notes.
+        }
+        
+        CLASS_ATTR_CHAR(c,"slursavoidchords",0, t_notation_obj, slurs_avoid_chords);
+        CLASS_ATTR_STYLE_LABEL(c,"slursavoidchords",0,"onoff","Slurs Avoid Chords");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"slursavoidchords",0,"1");
+        // @exclude bach.slot
+        // Toggles the ability for slurs to avoid chords.
+        
+        CLASS_ATTR_CHAR(c,"slursavoidaccidentals",0, t_notation_obj, slurs_avoid_accidentals);
+        CLASS_ATTR_STYLE_LABEL(c,"slursavoidaccidentals",0,"onoff","Slurs Avoid Accidentals");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"slursavoidaccidentals",0,"1");
+        // @exclude bach.slot
+        // Toggles the ability for slurs to avoid accidentals.
     }
     
-    CLASS_ATTR_CHAR(c,"slursavoidchords",0, t_notation_obj, slurs_avoid_chords);
-    CLASS_ATTR_STYLE_LABEL(c,"slursavoidchords",0,"onoff","Slurs Avoid Chords");
-    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"slursavoidchords",0,"1");
-    // @exclude bach.slot
-    // Toggles the ability for slurs to avoid chords.
-
-    CLASS_ATTR_CHAR(c,"slursavoidaccidentals",0, t_notation_obj, slurs_avoid_accidentals);
-    CLASS_ATTR_STYLE_LABEL(c,"slursavoidaccidentals",0,"onoff","Slurs Avoid Accidentals");
-    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"slursavoidaccidentals",0,"1");
-    // @exclude bach.slot
-    // Toggles the ability for slurs to avoid accidentals.
-
-	CLASS_ATTR_DOUBLE(c, "rounded", 0, t_notation_obj, corner_roundness); 
+	CLASS_ATTR_DOUBLE(c, "rounded", 0, t_notation_obj, corner_roundness);
 	CLASS_ATTR_STYLE_LABEL(c,"rounded",0,"text","Roundness of Box Corners");
 	CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"rounded",0,"0."); // default SHOULD BE: "6.", but only when corner clipping will perfectly work!
 	CLASS_ATTR_INVISIBLE(c, "rounded", ATTR_GET_OPAQUE | ATTR_SET_OPAQUE); // invisible attribute, as long as corner clipping doesn't perfectly work...
