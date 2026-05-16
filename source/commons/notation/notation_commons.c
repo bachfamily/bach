@@ -756,6 +756,9 @@ bool midicents_is_whitekey(long mc)
 
 void paint_keyboard_clef(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf, double middleC_y, long clef, t_jrgba color, t_jrgba auxcolor)
 {
+    if (!r_ob->show_clefs)
+        return;
+
     long minmc, maxmc;
     t_jrgba black = color;
     t_jrgba white = get_grey(1);
