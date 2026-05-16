@@ -95,6 +95,8 @@ enum playkeys_properties
     k_PLAYKEYS_PATH,
     k_PLAYKEYS_MEASURENUMBER,
     k_PLAYKEYS_BREAKPOINTS,
+    k_PLAYKEYS_CENTSPROFILE,
+    k_PLAYKEYS_VELOCITYPROFILE,
     k_PLAYKEYS_MEASUREINFO,
     k_PLAYKEYS_NAME,
     k_PLAYKEYS_SLURS,
@@ -400,6 +402,10 @@ long symbol_to_property(t_symbol *s)
 //        return k_PLAYKEYS_MEASURENUMBER;
     if (s == _llllobj_sym_breakpoints)
         return k_PLAYKEYS_BREAKPOINTS;
+    if (s == gensym("centsprofile"))
+        return k_PLAYKEYS_CENTSPROFILE;
+    if (s == gensym("velocityprofile"))
+        return k_PLAYKEYS_VELOCITYPROFILE;
     if (s == _llllobj_sym_measureinfo)
         return k_PLAYKEYS_MEASUREINFO;
     if (s == _llllobj_sym_name)
@@ -473,6 +479,8 @@ t_symbol *property_to_symbol(long property)
         case k_PLAYKEYS_PATH: return _llllobj_sym_path;
         case k_PLAYKEYS_MEASURENUMBER: return gensym("measurenumber");
         case k_PLAYKEYS_BREAKPOINTS: return _llllobj_sym_breakpoints;
+        case k_PLAYKEYS_CENTSPROFILE: return gensym("centsprofile");
+        case k_PLAYKEYS_VELOCITYPROFILE: return gensym("velocityprofile");
         case k_PLAYKEYS_MEASUREINFO: return _llllobj_sym_measureinfo;
         case k_PLAYKEYS_NAME: return _llllobj_sym_name;
         case k_PLAYKEYS_SLURS: return _llllobj_sym_slurs;
@@ -2498,10 +2506,10 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                             t_llllelem *velocity_el = llll_getindex(notell, incoming_is_from_roll(incoming) ? 3 : 2, I_STANDARD);
                                             if (velocity_el)
                                                 velocity = hatom_getlong(&velocity_el->l_hatom);
-                                            snprintf(buf, 512, "(0. 0. 0. %ld) (1. 0. 0. %ld)", velocity, velocity);
+                                            snprintf(buf, 512, "[0. 0. 0. %ld] [1. 0. 0. %ld]", velocity, velocity);
                                             llll_appendllll(found, llll_from_text_buf(buf));
                                         } else {
-                                            llll_appendllll(found, llll_from_text_buf("(0. 0. 0.) (1. 0. 0.)"));
+                                            llll_appendllll(found, llll_from_text_buf("[0. 0. 0.] [1. 0. 0.]"));
                                         }
                                     } else
                                         llll_appendllll(found, llll_get());
@@ -2515,6 +2523,150 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                     }
                         break;
 
+                    case k_PLAYKEYS_CENTSPROFILE:
+                    {
+                        switch (incoming) {
+                            case k_PLAYKEYS_INCOMING_ROLLNOTE:
+                            case k_PLAYKEYS_INCOMING_ROLLCHORD:
+                            case k_PLAYKEYS_INCOMING_SCORENOTE:
+                            case k_PLAYKEYS_INCOMING_SCORECHORD:
+                            case k_PLAYKEYS_INCOMING_ROLLNOTE_COMMAND:
+                            case k_PLAYKEYS_INCOMING_ROLLCHORD_COMMAND:
+                            case k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND:
+                            case k_PLAYKEYS_INCOMING_SCORECHORD_COMMAND:
+                                found = llll_get();
+                                for (t_llllelem *startnoteel = getindex_2levels(in_ll, 4, incoming_is_from_roll(incoming) ? 2 : 5); startnoteel; startnoteel = startnoteel->l_next) {
+                                    if (hatom_gettype(&startnoteel->l_hatom) != H_LLLL)
+                                        break;
+                                    t_llll *notell = hatom_getllll(&startnoteel->l_hatom);
+                                    if (!can_llll_be_a_note(notell))
+                                        break;
+                                    
+                                    double start_cents = 0;
+                                    if ((target_el = llll_getindex(notell, 1, I_STANDARD))) {
+                                        start_cents = hatom_getdouble(&target_el->l_hatom);
+                                    }
+                                    
+                                    t_llll *out_ll = llll_get();
+                                    if ((target_el = root_find_el_with_sym_router(notell, _llllobj_sym_breakpoints))) {
+                                        t_llll *breakpoints = hatom_getllll(&target_el->l_hatom);
+                                        if (breakpoints) {
+                                            for (t_llllelem *bptel = breakpoints->l_head; bptel; bptel = bptel->l_next) {
+                                                if (hatom_gettype(&bptel->l_hatom) == H_LLLL) {
+                                                    t_llll *bptel_ll = hatom_getllll(&bptel->l_hatom);
+                                                    if (bptel_ll->l_size >= 2) {
+                                                        double pos = hatom_getdouble(&bptel_ll->l_head->l_hatom);
+                                                        double deltacents = hatom_getdouble(&bptel_ll->l_head->l_next->l_hatom);
+                                                        double slope = bptel_ll->l_size >= 3 ? hatom_getdouble(&bptel_ll->l_head->l_next->l_next->l_hatom) : 0.;
+                                                        t_llll *subll = llll_get();
+                                                        llll_appenddouble(subll, pos);
+                                                        llll_appenddouble(subll, start_cents + deltacents);
+                                                        llll_appenddouble(subll, slope);
+                                                        llll_appendllll(out_ll, subll);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        llll_appendllll(found, out_ll);
+                                    } else if (x->n_use_default_breakpoints) {
+                                        t_llll *out_ll = llll_get();
+                                        t_llll *out_ll_start = llll_get();
+                                        t_llll *out_ll_end = llll_get();
+                                        llll_appenddouble(out_ll_start, 0.);
+                                        llll_appenddouble(out_ll_start, start_cents);
+                                        llll_appenddouble(out_ll_start, 0.);
+                                        llll_appenddouble(out_ll_end, 1.);
+                                        llll_appenddouble(out_ll_end, start_cents);
+                                        llll_appenddouble(out_ll_end, 0.);
+                                        llll_appendllll(out_ll, out_ll_start);
+                                        llll_appendllll(out_ll, out_ll_end);
+                                        llll_appendllll(found, out_ll);
+                                    } else {
+                                        llll_appenddouble(found, start_cents);
+                                    }
+                                }
+                                break;
+                                
+                            default:
+                                break;
+                        }
+                        playkeys_handle_flattening_and_nullmode(x, &found, incoming, this_key->property, outlet);
+                    }
+                        break;
+                        
+                        
+                    case k_PLAYKEYS_VELOCITYPROFILE:
+                    {
+                        switch (incoming) {
+                            case k_PLAYKEYS_INCOMING_ROLLNOTE:
+                            case k_PLAYKEYS_INCOMING_ROLLCHORD:
+                            case k_PLAYKEYS_INCOMING_SCORENOTE:
+                            case k_PLAYKEYS_INCOMING_SCORECHORD:
+                            case k_PLAYKEYS_INCOMING_ROLLNOTE_COMMAND:
+                            case k_PLAYKEYS_INCOMING_ROLLCHORD_COMMAND:
+                            case k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND:
+                            case k_PLAYKEYS_INCOMING_SCORECHORD_COMMAND:
+                                found = llll_get();
+                                for (t_llllelem *startnoteel = getindex_2levels(in_ll, 4, incoming_is_from_roll(incoming) ? 2 : 5); startnoteel; startnoteel = startnoteel->l_next) {
+                                    if (hatom_gettype(&startnoteel->l_hatom) != H_LLLL)
+                                        break;
+                                    t_llll *notell = hatom_getllll(&startnoteel->l_hatom);
+                                    if (!can_llll_be_a_note(notell))
+                                        break;
+                                    
+                                    double start_velocity = 0;
+                                    if ((target_el = llll_getindex(notell, 3, I_STANDARD))) {
+                                        start_velocity = hatom_getdouble(&target_el->l_hatom);
+                                    }
+                                    
+                                    t_llll *out_ll = llll_get();
+                                    if ((target_el = root_find_el_with_sym_router(notell, _llllobj_sym_breakpoints))) {
+                                        t_llll *breakpoints = hatom_getllll(&target_el->l_hatom);
+                                        if (breakpoints) {
+                                            for (t_llllelem *bptel = breakpoints->l_head; bptel; bptel = bptel->l_next) {
+                                                if (hatom_gettype(&bptel->l_hatom) == H_LLLL) {
+                                                    t_llll *bptel_ll = hatom_getllll(&bptel->l_hatom);
+                                                    if (bptel_ll->l_size >= 4) {
+                                                        double pos = hatom_getdouble(&bptel_ll->l_head->l_hatom);
+                                                        double deltacents = hatom_getdouble(&bptel_ll->l_head->l_next->l_hatom);
+                                                        double slope = hatom_getdouble(&bptel_ll->l_head->l_next->l_next->l_hatom);
+                                                        double velocity = hatom_getdouble(&bptel_ll->l_head->l_next->l_next->l_next->l_hatom);
+                                                        t_llll *subll = llll_get();
+                                                        llll_appenddouble(subll, pos);
+                                                        llll_appenddouble(subll, velocity);
+                                                        llll_appenddouble(subll, slope);
+                                                        llll_appendllll(out_ll, subll);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        llll_appendllll(found, out_ll);
+                                    } else if (x->n_use_default_breakpoints) {
+                                        t_llll *out_ll = llll_get();
+                                        t_llll *out_ll_start = llll_get();
+                                        t_llll *out_ll_end = llll_get();
+                                        llll_appenddouble(out_ll_start, 0.);
+                                        llll_appendlong(out_ll_start, start_velocity);
+                                        llll_appenddouble(out_ll_start, 0.);
+                                        llll_appenddouble(out_ll_end, 1.);
+                                        llll_appendlong(out_ll_end, start_velocity);
+                                        llll_appenddouble(out_ll_end, 0.);
+                                        llll_appendllll(out_ll, out_ll_start);
+                                        llll_appendllll(out_ll, out_ll_end);
+                                        llll_appendllll(found, out_ll);
+                                    } else {
+                                        llll_appendlong(found, start_velocity);
+                                    }
+                                }
+                                break;
+                                
+                            default:
+                                break;
+                        }
+                        playkeys_handle_flattening_and_nullmode(x, &found, incoming, this_key->property, outlet);
+                    }
+                        break;
+                        
 
 
                     case k_PLAYKEYS_NAME:

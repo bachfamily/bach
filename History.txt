@@ -156,7 +156,9 @@ VERSION NOTES:
 
 - bach.beatunbox:   fixed bug causing crashes with wrong syntax
                     fixed bug causing non-output of chord-attached slots
-                    
+                 
+- bach.playkeys: new keys: "midinote", "frequency", "centsprofile", "velocityprofile"
+
 v0.8.3
 
 ***********************
