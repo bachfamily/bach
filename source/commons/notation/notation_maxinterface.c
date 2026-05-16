@@ -2757,7 +2757,7 @@ void notation_class_add_play_attributes(t_class *c, char obj_type){
         CLASS_ATTR_FILTER_CLIP(c, "playpartialnotes", 0, 2);
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"playpartialnotes", 0, "1");
         // @exclude bach.slot
-        // @description Toggle the ability to play partial notes, when the playhead starts from a point where a note has
+        // @description Toggles the ability to play partial notes, when the playhead starts from a point where a note has
         // already started but not yet ended. In this case, all temporal information (temporal slots, pitch breakpoints)
         // is properly trimmed, and the corresponding partial note is played.
         // By default this is 1 (quiet playing); if you set the attribute to 2 (verbosely), instead of the onset a
@@ -2768,22 +2768,22 @@ void notation_class_add_play_attributes(t_class *c, char obj_type){
         CLASS_ATTR_DEFAULT_SAVE(c,"highlightplay",0,"0");
         CLASS_ATTR_ACCESSORS(c, "highlightplay", (method)NULL, (method)notationobj_setattr_highlightplay);
         // @exclude bach.slot
-        // @description Toggle the ability to highlight the played notes with the <m>playcolor</m>.
+        // @description Toggles the ability to highlight the played notes with the <m>playcolor</m>.
         // By default this is 0; if you turn it on be aware that it takes significant CPU time with scores with many notes.
 
         CLASS_ATTR_CHAR(c,"playmarkers",0, t_notation_obj, play_markers);
         CLASS_ATTR_STYLE_LABEL(c,"playmarkers",0,"onoff","Play Markers");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"playmarkers", 0, "1");
         // @exclude bach.slot
-        // @description Toggle the ability to also send the marker information through the playout during the playback.
+        // @description Toggles the ability to also send the marker information through the playout during the playback.
         // By default this is on (1).
 
         CLASS_ATTR_CHAR(c,"playslurs",0, t_notation_obj, play_slurs);
-        CLASS_ATTR_STYLE_LABEL(c,"playslurs",0,"onoff","Play Slurs");
+        CLASS_ATTR_STYLE_LABEL(c,"playslurs",0,"enumindex","Play Slurs");
         CLASS_ATTR_ENUMINDEX(c,"playslurs", 0, "Don't Chordwise Only Also Notewise (Highest) Also Notewise (Lowest) Also Notewise (Any))");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"playslurs", 0, "1");
         // @exclude bach.slot
-        // @description Toggle the ability to also send the slur information through the playout during the playback.
+        // @description Toggles the ability to also send the slur information through the playout during the playback.
         // There are several options: <br />
         // 0 (Don't): don't send out slurs information; <br />
         // 1 (Chordwise Only, default): send out slur information only with chordwise <m>playmode</m>; <br />
@@ -2792,12 +2792,21 @@ void notation_class_add_play_attributes(t_class *c, char obj_type){
         // 3 (Also Notewise [Lowest]): the same, with the lowest note of a chord; <br />
         // 4 (Also Notewise [Any]): the same, with the any note of a chord. <br />
 
+        CLASS_ATTR_CHAR(c,"playslursend",0, t_notation_obj, play_slurs_end);
+        CLASS_ATTR_STYLE_LABEL(c,"playslursend",0,"onoff","Play Slurs End");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"playslursend", 0, "1");
+        // @exclude bach.slot
+        // @description Toggles the ability to send information about when a slur ends during playback.
+        // This information is characterized by a negative number of spanned chords (instead of a positive one).
+        // For instance, a value for -3 means that a slur has ended which had started 3 chords ago.
+
+        
         CLASS_ATTR_CHAR(c,"useloop",0, t_notation_obj, use_loop_region);
         CLASS_ATTR_STYLE_LABEL(c,"useloop",0,"onoff","Activate Loop Region (When Shown)");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"useloop", 0, "1");
         CLASS_ATTR_ACCESSORS(c, "useloop", (method)NULL, (method)notationobj_setattr_useloop);
         // @exclude bach.slot
-        // @description Toggle the ability to use the loop region during the playback, if such region is shown (see the
+        // @description Toggles the ability to use the loop region during the playback, if such region is shown (see the
         // <m>showloop</m> attribute). If this is 1, and the loop region is shown, the playback will loop inside the region;
         // otherwise, even if the loop region is shown, the playback will continue linearly, without looping. By default this is 1.
 
@@ -2808,7 +2817,7 @@ void notation_class_add_play_attributes(t_class *c, char obj_type){
         CLASS_ATTR_FILTER_CLIP(c, "playoutfullpath", 0, 2);
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"playoutfullpath", 0, "0");
         // @exclude bach.slot
-        // @description Toggle the ability to output from the playout, instead of the voice number, the full path
+        // @description Toggles the ability to output from the playout, instead of the voice number, the full path
         // to get to the played element.
         // The playout syntax normally has as first element the voice number of the output item (note or chord).
         // By default this attribute is 0, and the simple voice number is output as first element. <br />
