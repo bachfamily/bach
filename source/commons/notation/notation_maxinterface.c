@@ -1625,25 +1625,28 @@ void notation_class_add_notation_attributes(t_class *c, char obj_type){
 
     CLASS_STICKY_ATTR(c,"category",0,"Notation");
 
-    CLASS_ATTR_CHAR(c,"showaccidentalspreferences",0, t_notation_obj, show_accidentals_preferences);
-    CLASS_ATTR_STYLE_LABEL(c,"showaccidentalspreferences",0,"enumindex","Display Accidentals");
-    CLASS_ATTR_ENUMINDEX(c,"showaccidentalspreferences", 0, "Classically Always Altered Notes Altered Notes (No Repetition) Altered Note (No Naturals) Never");
-    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showaccidentalspreferences", 0, "0");
-    CLASS_ATTR_ACCESSORS(c, "showaccidentalspreferences", (method)NULL, (method)notationobj_setattr_showaccidentalspreferences);
-    // @description Handles the display of accidentals: <br />
-    // - Classically (default): for <o>bach.score</o>: accidentals are displayed classically, i.e. on the first (altered) note requiring them,
-    //  and them never for any other note inside the same measure (but cautionary accidentals are possible: see the attribute <m>cautionaryaccidentals</m>);
-    // for <o>bach.roll</o>: this coincides with Altered Note (No Naturals) (see below). <br />
-    // - Always: accidentals are always displayed for all altered and naturals notes. <br />
-    // - Altered Notes: accidentals are always displayed for any altered note. Natural signs are preserved for notes which have to cancel such accidental. <br />
-    // - Altered Notes (No Repetition): accidentals are always displayed for any altered note, but dropped for immediate repetitions of the same note. <br />
-    // - Altered Note (No Naturals): accidentals are always displayed for any altered note, and natural signs are dropped for notes having to cancel such accidentals.
-    // In this case all non-natural notes have their accidental, and all natural notes have no accidental. <br />
-    // - Never: accidentals are never shown (always hidden). <br />
-    // IMPORTANT: be aware of the fact that, due to the cross dependencies between accidentals, in <o>bach.roll</o> the "Altered Notes"
-    // "Altered Notes (No Repetition)" configurations can be sensibly slower than any other any other configuration
-    // (<o>bach.score</o>, on the other hand, does not suffer from this issue).
-
+    if (obj_type != k_NOTATION_OBJECT_SLOT) {
+        CLASS_ATTR_CHAR(c,"showaccidentalspreferences",0, t_notation_obj, show_accidentals_preferences);
+        CLASS_ATTR_STYLE_LABEL(c,"showaccidentalspreferences",0,"enumindex","Display Accidentals");
+        CLASS_ATTR_ENUMINDEX(c,"showaccidentalspreferences", 0, "Classically Always Altered Notes Altered Notes (No Repetition) Altered Note (No Naturals) Never");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showaccidentalspreferences", 0, "0");
+        CLASS_ATTR_ACCESSORS(c, "showaccidentalspreferences", (method)NULL, (method)notationobj_setattr_showaccidentalspreferences);
+        // @exclude bach.slot
+        // @description Handles the display of accidentals: <br />
+        // - Classically (default): for <o>bach.score</o>: accidentals are displayed classically, i.e. on the first (altered) note requiring them,
+        //  and them never for any other note inside the same measure (but cautionary accidentals are possible: see the attribute <m>cautionaryaccidentals</m>);
+        // for <o>bach.roll</o>: this coincides with Altered Note (No Naturals) (see below). <br />
+        // - Always: accidentals are always displayed for all altered and naturals notes. <br />
+        // - Altered Notes: accidentals are always displayed for any altered note. Natural signs are preserved for notes which have to cancel such accidental. <br />
+        // - Altered Notes (No Repetition): accidentals are always displayed for any altered note, but dropped for immediate repetitions of the same note. <br />
+        // - Altered Note (No Naturals): accidentals are always displayed for any altered note, and natural signs are dropped for notes having to cancel such accidentals.
+        // In this case all non-natural notes have their accidental, and all natural notes have no accidental. <br />
+        // - Never: accidentals are never shown (always hidden). <br />
+        // IMPORTANT: be aware of the fact that, due to the cross dependencies between accidentals, in <o>bach.roll</o> the "Altered Notes"
+        // "Altered Notes (No Repetition)" configurations can be sensibly slower than any other any other configuration
+        // (<o>bach.score</o>, on the other hand, does not suffer from this issue).
+    }
+    
     CLASS_STICKY_ATTR_CLEAR(c, "category");
 }
 
