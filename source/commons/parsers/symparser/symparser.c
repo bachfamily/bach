@@ -1443,7 +1443,7 @@ static const flex_int16_t yy_chk[1937] =
 #include <unistd.h>
 #endif
 
-#define YY_EXTRA_TYPE t_parser *
+#define YY_EXTRA_TYPE t_symParser *
 
 /* Holds the entire state of the reentrant scanner. */
 struct yyguts_t
@@ -3332,7 +3332,8 @@ void t_symParser::reset()
 YY_BUFFER_STATE symparser_scan_string(yyscan_t myscanner, char *buf)
 {
     struct yyguts_t *yyg = (struct yyguts_t*) myscanner;
-    BEGIN ((t_symParser *) myscanner)->getStartCondition();
+    t_symParser *theParser = symparser_get_extra(myscanner);
+    BEGIN theParser->getStartCondition();
     YY_BUFFER_STATE bp = yy_scan_string(buf, myscanner);
     yy_switch_to_buffer(bp, myscanner);
     return bp;

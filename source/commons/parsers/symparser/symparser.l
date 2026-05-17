@@ -63,7 +63,7 @@ JIPITCHR ({INTEGER}([/]{INTEGER})?r)
 
 %}
 
-%option extra-type = "t_parser *"
+%option extra-type = "t_symParser *"
 
 %%
 
@@ -309,7 +309,8 @@ void t_symParser::reset()
 YY_BUFFER_STATE symparser_scan_string(yyscan_t myscanner, char *buf)
 {
     struct yyguts_t *yyg = (struct yyguts_t*) myscanner;
-    BEGIN ((t_symParser *) myscanner)->getStartCondition();
+    t_symParser *theParser = symparser_get_extra(myscanner);
+    BEGIN theParser->getStartCondition();
     YY_BUFFER_STATE bp = yy_scan_string(buf, myscanner);
     yy_switch_to_buffer(bp, myscanner);
     return bp;
