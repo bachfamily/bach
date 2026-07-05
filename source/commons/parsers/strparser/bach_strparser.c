@@ -3768,7 +3768,7 @@ void *strparser_alloc(size_t bytes, void *yyscanner)
 {
     void *b;
     if (!yyscanner) {
-        b = bach_newptr(bytes);
+        b = bach_newptr(sizeof(struct yyguts_t));
     } else {
         t_strParser *theParser = strparser_get_extra(yyscanner);
         b = theParser->isBig() ? bach_newptr(bytes) : theParser->getPtr(bytes);
