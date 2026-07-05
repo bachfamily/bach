@@ -390,7 +390,7 @@ void *strparser_alloc(size_t bytes, void *yyscanner)
 {
     void *b;
     if (!yyscanner) {
-        b = bach_newptr(sizeof(t_strParser)); // it's much more than we actually need, but this lets us define a valid "big" field
+        b = bach_newptr(sizeof(struct yyguts_t));
     } else {
         t_strParser *theParser = strparser_get_extra(yyscanner);
         b = theParser->isBig() ? bach_newptr(bytes) : theParser->getPtr(bytes);
@@ -422,5 +422,4 @@ void strparser_free(void *ptr,void *yyscanner)
     } else {
         parserpost(" strparser_free: requested to free %ptr but doing nothing", ptr);
     }
-    
 }

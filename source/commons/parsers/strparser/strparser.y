@@ -142,8 +142,9 @@ void t_strParser::parse(const char *buf, t_llll **ll, t_llll_stack *stack, long 
         yyscan_t myscanner;
         YY_BUFFER_STATE bp;
         strparser_lex_init(&myscanner);
-        ((t_strParser *) myscanner)->makeBig();
-        ((t_strParser *) myscanner)->setStartCondition(startCondition);
+        strparser_set_extra(this, myscanner);
+        makeBig();
+        setStartCondition(startCondition);
         bp = strparser_scan_string(myscanner, buf);
         strparser_parse(myscanner, ll, stack, depth);
         strparser_flush_and_delete_buffer(myscanner, bp);

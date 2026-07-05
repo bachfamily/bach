@@ -88,8 +88,8 @@
 		
 #ifdef CONFIGURATION_Development
     //#define BACH_SHOW_POOL_USAGE
-    //#define BACH_CHECK_LLLLS
-    //#define BACH_PEDANTICALLY_CHECK_LLLLS
+    #define BACH_CHECK_LLLLS
+    #define BACH_PEDANTICALLY_CHECK_LLLLS
     //#define BACH_CHECK_PHONENUMBERS
     //#define BACH_USE_MAGIC_NUMBER
 
