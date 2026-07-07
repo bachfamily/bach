@@ -296,6 +296,8 @@ t_atom_float step_get_progress(t_step *x)
     long best_depth = -1, best_length = x->n_iterationmode == 0 ? LONG_MAX : -1;
     long pivot = 0, scalarmode_can_apply;
     for (long i = 0; i < n_lists; i++) {
+        if (!cache->i_address[i])
+            return 1.;
         long this_depth = cache->i_address[i]->l_size;
         if (this_depth > best_depth) {
             // with recursion mode active, we choose the one with the "longest" address, i.e. the deepest iteration
