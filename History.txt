@@ -162,6 +162,8 @@ VERSION NOTES:
                  
 - bach.playkeys: new keys: "midinote", "frequency", "centsprofile", "velocityprofile"
 
+- bach.llll2dict: fixed bug causing crashes with some  unexpected non-llll values
+
 v0.8.3
 
 ***********************
