@@ -768,7 +768,6 @@
 		913D57B5232B972E00BC6B45 /* stringparser_tab_nolines.h in Headers */ = {isa = PBXBuildFile; fileRef = 913D5788232B972C00BC6B45 /* stringparser_tab_nolines.h */; };
 		913D57B7232B972E00BC6B45 /* stringparser_nolines.c in Sources */ = {isa = PBXBuildFile; fileRef = 913D578A232B972C00BC6B45 /* stringparser_nolines.c */; };
 		913D57B9232B972E00BC6B45 /* makefile in Sources */ = {isa = PBXBuildFile; fileRef = 913D578C232B972C00BC6B45 /* makefile */; };
-		913D57BA232B972E00BC6B45 /* stringparser.h in Headers */ = {isa = PBXBuildFile; fileRef = 913D578E232B972C00BC6B45 /* stringparser.h */; };
 		913D57BB232B972E00BC6B45 /* stringparser_tab_nolines.c in Sources */ = {isa = PBXBuildFile; fileRef = 913D578F232B972D00BC6B45 /* stringparser_tab_nolines.c */; };
 		913D57BE232B972E00BC6B45 /* stringparser_lex_nolines.h in Headers */ = {isa = PBXBuildFile; fileRef = 913D5792232B972D00BC6B45 /* stringparser_lex_nolines.h */; };
 		913D57BF232B972E00BC6B45 /* builtInFunctionWithFindFn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 913D5793232B972D00BC6B45 /* builtInFunctionWithFindFn.cpp */; };
@@ -4069,7 +4068,6 @@
 		913D578A232B972C00BC6B45 /* stringparser_nolines.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stringparser_nolines.c; sourceTree = "<group>"; };
 		913D578B232B972C00BC6B45 /* stringparser.tab.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stringparser.tab.c; sourceTree = "<group>"; };
 		913D578C232B972C00BC6B45 /* makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = makefile; sourceTree = "<group>"; };
-		913D578E232B972C00BC6B45 /* stringparser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stringparser.h; sourceTree = "<group>"; };
 		913D578F232B972D00BC6B45 /* stringparser_tab_nolines.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stringparser_tab_nolines.c; sourceTree = "<group>"; };
 		913D5790232B972D00BC6B45 /* stringparser.tab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stringparser.tab.h; sourceTree = "<group>"; };
 		913D5791232B972D00BC6B45 /* stringparser.lex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stringparser.lex.h; sourceTree = "<group>"; };
@@ -6780,7 +6778,6 @@
 				913D578A232B972C00BC6B45 /* stringparser_nolines.c */,
 				913D578B232B972C00BC6B45 /* stringparser.tab.c */,
 				913D578C232B972C00BC6B45 /* makefile */,
-				913D578E232B972C00BC6B45 /* stringparser.h */,
 				913D578F232B972D00BC6B45 /* stringparser_tab_nolines.c */,
 				913D5790232B972D00BC6B45 /* stringparser.tab.h */,
 				913D5791232B972D00BC6B45 /* stringparser.lex.h */,
@@ -8252,7 +8249,6 @@
 				00992CFA2C2EE6CC00DA02CD /* ANTLRFileStream.h in Headers */,
 				913D57A4232B972E00BC6B45 /* function.hpp in Headers */,
 				00992CE72C2EE6CC00DA02CD /* ParseTreeListener.h in Headers */,
-				913D57BA232B972E00BC6B45 /* stringparser.h in Headers */,
 				00992CCF2C2EE6CC00DA02CD /* XPathLexer.h in Headers */,
 				91C6047418C0D9F50027BB79 /* sdiftypes.h in Headers */,
 				00992CB32C2EE6CC00DA02CD /* CPPUtils.h in Headers */,
