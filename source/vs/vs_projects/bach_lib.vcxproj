@@ -122,6 +122,7 @@
     <ClCompile Include="..\..\commons\notation\notation_slurs.c" />
     <ClCompile Include="..\..\commons\notation\notation_undo.c" />
     <ClCompile Include="..\..\commons\parsers\alterparser\bach_alterparser.c" />
+    <ClCompile Include="..\..\commons\parsers\bach_parser.cpp" />
     <ClCompile Include="..\..\commons\parsers\chkparser\bach_chkparser.c" />
     <ClCompile Include="..\..\commons\parsers\exprparser\bach_exprparser.c" />
     <ClCompile Include="..\..\commons\parsers\pitchparser\bach_pitchparser.c" />
@@ -152,7 +153,6 @@
     <ClInclude Include="..\..\commons\bell\patcherVariable.hpp" />
     <ClInclude Include="..\..\commons\bell\pvManager.hpp" />
     <ClInclude Include="..\..\commons\bell\sharedVariable.hpp" />
-    <ClInclude Include="..\..\commons\bell\stringparser\stringparser.h" />
     <ClInclude Include="..\..\commons\bell\stringparser\stringparser_lex_nolines.h" />
     <ClInclude Include="..\..\commons\bell\stringparser\stringparser_tab_nolines.h" />
     <ClInclude Include="..\..\commons\bell\value.hpp" />
