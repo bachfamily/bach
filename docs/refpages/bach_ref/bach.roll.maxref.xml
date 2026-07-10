@@ -3254,6 +3254,28 @@
 				<br />				See also:<m>tail</m>,<m>duration</m>,<m>glissando</m><br />
 			</description>
 		</method>
+		<method name="glue">
+			<arg name="selection" optional="1" type="sym" />
+			<arg name="threshold_ms" optional="0" type="float" />
+			<arg name="threshold_cents" optional="0" type="float" />
+			<arg name="smoothing_ms" optional="1" type="float" />
+			<digest>
+				Connect notes
+			</digest>
+			<description>
+				Syntax: <b>glue <m>[&lt;sym: selection&gt;]</m> <m>&lt;float: threshold_ms&gt;</m> <m>&lt;float: threshold_cents&gt;</m> <m>[&lt;float: smoothing_ms&gt;]</m> </b><br />
+				Examples:<br />
+				• <b>glue 200 10</b>   <i>→ connect notes that are tail-to-head &lt;= 200ms and &lt;= 10cents apart</i><br />
+				• <b>merge selection 200 10</b>   <i>→ same, but only connect elements if selected</i><br />
+				<br />
+				You can use the <m>glue</m> message to connect notes whenever the tail of the first and the head of the
+				second are less than a given time threshold and pitch threshold apart. These two thresholds are the arguments
+				(in milliseconds and cents respectively).
+				If an optional "selection" symbol is put in front of the time threshold argument, the merging is performend only on the current selection,
+				otherwise it is performed on the whole score. <br />
+				<br />				See also:<m>merge</m>,<m>gluechord</m><br />
+			</description>
+		</method>
 		<method name="gluechord">
 			<arg name="voice_number" optional="1" type="int" />
 			<arg name="chord" optional="0" type="llll" />
@@ -4563,7 +4585,7 @@
 				Merging also applies to markers, which actually entails a deletion of markers nearer than <m>threshold_ms</m> to some other marker.
 				Time position is averaged with <m>time_merging_policy</m> also. If you don't want markers to be thinned, consider selecting all chords only
 				and then using <m>merge selection</m>.
-				<br />				See also:<m>explodechords</m><br />
+				<br />				See also:<m>glue</m>,<m>explodechords</m><br />
 			</description>
 		</method>
 		<method name="moveslot">
@@ -4643,6 +4665,22 @@
 			</description>
 		</method>
 		<method name="nametoslot">
+			<arg name="pitchslot" optional="0" type="int" />
+			<arg name="velocityslot" optional="1" type="int" />
+			<digest>
+				Copy duration line breakpoint function into a slot
+			</digest>
+			<description>
+				Syntax: <b>nametoslot <m>&lt;int: pitchslot&gt;</m> <m>[&lt;int: velocityslot&gt;]</m> </b><br />				<br />
+				A <m>dltoslot</m> message copies the duration line envelope (as a breakpoint function)
+				into a given slot for all the selected notes. Actually, the message copies both a pitch envelope and a velocity envelope
+				into two different slots, given as arguments (use -1 to avoid assigning one of the slots).
+				You should ensure that the introduced slots are of the appropriate type (in particular, they should be
+				function slots, with an appropriate range and a domain between 0 and 1). <br />
+				<br />				See also:<m>setslot</m><br />
+			</description>
+		</method>
+		<method name="nametoslot">
 			<arg name="slot_number_or_name" optional="0" type="int/symbol" />
 			<arg name="policy" optional="1" type="symbol" />
 			<digest>
@@ -4662,22 +4700,6 @@
 				- "merge" or "mergeprepend" (default): only chord names which don't already belong to the note are prepended to existing note names; <br />
 				- "mergeappend": only chord names which don't already belong to note are appendend to existing note names.
 				<br />				See also:<m>name</m>,<m>nameappend</m>,<m>clearnames</m>,<m>sel</m>,<m>unsel</m>,<m>select</m><br />
-			</description>
-		</method>
-		<method name="nametoslot">
-			<arg name="pitchslot" optional="0" type="int" />
-			<arg name="velocityslot" optional="1" type="int" />
-			<digest>
-				Copy duration line breakpoint function into a slot
-			</digest>
-			<description>
-				Syntax: <b>nametoslot <m>&lt;int: pitchslot&gt;</m> <m>[&lt;int: velocityslot&gt;]</m> </b><br />				<br />
-				A <m>dltoslot</m> message copies the duration line envelope (as a breakpoint function)
-				into a given slot for all the selected notes. Actually, the message copies both a pitch envelope and a velocity envelope
-				into two different slots, given as arguments (use -1 to avoid assigning one of the slots).
-				You should ensure that the introduced slots are of the appropriate type (in particular, they should be
-				function slots, with an appropriate range and a domain between 0 and 1). <br />
-				<br />				See also:<m>setslot</m><br />
 			</description>
 		</method>
 		<method name="onset">
@@ -5320,6 +5342,29 @@
 		<method name="resetslotinfo">
 			<arglist />
 			<digest>
+				Reset the slotinfo to the default one
+			</digest>
+			<description>
+				A <m>resetslotinfo</m> message will reset the all the <m>slotinfo</m> to the original one.
+				Beware that this may entail slot type conversions, which might result in loss of data if slot types are not compatible.
+				The slotinfo is the information about the types, ranges and many further characteristics of each one of the slots.
+				For bach.roll and bach.score, it is a global information: changing the slotinfo for a given slot will
+				affect such slot for all the notes inside the notation object. See the <m>llll</m> method to know more about its syntax.
+				<br />				See also:<m>eraseslot</m><br />
+			</description>
+		</method>
+		<method name="resetslotinfo">
+			<arglist />
+			<digest>
+				Reset the commands to the default one
+			</digest>
+			<description>
+				A <m>resetcommands</m> message will reset the all the <m>comnands</m> to the original ones
+			</description>
+		</method>
+		<method name="resetslotinfo">
+			<arglist />
+			<digest>
 				Reset the custom articulations definition to the default one
 			</digest>
 			<description>
@@ -5335,29 +5380,6 @@
 			<description>
 				A <m>resetnoteheadinfo</m> message will reset the all the <m>noteheadinfo</m> to the original one, i.e. will delete
 				all the user-defined noteheads.
-			</description>
-		</method>
-		<method name="resetslotinfo">
-			<arglist />
-			<digest>
-				Reset the commands to the default one
-			</digest>
-			<description>
-				A <m>resetcommands</m> message will reset the all the <m>comnands</m> to the original ones
-			</description>
-		</method>
-		<method name="resetslotinfo">
-			<arglist />
-			<digest>
-				Reset the slotinfo to the default one
-			</digest>
-			<description>
-				A <m>resetslotinfo</m> message will reset the all the <m>slotinfo</m> to the original one.
-				Beware that this may entail slot type conversions, which might result in loss of data if slot types are not compatible.
-				The slotinfo is the information about the types, ranges and many further characteristics of each one of the slots.
-				For bach.roll and bach.score, it is a global information: changing the slotinfo for a given slot will
-				affect such slot for all the notes inside the notation object. See the <m>llll</m> method to know more about its syntax.
-				<br />				See also:<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="respell">
@@ -7687,7 +7709,7 @@
 				Highlight Played Notes
 			</digest>
 			<description>
-				Toggle the ability to highlight the played notes with the <m>playcolor</m>.
+				Toggles the ability to highlight the played notes with the <m>playcolor</m>.
 				By default this is 0; if you turn it on be aware that it takes significant CPU time with scores with many notes.
 			</description>
 			<attributelist>
@@ -9028,7 +9050,7 @@
 				Play Markers
 			</digest>
 			<description>
-				Toggle the ability to also send the marker information through the playout during the playback.
+				Toggles the ability to also send the marker information through the playout during the playback.
 				By default this is on (1).
 			</description>
 			<attributelist>
@@ -9209,7 +9231,7 @@
 				Full Path In Playout Syntax
 			</digest>
 			<description>
-				Toggle the ability to output from the playout, instead of the voice number, the full path
+				Toggles the ability to output from the playout, instead of the voice number, the full path
 				to get to the played element.
 				The playout syntax normally has as first element the voice number of the output item (note or chord).
 				By default this attribute is 0, and the simple voice number is output as first element. <br />
@@ -9249,7 +9271,7 @@
 				Play Partial Notes
 			</digest>
 			<description>
-				Toggle the ability to play partial notes, when the playhead starts from a point where a note has
+				Toggles the ability to play partial notes, when the playhead starts from a point where a note has
 				already started but not yet ended. In this case, all temporal information (temporal slots, pitch breakpoints)
 				is properly trimmed, and the corresponding partial note is played.
 				By default this is 1 (quiet playing); if you set the attribute to 2 (verbosely), instead of the onset a
@@ -9449,7 +9471,7 @@
 				Play Slurs
 			</digest>
 			<description>
-				Toggle the ability to also send the slur information through the playout during the playback.
+				Toggles the ability to also send the slur information through the playout during the playback.
 				There are several options: <br />
 				0 (Don't): don't send out slurs information; <br />
 				1 (Chordwise Only, default): send out slur information only with chordwise <m>playmode</m>; <br />
@@ -9465,6 +9487,24 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
+			</attributelist>
+		</attribute>
+		<attribute name="playslursend" get="1" set="1" type="int" size="1">
+			<digest>
+				Play Slurs End
+			</digest>
+			<description>
+				Toggles the ability to send information about when a slur ends during playback.
+				This information is characterized by a negative number of spanned chords (instead of a positive one).
+				For instance, a value for -3 means that a slur has ended which had started 3 chords ago.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Play" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Play Slurs End" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
 		<attribute name="playstep" get="1" set="1" type="float" size="1">
@@ -9679,6 +9719,21 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="scalablestafflineswidth" get="1" set="1" type="int" size="1">
+			<digest>
+				Staff Lines Scale With Vertical Zoom
+			</digest>
+			<description>
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Staff Lines Scale With Vertical Zoom" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
 		<attribute name="scrollbarcolor" get="1" set="1" type="rgba" size="1">
@@ -10383,6 +10438,7 @@
 				- Duration Line Width: velocities are mapped on the width of the duration line, from almost 0 (velocity = 1, extremely thin) to the width defined
 				via the attribute <m>durationlinewidth</m> (velocity = 127, maximum thickness). <br />
 				- Notehead Size: velocities are mapped on the size of the notehead and accidentals, from the smallest size (velocity = 1) to the ordinary size (velocity = 127).
+				- Note Size: both Duration Line Width and Notehead Size are combined
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Show" />
@@ -10779,6 +10835,21 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text_large" />
 			</attributelist>
 		</attribute>
+		<attribute name="stafflineswidth" get="1" set="1" type="float" size="1">
+			<digest>
+				Staff Lines Width
+			</digest>
+			<description>
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="1." />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Staff Lines Width" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
 		<attribute name="stemcolor" get="1" set="1" type="rgba" size="1">
 			<digest>
 				Stem Color
@@ -10889,7 +10960,7 @@
 				Activate Loop Region (When Shown)
 			</digest>
 			<description>
-				Toggle the ability to use the loop region during the playback, if such region is shown (see the
+				Toggles the ability to use the loop region during the playback, if such region is shown (see the
 				<m>showloop</m> attribute). If this is 1, and the loop region is shown, the playback will loop inside the region;
 				otherwise, even if the loop region is shown, the playback will continue linearly, without looping. By default this is 1.
 			</description>

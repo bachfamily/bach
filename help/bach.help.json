@@ -57,13 +57,6 @@
 				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "operator", "precedence", "paren" ],
 				"title" : [ "Precedence" ]
 			},
-			"Basicunaryoperators" : {
-				"filename" : [ "bach.help.bell.010_basics.060_basicunaryoperators.maxpat" ],
-				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
-				"seealso" : [ "concatenation", "whitespace", "bell+llll" ],
-				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "unary", "operator" ],
-				"title" : [ "Basic Unary Operators" ]
-			},
 			"Unaryoperators" : {
 				"filename" : [ "bach.help.bell.010_basics.060_unaryoperators.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
@@ -389,10 +382,10 @@
 			},
 			"Scopeoflocalvariables" : {
 				"filename" : [ "bach.help.bell.060_functions.050_scopeoflocalvariables.maxpat" ],
-				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"objects" : [  ],
 				"seealso" : [  ],
-				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "variable", "local", "assignment", "scope", "visibility", "dynamic", "scoping", "propagation" ],
-				"title" : [ "Scope of local variables" ]
+				"tags" : [  ],
+				"title" : [ "" ]
 			},
 			"Liftedvariables" : {
 				"filename" : [ "bach.help.bell.060_functions.060_liftedvariables.maxpat" ],
@@ -438,10 +431,10 @@
 			},
 			"Argumentnames" : {
 				"filename" : [ "bach.help.bell.060_functions.080_argumentnames.maxpat" ],
-				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
-				"seealso" : [ "global+variable", "global+function" ],
-				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "argument", "variable", "local", "passing" ],
-				"title" : [ "Argument names" ]
+				"objects" : [  ],
+				"seealso" : [  ],
+				"tags" : [  ],
+				"title" : [ "" ]
 			},
 			"Functionfun" : {
 				"filename" : [ "bach.help.bell.060_functions.090_functionfun.maxpat" ],
@@ -544,10 +537,10 @@
 			"Built-in functions reference" : {
 				"Mathfunctions" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.00_mathfunctions.maxpat" ],
-					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"objects" : [  ],
 					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "math", "mathematics", "functional", "form", "operator", "#!", "#~", "#u-", "abs", "acos", "acosh", "asin", "asinh", "atan", "atanh", "ceil", "cos", "cosh", "den", "exp", "exp2", "float", "floor", "int", "log", "log10", "log2", "num", "rat", "round", "sgn", "sin", "sin" ],
-					"title" : [ "Math functions reference" ]
+					"tags" : [  ],
+					"title" : [ "" ]
 				},
 				"Alter" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.alter.maxpat" ],
@@ -719,10 +712,10 @@
 				},
 				"Findaddrs" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.findaddrs.maxpat" ],
-					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
-					"seealso" : [ "find", "finditems", "lambda" ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "findaddrs", "find", "search", "address" ],
-					"title" : [ "findaddrs() function reference" ]
+					"objects" : [  ],
+					"seealso" : [  ],
+					"tags" : [  ],
+					"title" : [ "" ]
 				},
 				"Finditems" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.finditems.maxpat" ],
@@ -740,10 +733,10 @@
 				},
 				"Foldratio" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.foldratio.maxpat" ],
-					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
-					"seealso" : [ "degree", "octave", "alter", "pitchkeys", "jisharps", "etsharps" ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "pitch", "alteration", "equal", "tempered" ],
-					"title" : [ "foldratio() function reference" ]
+					"objects" : [  ],
+					"seealso" : [  ],
+					"tags" : [  ],
+					"title" : [ "" ]
 				},
 				"Geomser" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.geomser.maxpat" ],
@@ -775,10 +768,10 @@
 				},
 				"Intersection" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.intersection.maxpat" ],
-					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
-					"seealso" : [ "diff", "union", "symdiff", "lambda" ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet", "intersection", "set" ],
-					"title" : [ "intersection() function reference" ]
+					"objects" : [  ],
+					"seealso" : [  ],
+					"tags" : [  ],
+					"title" : [ "" ]
 				},
 				"Ji" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.ji.maxpat" ],
@@ -873,10 +866,10 @@
 				},
 				"Maximum" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.maximum.maxpat" ],
-					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
-					"seealso" : [ "minmax", "minimum", "max" ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "maximum" ],
-					"title" : [ "maximum() function reference" ]
+					"objects" : [  ],
+					"seealso" : [  ],
+					"tags" : [  ],
+					"title" : [ "" ]
 				},
 				"Mc2f" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.mc2f.maxpat" ],
@@ -971,10 +964,10 @@
 				},
 				"Rev" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.rev.maxpat" ],
-					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
-					"seealso" : [ "rot", "scramble", "perm", "colon" ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "rev", "reverse", "permutation", "llll" ],
-					"title" : [ "rev() function reference" ]
+					"objects" : [  ],
+					"seealso" : [  ],
+					"tags" : [  ],
+					"title" : [ "" ]
 				},
 				"Right" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.right.maxpat" ],
@@ -1616,7 +1609,7 @@
 				"filename" : [ "bach.help.notation.appearance.13_inset.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [  ],
-				"tags" : [ "appearance", "corner", "round", "rounded", "inset", "horizontal" ],
+				"tags" : [ "appearance", "corner", "round", "rounded", "inset", "horizontal", "space", "before", "pad", "border" ],
 				"title" : [ "Horizontal inset and rounded corners" ]
 			},
 			"Legend" : {
@@ -1630,8 +1623,8 @@
 				"filename" : [ "bach.help.notation.appearance.15a_nonantialiasedlines.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "vzoom" ],
-				"tags" : [ "voice", "antialias", "alias", "staff", "lines", "antialiased", "nonantialiased", "nonantialiasedstafflines" ],
-				"title" : [ "Toggle staff lines antialiasing" ]
+				"tags" : [ "voice", "antialias", "alias", "staff", "lines", "antialiased", "nonantialiased", "nonantialiasedstafflines", "width", "stafflineswidth", "scalable", "scalablestafflineswidth" ],
+				"title" : [ "Staff lines width and antialiasing" ]
 			},
 			"B_finitestaff" : {
 				"filename" : [ "bach.help.notation.appearance.15b_finitestaff.maxpat" ],
@@ -3284,6 +3277,13 @@
 				"seealso" : [ "undo" ],
 				"tags" : [ "message", "merge", "merging", "selection" ],
 				"title" : [ "Merging content in bach.score" ]
+			},
+			"B_glueroll" : {
+				"filename" : [ "bach.help.notation.messages.16b_glueroll.maxpat" ],
+				"objects" : [  ],
+				"seealso" : [  ],
+				"tags" : [  ],
+				"title" : [ "" ]
 			},
 			"Explodechords" : {
 				"filename" : [ "bach.help.notation.messages.17_explodechords.maxpat" ],
@@ -5360,6 +5360,13 @@
 				"seealso" : [ "play", "playout+syntax", "play+offline", "playmeasures" ],
 				"tags" : [ "sequencer", "sequencing", "play", "tempo", "playtempi", "showsynchronoustempionce", "sequence", "tempo", "hidden" ],
 				"title" : [ "Sequencing tempi" ]
+			},
+			"B_playslurs" : {
+				"filename" : [ "bach.help.notation.sequencing.19b_playslurs.maxpat" ],
+				"objects" : [  ],
+				"seealso" : [  ],
+				"tags" : [  ],
+				"title" : [ "" ]
 			},
 			"Tracktempo" : {
 				"filename" : [ "bach.help.notation.sequencing.20_tracktempo.maxpat" ],

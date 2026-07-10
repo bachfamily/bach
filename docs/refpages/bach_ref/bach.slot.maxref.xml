@@ -1814,34 +1814,6 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
-		<attribute name="showaccidentalspreferences" get="1" set="1" type="int" size="1">
-			<digest>
-				Display Accidentals
-			</digest>
-			<description>
-				Handles the display of accidentals: <br />
-				- Classically (default): for <o>bach.score</o>: accidentals are displayed classically, i.e. on the first (altered) note requiring them,
-				and them never for any other note inside the same measure (but cautionary accidentals are possible: see the attribute <m>cautionaryaccidentals</m>);
-				for <o>bach.roll</o>: this coincides with Altered Note (No Naturals) (see below). <br />
-				- Always: accidentals are always displayed for all altered and naturals notes. <br />
-				- Altered Notes: accidentals are always displayed for any altered note. Natural signs are preserved for notes which have to cancel such accidental. <br />
-				- Altered Notes (No Repetition): accidentals are always displayed for any altered note, but dropped for immediate repetitions of the same note. <br />
-				- Altered Note (No Naturals): accidentals are always displayed for any altered note, and natural signs are dropped for notes having to cancel such accidentals.
-				In this case all non-natural notes have their accidental, and all natural notes have no accidental. <br />
-				- Never: accidentals are never shown (always hidden). <br />
-				IMPORTANT: be aware of the fact that, due to the cross dependencies between accidentals, in <o>bach.roll</o> the "Altered Notes"
-				"Altered Notes (No Repetition)" configurations can be sensibly slower than any other any other configuration
-				(<o>bach.score</o>, on the other hand, does not suffer from this issue).
-			</description>
-			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
-				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Display Accidentals" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
-			</attributelist>
-		</attribute>
 		<attribute name="showborder" get="1" set="1" type="int" size="1">
 			<digest>
 				Show Border

@@ -9637,61 +9637,6 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
-		<attribute name="cautionaryaccidentals" get="1" set="1" type="int" size="1">
-			<digest>
-				Show Cautionary Accidentals
-			</digest>
-			<description>
-				Handles the display of cautionary accidentals: <br />
-				- Never (default): never display cautionary accidentals. <br />
-				- Same Octave: display cautionary accidentals if notes are the same and in the same octave. <br />
-				- Any Octave: display cautionary accidentals if notes are the same, independently from their octave.
-			</description>
-			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
-				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Cautionary Accidentals" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
-			</attributelist>
-		</attribute>
-		<attribute name="cautionaryaccidentalsdecay" get="1" set="1" type="int" size="1">
-			<digest>
-				Cautionary Accidentals Decay
-			</digest>
-			<description>
-				Sets the scope of the cautionary naturals,
-				It tells after how many chords we no longer bother to put a cautionary natural.
-				By default, if <m>cautionaryaccidentals</m> is not set on never, cautionary naturals are dropped if 3 or more chords have passed after the last occurrence of a given non-natural note.
-			</description>
-			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
-				<attribute name="default" get="1" set="1" type="int" size="1" value="3" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Cautionary Accidentals Decay" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
-			</attributelist>
-		</attribute>
-		<attribute name="cautionaryaccidentalsremind" get="1" set="1" type="int" size="1">
-			<digest>
-				Cautionary Accidentals Remind
-			</digest>
-			<description>
-				Sets the scope of the cautionary accidentals. It represents the minimum number of chords that have to be in between
-				two equal non-natural notes in order for the accidental of the second note to be cautionary reminded.
-				By default, if <m>cautionaryaccidentals</m> is not set on never, accidentals are reminded if more than 10 chords have passed.
-			</description>
-			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notation" />
-				<attribute name="default" get="1" set="1" type="int" size="1" value="10" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Cautionary Accidentals Remind" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
-			</attributelist>
-		</attribute>
 		<attribute name="centeredwholerests" get="1" set="1" type="int" size="1">
 			<digest>
 				Centered Whole Rests In Empty Measures
@@ -10400,7 +10345,7 @@
 				Highlight Played Notes
 			</digest>
 			<description>
-				Toggle the ability to highlight the played notes with the <m>playcolor</m>.
+				Toggles the ability to highlight the played notes with the <m>playcolor</m>.
 				By default this is 0; if you turn it on be aware that it takes significant CPU time with scores with many notes.
 			</description>
 			<attributelist>
@@ -11941,7 +11886,7 @@
 				Play Markers
 			</digest>
 			<description>
-				Toggle the ability to also send the marker information through the playout during the playback.
+				Toggles the ability to also send the marker information through the playout during the playback.
 				By default this is on (1).
 			</description>
 			<attributelist>
@@ -12224,7 +12169,7 @@
 				Full Path In Playout Syntax
 			</digest>
 			<description>
-				Toggle the ability to output from the playout, instead of the voice number, the full path
+				Toggles the ability to output from the playout, instead of the voice number, the full path
 				to get to the played element.
 				The playout syntax normally has as first element the voice number of the output item (note or chord).
 				By default this attribute is 0, and the simple voice number is output as first element. <br />
@@ -12264,7 +12209,7 @@
 				Play Partial Notes
 			</digest>
 			<description>
-				Toggle the ability to play partial notes, when the playhead starts from a point where a note has
+				Toggles the ability to play partial notes, when the playhead starts from a point where a note has
 				already started but not yet ended. In this case, all temporal information (temporal slots, pitch breakpoints)
 				is properly trimmed, and the corresponding partial note is played.
 				By default this is 1 (quiet playing); if you set the attribute to 2 (verbosely), instead of the onset a
@@ -12566,7 +12511,7 @@
 				Play Slurs
 			</digest>
 			<description>
-				Toggle the ability to also send the slur information through the playout during the playback.
+				Toggles the ability to also send the slur information through the playout during the playback.
 				There are several options: <br />
 				0 (Don't): don't send out slurs information; <br />
 				1 (Chordwise Only, default): send out slur information only with chordwise <m>playmode</m>; <br />
@@ -12582,6 +12527,24 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
+			</attributelist>
+		</attribute>
+		<attribute name="playslursend" get="1" set="1" type="int" size="1">
+			<digest>
+				Play Slurs End
+			</digest>
+			<description>
+				Toggles the ability to send information about when a slur ends during playback.
+				This information is characterized by a negative number of spanned chords (instead of a positive one).
+				For instance, a value for -3 means that a slur has ended which had started 3 chords ago.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Play" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Play Slurs End" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
 		<attribute name="playstep" get="1" set="1" type="float" size="1">
@@ -12904,6 +12867,21 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Rhythm" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Output And Save Level Types" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="scalablestafflineswidth" get="1" set="1" type="int" size="1">
+			<digest>
+				Staff Lines Scale With Vertical Zoom
+			</digest>
+			<description>
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Staff Lines Scale With Vertical Zoom" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
@@ -13930,6 +13908,7 @@
 				- Duration Line Width: velocities are mapped on the width of the duration line, from almost 0 (velocity = 1, extremely thin) to the width defined
 				via the attribute <m>durationlinewidth</m> (velocity = 127, maximum thickness). <br />
 				- Notehead Size: velocities are mapped on the size of the notehead and accidentals, from the smallest size (velocity = 1) to the ordinary size (velocity = 127).
+				- Note Size: both Duration Line Width and Notehead Size are combined
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Show" />
@@ -14323,6 +14302,21 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text_large" />
 			</attributelist>
 		</attribute>
+		<attribute name="stafflineswidth" get="1" set="1" type="float" size="1">
+			<digest>
+				Staff Lines Width
+			</digest>
+			<description>
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="1." />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Staff Lines Width" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
 		<attribute name="stemcolor" get="1" set="1" type="rgba" size="1">
 			<digest>
 				Stem Color
@@ -14686,7 +14680,7 @@
 				Activate Loop Region (When Shown)
 			</digest>
 			<description>
-				Toggle the ability to use the loop region during the playback, if such region is shown (see the
+				Toggles the ability to use the loop region during the playback, if such region is shown (see the
 				<m>showloop</m> attribute). If this is 1, and the loop region is shown, the playback will loop inside the region;
 				otherwise, even if the loop region is shown, the playback will continue linearly, without looping. By default this is 1.
 			</description>
