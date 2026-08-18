@@ -136,6 +136,7 @@ VERSION NOTES:
         to clear the measures' chords without deleting the measures themselves
     á XML export: added "voice" tag to ensure correct behaviour with Dorico
                   fixed crash happening when importing files without "attributes" tag
+    á XML import: repeats are supported
 
 - bach.slot: 
     á fixed bug: now insertslotitem & similar messages work as expected

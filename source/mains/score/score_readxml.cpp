@@ -739,7 +739,8 @@ private:
     public:
         timeSignature timeSig;
         std::vector<tempo*> tempi;
-        t_llll *barline;
+        char barlineType;
+        int repeatTimes;
         measureinfo* prev;
         t_rational fullDuration;
         int number;
@@ -747,7 +748,8 @@ private:
 
         measureinfo(part *owner, t_rational pos, measureinfo* prev):
             timedThing(owner, pos),
-            barline(nullptr),
+            barlineType(k_BARLINE_AUTOMATIC),
+            repeatTimes(0),
             prev(prev),
             ll(nullptr)
         {
@@ -777,6 +779,13 @@ private:
             fullDuration = timeSig.getDuration();
         }
         
+        void addFwdRepeat() {
+            if (barlineType == k_BARLINE_REPEAT_END)
+                barlineType = k_BARLINE_REPEAT_END_AND_START;
+            else
+                barlineType = k_BARLINE_REPEAT_START;
+        }
+        
         timeSignature *getTimeSignature() {
             return &timeSig;
         }
@@ -794,6 +803,17 @@ private:
                     llll_appendllll(ll, tempill);
                 else
                     llll_free(tempill);
+                t_llll *barlinell = llll_get();
+                llll_appendsym(barlinell, _llllobj_sym_barline);
+                bool dummy;
+                llll_appendsym(barlinell, barline_type_to_symbol(barlineType, dummy));
+                llll_appendllll(ll, barlinell);
+                if (repeatTimes > 0) {
+                    t_llll *repeatnumll = llll_get();
+                    llll_appendsym(repeatnumll, _llllobj_sym_repeatnum);
+                    llll_appendlong(repeatnumll, repeatTimes);
+                    llll_appendllll(ll, repeatnumll);
+                }
             }
             return ll;
         }
@@ -820,11 +840,13 @@ private:
         level firstLevel;
         level* currentLevel;
         t_rational usedDuration;
+        measure *prev;
         voice *owner;
         
         measure(measure* prev, voice* owner) :
             currentLevel(&firstLevel),
             usedDuration(t_rational(0)),
+            prev(prev),
             owner(owner)
         {
             if (prev)
@@ -1043,8 +1065,9 @@ private:
                                 current->prevDuration += prevChord->duration;
                         }
                     }
-                    if (!found)
-                        object_error((t_object *) owner->owner->obj, "Tie mismatch");
+                    if (!found) {
+                        object_error((t_object *) owner->owner->obj, "Tie mismatch in voice %d, measure %d", num + 1, currentMeasure->number);
+                    }
                 }
             }
             
@@ -1280,8 +1303,18 @@ private:
         //    currentVoice->currentChord->slots = slotll;
         }
         
-        void setBarline(t_llll* barlinell) {
-            currentVoice->currentMeasure->getMeasureInfo()->barline = barlinell;
+        void setBarline(char type, int times) {
+            measureinfo* info = currentVoice->currentMeasure->getMeasureInfo();
+            info->barlineType = type;
+            info->repeatTimes = times;
+        }
+        
+        void setFwdRepeatInPreviousMeasure() {
+            measure* prev = currentVoice->currentMeasure->prev;
+            if (prev) {
+                measureinfo* info = prev->getMeasureInfo();
+                info->addFwdRepeat();
+            }
         }
         
         void setTimeSignature(timeSignature& timeSig) {
@@ -1586,7 +1619,8 @@ public:
     
     void setChordSlot(int n, t_llll *slotll) { currentPart->setChordSlot(n, slotll); }
     
-    void setBarline(t_llll* barlinell) { currentPart->setBarline(barlinell); }
+    void setBarline(char type, int repeats) { currentPart->setBarline(type, repeats); }
+    void setFwdRepeatInPreviousMeasure() { currentPart->setFwdRepeatInPreviousMeasure(); }
     
     void setTimeSignature(mxml_node_t* attributesXML) {
         currentPart->setTimeSignature(attributesXML, obj);
@@ -2369,35 +2403,52 @@ t_llll *xml_get_tempi(t_score *x, mxml_node_t *measureXML, long divisions, t_boo
     return tempill;
 }
 
-t_llll *xml_get_barline(mxml_node_t *measureXML)
+bool xml_is_there_left_repeat(mxml_node_t *measureXML)
 {
-    mxml_node_t *barlineXML = mxmlFindElement(measureXML, measureXML, "barline", NULL, NULL, MXML_DESCEND_FIRST);
+    mxml_node_t *barlineXML = mxmlFindElement(measureXML, measureXML, "barline", "location", "left", MXML_DESCEND_FIRST);
     if (barlineXML) {
-        mxml_node_t *barstyleXML = mxmlFindElement(barlineXML, barlineXML, "bar-style", NULL, NULL, MXML_DESCEND_FIRST);
-        if (barstyleXML) {
-            const char *bar_styletxt = mxmlGetText(barstyleXML, NULL);
-            char barline[2];
-            barline[1] = 0;
-            if (!strcmp(bar_styletxt, "regular"))            *barline = k_BARLINE_NORMAL;
-            else if (!strcmp(bar_styletxt, "dashed"))        *barline = k_BARLINE_DASHED;
-            else if (!strcmp(bar_styletxt, "dotted"))        *barline = k_BARLINE_POINTS;
-            else if (!strcmp(bar_styletxt, "light-light"))    *barline = k_BARLINE_DOUBLE;
-            else if (!strcmp(bar_styletxt, "light-heavy"))    *barline = k_BARLINE_FINAL;
-            else if (!strcmp(bar_styletxt, "none"))            *barline = k_BARLINE_HIDDEN;
-            else if (!strcmp(bar_styletxt, "heavy"))        *barline = k_BARLINE_SOLID;
-            else if (!strcmp(bar_styletxt, "tick"))        *barline = k_BARLINE_TICK;
-            else *barline = 0;
-            t_llll *barlinell = llll_get();
-            llll_appendsym(barlinell, _llllobj_sym_barline, 0, WHITENULL_llll);
-            if (*barline)
-                llll_appendsym(barlinell, gensym(barline), 0, WHITENULL_llll);
-            else
-                llll_appendlong(barlinell, 0, 0, WHITENULL_llll);
-            //// llll_appendllll(measureinfoll, barlinell, 0, WHITENULL_llll);
-            return barlinell;
-        }
+        mxml_node_t *repeatXML = mxmlFindElement(barlineXML, barlineXML, "repeat", "direction", "forward", MXML_DESCEND_FIRST);
+        if (repeatXML)
+            return true;
     }
-    return nullptr;
+    return false;
+}
+
+void xml_get_barline(mxml_node_t *measureXML, char& type, int& repeats)
+{
+    repeats = 0;
+    type = k_BARLINE_AUTOMATIC;
+    
+    mxml_node_t *barlineXML = nullptr;
+    for (barlineXML = mxmlFindElement(measureXML, measureXML, "barline", NULL, NULL, MXML_DESCEND_FIRST);
+         barlineXML;
+         barlineXML = mxmlFindElement(barlineXML, measureXML, "barline", NULL, NULL, MXML_NO_DESCEND)) {
+        const char *locationtxt = mxmlElementGetAttr(barlineXML, "location");
+        if (!locationtxt || !strcmp(locationtxt, "right"))
+            break;
+    }
+    if (!barlineXML)
+        return;
+
+    mxml_node_t *barstyleXML = mxmlFindElement(barlineXML, barlineXML, "bar-style", NULL, NULL, MXML_DESCEND_FIRST);
+    if (!barstyleXML)
+        return;
+    
+    const char *bar_styletxt = mxmlGetText(barstyleXML, NULL);
+    mxml_node_t *repeatXML = nullptr;
+    repeatXML = mxmlFindElement(barlineXML, barlineXML, "repeat", "direction", "backward", MXML_DESCEND_FIRST);
+    if (repeatXML) {
+        const char *timestxt = mxmlElementGetAttr(repeatXML, "times");
+        repeats = timestxt ? atoi(timestxt) : 2;
+        type = k_BARLINE_REPEAT_END;
+    } else if (!strcmp(bar_styletxt, "regular"))      type = k_BARLINE_NORMAL;
+    else if (!strcmp(bar_styletxt, "dashed"))       type = k_BARLINE_DASHED;
+    else if (!strcmp(bar_styletxt, "dotted"))       type = k_BARLINE_POINTS;
+    else if (!strcmp(bar_styletxt, "light-light"))  type = k_BARLINE_DOUBLE;
+    else if (!strcmp(bar_styletxt, "light-heavy"))  type = k_BARLINE_FINAL;
+    else if (!strcmp(bar_styletxt, "none"))         type = k_BARLINE_HIDDEN;
+    else if (!strcmp(bar_styletxt, "heavy"))        type = k_BARLINE_SOLID;
+    else if (!strcmp(bar_styletxt, "tick"))         type = k_BARLINE_TICK;
 }
 
 
@@ -2503,6 +2554,9 @@ t_llll *score_readxmlbuffer(t_score *x,
             theScore.createNewMeasure();
             
             //t_rational current_timepoint = t_rational(0);
+            
+            if (xml_is_there_left_repeat(measureXML))
+                theScore.setFwdRepeatInPreviousMeasure();
             
             //// t_llll *measureinfoll = llll_get();
             mxml_node_t *attributesXML = mxmlFindElement(measureXML, measureXML, "attributes", NULL, NULL, MXML_DESCEND_FIRST);
@@ -3030,12 +3084,10 @@ t_llll *score_readxmlbuffer(t_score *x,
             // if there was no valid time signature, make one
             theScore.adjustTimeSignatureIfNeeded();
             
-            if (t_llll *barline_ll = xml_get_barline(measureXML);
-                barline_ll) {
-                theScore.setBarline(barline_ll);
-            }
-            
-
+            char barlineType;
+            int repeatTimes;
+            xml_get_barline(measureXML, barlineType, repeatTimes);
+            theScore.setBarline(barlineType, repeatTimes);
             
             //// llll_prependllll(measurell[0], measureinfoll, 0, WHITENULL_llll);
             //// llll_appendlong(measurell[0], 0, 0, WHITENULL_llll); // measure flags

@@ -31707,6 +31707,32 @@ t_llll* measure_get_tempi_as_llll(t_measure *measure, t_tempo *prepend_this_temp
     return outllll;
 }
 
+t_symbol* barline_type_to_symbol(const char type, bool& end)
+{
+    switch(type) {
+        case k_BARLINE_REPEAT_END:
+            end = true;
+            return gensym("re");
+            break;
+        case k_BARLINE_REPEAT_START:    
+            end = false;
+            return gensym("rs");
+            break;
+        case k_BARLINE_REPEAT_END_AND_START:
+            end = true;
+            return gensym("res");
+            break;
+        default: 
+        {
+            end = false;
+            char bttxt[2];
+            bttxt[0] = type;
+            bttxt[1] = 0;
+            return gensym(bttxt);
+        }
+    }
+}
+
 t_llll* measure_get_measureinfo_as_llll(t_notation_obj *r_ob, t_measure *measure, t_tempo *prepend_this_tempo) 
 {
     t_llll* ts_tempo_llll = llll_get();
@@ -31718,26 +31744,11 @@ t_llll* measure_get_measureinfo_as_llll(t_notation_obj *r_ob, t_measure *measure
     llll_appendllll(ts_tempo_llll, measure_get_tempi_as_llll(measure, prepend_this_tempo), 0, WHITENULL_llll);
     
     if (measure->end_barline->barline_type > 0 && measure->end_barline->barline_type != 'a') {
-        bool repeat_end = false;
+        bool repeat_end;
         t_llll *barlinellll = llll_get();
         llll_appendsym(barlinellll, _llllobj_sym_barline, 0, WHITENULL_llll);
-        if (measure->end_barline->barline_type == k_BARLINE_REPEAT_END) {
-            llll_appendsym(barlinellll, gensym("re"), 0, WHITENULL_llll);
-            repeat_end = true;
-        } else if (measure->end_barline->barline_type == k_BARLINE_REPEAT_START) {
-            llll_appendsym(barlinellll, gensym("rs"), 0, WHITENULL_llll);
-        } else if (measure->end_barline->barline_type == k_BARLINE_REPEAT_END_AND_START) {
-            llll_appendsym(barlinellll, gensym("res"), 0, WHITENULL_llll);
-            repeat_end = true;
-        } else {
-            char mystring[2];
-            mystring[0] = measure->end_barline->barline_type;
-            mystring[1] = 0;
-            llll_appendsym(barlinellll, gensym(mystring), 0, WHITENULL_llll);
-        }
-        //        llll_appendlong(barlinellll, measure->end_barline->barline_type, 0, WHITENULL_llll);
+        llll_appendsym(barlinellll, barline_type_to_symbol(measure->end_barline->barline_type, repeat_end), 0, WHITENULL_llll);
         llll_appendllll(ts_tempo_llll, barlinellll, 0, WHITENULL_llll);
-        
         if (repeat_end) {
             llll_appendllll(ts_tempo_llll, symbol_and_long_to_llll(_llllobj_sym_repeatnum, measure->end_barline->repeat_num));
         }

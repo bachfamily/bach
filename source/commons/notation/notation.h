@@ -6062,6 +6062,15 @@ e_header_elems header_symbol_to_long(t_symbol *this_sym);
 char symbol_to_barline_type(t_symbol *thissym);
 
 
+/** Convert a barline type into the corresponding symbol
+ @ingroup    conversions
+ @param      type   The type of barline ('n', 'd', 'x', 'y'...)
+ @param      end     Does the barline type imply a repeat end?
+ @return        The barline type as a symbol (same as the barline type except for the repeat bars).
+ */
+t_symbol* barline_type_to_symbol(const char type, bool& end);
+
+
 /** Convert an llll containing the symbols of header objects into a combination of #e_header_elems.
     @ingroup    conversions
     @param        llll        The llll containing a sequence of symbols of header objects ("body", "header", "clefs", "markers", "groups", "midichannel", "commands", "keys", "slotinfo", "voicenames", "stafflines"...)
@@ -13455,7 +13464,7 @@ t_llll *measure_get_ties_as_llll(t_notation_obj *r_ob, t_measure *measure);
 t_llll* measure_get_values_as_llll(t_notation_obj *r_ob, t_measure *measure, e_data_considering_types for_what, char tree, char also_get_level_information, t_tempo *prepend_this_tempo = NULL);
 
 
-/** Obtain the measureinfo (measure "header" information: time signature, tempi, barline types...) for a given measure in llll form. 
+/** Obtain the measureinfo (measure "header" information: time signature, tempi, barline types...) for a given measure in llll form.
     This always contains time signature and tempi (a void llll, if there's no tempo inside the measure). Also it might contain "barline" specification (end barline type),
     "width" or "widthfactor" or "shownumber" or "boxes" specifications.
     @ingroup            notation_data
