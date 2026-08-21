@@ -90,6 +90,7 @@ t_pipe *pipe_new(t_symbol *s, short ac, t_atom *av);
 void pipe_free(t_pipe *x);
 
 void pipe_bang(t_pipe *x);
+void pipe_stop(t_pipe *x);
 void pipe_int(t_pipe *x, t_atom_long v);
 void pipe_float(t_pipe *x, double v);
 void pipe_anything(t_pipe *x, t_symbol *msg, long ac, t_atom *av);
@@ -133,6 +134,11 @@ void C74_EXPORT ext_main(void *moduleRef)
 	// @method bang @digest Trigger delay
 	// A bang in the first inlet triggers the delay of the llll most recently received in each inlet. 
 	class_addmethod(c, (method)pipe_bang,		"bang",			0);
+
+	// @method stop @digest Cancel all pending delays
+	// @description A <m>stop</m> message cancels all pending delayed outputs.
+	// Clocks that have already been scheduled will still fire, but their output is silently discarded.
+	class_addmethod(c, (method)pipe_stop,		"stop",			0);
 	class_addmethod(c, (method)pipe_assist,		"assist",		A_CANT,		0);
 
 	llllobj_class_add_default_bach_attrs_and_methods(c, LLLL_OBJ_VANILLA);
@@ -144,6 +150,11 @@ void C74_EXPORT ext_main(void *moduleRef)
 	dev_post("bach.pipe compiled %s %s", __DATE__, __TIME__);
 	
 	return;
+}
+
+void pipe_stop(t_pipe *x)
+{
+	ATOMIC_INCREMENT(&x->n_id);
 }
 
 void pipe_bang(t_pipe *x)
