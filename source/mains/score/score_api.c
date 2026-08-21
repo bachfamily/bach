@@ -11101,7 +11101,8 @@ void paint_ruler_and_grid_for_score(t_score *x, t_jgraphics* g, t_rect graphic_r
     if (x->r_ob.ruler > 0 || x->r_ob.show_grid) {
         double screen_ms_start = unscaled_xposition_to_ms((t_notation_obj *)x, x->r_ob.screen_ux_start, 1, 1);
         double screen_ms_end = unscaled_xposition_to_ms((t_notation_obj *)x, x->r_ob.screen_ux_end, 1, 1);
-        double start_ms = x->r_ob.grid_step_ms * MAX(0, (round(screen_ms_start / x->r_ob.grid_step_ms) - 1));
+        // Grid lines fall at: grid_offset_ms + n * grid_step_ms
+        double start_ms = x->r_ob.grid_offset_ms + x->r_ob.grid_step_ms * MAX(0, (floor((screen_ms_start - x->r_ob.grid_offset_ms) / x->r_ob.grid_step_ms) - 1));
         long num_subdivisions = x->r_ob.grid_subdivisions;
         double step_ms = x->r_ob.grid_step_ms / num_subdivisions;
         double ms;
