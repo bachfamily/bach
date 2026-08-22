@@ -14063,12 +14063,13 @@ t_note *note_get_first_in_tieseq(t_note *note);
  */
 t_note *note_get_last_in_tieseq(t_note *note);
 
-
-/**    Get the symbolic duration of a sequence of completely tied notes (given any note in the sequence)
+/**    Get the last note of the sequence of tied notes containing a given note, taking into account repeats. If the given note has no starting ties, the note itself is returned.
     @ingroup        notation
-    @param    note    Any note in the sequence
-    @return            The symbolic duration of the sequence of completely tied notes
+    @param    note    The note
+    @param      repeat_start The latest bar with a repeat start sign, or the first bar of the score. It can't be NULL.
+    @return    The last note tied to the given note.
  */
+
 t_rational note_get_tieseq_symduration(t_note *note);
 
 

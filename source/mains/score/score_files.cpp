@@ -36,8 +36,10 @@ t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av);
 t_max_err score_dowritelilypond(t_score *x, t_symbol *s, long ac, t_atom *av);
 t_max_err score_dowritelilypond_pdf(t_score *x, t_symbol *s, long ac, t_atom *av);
 
-long rat2ticks(const t_rational *pos, long time_division);
+long rat2ticks(const t_rational pos, long time_division);
 t_rational get_play_durations_between_timepoints(t_score *x, t_scorevoice *voice, t_timepoint *tp1, t_timepoint *tp2);
+t_rational get_chord_play_duration(t_score *x, t_chord *c);
+t_rational get_duration_of_tieseq_with_repeats(t_score *x, t_note *note, t_measure *repeat_start);
 t_rational normalize_timepoint(t_score *x, t_timepoint *tp);
 char strip_cresc_decresc(char *text);
 
@@ -316,9 +318,9 @@ void score_exportlilypond_pdf(t_score *x, t_symbol *s, long argc, t_atom *argv)
 // av:
 // long: format
 
-long rat2ticks(const t_rational *pos, long time_division)
+long rat2ticks(const t_rational pos, long time_division)
 {
-    return pos->r_num * 4. / pos->r_den * time_division + 0.5;
+    return pos.r_num * 4. / pos.r_den * time_division + 0.5;
 }
 
 t_rational ticks2rat(long ticks, long time_division)
@@ -356,13 +358,15 @@ t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
     t_timepoint longest_voice_start;
     t_atom_long exportbarlines = 1;
     t_atom_long exportdivisions = 1;
+    t_atom_long exportrepeats = 1;
 
     
-    llll_parseargs_and_attrs_destructive((t_object *) x, arguments, "siiiiiirl",
+    llll_parseargs_and_attrs_destructive((t_object *) x, arguments, "siiiiiiirl",
         _sym_filename, &filename_sym,
         gensym("exportmarkers"), &export_markers,
         gensym("exportbarlines"), &exportbarlines,
         gensym("exportdivisions"), &exportdivisions,
+        gensym("exportrepeats"), &exportrepeats,
         gensym("format"), &format,
         gensym("resolution"), &time_division,
         gensym("temporampsamplingrate"), &tempo_interp_sampling_interval,
@@ -371,7 +375,7 @@ t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
         );
     
     if (tempo_interp_sampling_interval == 0) {
-        tempo_interp_sampling_interval = rat2ticks(&tempo_interp_sampling_figure, time_division);
+        tempo_interp_sampling_interval = rat2ticks(tempo_interp_sampling_figure, time_division);
     }
     
     if (arguments->l_size) {
@@ -420,7 +424,7 @@ t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
         t_atom *av = NULL;
         long ac = llll_deparse(this_marker->r_it.names, &av, 0, 0);
         t_atomarray *name = atomarray_new_debug(ac, av);
-        append_marker_to_midi_export(track_ll[0], name, rat2ticks(&this_marker_pos_rat, time_division));
+        append_marker_to_midi_export(track_ll[0], name, rat2ticks(this_marker_pos_rat, time_division));
         bach_freeptr(av);
     }
     
@@ -438,8 +442,15 @@ t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
         
         voice_start_tp = build_timepoint_with_voice(0, long2rat(0), voice_num);
 
-        for (this_measure = this_scorevoice->firstmeasure; this_measure; this_measure = this_measure->next) {
-            long this_measure_number = this_measure->measure_number; // 0-based
+        t_measure *repeat_start = this_scorevoice->firstmeasure;
+        t_timepoint repeat_start_tp = voice_start_tp;
+        t_rational repeat_start_rat = genrat(0, 1);
+        t_rational repeat_duration = genrat(0, 1);
+        long repeat_duration_ticks = 0;
+        int togo = -1;
+        for (this_measure = this_scorevoice->firstmeasure; this_measure; ) {
+            const char barline_type = this_measure->end_barline->barline_type;
+            const long this_measure_number = this_measure->measure_number; // 0-based
             t_timepoint measure_start_tp;
             t_rational measure_start_rat;
             long new_ts_num = this_measure->timesignature.numerator;
@@ -448,8 +459,8 @@ t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
             
             measure_start_tp = build_timepoint_with_voice(this_measure_number, long2rat(0), voice_num);
             measure_start_rat = get_sym_durations_between_timepoints(this_scorevoice, voice_start_tp, measure_start_tp);
-            
-            long measure_start_ticks = rat2ticks(&measure_start_rat, time_division);
+                        
+            long measure_start_ticks = rat2ticks(measure_start_rat, time_division) + repeat_duration_ticks;
             
             if (exportbarlines && this_measure_number != 0) {
                 append_barline_to_midi_export(track_ll[0], measure_start_ticks);
@@ -473,12 +484,12 @@ t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
                 for (boxElem = boxes->l_head; boxElem; boxElem = boxElem->l_next) {
                     thisDiv = hatom_getrational(&boxElem->l_hatom);
                     divPos += thisDiv;
-                    append_division_to_midi_export(track_ll[0], measure_start_ticks + rat2ticks(&divPos, time_division));
+                    append_division_to_midi_export(track_ll[0], measure_start_ticks + rat2ticks(divPos, time_division));
                 }
                 
                 if (thisDiv > 0) { // one never knows...
                     for ( ; divPos < ts_rat; divPos += thisDiv)
-                        append_division_to_midi_export(track_ll[0], measure_start_ticks + rat2ticks(&divPos, time_division));
+                        append_division_to_midi_export(track_ll[0], measure_start_ticks + rat2ticks(divPos, time_division));
 
                 }
             }
@@ -489,8 +500,8 @@ t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
             
             // set all the tempi in this measure, and all the tempo interpolations starting from it
             for ( ; this_tempo; this_tempo = this_tempo->next) {
-                t_rational this_tempo_onset_rat = rat_rat_sum(measure_start_rat, this_tempo->changepoint);
-                long this_tempo_onset_ticks = rat2ticks(&this_tempo_onset_rat, time_division);
+                t_rational this_tempo_onset_rat = measure_start_rat + this_tempo->changepoint + repeat_duration;
+                long this_tempo_onset_ticks = rat2ticks(this_tempo_onset_rat, time_division) + repeat_duration_ticks;
                 double new_tempo = rat2double(this_tempo->tempo_value);
                 // if this tempo is different from the previous one, or we are at the beginning of the score, insert it
                 if (tempo != new_tempo || (voice_num == 0 && this_measure_number == 0)) {
@@ -506,9 +517,9 @@ t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
                         t_timepoint this_tempo_onset_tp = build_timepoint_with_voice(this_measure_number, this_tempo->changepoint, voice_num);
                         t_timepoint next_tempo_onset_tp = build_timepoint_with_voice(next_tempo_measure->measure_number, next_tempo->changepoint, voice_num);
                         t_rational next_tempo_onset_rat = get_sym_durations_between_timepoints(this_scorevoice, voice_start_tp, next_tempo_onset_tp);
-                        long next_tempo_onset_ticks = rat2ticks(&next_tempo_onset_rat, time_division);
+                        long next_tempo_onset_ticks = rat2ticks(next_tempo_onset_rat, time_division) + repeat_duration_ticks;
                         t_rational interp_dur_rat = get_sym_durations_between_timepoints(this_scorevoice, this_tempo_onset_tp, next_tempo_onset_tp);
-                        double interp_dur_ticks = rat2ticks(&interp_dur_rat, time_division);
+                        long interp_dur_ticks = rat2ticks(interp_dur_rat, time_division);
                         long this_tempo_sample;
                         
                         for (this_tempo_sample = this_tempo_onset_ticks + tempo_interp_sampling_interval;
@@ -545,20 +556,24 @@ t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
                     long vel = this_note->velocity;
                     t_rational noteoff_rat;
                     if (this_note->tie_to) {
-                        t_note *last = note_get_last_in_tieseq(this_note);
-                        t_chord *last_chord = last->parent;
-                        t_timepoint start_tp, end_tp;
-                        start_tp = build_timepoint_with_voice(this_measure_number, this_chord->play_r_sym_onset, voice_num);
-//                        end_tp = build_timepoint_with_voice(last_chord->parent->measure_number, last_chord->play_r_sym_onset, voice_num);
-                        end_tp = build_timepoint_with_voice(last_chord->parent->measure_number,
-                                                            rat_rat_sum(last_chord->play_r_sym_onset, last_chord->play_r_sym_duration),
-                                                            voice_num);
-                        noteoff_rat = rat_rat_sum(this_chord_onset_rat, get_play_durations_between_timepoints(x, this_scorevoice, &start_tp, &end_tp));
+                        if (!exportrepeats) {
+                            t_note *last = note_get_last_in_tieseq(this_note);
+                            t_chord *last_chord = last->parent;
+                            t_timepoint start_tp, end_tp;
+                            start_tp = build_timepoint_with_voice(this_measure_number, this_chord->play_r_sym_onset, voice_num);
+                            //                      end_tp = build_timepoint_with_voice(last_chord->parent->measure_number, last_chord->play_r_sym_onset, voice_num);
+                            end_tp = build_timepoint_with_voice(last_chord->parent->measure_number,
+                                                                rat_rat_sum(last_chord->play_r_sym_onset, last_chord->play_r_sym_duration),
+                                                                voice_num);
+                            noteoff_rat = rat_rat_sum(this_chord_onset_rat, get_play_durations_between_timepoints(x, this_scorevoice, &start_tp, &end_tp));
+                        } else {
+                            noteoff_rat = this_chord_onset_rat + get_duration_of_tieseq_with_repeats(x, this_note, repeat_start);
+                        }
                     } else
                         noteoff_rat = rat_rat_sum(this_chord_onset_rat, this_chord_duration_rat);
 
-                    long on_ticks = rat2ticks(&this_chord_onset_rat, time_division);
-                    long off_ticks = rat2ticks(&noteoff_rat, time_division);
+                    long on_ticks = rat2ticks(this_chord_onset_rat, time_division) + repeat_duration_ticks;
+                    long off_ticks = rat2ticks(noteoff_rat, time_division) + repeat_duration_ticks;
                     if (off_ticks > on_ticks + 1)
                         off_ticks --;
                     if (on_ticks < first_onset)
@@ -567,6 +582,26 @@ t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
                     append_note_to_midi_export(*this_track_ll, E_NOTEOFF, pitch, 0, channel, off_ticks);
                 }
             }
+            
+            if ((barline_type == k_BARLINE_REPEAT_END ||
+                 barline_type == k_BARLINE_REPEAT_END_AND_START) &&
+                togo != 0) {
+                if (togo == -1)
+                    togo = this_measure->end_barline->repeat_num - 2;
+                else
+                    --togo;
+                repeat_duration += get_play_durations_between_timepoints(x, this_scorevoice, &repeat_start_tp, &measure_start_tp) + measure_get_sym_duration(this_measure);
+                repeat_duration_ticks = rat2ticks(repeat_duration, time_division);
+                this_measure = repeat_start;
+                continue;
+            }
+            if (barline_type == k_BARLINE_REPEAT_START || barline_type == k_BARLINE_REPEAT_END_AND_START) {
+                repeat_start = this_measure->next;
+                repeat_start_rat = get_sym_durations_between_timepoints(this_scorevoice, voice_start_tp, measure_start_tp) + measure_get_sym_duration(this_measure);
+                repeat_start_tp = build_timepoint_with_voice(repeat_start->measure_number, genrat(0, 1), voice_num);
+                togo = -1;
+            }
+            this_measure = this_measure->next;
         }
     }
     
@@ -622,7 +657,7 @@ score_dowritemidi_error:
     return ok ? MAX_ERR_NONE : MAX_ERR_GENERIC;
 }
 
-t_rational get_play_durations_between_timepoints(t_score *x, t_scorevoice *voice, t_timepoint *tp1, t_timepoint *tp2) 
+t_rational get_play_durations_between_timepoints(t_score *x, t_scorevoice *voice, t_timepoint *tp1, t_timepoint *tp2)
 {
     t_rational rem1, rem2, result;
     rem1 = normalize_timepoint(x, tp1);
@@ -631,6 +666,79 @@ t_rational get_play_durations_between_timepoints(t_score *x, t_scorevoice *voice
     result = rat_rat_sum(result, rem1);
     result = rat_rat_diff(result, rem2);
     return result;
+}
+
+t_rational get_chord_play_duration(t_score *x, t_chord *c)
+{
+    t_measure *m = c->parent;
+    long measureNumber = c->parent->measure_number;
+    t_rational onset = c->play_r_sym_onset;
+    t_scorevoice* voiceparent = m->voiceparent;
+    long voicenum = voiceparent->v_ob.number;
+    t_timepoint tp_start = build_timepoint_with_voice(measureNumber, onset, voicenum);
+    t_timepoint tp_end = build_timepoint_with_voice(measureNumber, onset + c->r_sym_duration, voicenum);
+    t_rational duration = get_play_durations_between_timepoints(x, voiceparent, &tp_start, &tp_end);
+    return duration;
+}
+
+t_rational get_duration_of_tieseq_with_repeats(t_score *x, t_note *note, t_measure *repeat_start)
+{
+    t_measure *meas = note->parent->parent;
+    t_scorevoice *scorevoice = meas->voiceparent;
+    const long voicenum = meas->voiceparent->v_ob.number;
+    t_rational duration = genrat(0, 1);
+    t_note *outnote = note;
+    t_timepoint start_tp = build_timepoint_with_voice(meas->measure_number, note->parent->play_r_sym_onset, voicenum);
+    int togo = -1;
+    while (outnote && outnote->tie_to && outnote->tie_to != (t_note *) WHITENULL_llll) {
+        if (outnote->tie_to->parent->parent != meas) {
+            const t_measure_end_barline *measendbar = meas->end_barline;
+            const char type = measendbar->barline_type;
+            switch(type) {
+                case k_BARLINE_REPEAT_END:
+                case k_BARLINE_REPEAT_END_AND_START:
+                {
+                    if (togo < 0)
+                        togo = ((int) measendbar->repeat_num) - 1;
+                    if (togo > 0) {
+                        t_timepoint end_tp = build_timepoint_with_voice(outnote->parent->parent->measure_number, outnote->parent->play_r_sym_onset, voicenum);
+                        duration += get_play_durations_between_timepoints(x, scorevoice, &start_tp, &end_tp) + outnote->parent->play_r_sym_duration;
+                        
+                        const t_chord* startChord = repeat_start->firstchord;
+                        t_note *startChordNote;
+                        for (startChordNote = startChord->firstnote; startChordNote; startChordNote = startChordNote->next) {
+                            if (startChordNote->tie_from &&
+                                outnote->pitch_original == startChordNote->pitch_original &&
+                                outnote->midicents == startChordNote->midicents) {
+                                break;
+                            }
+                        }
+                        if (!startChordNote) {
+                            return duration;
+                        } else {
+                            note = outnote = startChordNote;
+                            meas = repeat_start;
+                            start_tp = build_timepoint_with_voice(meas->measure_number, startChord->play_r_sym_onset, voicenum);
+                            --togo;
+                        }
+                        break;
+                    }
+                }
+                case k_BARLINE_REPEAT_START:
+                    repeat_start = meas;
+                    togo = -1;
+                default:
+                    outnote = outnote->tie_to;
+                    meas = outnote->parent->parent;
+                    break;
+            }
+        } else {
+            outnote = outnote->tie_to;
+        }
+    }
+    t_timepoint end_tp = build_timepoint_with_voice(outnote->parent->parent->measure_number, outnote->parent->play_r_sym_onset, voicenum);
+    duration += get_play_durations_between_timepoints(x, scorevoice, &start_tp, &end_tp) + outnote->parent->play_r_sym_duration;
+    return duration;
 }
 
 t_rational normalize_timepoint(t_score *x, t_timepoint *tp)

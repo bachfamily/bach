@@ -15603,7 +15603,6 @@ t_note *note_get_last_in_tieseq(t_note *note)
     return outnote;
 }
 
-
 // get the duration for a tied sequence for any note included in such sequence
 t_rational note_get_tieseq_symduration(t_note *note)
 {
