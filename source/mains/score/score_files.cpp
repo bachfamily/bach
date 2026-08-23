@@ -500,7 +500,7 @@ t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
             
             // set all the tempi in this measure, and all the tempo interpolations starting from it
             for ( ; this_tempo; this_tempo = this_tempo->next) {
-                t_rational this_tempo_onset_rat = measure_start_rat + this_tempo->changepoint + repeat_duration;
+                t_rational this_tempo_onset_rat = measure_start_rat + this_tempo->changepoint;
                 long this_tempo_onset_ticks = rat2ticks(this_tempo_onset_rat, time_division) + repeat_duration_ticks;
                 double new_tempo = rat2double(this_tempo->tempo_value);
                 // if this tempo is different from the previous one, or we are at the beginning of the score, insert it
