@@ -4702,7 +4702,6 @@ void roll_task(t_roll *x){
                 end_time = x->r_ob.length_ms_till_last_note;
             
             char need_repaint = (x->r_ob.playing_scheduling_type == k_SCHEDULING_STANDARD);
-            t_llll *end_llll = llll_get();
             
             x->r_ob.playing = false;
             set_everything_unplayed(x);
@@ -4716,6 +4715,7 @@ void roll_task(t_roll *x){
             if (x->r_ob.playing_scheduling_type == k_SCHEDULING_PRESCHEDULE) {
                 notationobj_append_prescheduled_event((t_notation_obj *)x, end_time, NULL, 0, true);
             } else {
+                t_llll *end_llll = llll_get();
                 // send "end" message
                 llll_appendsym(end_llll, _llllobj_sym_end, 0, WHITENULL_llll);
                 llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 6, end_llll);

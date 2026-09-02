@@ -118,6 +118,7 @@ VERSION NOTES:
     · Fixed bug causing crashes with highlighted playback and no fade-domain
     · Added parameter to "distribute" message to warp the distribution
     · Fixed bug with deleting breakpoints possibly causing issues in several places
+    · fixed memory leak with "play preschedule"
     
 - bach.roll, bach.score, bach.score2roll:
     Now user-defined pitches are correctly preserved
