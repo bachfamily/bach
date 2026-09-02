@@ -788,6 +788,11 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @seealso setslot
     class_addmethod(c, (method) uislot_anything, "openslotwin", A_GIMME, 0);
 
+    // @method openinspector @digest Open bach inspector for selection
+    // @description The <m>openinspector</m> message opens the bach inspector for the selected notation item or for the slotinfo, in case
+    // a slot window is open.
+    class_addmethod(c, (method) notationobj_open_bach_inspector, "openinspector", 0);
+
     
     // @method (drag) @digest Open file
     // @description Dragging a file on the object will load its content, if a proper readable format is recognized.

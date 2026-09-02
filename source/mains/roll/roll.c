@@ -5650,6 +5650,11 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example legato extend @caption the same, preserving notes superpositions
     // @seealso tail, duration, glissando, poly
     class_addmethod(c, (method) roll_legato, "legato", A_GIMME, 0);
+    
+    // @method openinspector @digest Open bach inspector for selection
+    // @description The <m>openinspector</m> message opens the bach inspector for the selected notation item or for the slotinfo, in case
+    // a slot window is open.
+    class_addmethod(c, (method) notationobj_open_bach_inspector, "openinspector", 0);
 
     
     // @method poly @digest Force maximum polyphony and/or assign voicing numbers for selection
@@ -17655,7 +17660,6 @@ long roll_key(t_roll *x, t_object *patcherview, long keycode, long modifiers, lo
 
     if (keycode == 'i' && modifiers == eCommandKey && is_editable((t_notation_obj *)x, k_BACH_INSPECTOR, k_ELEMENT_ACTIONS_NONE)) {
         if (x->r_ob.active_slot_num >= 0 && x->r_ob.active_slot_notationitem) {
-            x->non_inspector_ms_screen_start = x->r_ob.screen_ms_start;
             if (x->r_ob.m_inspector.inspector_patcher)
                 bring_external_inspector_to_front(&x->r_ob.m_inspector);
             open_bach_inspector((t_notation_obj *)x, &x->r_ob.m_inspector, &x->r_ob.slotinfo[x->r_ob.active_slot_num], k_SLOTINFO);

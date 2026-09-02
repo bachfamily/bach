@@ -4727,6 +4727,35 @@ void end_editing_textfield(t_notation_obj *r_ob)
     object_attr_setlong(r_ob, _sym_fontface, 0);
 }
 
+long notationobj_open_bach_inspector(t_notation_obj *r_ob)
+{
+    if (r_ob->active_slot_num >= 0 && r_ob->active_slot_notationitem) {
+        if (r_ob->m_inspector.inspector_patcher)
+            bring_external_inspector_to_front(&r_ob->m_inspector);
+        open_bach_inspector(r_ob, &r_ob->m_inspector, &r_ob->slotinfo[r_ob->active_slot_num], k_SLOTINFO);
+        notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+        return 1;
+        
+    } else if (r_ob->obj_type != k_NOTATION_OBJECT_SLOT && r_ob->firstselecteditem &&
+               (r_ob->firstselecteditem->type == k_CHORD || r_ob->firstselecteditem->type == k_NOTE ||
+                r_ob->firstselecteditem->type == k_VOICE || r_ob->firstselecteditem->type == k_MARKER ||
+                r_ob->firstselecteditem->type == k_PITCH_BREAKPOINT ||
+                r_ob->firstselecteditem->type == k_SLUR)) {
+
+        if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
+            select_only_first_item_if_tieseq_is_selected(r_ob);
+        }
+
+        if (r_ob->num_selecteditems == 1) {
+            if (r_ob->m_inspector.inspector_patcher)
+                bring_external_inspector_to_front(&r_ob->m_inspector);
+            open_bach_inspector_for_notation_item(r_ob, r_ob->firstselecteditem);
+            notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+        }
+        return 1;
+    }
+    return 0;
+}
 
 // returns: e_actions_upon_change
 long handle_note_popup(t_notation_obj *r_ob, t_note *note, long modifiers, e_element_types clipboard_type)

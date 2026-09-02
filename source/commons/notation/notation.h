@@ -19254,6 +19254,9 @@ double notationobj_rescale_with_slope_inv(t_notation_obj *r_ob, double value, do
 
 void send_focus(t_notation_obj *r_ob, long outlet, t_symbol *label);
 
+void select_only_first_item_if_tieseq_is_selected(t_notation_obj *r_ob);
+t_notation_item *are_all_selected_items_tied(t_notation_obj *r_ob);
+long notationobj_open_bach_inspector(t_notation_obj *r_ob);
 
 // internal
 t_hatom *lexpr_eval_for_notation_item(t_notation_obj *r_ob, t_notation_item *it, t_lexpr *lexpr);

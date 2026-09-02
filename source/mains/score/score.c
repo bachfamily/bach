@@ -6868,6 +6868,12 @@ void C74_EXPORT ext_main(void *moduleRef){
     class_addmethod(c, (method) score_glissando, "glissando", A_GIMME, 0);
 
 
+    // @method openinspector @digest Open bach inspector for selection
+    // @description The <m>openinspector</m> message opens the bach inspector for the selected notation item or for the slotinfo, in case
+    // a slot window is open.
+    class_addmethod(c, (method) notationobj_open_bach_inspector, "openinspector", 0);
+
+    
     // @method resetwidthfactors @digest Reset measure width factors
     // @description The <m>resetwidthfactors</m> will revert all measure width factors to 1. 
     // Measure width factors are local width factors defined inside the measureinfo (see below) which alters the spacing width only for a given measure
@@ -16516,45 +16522,7 @@ void score_paste_measures(t_score *x, long at_this_measure_1based, long from_thi
 
 
 
-t_notation_item *are_all_selected_items_tied(t_score *x)
-{
-    t_notation_item *it, *first = get_leftmost_selected_notation_item((t_notation_obj *)x);
-    for (it = x->r_ob.firstselecteditem; it; it = it->next_selected){
-        if (it == first || notation_item_is_ancestor_of((t_notation_obj *)x, first, it)) {
-            // all right
-        } else {
-            if (it->type == k_NOTE || (it->type == k_CHORD && ((t_chord *)it)->num_notes == 1)) {
-                char found = false;
-                t_note *temp = it->type == k_NOTE ? (t_note *)it : ((t_chord *)it)->firstnote;
-                while (temp) {
-                    temp = temp->tie_from;
-                    if (!temp)
-                        return NULL;
-                    if (first == (t_notation_item *)temp || notation_item_is_ancestor_of((t_notation_obj *)x, first, (t_notation_item *)temp)) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found)
-                    return NULL;
-            } else
-                return NULL;
-        }
-    }
-    
-    return first;
-}
 
-void select_only_first_item_if_tieseq_is_selected(t_score *x)
-{
-    if (x->r_ob.num_selecteditems > 1) {
-        t_notation_item *first = are_all_selected_items_tied(x);
-        if (first) {
-            clear_selection((t_notation_obj *)x);
-            notation_item_add_to_selection((t_notation_obj *)x, first);
-        }
-    }
-}
 
 long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, long textcharacter)
 {
@@ -16576,7 +16544,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                     x->r_ob.firstselecteditem->type == k_TEMPO || x->r_ob.firstselecteditem->type == k_MARKER ||
                    x->r_ob.firstselecteditem->type == k_PITCH_BREAKPOINT || x->r_ob.firstselecteditem->type == k_SLUR)) {
             
-            select_only_first_item_if_tieseq_is_selected(x);
+            select_only_first_item_if_tieseq_is_selected((t_notation_obj *)x);
             
             if (x->r_ob.num_selecteditems == 1) {
                 if (x->r_ob.m_inspector.inspector_patcher)
@@ -17217,7 +17185,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                 // change slot view
                 // detect the selection type
                 
-                select_only_first_item_if_tieseq_is_selected(x);
+                select_only_first_item_if_tieseq_is_selected((t_notation_obj *)x);
                 
                 if ((x->r_ob.num_selecteditems == 1) && ((x->r_ob.firstselecteditem->type == k_NOTE) || (x->r_ob.firstselecteditem->type == k_CHORD)))     {
                     open_slot_window((t_notation_obj *) x, j, notation_item_to_notation_item_for_slot_win_opening((t_notation_obj *)x, x->r_ob.firstselecteditem));
@@ -17623,7 +17591,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                 handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_SPLIT_SELECTION); 
                 return 1;
             } else if (!(modifiers & eCommandKey) && !(modifiers & eAltKey) && !(modifiers & eControlKey)) {
-                 select_only_first_item_if_tieseq_is_selected(x);
+                 select_only_first_item_if_tieseq_is_selected((t_notation_obj *)x);
                  if (((x->r_ob.num_selecteditems == 1) && ((x->r_ob.firstselecteditem->type == k_NOTE) || (x->r_ob.firstselecteditem->type == k_CHORD))) && is_editable((t_notation_obj *)x, k_SLOT, k_ELEMENT_ACTIONS_NONE)) {
                     open_slot_window((t_notation_obj *) x, (keycode == 48) ? 9 : keycode - 49, notation_item_to_notation_item_for_slot_win_opening((t_notation_obj *)x, x->r_ob.firstselecteditem));
                     return 1;

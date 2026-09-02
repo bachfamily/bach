@@ -46738,3 +46738,43 @@ void send_focus(t_notation_obj *r_ob, long outlet, t_symbol *label)
     llllobj_outlet_llll((t_object *) r_ob, LLLL_OBJ_UI, outlet, outlist);
     llll_free(outlist);
 }
+
+t_notation_item *are_all_selected_items_tied(t_notation_obj *r_ob)
+{
+    t_notation_item *it, *first = get_leftmost_selected_notation_item(r_ob);
+    for (it = r_ob->firstselecteditem; it; it = it->next_selected){
+        if (it == first || notation_item_is_ancestor_of(r_ob, first, it)) {
+            // all right
+        } else {
+            if (it->type == k_NOTE || (it->type == k_CHORD && ((t_chord *)it)->num_notes == 1)) {
+                char found = false;
+                t_note *temp = it->type == k_NOTE ? (t_note *)it : ((t_chord *)it)->firstnote;
+                while (temp) {
+                    temp = temp->tie_from;
+                    if (!temp)
+                        return NULL;
+                    if (first == (t_notation_item *)temp || notation_item_is_ancestor_of(r_ob, first, (t_notation_item *)temp)) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                    return NULL;
+            } else
+                return NULL;
+        }
+    }
+    
+    return first;
+}
+
+void select_only_first_item_if_tieseq_is_selected(t_notation_obj *r_ob)
+{
+    if (r_ob->num_selecteditems > 1) {
+        t_notation_item *first = are_all_selected_items_tied(r_ob);
+        if (first) {
+            clear_selection(r_ob);
+            notation_item_add_to_selection(r_ob, first);
+        }
+    }
+}

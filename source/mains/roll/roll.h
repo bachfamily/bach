@@ -40,7 +40,6 @@ typedef struct _roll // [bach.roll] structure
     char        must_preselect_appended_chords;
     double        must_apply_delta_onset;
     char        pasting_chords;
-    double        non_inspector_ms_screen_start;
     
     long m_in;   // space for the inlet number used by all the proxies
     void *m_proxy1;
