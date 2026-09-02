@@ -588,6 +588,7 @@
 		1E5BBEB1263F23C700F66E7C /* icon_slur.png in Resources */ = {isa = PBXBuildFile; fileRef = 1E5BBEB0263F23C600F66E7C /* icon_slur.png */; };
 		1E5F437F152610C70085FA87 /* omtree2bachtree.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E5F437E152610C70085FA87 /* omtree2bachtree.c */; };
 		1E5F440F1526153C0085FA87 /* bachtree2omtree.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E5F440E1526153C0085FA87 /* bachtree2omtree.c */; };
+		1E6DD7173048833C001B58DB /* notation_scheduling.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E6DD7163048833B001B58DB /* notation_scheduling.c */; };
 		1E7573071BE03A64002A0986 /* cursor_note_flat.png in Resources */ = {isa = PBXBuildFile; fileRef = 1E7573051BE03A4E002A0986 /* cursor_note_flat.png */; };
 		1E7573081BE03A64002A0986 /* cursor_note_sharp.png in Resources */ = {isa = PBXBuildFile; fileRef = 1E7573061BE03A4E002A0986 /* cursor_note_sharp.png */; };
 		1E784F9720274BC400F11D75 /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
@@ -3684,6 +3685,7 @@
 		1E5F437E152610C70085FA87 /* omtree2bachtree.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = omtree2bachtree.c; sourceTree = "<group>"; };
 		1E5F43FE1526150E0085FA87 /* bach.bachtree2omtree.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.bachtree2omtree.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		1E5F440E1526153C0085FA87 /* bachtree2omtree.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bachtree2omtree.c; sourceTree = "<group>"; };
+		1E6DD7163048833B001B58DB /* notation_scheduling.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = notation_scheduling.c; sourceTree = "<group>"; };
 		1E7573051BE03A4E002A0986 /* cursor_note_flat.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cursor_note_flat.png; sourceTree = "<group>"; };
 		1E7573061BE03A4E002A0986 /* cursor_note_sharp.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cursor_note_sharp.png; sourceTree = "<group>"; };
 		1E784F9D20274BC400F11D75 /* bach.recurser.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.recurser.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -7085,6 +7087,7 @@
 				911385B91F4C3AC300637524 /* notation_goto.h */,
 				911385B71F4C3AB100637524 /* notation_goto.c */,
 				91EE6FC513A28C1C00BBE47C /* notation_maxinterface.c */,
+				1E6DD7163048833B001B58DB /* notation_scheduling.c */,
 				917388B21F69609000FF3971 /* notation_pitches.c */,
 			);
 			path = notation;
@@ -14666,6 +14669,7 @@
 				00992C6F2C2EE6CC00DA02CD /* PredicateEvalInfo.cpp in Sources */,
 				913D57AD232B972E00BC6B45 /* function.cpp in Sources */,
 				913D57B9232B972E00BC6B45 /* makefile in Sources */,
+				1E6DD7173048833C001B58DB /* notation_scheduling.c in Sources */,
 				91FDDC371FBE2BC90040D803 /* bach_symparser.c in Sources */,
 				00992C4F2C2EE6CC00DA02CD /* LexerIndexedCustomAction.cpp in Sources */,
 				00992D0D2C2EE6CC00DA02CD /* DefaultErrorStrategy.cpp in Sources */,

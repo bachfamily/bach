@@ -869,6 +869,15 @@ typedef void (*bach_paint_ext_fn)(t_object *x, t_object *view, t_jgraphics *g, t
 //TBD
 typedef char (*notationobj_inscreenmeas_fn)(t_object *x, void *measure_from, void *measure_to, char also_send_domain);
 
+typedef char (*notationobj_force_inscreenpos_ux)(t_object *x, double position, double inscreen_ux, char also_send_domain, char also_move_mousedown_pt);
+
+typedef char (*notationobj_force_inscreen_ux_rolling)(t_object *x, double inscreen_ux, char clip_to_length, char send_domain_if_changed, char also_move_mousedown_pt);
+
+
+typedef char (*notationobj_force_inscreenpos_ms)(t_object *x, double position, double inscreen_ms, char also_send_domain, char also_check_scheduling, char also_move_mousedown_pt);
+
+typedef char (*notationobj_force_inscreen_ms_rolling)(t_object *x, double inscreen_ms, char clip_to_length, char send_domain_if_changed, char also_check_scheduling, char also_move_mousedown_pt);
+
 
 
 /** Structure for a bach attribute. A bach attribute is some field of some specific element which we want to bring in the foreground,
@@ -4156,7 +4165,7 @@ typedef enum _playhead_domainchange_mode
     possible future improvements or developement of new objects.
  
     @ingroup    notation
- */ 
+ */
 typedef struct _notation_obj
 {
     t_llllobj_jbox        j_box;        ///< The #t_llllobj_jbox structure, corresponding to the fact that notation objects are UI llll objects
@@ -5204,7 +5213,12 @@ typedef struct _notation_obj
     notationobj_undo_redo_fn       undo_redo_function;             ///< Function for undo/redo
     bach_paint_ext_fn               paint_ext_function;             ///< Pointer to the function painting the object (in extended bach mode)
     notationobj_inscreenmeas_fn    inscreenmeas_function;          ///< Pointer to the inscreenmeas function
-    
+
+    notationobj_force_inscreenpos_ux    force_inscreenpos_ux_function;          ///< Pointer to the force_inscreenpos_ux function
+    notationobj_force_inscreen_ux_rolling    force_inscreen_ux_rolling_function;          ///< Pointer to the force_inscreen_ux_rolling function
+    notationobj_force_inscreenpos_ms    force_inscreenpos_ms_function;          ///< Pointer to the force_inscreenpos_ms function
+    notationobj_force_inscreen_ms_rolling    force_inscreen_ms_rolling_function;          ///< Pointer to the force_inscreen_ms_rolling function
+
     //TBD
     addchordfromllll_fn             addchordfromllll;
     setmeasurefromllll_fn           setmeasurefromllll;
@@ -7432,12 +7446,6 @@ void initialize_popup_menus(t_notation_obj *r_ob);
 void notationobj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_dictionary *d);
 
 
-
-// PRE-SCHEDULING
-void notationobj_clear_prescheduled_events(t_notation_obj *r_ob);
-void notationobj_preschedule_end(t_notation_obj *x, t_symbol *s, long argc, t_atom *argv);
-void notationobj_preschedule_task(t_notation_obj *r_ob);
-void notationobj_append_prescheduled_event(t_notation_obj *r_ob, double time, t_llll *content, char is_notewise, char is_end);
 
 
 
@@ -19391,6 +19399,33 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
 
 // mira multitouch
 void notationobj_mt(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+
+
+double notationobj_get_first_onset_ms_for_grace_notes(t_notation_obj *r_ob);
+
+// Common notationobj scheduling infrastructure
+long notationobj_get_playout(t_notation_obj *r_ob);
+void notationobj_task_chain_deferlow(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_task_gimme(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_task(t_notation_obj *r_ob);
+void notationobj_clock(t_notation_obj *r_ob, t_symbol *s);
+void notationobj_preschedule_end(t_notation_obj *r_ob);
+void notationobj_stop(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_do_stop(t_notation_obj *r_ob, t_symbol *s);
+void notationobj_play(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_play_offline(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_playselection(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_play_preschedule(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_do_play(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_pause(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_set_everything_unplayed(t_notation_obj *r_ob);
+
+
+// PRE-SCHEDULING
+void notationobj_clear_prescheduled_events(t_notation_obj *r_ob);
+void notationobj_preschedule_task(t_notation_obj *r_ob);
+void notationobj_append_prescheduled_event(t_notation_obj *r_ob, double time, t_llll *content, char is_notewise, char is_end);
+
 
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

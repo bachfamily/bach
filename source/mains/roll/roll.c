@@ -354,17 +354,6 @@ void roll_preset(t_roll *x);
 void roll_begin_preset(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 void roll_restore_preset(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 void roll_end_preset(t_roll *x);
-void roll_play(t_roll *x, t_symbol *s, long argc, t_atom *argv);
-void roll_do_play(t_roll *x, t_symbol *s, long argc, t_atom *argv);
-void roll_playselection(t_roll *x, t_symbol *s, long argc, t_atom *argv);
-void roll_stop(t_roll *x, t_symbol *s, long argc, t_atom *argv);
-void roll_do_stop(t_roll *x, t_symbol *s, long argc, t_atom *argv);
-void roll_pause(t_roll *x);
-void roll_play_offline(t_roll *x, t_symbol *s, long argc, t_atom *argv);
-void roll_play_preschedule(t_roll *x, t_symbol *s, long argc, t_atom *argv);
-void roll_task(t_roll *x);
-void roll_task_gimme(t_roll *x, t_symbol *s, long argc, t_atom *argv);
-void roll_task_chain_deferlow(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 
 void roll_adjustadditionalstartpad(t_roll *x);
 
@@ -4004,7 +3993,7 @@ char force_inscreenpos_ms(t_roll *x, double position, double inscreen_ms, char a
 char force_inscreen_ms_to_boundary(t_roll *x, double inscreen_ms, char clip_to_length, char send_domain_if_changed, char also_check_scheduling, char also_move_mousedown_pt){
     if (clip_to_length) 
         inscreen_ms = CLAMP(inscreen_ms, 0, x->r_ob.length_ms);
-
+    
     if (inscreen_ms > x->r_ob.screen_ms_end) {
         force_inscreenpos_ms(x, 1., inscreen_ms, send_domain_if_changed, also_check_scheduling, also_move_mousedown_pt);
         return 1;
@@ -4101,654 +4090,6 @@ void roll_inscreenpos(t_roll *x, t_symbol *s, long argc, t_atom *argv){
     }
 }
 
-void roll_playselection(t_roll *x, t_symbol *s, long argc, t_atom *argv)
-{
-    // we set all the SELECTED chords as NON-played, the other ones as PLAYED
-    double start_ms = -1;
-    t_notation_item *selitem;
-    char offline = (argc >= 1 && atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("offline"));
-    char preschedule = (argc >= 1 && atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("preschedule"));
-    t_atom av[3];
-    
-    notationobj_parse_play_arguments((t_notation_obj *)x, argc, argv, NULL, NULL, NULL, &x->r_ob.playback_deferlow);
-
-    // find selected chords and ms_boundaries
-    lock_general_mutex((t_notation_obj *)x);
-    for (selitem = x->r_ob.firstselecteditem; selitem; selitem = selitem->next_selected) {
-        if (selitem->type == k_CHORD) {
-            t_chord *chord = (t_chord *) selitem;
-            if (start_ms < 0 || chord->onset < start_ms)
-                start_ms = chord->onset;
-        } else if (selitem->type == k_NOTE) {
-            t_chord *chord = ((t_note *) selitem)->parent;
-            if (start_ms < 0 || chord->onset < start_ms)
-                start_ms = chord->onset;
-        } else if (selitem->type == k_VOICE) {
-            start_ms = 0;
-            break;
-        } 
-    }
-    unlock_general_mutex((t_notation_obj *)x);
-
-    start_ms -= CONST_EPSILON2; // we remove an "epsilon" from the start_ms
-    if (start_ms < 0.) 
-        start_ms = 0.;
-    
-    x->r_ob.only_play_selection = true;
-    
-    long acount = 0;
-    if (offline) {
-        atom_setsym(av, gensym("offline"));
-        if (x->r_ob.playback_deferlow) {
-            atom_setsym(av+1, gensym("deferlow"));
-            atom_setfloat(av+2, start_ms);
-            acount = 3;
-        } else {
-            atom_setfloat(av + 1, start_ms);
-            acount = 2;
-        }
-    } else if (preschedule) {
-        atom_setsym(av, gensym("preschedule"));
-        atom_setfloat(av + 1, start_ms);
-        acount = 2;
-    } else {
-        atom_setfloat(av, start_ms);
-        acount = 1;
-    }
-    roll_play(x, NULL, acount, av);
-}
-
-void roll_pause(t_roll *x)
-{
-    if (x->r_ob.playing && x->r_ob.playing_scheduling_type == k_SCHEDULING_PRESCHEDULE) {
-        object_warn((t_object *)x, "Can't pause during prescheduled playback.");
-    } else {
-        x->r_ob.show_playhead = true;
-        x->r_ob.play_head_start_ms = x->r_ob.play_head_ms;
-        roll_stop(x, _llllobj_sym_pause, 0, NULL);
-    }
-}
-
-void roll_play(t_roll *x, t_symbol *s, long argc, t_atom *argv)
-{
-    notationobj_parse_play_arguments((t_notation_obj *)x, argc, argv, NULL, NULL, NULL, &x->r_ob.playback_deferlow);
-    
-    if (argc >= 1 && atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("selection")) {
-        roll_playselection(x, s, argc-1, argv+1);
-        return;
-    }
-    
-    long offline = (argc >= 1 && atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("offline"));
-    long preschedule = (argc >= 1 && atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("preschedule"));
-    
-/*    t_llll *args = llllobj_parse_llll((t_object *)x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
-    llll_parseargs_and_attrs((t_object *) x, args, "ii", gensym("offline"), &offline, gensym("accurate"), &accurate);
-    llll_free(args); */
-    
-    long offset = (x->r_ob.playback_deferlow ? 2 : 1);
-    
-    if (offline) {
-        // play in offline mode
-        if (bach_atomic_trylock(&x->r_ob.c_atomic_lock_play)) {
-            object_warn((t_object *) x, "Already playing offline!");
-            return;
-        }
-        roll_play_offline(x, s, argc - offset, argv + offset);
-        bach_atomic_unlock(&x->r_ob.c_atomic_lock_play);
-        return;
-    }
-    
-    if (preschedule) {
-        // play in preschedule mode (more accurate)
-        roll_play_preschedule(x, s, argc - offset, argv + offset);
-        return;
-    }
-    
-    if (x->r_ob.playing) {
-        if (x->r_ob.playing_scheduling_type == k_SCHEDULING_OFFLINE) {
-            object_warn((t_object *)x, "Can't play: already playing offline");
-        } else if (x->r_ob.playing_scheduling_type == k_SCHEDULING_PRESCHEDULE) {
-            object_warn((t_object *)x, "Can't play: already playing in preschedule mode");
-        } else {
-            // normal play called when a previous normal play was already ongoing.
-            // For bw compatibility this will stop the existing play and trigger a new play
-            roll_do_stop(x, s, argc, argv);
-            x->r_ob.playing_scheduling_type = k_SCHEDULING_STANDARD;
-            schedule_delay(x, (method) roll_do_play, 0, s, argc, argv);
-//            object_warn((t_object *)x, "Can't play: already playing!");
-        }
-    } else {
-        x->r_ob.playing_scheduling_type = k_SCHEDULING_STANDARD;
-        schedule_delay(x, (method) roll_do_play, 0, s, argc, argv);
-    }
-}
-
-void roll_play_offline(t_roll *x, t_symbol *s, long argc, t_atom *argv)
-{
-    if (x->r_ob.playing) {
-        object_warn((t_object *)x, "Can't play offline: already playing");
-    } else {
-        x->r_ob.playing_scheduling_type = k_SCHEDULING_OFFLINE;
-        roll_do_play(x, s, argc, argv);
-        if (x->r_ob.playback_deferlow) {
-            roll_task_chain_deferlow(x, NULL, 0, NULL);
-        } else {
-            while (x->r_ob.playing) {
-                x->r_ob.play_step_count = x->r_ob.play_num_steps;
-                roll_task(x);
-            }
-        }
-    }
-}
-
-
-
-void roll_play_preschedule(t_roll *x, t_symbol *s, long argc, t_atom *argv)
-{
-    double start_ms = (argc > 0) ? atom_getfloat(argv) : x->r_ob.play_head_start_ms;
-
-    if (x->r_ob.playing) {
-        object_warn((t_object *)x, "Can't play in preschedule mode: already playing");
-    } else {
-        x->r_ob.playing_scheduling_type = k_SCHEDULING_PRESCHEDULE;
-        notationobj_clear_prescheduled_events((t_notation_obj *)x);
-        
-        // Gathering information about items to be scheduled inside x->r_ob.to_schedule
-        roll_do_play(x, s, argc, argv);
-        while (x->r_ob.playing) {
-            x->r_ob.play_step_count = x->r_ob.play_num_steps;
-            roll_task(x);
-        }
-        
-        x->r_ob.playing = true; // we are still to play! :)
-        x->r_ob.play_head_ms = start_ms;
-
-        // Scheduling stuff
-        x->r_ob.preschedule_cursor = x->r_ob.to_preschedule->l_head;
-        for (t_llllelem *el = x->r_ob.to_preschedule->l_head; el; el = el->l_next) {
-            t_scheduled_event *ev = (t_scheduled_event *)hatom_getobj(&el->l_hatom);
-            setclock_fdelay(x->r_ob.setclock->s_thing, ev->clock, ev->time - start_ms);
-        }
-    }
-}
-
-
-
-void roll_do_play(t_roll *x, t_symbol *s, long argc, t_atom *argv)
-{
-    // let's find the first chord to play
-    t_notation_item *firstplayeditem = NULL; 
-    double start_ms = (argc > 0) ? atom_getfloat(argv) : 0;
-    double end_ms, firstplayeditem_onset = 0;
-    t_chord *temp_ch = NULL;
-    t_note *temp_nt = NULL;
-    t_rollvoice *voice;
-    long i = 0;
-    
-    // detecting end_ms
-    if (argc > 1) {
-        // end is given as argument
-        end_ms = atom_getfloat(argv + 1);
-        x->r_ob.play_head_fixed_end_ms = end_ms;
-    } else {
-        // automatic end: when the roll is over
-        end_ms = x->r_ob.length_ms;
-        x->r_ob.play_head_fixed_end_ms = -1;
-    }
-    
-    // wrong time boundaries for play?
-    if (end_ms > 0 && end_ms <= start_ms) 
-        return;
-    
-    // synchronizing the playhead with out start_ms
-    if (argc == 0)
-        start_ms = x->r_ob.play_head_start_ms;
-    else
-        x->r_ob.play_head_start_ms = start_ms;
-    
-    update_playhead_cant_trespass_loop_end((t_notation_obj *)x);
-
-    // first we send the playhead starting position
-    send_playhead_position((t_notation_obj *) x, 6); 
-
-    // This line is no more needed, since we do it constantly at the stop method:
-    // set_everything_unplayed(x)
-    
-    t_llll *to_send = NULL;
-    t_llll *to_send_references = NULL;
-    char is_notewise = true;
-
-    // then we send partial notes, if needed
-    // i.e. the chords whose onset is < start_ms but whose duration continue at start_ms
-    if (x->r_ob.play_partial_notes) {
-        to_send = llll_get();
-        to_send_references = llll_get();
-        is_notewise = true;
-
-        lock_general_mutex((t_notation_obj *)x);
-        for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next) {
-            for (temp_ch = voice->firstchord; temp_ch; temp_ch = temp_ch->next){
-                if (temp_ch->onset >= start_ms) {
-                    break;
-                } else if (should_element_be_played((t_notation_obj *) x, (t_notation_item *)temp_ch)){
-                    for (temp_nt = temp_ch->firstnote; temp_nt && !temp_ch->played; temp_nt = temp_nt->next) {
-                        if (temp_ch->onset + temp_nt->duration - CONST_EPSILON1 > start_ms) {
-//                        if (temp_ch->onset + temp_nt->duration >= start_ms && !(temp_ch->r_it.flags & k_FLAG_PLAYED)) {
-                            t_llll *this_llll, *references;
-                            t_note *nt;
-                            this_llll = chord_get_as_llll_for_sending((t_notation_obj *) x, temp_ch, x->r_ob.play_partial_notes > 1 ? k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE : k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE, -1, NULL, &references, &is_notewise);
-                            
-                            // we set the partial notes as played
-                            temp_ch->played = true;
-                            for (nt = temp_ch->firstnote; nt; nt = nt->next) {
-                                if (temp_ch->onset + nt->duration >= start_ms) {
-                                    nt->played = true;
-                                    llll_appendobj(x->r_ob.notes_being_played, nt, 0, WHITENULL_llll);
-                                } else if (temp_ch->played)
-                                    temp_ch->played = false;
-                            }
-                                                        
-                            llll_appendllll(to_send, this_llll, 0, WHITENULL_llll);
-                            llll_appendllll(to_send_references, references, 0, WHITENULL_llll);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        
-        llll_flatten(to_send, 1, 0);
-        llll_flatten(to_send_references, 0, 0);
-
-        unlock_general_mutex((t_notation_obj *)x);
-    }
-
-    // setting the chord_play_cursor to NULL for every voice (why every voice, and not just the used ones???)
-    for (i = 0; i < CONST_MAX_VOICES; i++)
-        x->r_ob.chord_play_cursor[i] = NULL;
-    
-    x->r_ob.marker_play_cursor = NULL;
-    
-    lock_general_mutex((t_notation_obj *)x);
-    
-    x->r_ob.dont_schedule_loop_end = x->r_ob.dont_schedule_loop_start = false;
-
-    firstplayeditem = get_next_item_to_play((t_notation_obj *)x, start_ms);
-    if (firstplayeditem)
-        firstplayeditem_onset = notation_item_get_onset_ms((t_notation_obj *)x, firstplayeditem);
-    
-    // if the first chord is beyond the end limit, we stop
-    if (firstplayeditem && firstplayeditem_onset >= end_ms) 
-        firstplayeditem = NULL; 
-    
-    if (firstplayeditem || start_ms <= end_ms) { 
-
-        x->r_ob.scheduled_item = firstplayeditem;
-        x->r_ob.scheduled_ms = firstplayeditem ? firstplayeditem_onset : end_ms;
-
-        // if we're scheduling loop start or end, we don't want it to be rescheduled for next event
-        x->r_ob.dont_schedule_loop_start = (x->r_ob.scheduled_item && x->r_ob.scheduled_item->type == k_LOOP_START) ? true : false;
-        x->r_ob.dont_schedule_loop_end = (x->r_ob.scheduled_item && x->r_ob.scheduled_item->type == k_LOOP_END) ? true : false;
-        
-        unlock_general_mutex((t_notation_obj *)x);
-        
-        x->r_ob.play_head_ms = start_ms;
-
-        if ((x->r_ob.catch_playhead == k_PLAYHEAD_DOMAINCHANGE_PAGES && force_inscreen_ms_rolling(x, x->r_ob.play_head_ms, 0, true, false, false)) ||
-            (x->r_ob.catch_playhead == k_PLAYHEAD_DOMAINCHANGE_FIXPOS && force_inscreenpos_ms(x, x->r_ob.playhead_fixed_pos, x->r_ob.play_head_ms, true, false, false))) {
-            notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
-        }
-        
-        x->r_ob.playing = true;
-        llllobj_outlet_symbol_as_llll((t_object *)x, LLLL_OBJ_UI, 6, _llllobj_sym_play);
-
-        if (x->r_ob.theoretical_play_step_ms <= 0){
-            // step at each scheduled event
-            x->r_ob.play_step_ms = (x->r_ob.scheduled_ms - start_ms);
-            x->r_ob.play_num_steps = 1;
-        } else {
-            // fluid scheduling for redraw
-            x->r_ob.play_num_steps = MAX(1, round((x->r_ob.scheduled_ms - start_ms) / x->r_ob.theoretical_play_step_ms));
-            x->r_ob.play_step_ms = (x->r_ob.scheduled_ms - start_ms)/x->r_ob.play_num_steps;
-        }
-        x->r_ob.play_step_count = 0;
-
-        if (x->r_ob.playing_scheduling_type == k_SCHEDULING_STANDARD) {
-            setclock_fdelay(x->r_ob.setclock->s_thing, x->r_ob.m_clock, x->r_ob.play_step_ms);
-            setclock_getftime(x->r_ob.setclock->s_thing, &x->r_ob.start_play_time);
-            
-            if (x->r_ob.highlight_played_notes)
-                notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
-            else
-                notationobj_redraw((t_notation_obj *) x);
-        }
-    } else
-        unlock_general_mutex((t_notation_obj *)x);
-    
-    if (to_send)
-        send_sublists_through_playout_and_free((t_notation_obj *) x, 6, to_send, to_send_references, is_notewise);
-}
-
-
-void roll_stop(t_roll *x, t_symbol *s, long argc, t_atom *argv)
-{
-    if (x->r_ob.playing && x->r_ob.playing_scheduling_type == k_SCHEDULING_PRESCHEDULE)
-        notationobj_preschedule_end((t_notation_obj *)x, NULL, 0, NULL);
-    schedule_delay(x, (method) roll_do_stop, 0, s, argc, argv);
-}
-
-void roll_do_stop(t_roll *x, t_symbol *s, long argc, t_atom *argv)
-{
-    lock_general_mutex((t_notation_obj *)x);
-    x->r_ob.playing = false;
-    set_everything_unplayed(x);
-    x->r_ob.play_head_ms = -1;
-    x->r_ob.dont_schedule_loop_end = x->r_ob.dont_schedule_loop_start = false;
-    setclock_unset(x->r_ob.setclock->s_thing, x->r_ob.m_clock);
-    x->r_ob.scheduled_item = NULL;
-    x->r_ob.only_play_selection = false;
-    x->r_ob.playback_deferlow = false;
-    x->r_ob.play_step_count = 0;
-    unlock_general_mutex((t_notation_obj *)x);
-    
-    llllobj_outlet_symbol_as_llll((t_object *)x, LLLL_OBJ_UI, 6, s ? s : _llllobj_sym_stop);
-    if (x->r_ob.highlight_played_notes)
-        notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
-    else
-        notationobj_redraw((t_notation_obj *) x);
-}
-
-
-
-void set_everything_unplayed(t_roll *x){
-    t_rollvoice *voice; t_chord *chord; t_note *note;
-    for (voice = x->firstvoice; voice && (voice->v_ob.number < x->r_ob.num_voices); voice = voice->next)
-        for (chord = voice->firstchord; chord; chord = chord->next) {
-            chord->played = false;
-            for (note = chord->firstnote; note; note = note->next) 
-                note->played = false;
-        }
-    llll_clear(x->r_ob.notes_being_played);
-}
-
-
-
-
-void roll_task_chain_deferlow(t_roll *x, t_symbol *s, long argc, t_atom *argv)
-{
-    if (x->r_ob.playing) {
-        x->r_ob.play_step_count = x->r_ob.play_num_steps;
-        defer_low(x, (method)roll_task_gimme, NULL, 0, NULL);
-        defer_low(x, (method)roll_task_chain_deferlow, NULL, 0, NULL);
-    }
-}
-
-void roll_task_gimme(t_roll *x, t_symbol *s, long argc, t_atom *argv){
-    roll_task(x);
-}
-
-void roll_task(t_roll *x){ 
-
-    x->r_ob.play_head_ms += x->r_ob.play_step_ms;
-    x->r_ob.play_step_count++;
-
-    if (x->r_ob.highlight_played_notes)
-        check_unplayed_notes((t_notation_obj *) x, x->r_ob.play_head_ms);
-    
-    if (x->r_ob.playhead_notify_during_playback) {
-        send_playhead_position((t_notation_obj *)x, 6);
-    }
-
-    if (x->r_ob.play_step_count < x->r_ob.play_num_steps) {
-    
-        // we haven't reached the next event: we just redraw the playline
-        setclock_fdelay(x->r_ob.setclock->s_thing, x->r_ob.m_clock, x->r_ob.play_step_ms);
-        if (x->r_ob.theoretical_play_step_ms > 0) {
-            if ((x->r_ob.catch_playhead == k_PLAYHEAD_DOMAINCHANGE_PAGES && force_inscreen_ms_rolling(x, x->r_ob.play_head_ms, 0, true, false, false)) ||
-                (x->r_ob.catch_playhead == k_PLAYHEAD_DOMAINCHANGE_FIXPOS && force_inscreenpos_ms(x, x->r_ob.playhead_fixed_pos, x->r_ob.play_head_ms, true, false, false))) {
-                notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
-            }
-            notationobj_redraw((t_notation_obj *) x);
-        }
-        
-    } else {
-        
-        // we have reached the next scheduled event
-        lock_general_mutex((t_notation_obj *)x);
-
-        if (x->r_ob.scheduled_item) {
-            // next event is a notation item
-            char scheduled_item_type = x->r_ob.scheduled_item->type;
-            t_rollvoice *voice;
-            t_chord *temp_ch;
-            t_marker *marker;
-            t_notation_item *nextitemtoplay = NULL; 
-            long count = 0, i;
-            double last_scheduled_ms, nextitemtoplay_onset = 0;
-            long max_chord_per_scheduler_tick = MAX(x->r_ob.max_num_chord_per_scheduler_event, 1);
-            t_notation_item **items_to_send = (t_notation_item **) bach_newptr(max_chord_per_scheduler_tick * sizeof(t_notation_item *));
-
-            t_llll *to_send = llll_get();
-            t_llll *to_send_references = llll_get();
-            char is_notewise = true;
-
-            // finding synchronous items
-            if (scheduled_item_type == k_CHORD || scheduled_item_type == k_MARKER) {
-                items_to_send[0] = x->r_ob.scheduled_item;
-                if (items_to_send[0]->type == k_CHORD) {
-                    long voice_number = CLAMP(((t_chord *)items_to_send[0])->voiceparent->v_ob.number, 0, CONST_MAX_VOICES - 1);
-                    x->r_ob.chord_play_cursor[voice_number] = (t_chord *)items_to_send[0];
-                } else if (items_to_send[0]->type == k_MARKER)
-                    x->r_ob.marker_play_cursor = (t_marker *)items_to_send[0];
-                count = 1;
-
-                if (x->r_ob.play_markers) {
-                    for (marker = x->r_ob.marker_play_cursor ? x->r_ob.marker_play_cursor->next : x->r_ob.firstmarker;
-                         marker && count < x->r_ob.max_num_chord_per_scheduler_event; marker = marker->next) {
-                        if (should_element_be_played((t_notation_obj *) x, (t_notation_item *)marker)) {
-                            if (marker->position_ms == x->r_ob.scheduled_ms) {
-                                if (count < max_chord_per_scheduler_tick)
-                                    items_to_send[count++] = (t_notation_item *)marker;
-                                x->r_ob.marker_play_cursor = marker;
-                            } else if (marker->position_ms > x->r_ob.scheduled_ms) {
-                                break;
-                            }
-                        }
-                    }
-                }
-                
-                for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices && count < x->r_ob.max_num_chord_per_scheduler_event; voice = voice->next){
-                    for (temp_ch = x->r_ob.chord_play_cursor[voice->v_ob.number] ? x->r_ob.chord_play_cursor[voice->v_ob.number]->next : voice->firstchord;
-                         temp_ch && count < x->r_ob.max_num_chord_per_scheduler_event; temp_ch = temp_ch->next){
-                        if (should_element_be_played((t_notation_obj *) x, (t_notation_item *)temp_ch)) {
-                            if (temp_ch->onset == x->r_ob.scheduled_ms) {
-                                if (count < max_chord_per_scheduler_tick)
-                                    items_to_send[count++] = (t_notation_item *)temp_ch;
-                                x->r_ob.chord_play_cursor[voice->v_ob.number] = temp_ch;
-                            } else if (temp_ch->onset > x->r_ob.scheduled_ms) {
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            
-            // we now have to find the next item to schedule
-            if (x->r_ob.playing_scheduling_type == k_SCHEDULING_STANDARD && scheduled_item_type == k_LOOP_END) {
-                // looping: setting the chord_play_cursor to NULL for every voice
-                for (i = 0; i < x->r_ob.num_voices; i++)
-                    x->r_ob.chord_play_cursor[i] = NULL;
-                x->r_ob.marker_play_cursor = NULL;
-                
-                // we reset the start play time, and we set the starting playhead position to the loop start position 
-                setclock_getftime(x->r_ob.setclock->s_thing, &x->r_ob.start_play_time);
-                x->r_ob.play_head_start_ms = x->r_ob.loop_region.start.position_ms; 
-
-                last_scheduled_ms = x->r_ob.loop_region.start.position_ms;
-                x->r_ob.play_head_ms = last_scheduled_ms;
-                x->r_ob.dont_schedule_loop_start = false;
-            } else {
-                last_scheduled_ms = x->r_ob.scheduled_ms;
-                if (scheduled_item_type == k_LOOP_START)
-                    x->r_ob.dont_schedule_loop_end = false;
-            }
-            
-            nextitemtoplay = get_next_item_to_play((t_notation_obj *)x, last_scheduled_ms);
-            if (nextitemtoplay)
-                nextitemtoplay_onset = notation_item_get_onset_ms((t_notation_obj *)x, nextitemtoplay);
-
-            if (x->r_ob.play_head_fixed_end_ms > 0 && nextitemtoplay && nextitemtoplay_onset >= x->r_ob.play_head_fixed_end_ms)
-                nextitemtoplay = NULL;
-
-//            dev_post("Next item to play has onset: %.2f ms", nextitemtoplay_onset);
-            
-            // loop start must be scheduled once: if we schedule loop start, then we schedule a chord falling ON the loop start, we don't want next item to be the loop start again
-            // we check if we can resume scheduling the loop start or end
-            if (x->r_ob.dont_schedule_loop_start && x->r_ob.loop_region.start.position_ms != nextitemtoplay_onset)
-                x->r_ob.dont_schedule_loop_start = false;
-            if (x->r_ob.dont_schedule_loop_start && x->r_ob.loop_region.start.position_ms != nextitemtoplay_onset)
-                x->r_ob.dont_schedule_loop_end = false;
-
-            // we schedule the next event
-            x->r_ob.scheduled_ms = nextitemtoplay ? nextitemtoplay_onset : (x->r_ob.play_head_fixed_end_ms > 0 ? x->r_ob.play_head_fixed_end_ms : x->r_ob.length_ms_till_last_note);
-            if (x->r_ob.theoretical_play_step_ms <= 0){
-                // just one step per scheduled event
-                x->r_ob.play_num_steps = 1;
-                x->r_ob.play_step_ms = (x->r_ob.scheduled_ms - last_scheduled_ms);
-            } else {
-                // fluid steps for redraw
-                x->r_ob.play_num_steps = MAX(1, round((x->r_ob.scheduled_ms - last_scheduled_ms) / x->r_ob.theoretical_play_step_ms));
-                x->r_ob.play_step_ms = (x->r_ob.scheduled_ms - last_scheduled_ms)/x->r_ob.play_num_steps;
-            }
-            
-            if (nextitemtoplay) { // we check if we should or should not prevent loops from being scheduled
-                if (nextitemtoplay->type == k_LOOP_START)
-                    x->r_ob.dont_schedule_loop_start = true;
-                else if (nextitemtoplay->type == k_LOOP_END)
-                    x->r_ob.dont_schedule_loop_end = true;
-            }
-            
-            x->r_ob.play_step_count = 0;
-            x->r_ob.scheduled_item = nextitemtoplay; // this has to be within the mutex!
-
-            // gathering chord values as llll
-            for (i = 0; i < count; i++){
-                t_llll *references = NULL, *this_llll = NULL;
-                t_note *temp_nt;
-                if (items_to_send[i]->type == k_CHORD) {
-                    ((t_chord *)items_to_send[i])->played = true;
-                    for (temp_nt = ((t_chord *)items_to_send[i])->firstnote; temp_nt; temp_nt = temp_nt->next) {
-                        temp_nt->played = true;
-                        llll_appendobj(x->r_ob.notes_being_played, temp_nt, 0, WHITENULL_llll);
-                    }
-                    this_llll = chord_get_as_llll_for_sending((t_notation_obj *) x, (t_chord *)items_to_send[i], k_CONSIDER_FOR_PLAYING, -1, NULL, &references, &is_notewise);
-                } else if (items_to_send[i]->type == k_MARKER) {
-                    t_llll *temp = marker_get_as_llll((t_notation_obj *) x, (t_marker *)items_to_send[i], true, true, k_CONSIDER_FOR_PLAYING);
-                    this_llll = llll_get();
-                    references = llll_get();
-                    llll_appendobj(this_llll, temp, 0, WHITENULL_llll);
-                    llll_appendobj(references, items_to_send[i], 0, WHITENULL_llll);
-                }
-                if (this_llll && references) {
-                    llll_appendllll(to_send, this_llll, 0, WHITENULL_llll);
-                    llll_appendllll(to_send_references, references, 0, WHITENULL_llll);
-                }
-            }
-
-            llll_flatten(to_send, 1, 0);
-            llll_flatten(to_send_references, 0, 0);
-            
-            unlock_general_mutex((t_notation_obj *)x);
-
-            if (x->r_ob.playing_scheduling_type == k_SCHEDULING_STANDARD)
-                setclock_fdelay(x->r_ob.setclock->s_thing, x->r_ob.m_clock, x->r_ob.play_step_ms);
-            
-            x->r_ob.play_head_ms = last_scheduled_ms;
-
-            if (x->r_ob.playing_scheduling_type == k_SCHEDULING_STANDARD) {
-                if ((x->r_ob.catch_playhead == k_PLAYHEAD_DOMAINCHANGE_PAGES && force_inscreen_ms_rolling(x, x->r_ob.play_head_ms, 0, true, false, false)) ||
-                    (x->r_ob.catch_playhead == k_PLAYHEAD_DOMAINCHANGE_FIXPOS && force_inscreenpos_ms(x, x->r_ob.playhead_fixed_pos, x->r_ob.play_head_ms, true, false, false))) {
-                    notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
-                }
-            }
-            
-            // outputting chord values
-            if (x->r_ob.playing_scheduling_type == k_SCHEDULING_PRESCHEDULE) {
-                notationobj_append_prescheduled_event((t_notation_obj *)x, last_scheduled_ms, to_send, is_notewise, false);
-                llll_free(to_send_references);
-            } else {
-                if (count > 0)
-                    send_sublists_through_playout_and_free((t_notation_obj *) x, 6, to_send, to_send_references, is_notewise);
-                else if (scheduled_item_type == k_LOOP_START || scheduled_item_type == k_LOOP_END) {
-                    llllobj_outlet_symbol_couple_as_llll((t_object *)x, LLLL_OBJ_UI, 6, _llllobj_sym_loop, scheduled_item_type == k_LOOP_START ? _llllobj_sym_start : _llllobj_sym_end);
-                    llll_free(to_send);
-                    llll_free(to_send_references);
-                }
-                
-                if (x->r_ob.playing_scheduling_type == k_SCHEDULING_STANDARD) {
-                    if (x->r_ob.highlight_played_notes)
-                        notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
-                    else
-                        notationobj_redraw((t_notation_obj *) x);
-                }
-            }
-
-            bach_freeptr(items_to_send);
-
-        } else {
-            // next event is the end of the roll
-            double end_time = x->r_ob.play_head_ms;
-            if (x->r_ob.playing_scheduling_type == k_SCHEDULING_PRESCHEDULE)
-                end_time = x->r_ob.length_ms_till_last_note;
-            
-            char need_repaint = (x->r_ob.playing_scheduling_type == k_SCHEDULING_STANDARD);
-            
-            x->r_ob.playing = false;
-            set_everything_unplayed(x);
-            x->r_ob.play_head_ms = -1;
-            x->r_ob.scheduled_item = NULL;
-            x->r_ob.only_play_selection = false;
-            x->r_ob.playback_deferlow = false;
-            x->r_ob.play_step_count = 0;
-            unlock_general_mutex((t_notation_obj *)x);
-            
-            if (x->r_ob.playing_scheduling_type == k_SCHEDULING_PRESCHEDULE) {
-                notationobj_append_prescheduled_event((t_notation_obj *)x, end_time, NULL, 0, true);
-            } else {
-                t_llll *end_llll = llll_get();
-                // send "end" message
-                llll_appendsym(end_llll, _llllobj_sym_end, 0, WHITENULL_llll);
-                llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 6, end_llll);
-                llll_free(end_llll);
-            }
-            
-            if (need_repaint)
-                notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
-        }
-    }
-}
-
-
-
-
-
-void roll_clock(t_roll *x, t_symbol *s) 
-{
-    void *old = x->r_ob.setclock->s_thing; 
-    t_object *c = 0; 
-    
-    // the line below can be restated as: 
-    // if s is the empty symbol 
-    // or s->s_thing is zero 
-    // or s->s_thing is non-zero and a setclock object  
-    if (s && (s == gensym("") || ((c = (t_object *) s->s_thing) && zgetfn(c, gensym("unset"))))) { 
-        if (old) 
-            roll_stop(x, NULL, 0, NULL); 
-        x->r_ob.setclock = s; 
-        /*        if (x->m_running) 
-         setclock_delay(c, x->r_clock, 0L); */
-    } 
-}
 
 
     
@@ -5006,7 +4347,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @marg 0 @name setclock_name @optional 1 @type symbol
     // @example clock ticker @caption link to 'ticker' setclock
     // @example clock @caption link to default clock
-    class_addmethod(c, (method) roll_clock,    "clock", A_DEFSYM, 0);
+    class_addmethod(c, (method) notationobj_clock,    "clock", A_DEFSYM, 0);
 
 
     // @method delete @digest Delete current selected items
@@ -6401,21 +5742,21 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example play selection offline deferlow @caption play selection offline but deferlow between consecutive outputs
     // @example play preschedule @caption accurate prescheduled playback (with limitations)
     // @seealso stop, pause, setcursor
-    class_addmethod(c, (method) roll_play, "play", A_GIMME, 0);
-    class_addmethod(c, (method) roll_playselection, "playselection", A_GIMME, 0);
+    class_addmethod(c, (method) notationobj_play, "play", A_GIMME, 0);
+    class_addmethod(c, (method) notationobj_playselection, "playselection", A_GIMME, 0);
     
     
     // @method stop @digest Stop
     // @description The <m>stop</m> message stops any ongoing playing, if <o>bach.roll</o> was in play mode (nothing happens otherwise).
     // @seealso pause, play, playselection
-    class_addmethod(c, (method) roll_stop, "stop", A_GIMME, 0);
+    class_addmethod(c, (method) notationobj_stop, "stop", A_GIMME, 0);
 
     // @method pause @digest Pause
     // @description The <m>pause</m> message pause any ongoing playing, if <o>bach.roll</o> was in play mode (nothing happens otherwise).
     // When paused, the play head cursor is updated to its last reached position while playing, so that a new play will begin by default
     // at that position.
     // @seealso play, playselection, stop
-    class_addmethod(c, (method) roll_pause, "pause", A_GIMME, 0);
+    class_addmethod(c, (method) notationobj_pause, "pause", A_GIMME, 0);
 
 
     // @method mute @digest Mute selected items
@@ -11556,6 +10897,11 @@ t_roll* roll_new(t_symbol *s, long argc, t_atom *argv)
     x->r_ob.length_ms = 2000;
     x->r_ob.length_ux = 200; // xposition_to_unscaled_xposition((t_notation_obj *)x, onset_to_xposition_roll((t_notation_obj *)x, x->r_ob.length_ms, NULL));
 
+    x->r_ob.force_inscreenpos_ux_function = NULL;
+    x->r_ob.force_inscreen_ux_rolling_function = NULL;
+    x->r_ob.force_inscreenpos_ms_function = (notationobj_force_inscreenpos_ms)force_inscreenpos_ms;
+    x->r_ob.force_inscreen_ms_rolling_function = (notationobj_force_inscreen_ms_rolling)force_inscreen_ms_rolling;
+
     x->r_ob.first_shown_system = 0;
     x->r_ob.last_shown_system = 0;
 
@@ -11581,7 +10927,7 @@ t_roll* roll_new(t_symbol *s, long argc, t_atom *argv)
     initialize_textfield((t_notation_obj *) x);    
 
     // clock
-    x->r_ob.m_clock = clock_new_debug((t_object *)x, (method) roll_task);
+    x->r_ob.m_clock = clock_new_debug((t_object *)x, (method) notationobj_task);
     x->r_ob.step_y = CONST_STEP_UY * x->r_ob.zoom_y;
     calculate_voice_offsets((t_notation_obj *) x);
     compute_middleC_position_for_all_voices((t_notation_obj *) x);
@@ -18259,14 +17605,14 @@ long roll_key(t_roll *x, t_object *patcherview, long keycode, long modifiers, lo
             if (modifiers == eShiftKey) { // acts like a "pause" command: playhead stays visible where it is
                 x->r_ob.show_playhead = true;
                 x->r_ob.play_head_start_ms = x->r_ob.play_head_ms;
-                roll_stop(x, _llllobj_sym_pause, 0, NULL);
+                notationobj_stop((t_notation_obj *)x, _llllobj_sym_pause, 0, NULL);
             } else
-                roll_stop(x, NULL, 0, NULL);
+                notationobj_stop((t_notation_obj *)x, NULL, 0, NULL);
         } else {
             if (modifiers == eShiftKey)
-                roll_playselection(x, NULL, 0, NULL);
+                notationobj_playselection((t_notation_obj *)x, NULL, 0, NULL);
             else
-                roll_play(x, NULL, 0, NULL);
+                notationobj_play((t_notation_obj *)x, NULL, 0, NULL);
         }
         return 1;
     }

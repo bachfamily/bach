@@ -15730,6 +15730,20 @@ void check_ties_around_measure(t_measure *measure){
     if (measure->prev) measure->prev->need_check_ties = true;
     if (measure->next) measure->next->need_check_ties = true;
 }
+
+double notationobj_get_first_onset_ms_for_grace_notes(t_notation_obj *r_ob)
+{
+    double res = 0;
+    for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
+        t_scorevoice *sv = (t_scorevoice *)voice;
+        if (sv && sv->firstmeasure && sv->firstmeasure->firstchord && sv->firstmeasure->firstchord->is_grace_chord) {
+            if (sv->firstmeasure->firstchord->onset < res) {
+                res = sv->firstmeasure->firstchord->onset - CONST_EPSILON2;
+            }
+        }
+    }
+    return res;
+}
  
 t_rational measure_get_content_sym_duration(t_measure *measure){
     t_rational res = long2rat(0);

@@ -11973,17 +11973,6 @@ void score_move_and_reinitialize_last_voice(t_score *x, t_scorevoice *after_this
     }
 }
 
-double get_first_onset_ms_for_grace_notes(t_score *x)
-{
-    t_scorevoice *voice;
-    double res = 0;
-    for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next)
-        if (voice->firstmeasure && voice->firstmeasure->firstchord && voice->firstmeasure->firstchord->is_grace_chord)
-            if (voice->firstmeasure->firstchord->onset < res)
-                res = voice->firstmeasure->firstchord->onset - CONST_EPSILON2;
-    return res;
-}
-
 t_scorevoice *get_longest_scorevoice(t_score *x)
 {
     t_scorevoice *voice, *longest_voice = NULL;
