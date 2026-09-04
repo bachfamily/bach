@@ -166,6 +166,7 @@
 #define    CONST_MAX_NESTED_TUPLETS_FOR_SPEEDY 1                ///< Maximum nested tuplet insertion while speedy editing
 #define CONST_MAX_CENTS 100000                                ///< Loose upper bound for the midicents of a note, only when setting them via the bach inspector 
 #define CONST_MIN_SYM_DURATION_FOR_CHORD (genrat(1,8192))    ///< Minimum symbolic duration for a chord (this is due to the fact that going under this duration may cause problems with beaming tree algorithms, and so on...) 
+#define CONST_MAX_PLAYHEADS 8                                ///< Maximum number of playheads
 
 /** @}*/
 
@@ -4158,6 +4159,17 @@ typedef enum _playhead_domainchange_mode
 } e_playhead_domainchange_mode;
 
 
+/** Structure holding the properties of a playhead
+    @ingroup scheduling
+ */
+typedef struct _playhead
+{
+    long            index;
+    t_symbol        *name;
+    t_pitch         transpose;
+    t_pitch         invert;
+} t_playhead;
+
 
 /** A common structure for UI notation objects. 
     [bach.score], [bach.roll] and [bach.slot] will extend this structure, but most of the stuff is already inside here.
@@ -5027,30 +5039,33 @@ typedef struct _notation_obj
     double uwidth_after_ts;                 ///< Unscaled horizontal blank space after time signature (un unscaled pixels)
     
     // play
-    char        allow_play_from_interface;    ///< Flag telling if we allow playing from the interface
-    char        playing;                    ///< Flag telling if the object is currently playing
+    char        allow_play_from_interface;              ///< Flag telling if we allow playing from the interface
+    char        playing;                                ///< Flag telling if the object is currently playing
+    char        play_head_playing[CONST_MAX_PLAYHEADS]; ///< Whether each of the playheads is actually playing
+    long        play_head_max;                          ///< Maximum index of the active playhead
     char        playing_scheduling_type;    ///< Scheduling type for playing, one of the #e_scheduling_type
     t_llll      *to_preschedule;            ///< List containing t_scheduled_events to be scheduled, ONLY for the PRESCHEDULED mode.
     t_llllelem  *preschedule_cursor;        ///< Cursor while reading the prescheduled list
     
-    double        play_head_start_ms;        ///< Position in milliseconds of the OFFLINE play cursor
-    double        play_head_start_ux;        ///< Unscaled x pixel of the OFFLINE play cursor (only used in [bach.score]) 
-    double        play_head_ms;            ///< Current position in milliseconds of the PLAYTIME play cursor
-    double        play_head_ux;            ///< Current unscaled x pixel of the PLAYTIME play cursor (only used in [bach.score]).
+    double        play_head_start_ms[CONST_MAX_PLAYHEADS];        ///< Position in milliseconds of the OFFLINE play cursor
+    double        play_head_start_ux[CONST_MAX_PLAYHEADS];        ///< Unscaled x pixel of the OFFLINE play cursor (only used in [bach.score])
+    double        play_head_ms[CONST_MAX_PLAYHEADS];            ///< Current position in milliseconds of the PLAYTIME play cursor
+    double        play_head_ux[CONST_MAX_PLAYHEADS];            ///< Current unscaled x pixel of the PLAYTIME play cursor (only used in [bach.score]).
                                         ///< REMARK: We have to distinguish between the fixed offline playcursor (which always indicates the beginning of the play region, i.e.
                                         ///< if one press the spacebar, the play starts from there) and the mobile playcursor at playtime: when we send a "play" command, the 
                                         ///< offline playcursor does not move AT ALL, but it is the playtime playcursor which takes its place and start moving. You have to 
                                         ///< think at the offline playcursor as the indication of the play start region (which graphically disappear while playing, substituted
                                         ///< by the mobile playtime playcursor)
-    double        play_head_fixed_end_ms; ///< Fixed end in milliseconds for the play to stop. Once reached this millisecond position, the stop function is called, and the play is over.
+    double        play_head_fixed_end_ms[CONST_MAX_PLAYHEADS]; ///< Fixed end in milliseconds for the play to stop. Once reached this millisecond position, the stop function is called, and the play is over.
                                         ///< If this value is negative (e.g. -1), no end is given, and the play stops only when the score reading is over.
-    double        play_head_reset_start_ms_when_play_ends; ///< if positive, sets a position for the reset of the play_head after play ends
+    double        play_head_reset_start_ms_when_play_ends[CONST_MAX_PLAYHEADS]; ///< if positive, sets a position for the reset of the play_head after play ends
     ///<
     double        theoretical_play_step_ms;    ///< Approximative step (in milliseconds) for playhead redraw. 0 means that the score is redrawn at each
                                             ///< scheduled event. The "approximative" adjective is due to the fact that we need an integer number of ticks 
                                             ///< between two scheduled events, so this might slightly vary in each scheduled interval
 
-    char        catch_playhead;             ///< Handles how the playhead changes the domain during playback: one of the e_playhead_changedomain_modes
+    char        catch_playhead_mode;             ///< Handles how the playhead changes the domain during playback: one of the e_playhead_changedomain_modes
+    long        catch_playhead_which;           ///< Which playhead to catch
     double      playhead_fixed_pos;         ///< relative position of the playehad within the bar
     char        playhead_notify_during_playback;    ///< Notify cursor position during playback
 
@@ -5060,6 +5075,7 @@ typedef struct _notation_obj
     char        play_measures;              ///< Send measure start barlines during play
     char        play_slurs;                 ///< Send slur information during playback
     char        play_slurs_end;             ///< Also send information about slur end (as a negative number, e.g.: -3 means: a slur has ended which started 3 chords ago)
+    char        notify_playheads;           ///< Notify individual playheads
 
     void        *m_clock;                            ///< The clock for the play and task routine
     t_symbol    *setclock;                            ///< The setclock, to handle the change of clock speed
@@ -5069,13 +5085,13 @@ typedef struct _notation_obj
     long        max_num_chord_per_scheduler_event;    ///< Maximum number of synchronous chords being output within the same scheduler event. Somehow, it's a bach Play Poll Throttle.
                                                     ///< Synchoronous chords exceeding this number will be played 'as soon as possible' in the next scheduler tick (scheduled immediately)
 
-    t_chord        **chord_play_cursor;        ///< Multicursor (one element for each voice) containing the last played chords, or generally (when possible) the chords happening _before_ the already scheduled events. 
+    t_chord        **chord_play_cursor[CONST_MAX_PLAYHEADS];        ///< Multicursor (one element for each voice) containing the last played chords, or generally (when possible) the chords happening _before_ the already scheduled events.
                                             ///< It is an array with #CONST_MAX_VOICES elements allocated in notationobj_init() and freed by notationobj_free()
                                             ///< The idea is that, to play the next chord, we start to look ahead from the ones we have already played, and
                                             ///< we keep track of this 'looking ahead' with this multicursor.
-    t_tempo     **tempo_play_cursor;         ///< Cursor containing the last played tempo for each voice, or generally (when possible) the tempo happening _before_ the already scheduled events (exactly linke #chord_play_cursor)
-    t_measure    **measure_play_cursor;         ///< Cursor containing the last played measure for each voice, or generally (when possible) the tempo happening _before_ the already scheduled events (exactly linke #chord_play_cursor). Measures are "played" when they start, outputting measure number and measureinfo.
-    t_marker    *marker_play_cursor;        ///< Cursor containing the last played marker, or generally (when possible) the markers happening _before_ the already scheduled events (see #chord_play_cursor)
+    t_tempo     **tempo_play_cursor[CONST_MAX_PLAYHEADS];         ///< Cursor containing the last played tempo for each voice, or generally (when possible) the tempo happening _before_ the already scheduled events (exactly linke #chord_play_cursor)
+    t_measure    **measure_play_cursor[CONST_MAX_PLAYHEADS];         ///< Cursor containing the last played measure for each voice, or generally (when possible) the tempo happening _before_ the already scheduled events (exactly linke #chord_play_cursor). Measures are "played" when they start, outputting measure number and measureinfo.
+    t_marker    *marker_play_cursor[CONST_MAX_PLAYHEADS];        ///< Cursor containing the last played marker, or generally (when possible) the markers happening _before_ the already scheduled events (see #chord_play_cursor)
     t_notation_item        *scheduled_item;    ///< Pointer to the notation item currently being scheduled
     double                scheduled_ms;        ///< Onset (in milliseconds) of the chord currently being scheduled
     double                start_play_time;    ///< Time (in milliseconds) obtained by setclock_getftime() at the very beginning of the play.
@@ -5083,7 +5099,7 @@ typedef struct _notation_obj
                                             ///< if you add a note (having onset later than the current playtime playhead), bach will try to reschedule events,
                                             ///< in order to play the note. This rescheduling is performed in the check_correct_scheduling() routine, where this 
                                             ///< <start_play_time> is essential.
-    t_llll        *notes_being_played;        ///< llll containing all the notes (as #H_OBJ elements) currently being played. 
+    t_llll        *notes_being_played[CONST_MAX_PLAYHEADS];        ///< llll containing all the notes (as #H_OBJ elements) currently being played. 
                                             ///< Important: for bach.score, this llll will only contain the starting note of a tied sequence of notes (if any, and if playtiedelementsseparately is set to 0).
     
     // contextual menu (obtained by right clicking)

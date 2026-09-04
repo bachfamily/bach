@@ -94,29 +94,6 @@ void handle_rebuild_done(t_notation_obj *r_ob) {
 }
 
 
-void send_moved_playhead_position(t_notation_obj *r_ob, long outlet) {
-    t_llll* out_llll = llll_get();
-    llll_appendsym(out_llll, gensym("movedcursor"), 0, WHITENULL_llll);
-    if (!r_ob->playing)
-        llll_appenddouble(out_llll, r_ob->play_head_start_ms, 0, WHITENULL_llll);
-    else
-        llll_appenddouble(out_llll, r_ob->play_head_ms, 0, WHITENULL_llll);
-    llllobj_outlet_llll((t_object *) r_ob, LLLL_OBJ_UI, outlet, out_llll);
-    llll_free(out_llll);
-
-    send_playhead_position(r_ob, outlet);
-}
-
-void send_playhead_position(t_notation_obj *r_ob, long outlet) {
-    t_llll* out_llll = llll_get();
-    llll_appendsym(out_llll, _llllobj_sym_cursor, 0, WHITENULL_llll);
-    if (!r_ob->playing)
-        llll_appenddouble(out_llll, r_ob->play_head_start_ms, 0, WHITENULL_llll);
-    else
-        llll_appenddouble(out_llll, r_ob->play_head_ms, 0, WHITENULL_llll);
-    llllobj_outlet_llll((t_object *) r_ob, LLLL_OBJ_UI, outlet, out_llll);
-    llll_free(out_llll);
-}
 
 
 void send_loop_region_on_off(t_notation_obj *r_ob, long outlet)
@@ -2707,7 +2684,7 @@ void notation_class_add_play_attributes(t_class *c, char obj_type){
         // vary in each scheduled interval
 
 
-        CLASS_ATTR_CHAR(c,"catchplay", 0, t_notation_obj, catch_playhead);
+        CLASS_ATTR_CHAR(c,"catchplay", 0, t_notation_obj, catch_playhead_mode);
         CLASS_ATTR_STYLE_LABEL(c,"catchplay",0,"enumindex","Catch Playhead");
         CLASS_ATTR_ENUMINDEX(c,"catchplay", 0, "Don't ChangePage FixedPlayhead");
         CLASS_ATTR_ACCESSORS(c, "catchplay", (method)NULL, (method)notationobj_setattr_catchplay);
@@ -4152,7 +4129,7 @@ t_max_err notationobj_setattr_preventedit(t_notation_obj *r_ob, t_object *attr, 
 t_max_err notationobj_setattr_catchplay(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && av) {
         long mode = atom_getlong(av);
-        r_ob->catch_playhead = mode;
+        r_ob->catch_playhead_mode = mode;
         object_attr_setdisabled((t_object *)r_ob, gensym("playheadfixedpos"), mode != k_PLAYHEAD_DOMAINCHANGE_FIXPOS);
     }
     
