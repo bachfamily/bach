@@ -46493,7 +46493,7 @@ void notationobj_parse_play_arguments(t_notation_obj *r_ob, long argc, t_atom *a
     if (preschedule) *preschedule = false;
     if (deferlow) *deferlow = false;
     for (long i = 0; i < argc; i++) {
-        if (atom_gettype(argv) == A_SYM) {
+        if (atom_gettype(argv+i) == A_SYM) {
             if (selection && atom_getsym(argv+i) == gensym("selection")) {
                 *selection = true;
             } else if (offline && atom_getsym(argv+i) == gensym("offline")) {
