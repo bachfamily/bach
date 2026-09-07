@@ -142,6 +142,20 @@ void send_playhead_position(t_notation_obj *r_ob, long outlet, char only_for_pla
 
 // TODO: play_head_max must be mutexed and accessed accordingly ?
 
+void notationobj_catch_playhead(t_notation_obj *r_ob)
+{
+    long which_playhead = CLAMP(r_ob->catch_playhead_which, 0, CONST_MAX_PLAYHEADS-1);
+    if (((r_ob->obj_type == k_NOTATION_OBJECT_SCORE) &&
+         ((r_ob->catch_playhead_mode == k_PLAYHEAD_DOMAINCHANGE_PAGES && r_ob->force_inscreen_ux_rolling_function((t_object *)r_ob, r_ob->play_head_ux[which_playhead], 0, true, false)) ||
+         (r_ob->catch_playhead_mode == k_PLAYHEAD_DOMAINCHANGE_FIXPOS && r_ob->force_inscreenpos_ux_function((t_object *)r_ob, r_ob->playhead_fixed_pos, r_ob->play_head_ux[which_playhead], true, false)))) ||
+         ((r_ob->obj_type == k_NOTATION_OBJECT_ROLL) &&
+         ((r_ob->catch_playhead_mode == k_PLAYHEAD_DOMAINCHANGE_PAGES && r_ob->force_inscreen_ms_rolling_function((t_object *)r_ob, r_ob->play_head_ms[which_playhead], 0, true, false, false)) ||
+         (r_ob->catch_playhead_mode == k_PLAYHEAD_DOMAINCHANGE_FIXPOS && r_ob->force_inscreenpos_ms_function((t_object *)r_ob, r_ob->playhead_fixed_pos, r_ob->play_head_ms[which_playhead], true, false, false)))))
+    {
+        notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+    }
+}
+
 void notationobj_task(t_notation_obj *r_ob)
 {
 // clock activation.
@@ -149,7 +163,6 @@ void notationobj_task(t_notation_obj *r_ob)
 // So, each interval (from note to note) is divided into x->r_ob.play_num_steps steps, when we get to the last one, we compute the next note values.
 
     long playout_num = notationobj_get_playout(r_ob);
-    long catch_playhead_which = CLAMP(r_ob->catch_playhead_which, 0, CONST_MAX_PLAYHEADS-1);
 
     for (long ph = 0; ph < r_ob->play_head_max; ph++) {
         r_ob->play_head_ms[ph] += r_ob->play_step_ms;
@@ -165,7 +178,7 @@ void notationobj_task(t_notation_obj *r_ob)
 
     if (r_ob->play_step_count < r_ob->play_num_steps) {
 
-        // we haven't reached the next event: we just redraw the playline
+        // we haven't reached the next event: we just redraw the playline(s)
 
         if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
             lock_general_mutex(r_ob);
@@ -180,24 +193,17 @@ void notationobj_task(t_notation_obj *r_ob)
         setclock_fdelay(r_ob->setclock->s_thing, r_ob->m_clock, r_ob->play_step_ms);
 
         if (r_ob->theoretical_play_step_ms > 0) {
-            if ((r_ob->obj_type == k_NOTATION_OBJECT_SCORE &&
-                 ((r_ob->catch_playhead_mode == k_PLAYHEAD_DOMAINCHANGE_PAGES && r_ob->force_inscreen_ux_rolling_function((t_object *)r_ob, r_ob->play_head_ux[catch_playhead_which], 0, true, false)) ||
-                  (r_ob->catch_playhead_mode == k_PLAYHEAD_DOMAINCHANGE_FIXPOS && r_ob->force_inscreenpos_ux_function((t_object *)r_ob, r_ob->playhead_fixed_pos, r_ob->play_head_ux[catch_playhead_which], true, false)))) ||
-                (r_ob->obj_type == k_NOTATION_OBJECT_ROLL &&
-                 ((r_ob->catch_playhead_mode == k_PLAYHEAD_DOMAINCHANGE_PAGES && r_ob->force_inscreen_ms_rolling_function((t_object *)r_ob, r_ob->play_head_ms[catch_playhead_which], 0, true, false, false)) ||
-                  (r_ob->catch_playhead_mode == k_PLAYHEAD_DOMAINCHANGE_FIXPOS && r_ob->force_inscreenpos_ms_function((t_object *)r_ob, r_ob->playhead_fixed_pos, r_ob->play_head_ms[catch_playhead_which], true, false, false)))))
-            {
-                notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
-            }
-
+            notationobj_catch_playhead(r_ob);
             notationobj_redraw(r_ob);
         }
     
     } else {
         
-        // we have reached the next scheduled event
+        // we have reached the next scheduled event for some playhead.
         
         lock_general_mutex(r_ob);
+        
+        // TODO: here!
 
         if (r_ob->scheduled_item) {
             
@@ -530,15 +536,7 @@ void notationobj_task(t_notation_obj *r_ob)
             }
             
             if (r_ob->playing_scheduling_type == k_SCHEDULING_STANDARD) {
-                if ((r_ob->obj_type == k_NOTATION_OBJECT_SCORE &&
-                    ((r_ob->catch_playhead_mode == k_PLAYHEAD_DOMAINCHANGE_PAGES && r_ob->force_inscreen_ux_rolling_function((t_object *)r_ob, r_ob->play_head_ux, 0, true, false)) ||
-                     (r_ob->catch_playhead_mode == k_PLAYHEAD_DOMAINCHANGE_FIXPOS && r_ob->force_inscreenpos_ux_function((t_object *)r_ob, r_ob->playhead_fixed_pos, r_ob->play_head_ux, true, false)))) ||
-                    (r_ob->obj_type == k_NOTATION_OBJECT_ROLL &&
-                    ((r_ob->catch_playhead_mode == k_PLAYHEAD_DOMAINCHANGE_PAGES && r_ob->force_inscreen_ms_rolling_function((t_object *)r_ob, r_ob->play_head_ms, 0, true, false, false)) ||
-                     (r_ob->catch_playhead_mode == k_PLAYHEAD_DOMAINCHANGE_FIXPOS && r_ob->force_inscreenpos_ms_function((t_object *)r_ob, r_ob->playhead_fixed_pos, r_ob->play_head_ms, true, false, false)))))
-                {
-                    notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
-                }
+                notationobj_catch_playhead(r_ob);
             }
             
             // outputting chord values
@@ -566,7 +564,9 @@ void notationobj_task(t_notation_obj *r_ob)
             
         } else {
 
-            // next event is the end of the score
+            // next event is the end of the score for some playhead
+            // TODO: again, check all playheads
+            
             double end_time = r_ob->play_head_ms;
             if (r_ob->playing_scheduling_type == k_SCHEDULING_PRESCHEDULE)
                 end_time = r_ob->length_ms_till_last_note;
@@ -641,9 +641,11 @@ void notationobj_preschedule_task(t_notation_obj *r_ob)
     t_llllelem *cur = r_ob->preschedule_cursor;
     if (cur) {
         t_scheduled_event *ev = (t_scheduled_event *)hatom_getobj(&cur->l_hatom);
-        r_ob->play_head_ms = ev->time;
-        if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE);
-        r_ob->play_head_ux = ms_to_unscaled_xposition(r_ob, ev->time, 1);
+        for (long ph = 0; ph < r_ob->play_head_max; ph++) {
+            r_ob->play_head_ms[ph] = ev->time_ms[ph];
+            if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
+                r_ob->play_head_ux[ph] = ms_to_unscaled_xposition(r_ob, ev->time_ms[ph], 1);
+        }
         if (ev->is_end) {
             t_llll *end_llll = llll_get();
             llll_appendsym(end_llll, _llllobj_sym_end, 0, WHITENULL_llll);
@@ -1160,15 +1162,7 @@ void notationobj_do_play(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *a
             r_ob->play_head_ux = ms_to_unscaled_xposition(r_ob, r_ob->play_head_ms, 1);
         }
 
-        if (((r_ob->obj_type == k_NOTATION_OBJECT_SCORE) &&
-             ((r_ob->catch_playhead_mode == k_PLAYHEAD_DOMAINCHANGE_PAGES && r_ob->force_inscreen_ux_rolling_function((t_object *)r_ob, r_ob->play_head_ux, 0, true, false)) ||
-             (r_ob->catch_playhead_mode == k_PLAYHEAD_DOMAINCHANGE_FIXPOS && r_ob->force_inscreenpos_ux_function((t_object *)r_ob, r_ob->playhead_fixed_pos, r_ob->play_head_ux, true, false)))) ||
-             ((r_ob->obj_type == k_NOTATION_OBJECT_ROLL) &&
-             ((r_ob->catch_playhead_mode == k_PLAYHEAD_DOMAINCHANGE_PAGES && r_ob->force_inscreen_ms_rolling_function((t_object *)r_ob, r_ob->play_head_ms, 0, true, false, false)) ||
-             (r_ob->catch_playhead_mode == k_PLAYHEAD_DOMAINCHANGE_FIXPOS && r_ob->force_inscreenpos_ms_function((t_object *)r_ob, r_ob->playhead_fixed_pos, r_ob->play_head_ms, true, false, false)))))
-        {
-            notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
-        }
+        notationobj_catch_playhead(r_ob);
 
         r_ob->playing = true;
         llllobj_outlet_symbol_as_llll((t_object *)r_ob, LLLL_OBJ_UI, notationobj_get_playout(r_ob), _llllobj_sym_play);

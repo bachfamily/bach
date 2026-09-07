@@ -2472,9 +2472,9 @@ typedef struct _scheduled_event
 {
     void            *clock;
     t_llll          *content;
-    double          time;
+    double          time_ms[CONST_MAX_PLAYHEADS];
     char            is_notewise;
-    char            is_end;
+    bool            is_end[CONST_MAX_PLAYHEADS];
 } t_scheduled_event;
 
 
