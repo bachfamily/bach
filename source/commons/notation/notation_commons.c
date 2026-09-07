@@ -46223,26 +46223,6 @@ void note_stretch_portion_of_duration_line_and_temporal_slots(t_notation_obj *r_
 
 
 
-void notationobj_parse_play_arguments(t_notation_obj *r_ob, long argc, t_atom *argv, char *selection, char *offline, char *preschedule, char *deferlow)
-{
-    if (selection) *selection = false;
-    if (offline) *offline = false;
-    if (preschedule) *preschedule = false;
-    if (deferlow) *deferlow = false;
-    for (long i = 0; i < argc; i++) {
-        if (atom_gettype(argv) == A_SYM) {
-            if (selection && atom_getsym(argv+i) == gensym("selection")) {
-                *selection = true;
-            } else if (offline && atom_getsym(argv+i) == gensym("offline")) {
-                *offline = true;
-            } else if (preschedule && atom_getsym(argv+i) == gensym("preschedule")) {
-                *preschedule = true;
-            } else if (deferlow && atom_getsym(argv+i) == gensym("deferlow")) {
-                *deferlow = true;
-            }
-        }
-    }
-}
 
 void delete_measure_tempi(t_notation_obj *r_ob, t_measure *measure)
 {

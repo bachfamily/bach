@@ -140,6 +140,21 @@ void send_playhead_position(t_notation_obj *r_ob, long outlet, char only_for_pla
     }
 }
 
+void send_end_message(t_notation_obj *r_ob, long playhead)
+{
+    long playout_num = notationobj_get_playout(r_ob);
+    
+    t_llll *end_llll = llll_get();
+    llll_appendsym(end_llll, _llllobj_sym_end);
+
+    if (r_ob->notify_playheads) {
+        llll_appendlong(end_llll, ph);
+    }
+
+    llllobj_outlet_llll((t_object *) r_ob, LLLL_OBJ_UI, playout_num, end_llll);
+    llll_free(end_llll);
+}
+
 // TODO: play_head_max must be mutexed and accessed accordingly ?
 
 void notationobj_catch_playhead(t_notation_obj *r_ob)
@@ -593,11 +608,7 @@ void notationobj_task(t_notation_obj *r_ob)
             if (r_ob->playing_scheduling_type == k_SCHEDULING_PRESCHEDULE) {
                 notationobj_append_prescheduled_event(r_ob, end_time, NULL, 0, true);
             } else {
-                // send "end" message
-                t_llll *end_llll = llll_get();
-                llll_appendsym(end_llll, _llllobj_sym_end, 0, WHITENULL_llll);
-                llllobj_outlet_llll((t_object *) r_ob, LLLL_OBJ_UI, playout_num, end_llll);
-                llll_free(end_llll);
+                send_end_message(r_ob);
             }
             
             if (need_repaint)
@@ -645,40 +656,31 @@ void notationobj_preschedule_task(t_notation_obj *r_ob)
             r_ob->play_head_ms[ph] = ev->time_ms[ph];
             if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
                 r_ob->play_head_ux[ph] = ms_to_unscaled_xposition(r_ob, ev->time_ms[ph], 1);
-        }
-        if (ev->is_end) {
-            t_llll *end_llll = llll_get();
-            llll_appendsym(end_llll, _llllobj_sym_end, 0, WHITENULL_llll);
-            llllobj_outlet_llll((t_object *) r_ob, LLLL_OBJ_UI, playout, end_llll);
-            llll_free(end_llll);
-            defer((t_object *) r_ob, (method)notationobj_preschedule_end, NULL, 0, NULL);
-        } else {
-
-            notationobj_redraw(r_ob);
-            /*            if (ev->content && r_ob->highlight_played_notes) {
-             check_unplayed_notes(r_ob, r_ob->play_head_ms);
-             notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
-             } else {
-             //            if (x->r_ob.catch_playhead && force_inscreen_ms_rolling(x, x->r_ob.play_head_ms, 0, true, false, false))
-             //                notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
-             notationobj_redraw(r_ob);
-             } */
-
-            if (ev->content){
-                send_sublists_through_playout_and_free(r_ob, playout, ev->content, NULL, ev->is_notewise);
-                r_ob->preschedule_cursor = r_ob->preschedule_cursor->l_next;
+            if (ev->is_end[ph]) {
+                send_end_message(r_ob, ph);
+                defer((t_object *) r_ob, (method)notationobj_preschedule_end, NULL, 0, NULL);
+            } else {
+                
+                notationobj_redraw(r_ob);
+                
+                if (ev->content){
+                    send_sublists_through_playout_and_free(r_ob, playout, ev->content, NULL, ev->is_notewise);
+                    r_ob->preschedule_cursor = r_ob->preschedule_cursor->l_next;
+                }
             }
         }
     }
 }
 
-void notationobj_append_prescheduled_event(t_notation_obj *r_ob, double time, t_llll *content, char is_notewise, char is_end)
+void notationobj_append_prescheduled_event(t_notation_obj *r_ob, double time, t_llll *content, char is_notewise, char *is_end)
 {
     t_scheduled_event *ev = (t_scheduled_event *)bach_newptr(sizeof(t_scheduled_event));
     ev->time = time;
     ev->clock = clock_new_debug((t_object *)r_ob, (method)notationobj_preschedule_task);
     ev->content = content;
-    ev->is_end = is_end;
+    for (long ph = 0; ph < CONST_MAX_PLAYHEADS) {
+        ev->is_end[ph] = is_end[ph];
+    }
     ev->is_notewise = is_notewise;
     llll_appendobj(r_ob->to_preschedule, ev);
 }
@@ -730,28 +732,114 @@ void notationobj_set_everything_unplayed(t_notation_obj *r_ob)
     llll_clear(r_ob->notes_being_played);
 }
 
-void notationobj_do_stop(t_notation_obj *r_ob, t_symbol *s)
+long atom_to_playhead_index(t_notation_obj *r_ob, t_atom *a)
 {
+    if (atom_gettype(a) == A_SYM) {
+        // TODO: handle symbols
+    } else if (atom_gettype(a) == A_LONG) {
+        long l = atom_getlong(a);
+        if (l >= 1 && l <= CONST_MAX_PLAYHEADS) {
+            return l-1;
+        }
+    }
+    return -1;
+}
+
+void notationobj_do_stop(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv)
+{
+    long which_playhead = argc > 0 ? atom_to_playhead_index(argv) : -1;
+    bool notifyplayheads[CONST_MAX_PLAYHEADS];
+    for (long ph = 0; ph < CONST_MAX_PLAYHEADS; ph++)
+        notifyplayheads[ph] = false;
+    bool all_stopped = false;
+    
     lock_general_mutex(r_ob);
-    r_ob->playing = false;
-    notationobj_set_everything_unplayed(r_ob);
-    r_ob->play_head_ms = -1;
-    r_ob->dont_schedule_loop_end = r_ob->dont_schedule_loop_start = false;
-    setclock_unset(r_ob->setclock->s_thing, r_ob->m_clock);
-    r_ob->only_play_selection = false;
-    r_ob->playback_deferlow = false;
-    r_ob->play_step_count = 0;
+    if (which_playhead >= 0 && which_playhead < CONST_MAX_PLAYHEADS) {
+        r_ob->play_head_ms[ph] = -1;
+        r_ob->dont_schedule_loop_end[ph] = r_ob->dont_schedule_loop_start[ph] = false;
+        if (r_ob->play_head_playing[ph]) {
+            notifyplayheads[ph] = true;
+            r_ob->play_head_playing[ph] = false;
+        }
+        // check if everything is stopped
+        bool all_stopped = true;
+        for (long ph = 0; ph < r_ob->play_head_max; ph++) {
+            if (r_ob->play_head_playing[ph]) {
+                all_stopped = false;
+                break;
+            }
+        }
+    } else {
+        // we stop everything
+        all_stopped = true;
+    }
+        
+    if (all_stopped) { // stop everything
+        r_ob->playing = false;
+        notationobj_set_everything_unplayed(r_ob);
+        for (long ph = 0; ph < CONST_MAX_PLAYHEADS; ph++) {
+            r_ob->play_head_ms[ph] = -1;
+            r_ob->dont_schedule_loop_end[ph] = r_ob->dont_schedule_loop_start[ph] = false;
+        }
+        setclock_unset(r_ob->setclock->s_thing, r_ob->m_clock);
+        r_ob->only_play_selection = false;
+        r_ob->playback_deferlow = false;
+        r_ob->play_step_count = 0;
+        
+    }
     unlock_general_mutex(r_ob);
 
-    llllobj_outlet_symbol_as_llll((t_object *)r_ob, LLLL_OBJ_UI, notationobj_get_playout(r_ob), s ? s : _llllobj_sym_stop);
-
+    if (r_ob->notify_playheads) {
+        for (long ph = 0; ph < CONST_MAX_PLAYHEADS; ph++) {
+            if (notifyplayheads[ph]) {
+                t_llll *outll = llll_get();
+                llll_appendsym(outll, s ? s : _llllobj_sym_stop);
+                llll_appendlong(outll, ph);
+                llllobj_outlet_llll((t_object *)r_ob, LLLL_OBJ_UI, notationobj_get_playout(r_ob), outll);
+                llll_free(outll);
+            }
+        }
+    }
+    if (all_stopped) {
+        llllobj_outlet_symbol_as_llll((t_object *)r_ob, LLLL_OBJ_UI, notationobj_get_playout(r_ob), s ? s : _llllobj_sym_stop);
+    }
+    
+    
     if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
         if (r_ob->highlight_played_notes)
             notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
         else
             notationobj_redraw(r_ob);
     } else {
-       notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+        notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+    }
+    
+}
+
+
+void notationobj_parse_play_arguments(t_notation_obj *r_ob, long argc, t_atom *argv, char *selection, char *offline, char *preschedule, char *deferlow, long *which_playhead)
+{
+    if (selection) *selection = false;
+    if (offline) *offline = false;
+    if (preschedule) *preschedule = false;
+    if (deferlow) *deferlow = false;
+    if (which_playhead) *which_playhead = -1;
+    for (long i = 0; i < argc; i++) {
+        if (atom_gettype(argv[i]) == A_SYM) {
+            if (selection && atom_getsym(argv+i) == gensym("selection")) {
+                *selection = true;
+            } else if (offline && atom_getsym(argv+i) == gensym("offline")) {
+                *offline = true;
+            } else if (preschedule && atom_getsym(argv+i) == gensym("preschedule")) {
+                *preschedule = true;
+            } else if (deferlow && atom_getsym(argv+i) == gensym("deferlow")) {
+                *deferlow = true;
+            } else if (which_playhead && atom_getsym(argv+i) == gensym("@playhead")) {
+                which_playhead = i+1 < argc ? atom_to_playhead_index(r_ob, argv);
+            }
+        } else {
+            which_playhead = atom_to_playhead_index(r_ob, argv);
+        }
     }
 }
 

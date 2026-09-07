@@ -4647,9 +4647,9 @@ typedef struct _notation_obj
     char            use_loop_region;                    ///< Flag telling if we use the loop region during play or not
     double            loop_region_pixel_start;            ///< Starting x pixel position for the loop region
     double            loop_region_pixel_end;                ///< Ending x pixel position for the loop region 
-    char            dont_schedule_loop_start;            ///< (PRIVATE, INTERNAL) Flag useful to avoid scheduling the loop start (for instance, because it had already been scheduled before) 
-    char            dont_schedule_loop_end;                ///< (PRIVATE, INTERNAL) Flag useful to avoid scheduling the loop end (for instance, because it had already been scheduled before) 
-    char            playhead_cant_trespass_loop_end;    ///< (PRIVATE, INTERNAL) If this flag is set, the playhead cannot trespass the end of the loop. This is extremely useful in this circumstance:
+    char            dont_schedule_loop_start[CONST_MAX_PLAYHEADS];            ///< (PRIVATE, INTERNAL) Flag useful to avoid scheduling the loop start (for instance, because it had already been scheduled before)
+    char            dont_schedule_loop_end[CONST_MAX_PLAYHEADS];                ///< (PRIVATE, INTERNAL) Flag useful to avoid scheduling the loop end (for instance, because it had already been scheduled before)
+    char            playhead_cant_trespass_loop_end[CONST_MAX_PLAYHEADS];    ///< (PRIVATE, INTERNAL) If this flag is set, the playhead cannot trespass the end of the loop. This is extremely useful in this circumstance:
                                                         ///< If the user is playing and at the same time moving the right boundary of the loop leftwards, the check_correct_scheduling() might want to skip 
                                                         ///< the scheduling of the loop end, because it has been overwhelmed (just like when you move a chord leftwards, and it MIGHT not be played if 
                                                         ///< it's "too late". Yet loop end is no chord, and we need to somehow force its scheduling: we do it via this flag: if this is set, check_correct_scheduling()  
