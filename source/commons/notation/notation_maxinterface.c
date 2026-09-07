@@ -5819,8 +5819,8 @@ void notationobj_preschedule_task(t_notation_obj *r_ob)
     if (cur) {
         t_scheduled_event *ev = (t_scheduled_event *)hatom_getobj(&cur->l_hatom);
         r_ob->play_head_ms = ev->time;
-        if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE);
-        r_ob->play_head_ux = ms_to_unscaled_xposition(r_ob, ev->time, 1);
+        if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
+            r_ob->play_head_ux = ms_to_unscaled_xposition(r_ob, ev->time, 1);
         if (ev->is_end) {
             t_llll *end_llll = llll_get();
             llll_appendsym(end_llll, _llllobj_sym_end, 0, WHITENULL_llll);
