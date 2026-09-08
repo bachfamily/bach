@@ -4171,6 +4171,39 @@ typedef struct _playhead
 } t_playhead;
 
 
+    
+typedef struct _playback_specs
+{
+    bool            deferlow;
+    bool            preschedule;
+    bool            selection;
+    bool            offline;
+    bool            pause;
+    bool            stop;
+
+    bool            playhead_active[CONST_MAX_PLAYHEADS];
+
+    bool            start_ms_specificed[CONST_MAX_PLAYHEADS];
+    double          msoffset[CONST_MAX_PLAYHEADS];  // this is the key field used to schedule playheads together
+
+    bool            stop_ms_specified[CONST_MAX_PLAYHEADS];
+    double          stop_ms[CONST_MAX_PLAYHEADS];
+    
+    long            playhead_index_max;
+    
+    double          msdiffwithfirst[CONST_MAX_PLAYHEADS];
+
+    bool            dont_schedule_loop_start[CONST_MAX_PLAYHEADS];            ///< (PRIVATE, INTERNAL) Flag useful to avoid scheduling the loop start (for instance, because it had already been scheduled before)
+    bool            dont_schedule_loop_end[CONST_MAX_PLAYHEADS];                ///< (PRIVATE, INTERNAL) Flag useful to avoid scheduling the loop end (for instance, because it had already been scheduled before)
+    bool            playhead_cant_trespass_loop_end[CONST_MAX_PLAYHEADS];    ///< (PRIVATE, INTERNAL) If this flag is set, the playhead cannot trespass the end of the loop. This is extremely useful in this circumstance:
+                                                        ///< If the user is playing and at the same time moving the right boundary of the loop leftwards, the check_correct_scheduling() might want to skip
+                                                        ///< the scheduling of the loop end, because it has been overwhelmed (just like when you move a chord leftwards, and it MIGHT not be played if
+                                                        ///< it's "too late". Yet loop end is no chord, and we need to somehow force its scheduling: we do it via this flag: if this is set, check_correct_scheduling()
+                                                        ///< will check that the current timing is NO bigger than the loop end, otherwise it'll simply schedule immediately the loop end.
+                                                        ///< This flag is updated each time the play is started.
+} t_playback_specs;
+
+
 /** A common structure for UI notation objects. 
     [bach.score], [bach.roll] and [bach.slot] will extend this structure, but most of the stuff is already inside here.
     Moreover, for convenience, some stuff which concerning a single object (such [bach.score]) is still in this structure, for
@@ -4647,14 +4680,7 @@ typedef struct _notation_obj
     char            use_loop_region;                    ///< Flag telling if we use the loop region during play or not
     double            loop_region_pixel_start;            ///< Starting x pixel position for the loop region
     double            loop_region_pixel_end;                ///< Ending x pixel position for the loop region 
-    char            dont_schedule_loop_start[CONST_MAX_PLAYHEADS];            ///< (PRIVATE, INTERNAL) Flag useful to avoid scheduling the loop start (for instance, because it had already been scheduled before)
-    char            dont_schedule_loop_end[CONST_MAX_PLAYHEADS];                ///< (PRIVATE, INTERNAL) Flag useful to avoid scheduling the loop end (for instance, because it had already been scheduled before)
-    char            playhead_cant_trespass_loop_end[CONST_MAX_PLAYHEADS];    ///< (PRIVATE, INTERNAL) If this flag is set, the playhead cannot trespass the end of the loop. This is extremely useful in this circumstance:
-                                                        ///< If the user is playing and at the same time moving the right boundary of the loop leftwards, the check_correct_scheduling() might want to skip 
-                                                        ///< the scheduling of the loop end, because it has been overwhelmed (just like when you move a chord leftwards, and it MIGHT not be played if 
-                                                        ///< it's "too late". Yet loop end is no chord, and we need to somehow force its scheduling: we do it via this flag: if this is set, check_correct_scheduling()  
-                                                        ///< will check that the current timing is NO bigger than the loop end, otherwise it'll simply schedule immediately the loop end.
-                                                        ///< This flag is updated each time the play is started.
+
     
 //    t_timepoint            repeat_teleport_to;        ///< Teleport ending position for a repeat sign as timepoint (used internally)
 //    double                 repeat_teleport_to_ms;     ///< Teleport ending position for a repeat sign in milliseconds (used internally)
@@ -5040,6 +5066,7 @@ typedef struct _notation_obj
     
     // play
     char        allow_play_from_interface;              ///< Flag telling if we allow playing from the interface
+    t_playback_specs playback_specs;                    ///< Current playback specs
     char        playing;                                ///< Flag telling if the object is currently playing
     char        play_head_playing[CONST_MAX_PLAYHEADS]; ///< Whether each of the playheads is actually playing
     long        play_head_max;                          ///< Maximum index of the active playhead
@@ -5056,7 +5083,6 @@ typedef struct _notation_obj
                                         ///< offline playcursor does not move AT ALL, but it is the playtime playcursor which takes its place and start moving. You have to 
                                         ///< think at the offline playcursor as the indication of the play start region (which graphically disappear while playing, substituted
                                         ///< by the mobile playtime playcursor)
-    double        play_head_fixed_end_ms[CONST_MAX_PLAYHEADS]; ///< Fixed end in milliseconds for the play to stop. Once reached this millisecond position, the stop function is called, and the play is over.
                                         ///< If this value is negative (e.g. -1), no end is given, and the play stops only when the score reading is over.
     double        play_head_reset_start_ms_when_play_ends[CONST_MAX_PLAYHEADS]; ///< if positive, sets a position for the reset of the play_head after play ends
     ///<
@@ -5094,6 +5120,7 @@ typedef struct _notation_obj
     t_marker    *marker_play_cursor[CONST_MAX_PLAYHEADS];        ///< Cursor containing the last played marker, or generally (when possible) the markers happening _before_ the already scheduled events (see #chord_play_cursor)
     t_notation_item        *scheduled_item;    ///< Pointer to the notation item currently being scheduled
     double                scheduled_ms;        ///< Onset (in milliseconds) of the chord currently being scheduled
+    long                  scheduled_playhead;  ///< Scheduled playhead
     double                start_play_time;    ///< Time (in milliseconds) obtained by setclock_getftime() at the very beginning of the play.
                                             ///< We'll use this time to handle rescheduling if needed. Indeed the play system is robust to score changes: 
                                             ///< if you add a note (having onset later than the current playtime playhead), bach will try to reschedule events,
@@ -12150,9 +12177,10 @@ void send_chord_as_llll(t_notation_obj *r_ob, t_chord *chord, long outlet, e_dat
     @param    references    An llll which will be filled with pointers to notation items associated to each obtained sub-llll (e.g. if playmode is notewise, each note of the chord) 
                         You will have to free this llll later on.
     @param    is_notewise    Pointer that will be filled with 1 if the data retrieving is for chord being played notewisely, will be filled with 0 otherwise.
+    @param  playhead        0-based Index of the playhead
     @return    An llll containing at the root level a list of lllls to be supposely later output one after the other.
  */
-t_llll *chord_get_as_llll_for_sending(t_notation_obj *r_ob, t_chord *chord, e_data_considering_types mode, long command_number, t_llll *forced_routers, t_llll **references, char *is_notewise);
+t_llll *chord_get_as_llll_for_sending(t_notation_obj *r_ob, t_chord *chord, e_data_considering_types mode, long command_number, t_llll *forced_routers, t_llll **references, char *is_notewise, long playhead);
 
 
 /**    Obtain tempo as llll to be sent through the playout.
@@ -14769,15 +14797,6 @@ long chord_get_max_velocity(t_notation_obj *r_ob, t_chord *chord);
     @param    lock_general_mutex    If this is non-zero, the t_notation_obj::c_general_mutex mutex is locked and unlocked before checking and changing
 */
 void check_correct_scheduling(t_notation_obj *r_ob, char also_lock_general_mutex);
-
-
-/** Update the t_notation_obj::playhead_cant_trespass_loop_end field, telling us if the playhead can or cannot be AFTER the end of the loop.
-    This is performed before starting playing: via this, we know for instance that if the playhead start is BEFORE the end of the (visible) loop, 
-    the loop end will never be trespassed; otherwise if it is AFTER the end of the loop, the play will continue linearly to the end of the roll or score. 
-    @ingroup play
-    @param    r_ob        The notation object
-*/
-void update_playhead_cant_trespass_loop_end(t_notation_obj *r_ob);
 
 
 /** Obtain the next notation item which is supposed to be played.
@@ -19318,9 +19337,6 @@ void notationobj_paste_slot_selection_to_open_slot_window(t_notation_obj *r_ob, 
 void notationobj_copy_durationline(t_notation_obj *r_ob, t_clipboard *clipboard, t_note *note, char cut);
 void notationobj_paste_durationline(t_notation_obj *r_ob, t_clipboard *clipboard);
 
-void notationobj_parse_play_arguments(t_notation_obj *r_ob, long argc, t_atom *argv, char *selection, char *offline, char *preschedule, char *deferlow);
-
-
 void notationobj_pixel_to_element(t_notation_obj *r_ob, t_pt pix, void **clicked_elem_ptr, long *clicked_elem_type);
 void notationobj_toggle_realtime_mode(t_notation_obj *r_ob, char realtime);
 void notationobj_setnotationcolors(t_notation_obj *r_ob, t_llll *ll);
@@ -19429,12 +19445,12 @@ void notationobj_preschedule_end(t_notation_obj *r_ob);
 void notationobj_stop(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 void notationobj_do_stop(t_notation_obj *r_ob, t_symbol *s);
 void notationobj_play(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
-void notationobj_play_offline(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
-void notationobj_playselection(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_play_offline(t_notation_obj *r_ob);
 void notationobj_play_preschedule(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 void notationobj_do_play(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 void notationobj_pause(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 void notationobj_set_everything_unplayed(t_notation_obj *r_ob);
+void notationobj_parse_play_arguments(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 
 
 // PRE-SCHEDULING

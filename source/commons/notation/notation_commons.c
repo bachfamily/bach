@@ -371,18 +371,6 @@ void paint_timesignature(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_
 
 
 
-void update_playhead_cant_trespass_loop_end(t_notation_obj *r_ob)
-{
-    if (!r_ob->show_loop_region || !r_ob->use_loop_region) {
-        r_ob->playhead_cant_trespass_loop_end = false;
-        return;
-    }
-    
-    if (r_ob->play_head_start_ms < r_ob->loop_region.end.position_ms)
-        r_ob->playhead_cant_trespass_loop_end = true;
-    else
-        r_ob->playhead_cant_trespass_loop_end = false;
-}
 
 
 // returns -1 if the point (point_x, point_y) is on the loop start line, 1 for loop end line, 0 otherwise

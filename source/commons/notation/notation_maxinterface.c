@@ -405,13 +405,14 @@ void append_voice_or_full_path_to_playout_syntax(t_notation_obj *r_ob, t_llll *p
 
 
 
-t_llll *chord_get_as_llll_for_sending(t_notation_obj *r_ob, t_chord *chord, e_data_considering_types mode, long command_number, t_llll *forced_routers, t_llll **references, char *is_notewise)
+t_llll *chord_get_as_llll_for_sending(t_notation_obj *r_ob, t_chord *chord, e_data_considering_types mode, long command_number, t_llll *forced_routers, t_llll **references, char *is_notewise, long playhead)
 {
 	// we output: chord voice# midichannel ( CHORD_GATHERED_SYNTAX )
 	// mode = 1 = playout, 0 = single chord dump, -1 for gathered syntax (first outlet), 2 = partialplayout
 	// command_number = -1 -> normal playout or dump; commandnumber >=0: a defined command.
 	// puts into references the references for the played notes or chords
 
+    bool should_append_playhead = ((mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_PLAYING || mode == k_CONSIDER_FOR_PLAYING_AND_ALLOW_PARTIAL_LOOPED_NOTES) && (r_ob->notify_playheads) );
 	if (references)
 		*references = llll_get();
 
@@ -425,6 +426,9 @@ t_llll *chord_get_as_llll_for_sending(t_notation_obj *r_ob, t_chord *chord, e_da
 			append_voice_or_full_path_to_playout_syntax(r_ob, out_llll, (t_notation_item *)chord, mode);
 			llll_appendlong(out_llll, chord->parent->voiceparent->v_ob.midichannel);
 			llll_appendllll(out_llll, get_scorechord_values_as_llll(r_ob, chord, mode, true));
+            if (should_append_playhead) {
+                llll_appendlong(out_llll, playhead+1);
+            }
 			llll_appendobj(all_notes_llll, out_llll);
 
 			if (references)
@@ -444,6 +448,10 @@ t_llll *chord_get_as_llll_for_sending(t_notation_obj *r_ob, t_chord *chord, e_da
                         append_voice_or_full_path_to_playout_syntax(r_ob, out_llll, (t_notation_item *)note, mode);
                         llll_appendlong(out_llll, chord->parent->voiceparent->v_ob.midichannel);
                         llll_appendllll(out_llll, get_single_scorenote_values_as_llll(r_ob, note, mode));
+                        if (should_append_playhead) {
+                            llll_appendlong(out_llll, playhead+1);
+                        }
+                        
                         llll_appendobj(all_notes_llll, out_llll);
 
                         if (references)
@@ -465,7 +473,7 @@ t_llll *chord_get_as_llll_for_sending(t_notation_obj *r_ob, t_chord *chord, e_da
 
         for (note =  chord->firstnote; note; note = note->next) {
             if (should_element_be_played(r_ob, (t_notation_item *)note)) {
-                if ((mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) && (note->parent->onset + note->duration) < r_ob->play_head_start_ms)
+                if ((mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) && (note->parent->onset + note->duration) < r_ob->play_head_start_ms[playhead])
                     continue;
 
 				t_llll* out_llll = llll_get();
@@ -473,6 +481,9 @@ t_llll *chord_get_as_llll_for_sending(t_notation_obj *r_ob, t_chord *chord, e_da
 				append_voice_or_full_path_to_playout_syntax(r_ob, out_llll, (t_notation_item *)note, mode);
 				llll_appendlong(out_llll, chord->voiceparent->v_ob.midichannel);
 				llll_appendllll(out_llll, get_single_rollnote_values_as_llll(r_ob, note, mode));
+                if (should_append_playhead) {
+                    llll_appendlong(out_llll, playhead+1);
+                }
 
 				llll_appendobj(all_notes_llll, out_llll);
 
@@ -510,6 +521,11 @@ t_llll *chord_get_as_llll_for_sending(t_notation_obj *r_ob, t_chord *chord, e_da
                 llll_appendlong(out_llll, chord->voiceparent->v_ob.midichannel, 0, WHITENULL_llll);
                 llll_appendllll(out_llll, get_rollchord_values_as_llll(r_ob, chord, mode, false), 0, WHITENULL_llll);
             }
+
+            if (should_append_playhead) {
+                llll_appendlong(out_llll, playhead+1);
+            }
+
 
             llll_appendobj(external_out_llll, out_llll, 0, WHITENULL_llll);
 

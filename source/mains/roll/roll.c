@@ -5743,7 +5743,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example play preschedule @caption accurate prescheduled playback (with limitations)
     // @seealso stop, pause, setcursor
     class_addmethod(c, (method) notationobj_play, "play", A_GIMME, 0);
-    class_addmethod(c, (method) notationobj_playselection, "playselection", A_GIMME, 0);
+    class_addmethod(c, (method) notationobj_play, "playselection", A_GIMME, 0);
     
     
     // @method stop @digest Stop
@@ -17609,10 +17609,7 @@ long roll_key(t_roll *x, t_object *patcherview, long keycode, long modifiers, lo
             } else
                 notationobj_stop((t_notation_obj *)x, NULL, 0, NULL);
         } else {
-            if (modifiers == eShiftKey)
-                notationobj_playselection((t_notation_obj *)x, NULL, 0, NULL);
-            else
-                notationobj_play((t_notation_obj *)x, NULL, 0, NULL);
+            notationobj_play((t_notation_obj *)x, modifiers == eShiftKey ? gensym("playselection") : NULL, 0, NULL);
         }
         return 1;
     }

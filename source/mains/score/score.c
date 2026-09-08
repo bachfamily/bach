@@ -5016,7 +5016,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example playselection @caption play selected items only
     // @example playselection offline @caption the same, in non-realtime mode ("uzi-like")
     // @seealso stop, pause, play
-    class_addmethod(c, (method) notationobj_playselection, "playselection", A_GIMME, 0);
+    class_addmethod(c, (method) notationobj_play, "playselection", A_GIMME, 0);
 
 
     // @method stop @digest Stop
@@ -16884,10 +16884,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
             } else
                 notationobj_stop((t_notation_obj *)x, NULL, 0, NULL);
         } else {
-            if (modifiers == eShiftKey)
-                notationobj_playselection((t_notation_obj *)x, NULL, 0, NULL);
-            else
-                notationobj_play((t_notation_obj *)x, NULL, 0, NULL);
+            notationobj_play((t_notation_obj *)x, modifiers == eShiftKey ? gensym("playselection") : NULL, 0, NULL);
         }
         return 1;
     }
