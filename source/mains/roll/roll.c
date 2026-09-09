@@ -174,7 +174,7 @@ void roll_addchord_from_values(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 void roll_subroll(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 void roll_merge_or_glue(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 void roll_snap_pitch_to_grid(t_roll *x, t_symbol *s, long argc, t_atom *argv);
-void roll_send_current_chord(t_roll *x);
+void roll_send_current_chord(t_roll *x, long playhead);
 
 void roll_dump(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 void select_all(t_roll *x);
@@ -1248,7 +1248,8 @@ void roll_quantize(t_roll *x, t_symbol *s, long argc, t_atom *argv)
     llll_free(out_llll);
 }
 
-void roll_send_current_chord(t_roll *x){
+void roll_send_current_chord(t_roll *x, long playhead)
+{
     t_rollvoice *voice;
     t_chord *chord;
     t_note *note;
@@ -1257,7 +1258,7 @@ void roll_send_current_chord(t_roll *x){
     t_llll *out_vels = llll_get();
     
     lock_general_mutex((t_notation_obj *)x);
-    double curr_pos_ms = x->r_ob.playing ? x->r_ob.play_head_ms : x->r_ob.play_head_start_ms;
+    double curr_pos_ms = x->r_ob.playing ? x->r_ob.play_head_ms[playhead] : x->r_ob.play_head_start_ms[playhead];
     for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next){
         for (chord = voice->firstchord; chord; chord = chord->next){
             if (chord->onset > curr_pos_ms)
@@ -1311,21 +1312,22 @@ void roll_showcursor(t_roll *x){
 }
 
 void roll_setcursor(t_roll *x, t_symbol *s, long argc, t_atom *argv){
+    t_atom_long playhead = 0;
     if (argc>0) {
-        if (atom_gettype(argv) == A_SYM) {
-            t_notation_item *it;
-            t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
+        t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
+        llll_parseattrs((t_object *)x, args, LLLL_PA_DESTRUCTIVE, "i", gensym("playhead"), &playhead);
+        if (hatom_gettype(&args->l_head->l_hatom) == H_SYM) {
             lock_general_mutex((t_notation_obj *)x);
-            it = names_to_single_notation_item((t_notation_obj *) x, args);
+            t_notation_item *it = names_to_single_notation_item((t_notation_obj *) x, args);
             if (it)
-                x->r_ob.play_head_start_ms  = notation_item_get_onset_ms((t_notation_obj *)x, it);
+                x->r_ob.play_head_start_ms[playhead]  = notation_item_get_onset_ms((t_notation_obj *)x, it);
             unlock_general_mutex((t_notation_obj *)x);
             llll_free(args);
-        } else if (is_atom_number(argv))
-            x->r_ob.play_head_start_ms = atom_getfloat(argv);
+        } else if (is_hatom_number(&args->l_head->l_hatom))
+            x->r_ob.play_head_start_ms[playhead] = hatom_getdouble(&args->l_head->l_hatom);
     }
     if (x->r_ob.notify_also_upon_messages) {
-        send_moved_playhead_position((t_notation_obj *) x, 6);
+        send_moved_playhead_position((t_notation_obj *) x, 6, playhead);
     }
     notationobj_redraw((t_notation_obj *) x);
 }
@@ -3850,9 +3852,12 @@ void roll_addmarker(t_roll *x, t_symbol *s, long argc, t_atom *argv){
         char dummy_attach_to;
         t_llll *content = NULL;
         
-        if (hatom_gettype(&args->l_head->l_hatom) == H_SYM && hatom_getsym(&args->l_head->l_hatom) == _llllobj_sym_cursor) 
-            pos_ms = (!x->r_ob.playing ? x->r_ob.play_head_start_ms : x->r_ob.play_head_ms);
-        else if (hatom_gettype(&args->l_head->l_hatom) == H_SYM && hatom_getsym(&args->l_head->l_hatom) == _llllobj_sym_end)
+        if (hatom_gettype(&args->l_head->l_hatom) == H_SYM && hatom_getsym(&args->l_head->l_hatom) == _llllobj_sym_cursor) {
+            long playhead = 0;
+            if (args->l_head->l_next)
+                playhead = CLAMP(hatom_to_playhead_index((t_notation_obj *)x, &args->l_head->l_next->l_hatom), 0, CONST_MAX_PLAYHEADS);
+            pos_ms = (!x->r_ob.playing ? x->r_ob.play_head_start_ms[playhead] : x->r_ob.play_head_ms[playhead]);
+        } else if (hatom_gettype(&args->l_head->l_hatom) == H_SYM && hatom_getsym(&args->l_head->l_hatom) == _llllobj_sym_end)
             pos_ms = x->r_ob.length_ms_till_last_note;
         else if (args->l_head) {
             marker_llllelem_to_onset_and_region_properties((t_notation_obj *)x, args->l_head, &pos_ms, &dur_ms, &dummy_timepoint, &dummy_rational, &dummy_attach_to);
@@ -4038,7 +4043,10 @@ void roll_inscreen(t_roll *x, t_symbol *s, long argc, t_atom *argv){
             if (atom_getsym(argv) == _llllobj_sym_end) {
                 inscreen = x->r_ob.length_ms_till_last_note;
             } else if (atom_getsym(argv) == _llllobj_sym_cursor) {
-                inscreen = x->r_ob.playing ? x->r_ob.play_head_ms : x->r_ob.play_head_start_ms;
+                long playhead = 0;
+                if (argc >= 2)
+                    playhead = CLAMP(atom_to_playhead_index((t_notation_obj *)x, argv+1), 0, CONST_MAX_PLAYHEADS);
+                inscreen = x->r_ob.playing ? x->r_ob.play_head_ms[playhead] : x->r_ob.play_head_start_ms[playhead];
             } else {
                 t_notation_item *it;
                 t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
@@ -4068,7 +4076,10 @@ void roll_inscreenpos(t_roll *x, t_symbol *s, long argc, t_atom *argv){
             if (atom_getsym(argv + 1) == _llllobj_sym_end) {
                 ms = x->r_ob.length_ms_till_last_note;
             } else if (atom_getsym(argv + 1) == _llllobj_sym_cursor) {
-                ms = x->r_ob.playing ? x->r_ob.play_head_ms : x->r_ob.play_head_start_ms;
+                long playhead = 0;
+                if (argc >= 3)
+                    playhead = CLAMP(atom_to_playhead_index((t_notation_obj *)x, argv+2), 0, CONST_MAX_PLAYHEADS);
+                ms = x->r_ob.playing ? x->r_ob.play_head_ms[playhead] : x->r_ob.play_head_start_ms[playhead];
             } else {
                 t_notation_item *it;
                 t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc - 1, argv + 1, LLLL_PARSE_RETAIN);
@@ -5068,8 +5079,9 @@ void C74_EXPORT ext_main(void *moduleRef){
 
     // @method getcurrentchord @digest Get notes at cursor position
     // @description @copy BACH_DOC_MESSAGE_GETCURRENTCHORD 
+    // @marg 0 @name playhead @optional 1 @type int
     // @seealso interp, sample
-    class_addmethod(c, (method) roll_send_current_chord, "getcurrentchord", 0);
+    class_addmethod(c, (method) roll_send_current_chord, "getcurrentchord", A_DEFLONG, 0);
 
 
     // @method explodechords @digest Turn all chords into 1-note-chords
@@ -9786,7 +9798,7 @@ t_chord* addchord_from_notes(t_roll *x, long voicenumber, double onset, long unu
     this_ch->overall_tuplet_ratio = long2rat(1);
     this_ch->firstnote = firstnote;
     this_ch->lastnote = lastnote;
-    this_ch->played = false;
+    this_ch->played = 0;
     this_ch->muted = false;
     this_ch->locked = false;
     this_ch->solo = false;
@@ -9882,7 +9894,7 @@ t_chord* addchord_from_values(t_roll *x, long voicenumber, long num_notes, doubl
             this_ch->system_index = 0;
             this_ch->need_recompute_parameters = false;
             this_ch->onset = onset;
-            this_ch->played = false;
+            this_ch->played = 0;
             this_ch->muted = false;
             this_ch->locked = false;
             this_ch->solo = false;
@@ -10949,7 +10961,8 @@ t_roll* roll_new(t_symbol *s, long argc, t_atom *argv)
     x->r_ob.active_slot_num = -1; // active slot is the normal view (= no slot is visible!)
     x->r_ob.active_slot_num_1based = 0;
     x->r_ob.m_editor = NULL;
-    x->r_ob.play_head_ms = -1;
+    for (long ph = 0; ph < CONST_MAX_PLAYHEADS; ph++)
+        x->r_ob.play_head_ms[ph] = -1;
 
     x->r_ob.key_signature_uwidth = get_max_key_uwidth((t_notation_obj *) x);
     calculate_ms_on_a_line((t_notation_obj *) x);
@@ -12178,7 +12191,7 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
     }
     unlock_general_mutex((t_notation_obj *)x);
 
-    paint_playhead((t_notation_obj *)x, main_g, rect);
+    paint_playheads((t_notation_obj *)x, main_g, rect);
 
     assert(jf_text_small != NULL);
 
@@ -12649,7 +12662,7 @@ void roll_paint_ext(t_roll *x, t_object *view, t_jgraphics *g, t_rect rect)
         
         paint_static_stuff1(x, view, rect, jf, jf_acc, jf_text_fractions, jf_acc_bogus, g);
         
-        paint_playhead((t_notation_obj *)x, g, rect);
+        paint_playheads((t_notation_obj *)x, g, rect);
         
         jgraphics_set_source_rgba(g, 0, 0, 0, 1);   // setting alpha to 1 before painting layers! otherwise we have blending issues
         
@@ -13048,17 +13061,18 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
         
     } else if (x->r_ob.j_mousedown_obj_type == k_PLAYCURSOR) { // the playcursor is being drawn!
         if (!is_editable((t_notation_obj *)x, k_PLAYCURSOR, k_ELEMENT_ACTIONS_NONE)) return;
+        long playhead = 0;
         if (x->r_ob.playhead_dragging_mode == 1)
-            x->r_ob.play_head_start_ms += deltaxpixels_to_deltaonset((t_notation_obj *) x, pt.x - prev_mousedrag_point.x);
+            x->r_ob.play_head_start_ms[playhead] += deltaxpixels_to_deltaonset((t_notation_obj *) x, pt.x - prev_mousedrag_point.x);
         else
-            x->r_ob.play_head_start_ms = xposition_to_onset((t_notation_obj *) x, pt.x, yposition_to_systemnumber((t_notation_obj *) x, x->r_ob.j_mousedrag_point.y));
+            x->r_ob.play_head_start_ms[playhead] = xposition_to_onset((t_notation_obj *) x, pt.x, yposition_to_systemnumber((t_notation_obj *) x, x->r_ob.j_mousedrag_point.y));
 
-        if (x->r_ob.play_head_start_ms < 0)
-            x->r_ob.play_head_start_ms = 0;
+        if (x->r_ob.play_head_start_ms[playhead] < 0)
+            x->r_ob.play_head_start_ms[playhead] = 0;
             
-        force_inscreen_ms_to_boundary_and_set_mouse_position(x, x->r_ob.play_head_start_ms, patcherview, pt, false);
+        force_inscreen_ms_to_boundary_and_set_mouse_position(x, x->r_ob.play_head_start_ms[playhead], patcherview, pt, false);
         
-        send_moved_playhead_position((t_notation_obj *) x, 6);
+        send_moved_playhead_position((t_notation_obj *) x, 6, playhead);
         
         redraw = 1;
         changed = 0;
@@ -14804,13 +14818,14 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
     if (!clicked_ptr && x->r_ob.show_playhead && modifiers == eAltKey) {
         clicked_ptr = WHITENULL; //doesn't really matter, but NON 0...
         clicked_obj = k_PLAYCURSOR;
+        long playhead = 0;
         if (x->r_ob.playhead_dragging_mode != 1 && is_editable((t_notation_obj *)x, k_PLAYCURSOR, k_ELEMENT_ACTIONS_NONE))
-            x->r_ob.play_head_start_ms = xposition_to_onset((t_notation_obj *) x, x->r_ob.j_mousedown_point.x, yposition_to_systemnumber((t_notation_obj *) x, x->r_ob.j_mousedown_point.y));
+            x->r_ob.play_head_start_ms[playhead] = xposition_to_onset((t_notation_obj *) x, x->r_ob.j_mousedown_point.x, yposition_to_systemnumber((t_notation_obj *) x, x->r_ob.j_mousedown_point.y));
         unlock_general_mutex((t_notation_obj *)x);
         unlock_markers_mutex((t_notation_obj *)x);
         notationobj_redraw((t_notation_obj *) x);
         if (x->r_ob.playhead_dragging_mode != 1 && is_editable((t_notation_obj *)x, k_PLAYCURSOR, k_ELEMENT_ACTIONS_NONE)) {
-            send_moved_playhead_position((t_notation_obj *) x, 6);
+            send_moved_playhead_position((t_notation_obj *) x, 6, playhead);
         }
         set_mousedown((t_notation_obj *) x, clicked_ptr, clicked_obj);
         return;
@@ -15415,11 +15430,11 @@ t_llll* get_subvoice_values_as_llll(t_roll *x, t_rollvoice *voice, double start_
         t_llll* to_append = NULL;
         if (subroll_type == 1) {
             if (temp_chord->onset >= start_ms && temp_chord->onset <= end_ms) {
-                to_append = get_rollchord_values_as_llll((t_notation_obj *) x, temp_chord, k_CONSIDER_FOR_SUBDUMPING, false);
+                to_append = get_rollchord_values_as_llll((t_notation_obj *) x, temp_chord, k_CONSIDER_FOR_SUBDUMPING, false, 0);
             }
         } else {
             if (temp_chord->onset >= start_ms && temp_chord->onset + max_duration <= end_ms) { // whole chord within boundaries
-                to_append = get_rollchord_values_as_llll((t_notation_obj *) x, temp_chord, k_CONSIDER_FOR_SUBDUMPING, false);
+                to_append = get_rollchord_values_as_llll((t_notation_obj *) x, temp_chord, k_CONSIDER_FOR_SUBDUMPING, false, 0);
             } else if ((temp_chord->onset >= start_ms && temp_chord->onset <= end_ms) || // onset is within boundaries
                        (temp_chord->onset + max_duration > start_ms && temp_chord->onset + max_duration <= end_ms) || // tail is within boundaries
                        (temp_chord->onset < start_ms && temp_chord->onset + max_duration > end_ms)) { // chord starts before the region beginning and ends after the region end
@@ -15444,7 +15459,7 @@ t_llll* get_rollvoice_values_as_llll(t_roll *x, t_rollvoice *voice, e_data_consi
     
     while (temp_chord) { // append chord lllls
         if (!selection_only || chord_or_any_of_its_notes_are_selected((t_notation_obj *)x, temp_chord))
-            llll_appendllll(out_llll, get_rollchord_values_as_llll((t_notation_obj *) x, temp_chord, for_what, selection_only));
+            llll_appendllll(out_llll, get_rollchord_values_as_llll((t_notation_obj *) x, temp_chord, for_what, selection_only, 0));
         temp_chord = temp_chord->next;
     }
 
@@ -17025,13 +17040,15 @@ long roll_key(t_roll *x, t_object *patcherview, long keycode, long modifiers, lo
                    }
     } else if (keycode == JKEY_RETURN && is_editable((t_notation_obj *)x, k_PLAYCURSOR, k_ELEMENT_ACTIONS_NONE)) {
         if (!x->r_ob.playing) {
-            x->r_ob.play_head_start_ms = x->r_ob.show_loop_region && !(modifiers & eShiftKey) ? x->r_ob.loop_region.start.position_ms : 0;
-            send_moved_playhead_position((t_notation_obj *) x, 6);
+            for (long ph = 0; ph < x->r_ob.num_playheads; ph++) {
+                x->r_ob.play_head_start_ms[ph] = x->r_ob.show_loop_region && !(modifiers & eShiftKey) ? x->r_ob.loop_region.start.position_ms : 0;
+                send_moved_playhead_position((t_notation_obj *) x, 6, ph);
+            }
             if (!x->r_ob.show_loop_region || modifiers & eShiftKey) {
                 x->r_ob.hscrollbar_pos = 0.;
                 redraw_hscrollbar((t_notation_obj *) x, 1);
             } else {
-                force_inscreen_ms_to_boundary(x, x->r_ob.play_head_start_ms, false, true, true, false);
+                force_inscreen_ms_to_boundary(x, x->r_ob.play_head_start_ms[x->r_ob.catch_playhead_which], false, true, true, false);
                 notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
             }
             send_domain(x, 6, NULL);
@@ -17602,12 +17619,11 @@ long roll_key(t_roll *x, t_object *patcherview, long keycode, long modifiers, lo
     
     if (textcharacter == 32 && x->r_ob.allow_play_from_interface){ // spacebar
         if (x->r_ob.playing) {
-            if (modifiers == eShiftKey) { // acts like a "pause" command: playhead stays visible where it is
-                x->r_ob.show_playhead = true;
-                x->r_ob.play_head_start_ms = x->r_ob.play_head_ms;
-                notationobj_stop((t_notation_obj *)x, _llllobj_sym_pause, 0, NULL);
-            } else
+            if (modifiers == eShiftKey) {
+                notationobj_pause((t_notation_obj *)x, NULL, 0, NULL);
+            } else {
                 notationobj_stop((t_notation_obj *)x, NULL, 0, NULL);
+            }
         } else {
             notationobj_play((t_notation_obj *)x, modifiers == eShiftKey ? gensym("playselection") : NULL, 0, NULL);
         }
@@ -17695,7 +17711,7 @@ t_llll *get_selection_gathered_syntax(t_roll *x){
                 }
             }
             if (there_is_something_selected)
-                llll_appendllll(voice_llll, get_rollchord_values_as_llll((t_notation_obj *) x, chord, k_CONSIDER_FOR_SELECTION_COPYING, false), 0, WHITENULL_llll);
+                llll_appendllll(voice_llll, get_rollchord_values_as_llll((t_notation_obj *) x, chord, k_CONSIDER_FOR_SELECTION_COPYING, false, 0), 0, WHITENULL_llll);
         }
         llll_appendllll(out, voice_llll, 0, WHITENULL_llll);
     }

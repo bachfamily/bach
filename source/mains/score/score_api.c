@@ -87,19 +87,7 @@ void score_showcursor(t_score *x)
     notationobj_redraw((t_notation_obj *) x);
 }
 
-void scoreapi_setcursor_from_double(t_score *x, double pos)
-{
-    x->r_ob.play_head_start_ms = CLAMP(pos, 0, x->r_ob.length_ms_till_last_note);
-    x->r_ob.play_head_start_ux = ms_to_unscaled_xposition((t_notation_obj *)x, x->r_ob.play_head_start_ms, 1);
-    notationobj_redraw((t_notation_obj *) x);
-}
 
-void scoreapi_setcursor_from_llll(t_score *x, t_llll *args, long flags)
-{
-    t_timepoint tp;
-    parse_open_timepoint_syntax((t_notation_obj *)x, args, &x->r_ob.play_head_start_ux, &x->r_ob.play_head_start_ms, &tp, flags);
-    notationobj_redraw((t_notation_obj *) x);
-}
 
 
 //returns true if need a redraw
@@ -229,9 +217,12 @@ char scoreapi_inscreen(t_score *x, t_llll *inscreen)
     
     if (inscreen->l_head && hatom_gettype(&inscreen->l_head->l_hatom) == H_SYM && hatom_getsym(&inscreen->l_head->l_hatom) == _llllobj_sym_end)
         unscaled_x = get_last_barline_ux(x); // x->r_ob.length_ux;
-    else if (inscreen->l_head && hatom_gettype(&inscreen->l_head->l_hatom) == H_SYM && hatom_getsym(&inscreen->l_head->l_hatom) == _llllobj_sym_cursor)
-        unscaled_x = x->r_ob.playing ? x->r_ob.play_head_ux : x->r_ob.play_head_start_ux;
-    else
+    else if (inscreen->l_head && hatom_gettype(&inscreen->l_head->l_hatom) == H_SYM && hatom_getsym(&inscreen->l_head->l_hatom) == _llllobj_sym_cursor) {
+        long playhead = 0;
+        if (inscreen->l_head->l_next)
+            playhead = CLAMP(hatom_to_playhead_index((t_notation_obj *)x, &inscreen->l_head->l_next->l_hatom), 0, CONST_MAX_PLAYHEADS);
+        unscaled_x = x->r_ob.playing ? x->r_ob.play_head_ux[playhead] : x->r_ob.play_head_start_ux[playhead];
+    } else
         err = parse_open_timepoint_syntax((t_notation_obj *)x, inscreen, &unscaled_x, NULL, NULL);
     
     if (!err)
@@ -249,12 +240,17 @@ char scoreapi_inscreenpos(t_score *x, t_llll *inscreen)
     if (inscreen && inscreen->l_head) {
         screenpos = hatom_getdouble(&inscreen->l_head->l_hatom);
         llll_destroyelem(inscreen->l_head);
-        if (inscreen->l_head && hatom_gettype(&inscreen->l_head->l_hatom) == H_SYM && hatom_getsym(&inscreen->l_head->l_hatom) == _llllobj_sym_end)
+        if (inscreen->l_head && hatom_gettype(&inscreen->l_head->l_hatom) == H_SYM && hatom_getsym(&inscreen->l_head->l_hatom) == _llllobj_sym_end) {
             unscaled_x = get_last_barline_ux(x); // x->r_ob.length_ux;
-        else if (inscreen->l_head && hatom_gettype(&inscreen->l_head->l_hatom) == H_SYM && hatom_getsym(&inscreen->l_head->l_hatom) == _llllobj_sym_cursor)
-            unscaled_x = x->r_ob.playing ? x->r_ob.play_head_ux : x->r_ob.play_head_start_ux;
-        else
+        } else if (inscreen->l_head && hatom_gettype(&inscreen->l_head->l_hatom) == H_SYM && hatom_getsym(&inscreen->l_head->l_hatom) == _llllobj_sym_cursor) {
+            long playhead = 0;
+            if (inscreen->l_head->l_next)
+                playhead = CLAMP(hatom_to_playhead_index((t_notation_obj *)x, &inscreen->l_head->l_next->l_hatom), 0, CONST_MAX_PLAYHEADS);
+            
+            unscaled_x = x->r_ob.playing ? x->r_ob.play_head_ux[playhead] : x->r_ob.play_head_start_ux[playhead];
+        } else {
             err = parse_open_timepoint_syntax((t_notation_obj *)x, inscreen, &unscaled_x, NULL, NULL);
+        }
     } else
         err = true;
     
@@ -4093,7 +4089,7 @@ t_chord* addchord_in_measure_from_notes(t_score *x, t_measure *measure, t_chord 
     this_ch->locked = false;
     this_ch->solo = false;
     this_ch->muted = false;
-    this_ch->played = false;
+    this_ch->played = 0;
     this_ch->rhythmic_tree_elem = NULL;
     this_ch->overall_tuplet_ratio = long2rat(1);
     this_ch->dont_split_for_ts_boxes = false;
@@ -4174,7 +4170,7 @@ t_chord* addchord_in_measure_from_values(t_score *x, t_measure *measure, t_chord
             this_ch->onset = 0; // will be set later by calculate_all_chords_remaining_onsets
             this_ch->locked = false;
             this_ch->muted = false;
-            this_ch->played = false;
+            this_ch->played = 0;
             this_ch->solo = false;
             this_ch->num_notes = num_notes;
             this_ch->rhythmic_tree_elem = NULL;
@@ -5304,8 +5300,10 @@ void scoreapi_initscore_step02(t_score *x)
     x->r_ob.active_slot_num = -1; // active slot is the normal view (= no slot is visible!)
     x->r_ob.active_slot_num_1based = 0;
     x->r_ob.m_editor = NULL;
-    x->r_ob.play_head_ms = -1;
-    x->r_ob.play_head_ux = -1;
+    for (long ph = 0; ph < CONST_MAX_PLAYHEADS; ph++) {
+        x->r_ob.play_head_ms[ph] = -1;
+        x->r_ob.play_head_ux[ph] = -1;
+    }
     x->need_repaint = false;
     x->can_need_repaint = false;
     
@@ -9149,8 +9147,14 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                         lasttiedchord_forplay = x->r_ob.play_tied_elements_separately ? curr_ch : last_all_tied_chord(curr_ch, false);
                     else
                         lasttiedchord_forplay = x->r_ob.play_rests_separately ? curr_ch : rest_get_last_in_seq(curr_ch, false);
-                    if (lasttiedchord_forplay && x->r_ob.play_head_ms < lasttiedchord_forplay->onset + lasttiedchord_forplay->duration_ms)
-                        is_chord_played = true;
+                    for (long ph = 0; ph < x->r_ob.num_playheads; ph++) {
+                        if (bit_is_set(curr_ch->played, ph)) {
+                            if (lasttiedchord_forplay && x->r_ob.play_head_ms[ph] < lasttiedchord_forplay->onset + lasttiedchord_forplay->duration_ms) {
+                                is_chord_played = true;
+                                break;
+                            }
+                        }
+                    }
                 }
             }
             
@@ -9408,8 +9412,13 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
 							else {
 								if (should_element_be_played((t_notation_obj *) x, (t_notation_item *)curr_nt) && (curr_ch->played || curr_nt->played)) {
 									t_note *lasttiednote_forplay = x->r_ob.play_tied_elements_separately ? curr_nt : note_get_last_in_tieseq(curr_nt);
-									if (x->r_ob.play_head_ms < lasttiednote_forplay->parent->onset + lasttiednote_forplay->parent->duration_ms)
-										is_note_played = true;
+                                    for (long ph = 0; ph < x->r_ob.num_playheads; ph++) {
+                                        if (bit_is_set(curr_ch->played, ph) || bit_is_set(curr_nt->played, ph)) {
+                                            if (x->r_ob.play_head_ms[ph] < lasttiednote_forplay->parent->onset + lasttiednote_forplay->parent->duration_ms) {
+                                                is_note_played = true;
+                                            }
+                                        }
+                                    }
 								}
 							}
 						}
@@ -11017,7 +11026,7 @@ void score_paint_ext(t_score *x, t_object *view, t_jgraphics *g, t_rect rect)
     jgraphics_set_source_rgba(g, 0, 0, 0, 1);
     paint_static_stuff1(x, view, rect, jf, jf_acc, jf_text_fractions, jf_acc_bogus, jf_ts, jf_ts_big, jf_tempi, jf_text, jf_measure_num, g, repaint_measure_num);
     
-    paint_playhead((t_notation_obj *)x, g, rect);
+    paint_playheads((t_notation_obj *)x, g, rect);
     
     // draw the legend
     if (x->r_ob.j_mouse_is_over && x->r_ob.legend == 2 && x->r_ob.j_mouse_x >= x->r_ob.j_inset_x && 

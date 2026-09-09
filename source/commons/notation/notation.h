@@ -2472,10 +2472,10 @@ typedef struct _scheduled_event
 {
     void            *clock;
     t_llll          *content;
-    double          time_ms[CONST_MAX_PLAYHEADS];
+    double          time_ms;
     char            is_notewise;
-    bool            is_end[CONST_MAX_PLAYHEADS];
-} t_scheduled_event;
+    bool            is_end;
+} t_prescheduled_event;
 
 
 
@@ -2606,7 +2606,7 @@ typedef struct _note
     // lock/mute/play/solo
     char        locked;                    ///< Flag telling if the note is locked
     char        muted;                    ///< Flag telling if the note is muted
-    char        played;                    ///< Flag telling if the note is being played
+    t_uint64    played;                    ///< Flag telling if the note is being played and by which voice(s): it's a bit-field!
     char        solo;                    ///< Flag telling if the note is soloed
 
 #ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
@@ -2850,7 +2850,7 @@ typedef struct _chord
     
     char        locked;                            ///< Flag telling if the chord is locked
     char        muted;                            ///< Flag telling if the chord is muted
-    char        played;                            ///< Flag telling if AT LEAST one note of the chord is being played
+    t_uint64    played;                            ///< Flag telling if AT LEAST one note of the chord is being played, and by which playhead (it's a bit field!)
     char        solo;                            ///< Flag telling if the chord is soloed
 
     char        just_added_from_separate_parameters;        ///< Private flag, used in [bach.roll], telling if the chord has just been added from a separate parameters input
@@ -3188,7 +3188,8 @@ typedef struct _measure_end_barline
     char          barline_type;    ///< Type of ending barline. Must be one of #e_barline_modifier. By default it is #k_BARLINE_AUTOMATIC.
     t_uint16      repeat_num;      ///< Number of repeat times (only applicable if barline types are of type ...._REPEAT_...)
 //    t_uint16      repeat_alternate_ending_length; ///< Length of alternate ending for repeating: unsupported for now
-    t_uint16      repeat_count;      ///< Current repetition count during playback (set at runtime)
+    t_uint8      repeat_count[CONST_MAX_PLAYHEADS];      ///< Current repetition count during playback (set at runtime)
+    //TODO: I don't like that repeat_count[CONST_MAX_PLAYHEADS] takes a lot of space, find a way to put the repeat count of measures inside the t_playback_specs structure
 } t_measure_end_barline;
 
 
@@ -4183,13 +4184,15 @@ typedef struct _playback_specs
 
     bool            playhead_active[CONST_MAX_PLAYHEADS];
 
-    bool            start_ms_specificed[CONST_MAX_PLAYHEADS];
-    double          msoffset[CONST_MAX_PLAYHEADS];  // this is the key field used to schedule playheads together
+    bool            start_ms_specified[CONST_MAX_PLAYHEADS];
+    double          start_ms[CONST_MAX_PLAYHEADS];
 
     bool            stop_ms_specified[CONST_MAX_PLAYHEADS];
     double          stop_ms[CONST_MAX_PLAYHEADS];
     
-    long            playhead_index_max;
+    double          offset_ms[CONST_MAX_PLAYHEADS];  // this is the key field used to schedule playheads together
+
+    double          last_scheduled_ms[CONST_MAX_PLAYHEADS];
     
     double          msdiffwithfirst[CONST_MAX_PLAYHEADS];
 
@@ -4809,7 +4812,10 @@ typedef struct _notation_obj
     t_jrgba        j_legend_rgba;                    ///< Color of the bottom-down legend
     t_jrgba        j_selectedlegend_rgba;            ///< Color of the top legend (when an element is selected)
     t_jrgba        j_scrollbar_rgba;                ///< Color of the scrollbar
-    t_jrgba        j_play_rgba;                    ///< Color related to play (playbar, played notes...)
+    t_jrgba        j_play_rgba;                    ///< Color related to main playhead and its playback entourage (playbar, played notes...)
+    t_jrgba        j_play2_rgba;                    ///< Color related to second playhead etc.
+    t_jrgba        j_play3_rgba;                    ///< Color related to third playhead etc.
+    t_jrgba        j_play4_rgba;                    ///< Color related to fourth playhead etc. (then they will cycle back)
     t_jrgba        j_locked_rgba;                    ///< Color related to locking (locked notes, measures, voices...)
     t_jrgba        j_muted_rgba;                    ///< Color related to muting (muted notes, measures, voices...)
     t_jrgba        j_solo_rgba;                    ///< Color related to soloing (solo notes, measures, voices...)
@@ -5068,8 +5074,7 @@ typedef struct _notation_obj
     char        allow_play_from_interface;              ///< Flag telling if we allow playing from the interface
     t_playback_specs playback_specs;                    ///< Current playback specs
     char        playing;                                ///< Flag telling if the object is currently playing
-    char        play_head_playing[CONST_MAX_PLAYHEADS]; ///< Whether each of the playheads is actually playing
-    long        play_head_max;                          ///< Maximum index of the active playhead
+    long        num_playheads;                          ///< Maximum index of the active playhead
     char        playing_scheduling_type;    ///< Scheduling type for playing, one of the #e_scheduling_type
     t_llll      *to_preschedule;            ///< List containing t_scheduled_events to be scheduled, ONLY for the PRESCHEDULED mode.
     t_llllelem  *preschedule_cursor;        ///< Cursor while reading the prescheduled list
@@ -5118,11 +5123,14 @@ typedef struct _notation_obj
     t_tempo     **tempo_play_cursor[CONST_MAX_PLAYHEADS];         ///< Cursor containing the last played tempo for each voice, or generally (when possible) the tempo happening _before_ the already scheduled events (exactly linke #chord_play_cursor)
     t_measure    **measure_play_cursor[CONST_MAX_PLAYHEADS];         ///< Cursor containing the last played measure for each voice, or generally (when possible) the tempo happening _before_ the already scheduled events (exactly linke #chord_play_cursor). Measures are "played" when they start, outputting measure number and measureinfo.
     t_marker    *marker_play_cursor[CONST_MAX_PLAYHEADS];        ///< Cursor containing the last played marker, or generally (when possible) the markers happening _before_ the already scheduled events (see #chord_play_cursor)
-    t_notation_item        *scheduled_item;    ///< Pointer to the notation item currently being scheduled
-    double                scheduled_ms;        ///< Onset (in milliseconds) of the chord currently being scheduled
-    long                  scheduled_playhead;  ///< Scheduled playhead
-    double                start_play_time;    ///< Time (in milliseconds) obtained by setclock_getftime() at the very beginning of the play.
-                                            ///< We'll use this time to handle rescheduling if needed. Indeed the play system is robust to score changes: 
+    
+    t_notation_item        *scheduled_item[CONST_MAX_PLAYHEADS];    ///< Pointer to the notation item currently being scheduled
+    double                scheduled_ms[CONST_MAX_PLAYHEADS];        ///< Onset (in milliseconds) of the chord currently being scheduled
+    long                  scheduled_playhead[CONST_MAX_PLAYHEADS];  ///< Scheduled playhead(s) as a bitfield
+    long                  num_scheduled_items;
+    
+    double                start_play_time[CONST_MAX_PLAYHEADS];    ///< Time (in milliseconds) obtained by setclock_getftime() at the very beginning of the play.
+                                            ///< We'll use this time to handle rescheduling if needed. Indeed the play system is robust to score changes:
                                             ///< if you add a note (having onset later than the current playtime playhead), bach will try to reschedule events,
                                             ///< in order to play the note. This rescheduling is performed in the check_correct_scheduling() routine, where this 
                                             ///< <start_play_time> is essential.
@@ -10562,7 +10570,7 @@ void paint_accollatura(t_notation_obj *r_ob, t_jgraphics* g, double stafftop_y, 
 
 // TBD
 e_accollatura_type accollatura_symbol_to_type(t_notation_obj *r_ob, t_symbol *acc);
-void paint_playhead(t_notation_obj *r_ob, t_jgraphics* g, t_rect rect);
+void paint_playheads(t_notation_obj *r_ob, t_jgraphics* g, t_rect rect);
 char is_clef_multistaff(t_notation_obj *r_ob, long clef);
 
 
@@ -12189,14 +12197,15 @@ t_llll *chord_get_as_llll_for_sending(t_notation_obj *r_ob, t_chord *chord, e_da
     @param    note        The tempo
     @param    mode        The reason why you need to send the information: this is one of the #e_data_considering_types and
  will affect the output syntax accordingly.
+    @param  playhead    The 0-based index of the playhead who triggered the sending (use -1 if irrelevant)
     @return    An llll containing the tempo llll to be sent out.
  */
-t_llll *get_tempo_as_llll_for_sending(t_notation_obj *r_ob, t_tempo *tempo, e_data_considering_types mode);
+t_llll *get_tempo_as_llll_for_sending(t_notation_obj *r_ob, t_tempo *tempo, e_data_considering_types mode, long playhead);
 
 
 // Private
 t_llll *get_single_tempo_values_as_llll(t_notation_obj *r_ob, t_tempo *tempo, e_data_considering_types mode);
-t_llll *measure_get_as_llll_for_sending(t_notation_obj *r_ob, t_measure *measure, e_data_considering_types mode);
+t_llll *measure_get_as_llll_for_sending(t_notation_obj *r_ob, t_measure *measure, e_data_considering_types mode, long playhead);
 
 
 /**    Actually send some sublists one after each other through the playout (and also properly set the references for possible lambda loops).
@@ -12275,7 +12284,7 @@ void send_playhead_position(t_notation_obj *r_ob, long outlet);
     @param    r_ob        The notation object
     @param    outlet        The outlet number
  */
-void send_moved_playhead_position(t_notation_obj *r_ob, long outlet);
+void send_moved_playhead_position(t_notation_obj *r_ob, long outlet, long playhead);
 
 
 /**    Send the loop region information through a given outlet. This will be in the form "loop <start_ms> <end_ms>" for bach.roll and
@@ -13144,9 +13153,10 @@ t_llll* get_rollnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_c
     @param    r_ob        The notation object
     @param    note        The note
     @param    mode        One of the possible #e_data_considering_types specifying the reason why the llll is asked, and thus returning slightly different specifications depending on the usage.
+    @param playhead     THe playhead index, if relevant (use 0 as default or if not needed)
     @return                The llll gathered syntax of a chord containing the #note as a single note
 */
-t_llll* get_single_rollnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_considering_types mode);
+t_llll* get_single_rollnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_considering_types mode, long playhead);
 
 
 /**    Obtain all the information about a bach.roll chord, in gathered syntax.
@@ -13155,9 +13165,10 @@ t_llll* get_single_rollnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e
     @param    chord        The chord
     @param    mode        One of the possible #e_data_considering_types specifying the reason why the llll is asked, and thus returning slightly different specifications depending on the usage.
     @param   selection_only  If non-zero, only get selected notes
+    @param playhead     THe playhead index, if relevant (use 0 as default or if not needed)
     @return                The gathered syntax of the chord, as an llll
 */
-t_llll* get_rollchord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_data_considering_types mode, bool selection_only);
+t_llll* get_rollchord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_data_considering_types mode, bool selection_only, long playhead);
 
 
 /**    Obtain all the information about a bach.score note, in gathered syntax.
@@ -13165,9 +13176,10 @@ t_llll* get_rollchord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_dat
     @param    r_ob        The notation object
     @param    note        The note
     @param    mode        One of the possible #e_data_considering_types specifying the reason why the llll is asked, and thus returning slightly different specifications depending on the usage.
+ @param playhead     THe playhead index, if relevant (use 0 as default or if not needed)
     @return                The gathered syntax of the chord, as an llll
 */
-t_llll* get_scorenote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_considering_types mode); // used by score
+t_llll* get_scorenote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_considering_types mode, long playhead); // used by score
 
 
 /** Obtain all the information about a bach.score note, in gathered syntax, but considering it as a part of a chord containing just this note.
@@ -13176,9 +13188,10 @@ t_llll* get_scorenote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_
     @param    r_ob        The notation object
     @param    note        The note
     @param    mode        One of the possible #e_data_considering_types specifying the reason why the llll is asked, and thus returning slightly different specifications depending on the usage.
+    @param playhead     THe playhead index, if relevant (use 0 as default or if not needed)
     @return                The llll gathered syntax of a chord containing the #note as a single note
 */
-t_llll* get_single_scorenote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_considering_types mode);
+t_llll* get_single_scorenote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_considering_types mode, long playhead);
 
 
 // TBD
@@ -13191,9 +13204,10 @@ char should_play_tied_chords_separately(t_notation_obj *r_ob, t_chord *chord);
     @param    r_ob        The notation object
     @param    chord        The chord
     @param    mode        One of the possible #e_data_considering_types specifying the reason why the llll is asked, and thus returning slightly different specifications depending on the usage.
+     @param playhead     THe playhead index, if relevant (use 0 as default or if not needed)
     @return                The gathered syntax of the chord, as an llll
 */
-t_llll* get_scorechord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_data_considering_types mode, char put_grace_chord_sym_duration_to_zero); // used by score
+t_llll* get_scorechord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_data_considering_types mode, char put_grace_chord_sym_duration_to_zero, long playhead); // used by score
 
 
 /**    Obtain all the information about a (dummy) bach.slot note, in gathered syntax (indeed, bach.slot is a set of slots associated to a dummy note).
@@ -14804,9 +14818,10 @@ void check_correct_scheduling(t_notation_obj *r_ob, char also_lock_general_mutex
     @param    r_ob        The notation object
     @param    current_ms    The last scheduled time or the "current" time (in milliseconds), in any case: a time limit BEFORE WHICH everything
                         is supposed to have been already properly scheduled, or ignored.
+        @param playhead  THe 0-based index of the playhead that would play the item
     @return                The next notation item which should be played
 */
-t_notation_item *get_next_item_to_play(t_notation_obj *r_ob, double current_ms);
+t_notation_item *get_next_item_to_play(t_notation_obj *r_ob, double current_ms, long playhead);
 
 
 /** Check if some of the notes and chords which were played (i.e. had their t_chord::played and t_note::played fields set) have ended playing, and should be
@@ -19446,11 +19461,21 @@ void notationobj_stop(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv
 void notationobj_do_stop(t_notation_obj *r_ob, t_symbol *s);
 void notationobj_play(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 void notationobj_play_offline(t_notation_obj *r_ob);
-void notationobj_play_preschedule(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_play_preschedule(t_notation_obj *r_ob);
 void notationobj_do_play(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 void notationobj_pause(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 void notationobj_set_everything_unplayed(t_notation_obj *r_ob);
 void notationobj_parse_play_arguments(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+
+void notationobj_setcursor_from_double(t_notation_obj *r_ob, double pos, long playhead);
+void notationobj_setcursor_from_llll(t_notation_obj *r_ob, t_llll *args, long flags, long playhead);
+long hatom_to_playhead_index(t_notation_obj *r_ob, t_hatom *h);
+long atom_to_playhead_index(t_notation_obj *r_ob, t_atom *a);
+
+// utilities to manipulate the ->played bitfield of t_note and t_chord
+void bit_set(t_uint64 *played, long whichbit);
+void bit_unset(t_uint64 *played, long whichbit);
+bool bit_is_set(t_uint64 played, long whichbit);
 
 
 // PRE-SCHEDULING

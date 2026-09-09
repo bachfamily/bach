@@ -143,7 +143,7 @@ void score_dump(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_score2roll(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void select_all(t_score *x);
 
-void score_send_current_chord(t_score *x);
+void score_send_current_chord(t_score *x, long playhead);
 
 // interface functions
 void score_getdomain(t_score *x, t_symbol *s, long argc, t_atom *argv);
@@ -888,7 +888,8 @@ void score_quantize(t_score *x, t_symbol *s, long argc, t_atom *argv)
 }
 
 
-void score_send_current_chord(t_score *x){
+void score_send_current_chord(t_score *x, long playhead)
+{
     t_scorevoice *voice;
     t_measure *meas;
     t_chord *chord;
@@ -898,8 +899,8 @@ void score_send_current_chord(t_score *x){
     t_llll *out_vels = llll_get();
     
     lock_general_mutex((t_notation_obj *)x);
-    double curr_pos_ux = x->r_ob.playing ? x->r_ob.play_head_ux : x->r_ob.play_head_start_ux;
-    double curr_pos_ms = x->r_ob.playing ? x->r_ob.play_head_ms : x->r_ob.play_head_start_ms;
+    double curr_pos_ux = x->r_ob.playing ? x->r_ob.play_head_ux[playhead] : x->r_ob.play_head_start_ux[playhead];
+    double curr_pos_ms = x->r_ob.playing ? x->r_ob.play_head_ms[playhead] : x->r_ob.play_head_start_ms[playhead];
     for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next){
         for (meas = voice->firstmeasure; meas; meas = meas->next) {
             if (meas->tuttipoint_reference->offset_ux + meas->start_barline_offset_ux > curr_pos_ux)
@@ -971,13 +972,16 @@ void score_send_current_chord(t_score *x){
 void score_setcursor(t_score *x, t_symbol *s, long argc, t_atom *argv){
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
     
+    t_atom_long playhead = 0;
+    llll_parseattrs((t_object *)x, args, LLLL_PA_DESTRUCTIVE, "i", gensym("playhead"), &playhead);
+    
     if (args && args->l_size == 1 && is_hatom_number(&args->l_head->l_hatom)) {
-        scoreapi_setcursor_from_double(x, atom_getfloat(argv));
+        notationobj_setcursor_from_double((t_notation_obj *)x, atom_getfloat(argv), playhead);
     } else if (args && args->l_size == 1 && hatom_gettype(&args->l_head->l_hatom) == H_SYM) {
         t_notation_item *it;
         lock_general_mutex((t_notation_obj *)x);
         if ((it = names_to_single_notation_item((t_notation_obj *) x, args)))
-            scoreapi_setcursor_from_double(x, notation_item_get_onset_ms((t_notation_obj *)x, it));
+            notationobj_setcursor_from_double((t_notation_obj *)x, notation_item_get_onset_ms((t_notation_obj *)x, it), playhead);
         unlock_general_mutex((t_notation_obj *)x);
     } else {
         // measure point in measure, voice
@@ -993,10 +997,10 @@ void score_setcursor(t_score *x, t_symbol *s, long argc, t_atom *argv){
         if (zeropimisfirstchord > 0)
             flags |= k_PARSETIMEPOINT_FLAG_ZEROPIMISFIRSTCHORD;
 
-        scoreapi_setcursor_from_llll(x, args, flags);
+        notationobj_setcursor_from_llll((t_notation_obj *)x, args, flags, playhead);
     }
     if (x->r_ob.notify_also_upon_messages) {
-        send_moved_playhead_position((t_notation_obj *) x, 7);
+        send_moved_playhead_position((t_notation_obj *) x, 7, playhead);
     }
     llll_free(args);
 }
@@ -3040,10 +3044,13 @@ void score_addmarker(t_score *x, t_symbol *s, long argc, t_atom *argv)
         char attach_to = k_MARKER_ATTACH_TO_MS;
         t_llll *content = NULL;
         t_marker *newmarker;
-
-        if (hatom_gettype(&params->l_head->l_hatom) == H_SYM && hatom_getsym(&params->l_head->l_hatom) == _llllobj_sym_cursor) 
-            pos_ms = (!x->r_ob.playing ? x->r_ob.play_head_start_ms : x->r_ob.play_head_ms);
-        else if (params->l_head) {
+        
+        if (hatom_gettype(&params->l_head->l_hatom) == H_SYM && hatom_getsym(&params->l_head->l_hatom) == _llllobj_sym_cursor) {
+            long playhead = 0;
+            if (params->l_head->l_next)
+                playhead = CLAMP(hatom_to_playhead_index((t_notation_obj *)x, &params->l_head->l_next->l_hatom), 0, CONST_MAX_PLAYHEADS);
+            pos_ms = (!x->r_ob.playing ? x->r_ob.play_head_start_ms[playhead] : x->r_ob.play_head_ms[playhead]);
+        } else if (params->l_head) {
             marker_llllelem_to_onset_and_region_properties((t_notation_obj *)x, params->l_head, &pos_ms, &dur_ms, &tp, &sym_dur, &attach_to);
         }
 
@@ -3407,7 +3414,7 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
                         }
                         
                         for (nt = ch_to_complete->firstnote; nt; nt = nt->next)
-                            llll_appendllll(out_ch, get_scorenote_values_as_llll((t_notation_obj *) x, nt, last_one ? k_CONSIDER_FOR_COLLAPSING_AS_NOTE_END : k_CONSIDER_FOR_COLLAPSING_AS_NOTE_MIDDLE), 0, WHITENULL_llll);    
+                            llll_appendllll(out_ch, get_scorenote_values_as_llll((t_notation_obj *) x, nt, last_one ? k_CONSIDER_FOR_COLLAPSING_AS_NOTE_END : k_CONSIDER_FOR_COLLAPSING_AS_NOTE_MIDDLE, 0), 0, WHITENULL_llll);
                         
                         if (last_one) {
                             temp1 = active_chords_elem->l_next;
@@ -3433,7 +3440,7 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
                         
                         for (nt = these_ch[i]->firstnote; nt; nt = nt->next){
                             these_ch[i]->r_it.flags = (e_bach_internal_notation_flags) (these_ch[i]->r_it.flags | k_FLAG_COLLAPSE);
-                            llll_appendllll(out_ch, get_scorenote_values_as_llll((t_notation_obj *) x, nt, ended ? k_CONSIDER_FOR_DUMPING : k_CONSIDER_FOR_COLLAPSING_AS_NOTE_BEGINNING), 0, WHITENULL_llll);    
+                            llll_appendllll(out_ch, get_scorenote_values_as_llll((t_notation_obj *) x, nt, ended ? k_CONSIDER_FOR_DUMPING : k_CONSIDER_FOR_COLLAPSING_AS_NOTE_BEGINNING, 0), 0, WHITENULL_llll);
                         }
                         
                         if (!ended) {
@@ -3528,7 +3535,7 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
                     }
 
                     for (nt = ch_to_complete->firstnote; nt; nt = nt->next){
-                        llll_appendllll(out_ch, get_scorenote_values_as_llll((t_notation_obj *) x, nt, last_one ? k_CONSIDER_FOR_COLLAPSING_AS_NOTE_END : k_CONSIDER_FOR_COLLAPSING_AS_NOTE_MIDDLE), 0, WHITENULL_llll);    
+                        llll_appendllll(out_ch, get_scorenote_values_as_llll((t_notation_obj *) x, nt, last_one ? k_CONSIDER_FOR_COLLAPSING_AS_NOTE_END : k_CONSIDER_FOR_COLLAPSING_AS_NOTE_MIDDLE, 0), 0, WHITENULL_llll);
                     }
                     
                     if (last_one) {
@@ -3555,7 +3562,7 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
 
                     for (nt = these_ch[i]->firstnote; nt; nt = nt->next){
                         these_ch[i]->r_it.flags = (e_bach_internal_notation_flags) (these_ch[i]->r_it.flags | k_FLAG_COLLAPSE);
-                        llll_appendllll(out_ch, get_scorenote_values_as_llll((t_notation_obj *) x, nt, ended ? k_CONSIDER_FOR_DUMPING : k_CONSIDER_FOR_COLLAPSING_AS_NOTE_BEGINNING), 0, WHITENULL_llll);    
+                        llll_appendllll(out_ch, get_scorenote_values_as_llll((t_notation_obj *) x, nt, ended ? k_CONSIDER_FOR_DUMPING : k_CONSIDER_FOR_COLLAPSING_AS_NOTE_BEGINNING, 0), 0, WHITENULL_llll);
                     }
                     
                     if (!ended) {
@@ -3650,7 +3657,7 @@ char legato(t_score *x, long mode)
                     }
                     if (last_nonrest_chord_llll)
                         llll_free(last_nonrest_chord_llll);
-                    last_nonrest_chord_llll = get_scorechord_values_as_llll((t_notation_obj *) x, chord, k_CONSIDER_FOR_DUMPING, false);
+                    last_nonrest_chord_llll = get_scorechord_values_as_llll((t_notation_obj *) x, chord, k_CONSIDER_FOR_DUMPING, false, 0);
                 }
             }
         }
@@ -5077,8 +5084,11 @@ void C74_EXPORT ext_main(void *moduleRef){
 
     // @method getcurrentchord @digest Get notes at cursor position
     // @description @copy BACH_DOC_MESSAGE_GETCURRENTCHORD 
+    // @marg 0 @name playhead @optional 1 @type int
+    // @example getcurrentchord @caption get notes at main cursor position
+    // @example getcurrentchord 3  @caption get notes at the position of playhead No. 3
     // @seealso interp, sample
-    class_addmethod(c, (method) score_send_current_chord, "getcurrentchord", 0);
+    class_addmethod(c, (method) score_send_current_chord, "getcurrentchord", A_DEFLONG, 0);
     
     
     // @method getloop @digest Get current loop region position 
@@ -8955,7 +8965,7 @@ void score2roll(t_score *x, char markmeasures, char marktimesig, char marktempi,
                         llll_appendsym(note_llll, _llllobj_sym_note, 0, WHITENULL_llll);
                         llll_appendlong(note_llll, chord->parent->voiceparent->v_ob.number + 1, 0, WHITENULL_llll); // voices are 1-based
                         llll_appendlong(note_llll, chord->parent->voiceparent->v_ob.midichannel, 0, WHITENULL_llll);
-                        llll_appendllll(note_llll, get_single_scorenote_values_as_llll((t_notation_obj *) x, note, k_CONSIDER_FOR_SCORE2ROLL), 0, WHITENULL_llll);
+                        llll_appendllll(note_llll, get_single_scorenote_values_as_llll((t_notation_obj *) x, note, k_CONSIDER_FOR_SCORE2ROLL, 0), 0, WHITENULL_llll);
                         llll_appendllll(voice_llll, note_llll, 0, WHITENULL_llll);
                     }
                     note = note->next;
@@ -10067,7 +10077,7 @@ t_score* score_new(t_symbol *s, long argc, t_atom *argv)
             if (x->r_ob.send_rebuild_done_at_startup)
                 handle_rebuild_done((t_notation_obj *) x);
             double first_onset_ms = notationobj_get_first_onset_ms_for_grace_notes((t_notation_obj *)x);
-            x->r_ob.play_head_start_ms = (first_onset_ms < 0 ? first_onset_ms - CONST_EPSILON2 : first_onset_ms);
+            x->r_ob.play_head_start_ms[0] = (first_onset_ms < 0 ? first_onset_ms - CONST_EPSILON2 : first_onset_ms);
             llll_free(llll_for_rebuild);
         } else { // old method, or brand new object
             long ac; t_atom *av = NULL;
@@ -10515,19 +10525,20 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 
         if (!is_editable((t_notation_obj *)x, k_PLAYCURSOR, k_ELEMENT_ACTIONS_NONE)) return;
 
+        long playhead = 0;
         if (x->r_ob.playhead_dragging_mode == 1)
-            x->r_ob.play_head_start_ux += deltaxpixels_to_deltauxpixels((t_notation_obj *)x, pt.x - prev_mousedrag_point.x);
+            x->r_ob.play_head_start_ux[playhead] += deltaxpixels_to_deltauxpixels((t_notation_obj *)x, pt.x - prev_mousedrag_point.x);
         else
-            x->r_ob.play_head_start_ux = CLAMP(xposition_to_unscaled_xposition((t_notation_obj *)x, pt.x), 0, scoreapi_get_end_ux(x));
-        x->r_ob.play_head_start_ms = unscaled_xposition_to_ms((t_notation_obj *)x, x->r_ob.play_head_start_ux, 1);
+            x->r_ob.play_head_start_ux[playhead] = CLAMP(xposition_to_unscaled_xposition((t_notation_obj *)x, pt.x), 0, scoreapi_get_end_ux(x));
+        x->r_ob.play_head_start_ms[playhead] = unscaled_xposition_to_ms((t_notation_obj *)x, x->r_ob.play_head_start_ux[playhead], 1);
         
         min_onset = notationobj_get_first_onset_ms_for_grace_notes((t_notation_obj *)x);
-        if (x->r_ob.play_head_start_ms < min_onset)
-            x->r_ob.play_head_start_ms = min_onset;
+        if (x->r_ob.play_head_start_ms[playhead] < min_onset)
+            x->r_ob.play_head_start_ms[playhead] = min_onset;
 
-        force_inscreen_ux_to_boundary_and_set_mouse_position(x, x->r_ob.play_head_start_ux, patcherview, pt, false);
+        force_inscreen_ux_to_boundary_and_set_mouse_position(x, x->r_ob.play_head_start_ux[playhead], patcherview, pt, false);
 
-        send_moved_playhead_position((t_notation_obj *) x, 7);
+        send_moved_playhead_position((t_notation_obj *) x, 7, playhead);
 
         redraw = 1;
         changed = 0;
@@ -13329,15 +13340,16 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
     if (!clicked_ptr && x->r_ob.show_playhead && (modifiers == eAltKey)) {
         clicked_ptr = WHITENULL; //doesn't really matter, but NON 0...
         clicked_obj = k_PLAYCURSOR;
+        long playhead = 0;
         if (x->r_ob.playhead_dragging_mode != 1 && is_editable((t_notation_obj *)x, k_PLAYCURSOR, k_ELEMENT_ACTIONS_NONE)) {
-            x->r_ob.play_head_start_ux = CLAMP(xposition_to_unscaled_xposition((t_notation_obj *)x, x->r_ob.j_mousedrag_point.x), 0, scoreapi_get_end_ux(x));
-            x->r_ob.play_head_start_ms = unscaled_xposition_to_ms((t_notation_obj *)x, x->r_ob.play_head_start_ux, 1);
+            x->r_ob.play_head_start_ux[playhead] = CLAMP(xposition_to_unscaled_xposition((t_notation_obj *)x, x->r_ob.j_mousedrag_point.x), 0, scoreapi_get_end_ux(x));
+            x->r_ob.play_head_start_ms[playhead] = unscaled_xposition_to_ms((t_notation_obj *)x, x->r_ob.play_head_start_ux[playhead], 1);
         }
         unlock_markers_mutex((t_notation_obj *)x);;
         unlock_general_mutex((t_notation_obj *)x);
         notationobj_redraw((t_notation_obj *) x);
         if (x->r_ob.playhead_dragging_mode != 1 && is_editable((t_notation_obj *)x, k_PLAYCURSOR, k_ELEMENT_ACTIONS_NONE)) {
-            send_moved_playhead_position((t_notation_obj *) x, 7);
+            send_moved_playhead_position((t_notation_obj *) x, 7, playhead);
         }
         set_mousedown((t_notation_obj *) x, clicked_ptr, clicked_obj);
         return;
@@ -15676,20 +15688,22 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
         
     } else if (keycode == JKEY_RETURN && is_editable((t_notation_obj *)x, k_PLAYCURSOR, k_ELEMENT_ACTIONS_NONE)) {
         if (!x->r_ob.playing) {
-            if (x->r_ob.show_loop_region && !(modifiers & eShiftKey)) {
-                x->r_ob.play_head_start_ux = timepoint_to_unscaled_xposition((t_notation_obj *)x, x->r_ob.loop_region.start.timepoint, k_PARSETIMEPOINT_FLAG_ZEROPIMISFIRSTCHORD);
-                x->r_ob.play_head_start_ms = unscaled_xposition_to_ms((t_notation_obj *)x, x->r_ob.play_head_start_ux, 1);
-            } else {
-                double first_onset_ms = notationobj_get_first_onset_ms_for_grace_notes((t_notation_obj *)x);
-                x->r_ob.play_head_start_ux = 0;
-                x->r_ob.play_head_start_ms = (first_onset_ms < 0 ? first_onset_ms - CONST_EPSILON2 : first_onset_ms);
+            for (long ph = 0; ph < x->r_ob.num_playheads; ph++) {
+                if (x->r_ob.show_loop_region && !(modifiers & eShiftKey)) {
+                    x->r_ob.play_head_start_ux[ph] = timepoint_to_unscaled_xposition((t_notation_obj *)x, x->r_ob.loop_region.start.timepoint, k_PARSETIMEPOINT_FLAG_ZEROPIMISFIRSTCHORD);
+                    x->r_ob.play_head_start_ms[ph] = unscaled_xposition_to_ms((t_notation_obj *)x, x->r_ob.play_head_start_ux[ph], 1);
+                } else {
+                    double first_onset_ms = notationobj_get_first_onset_ms_for_grace_notes((t_notation_obj *)x);
+                    x->r_ob.play_head_start_ux[ph] = 0;
+                    x->r_ob.play_head_start_ms[ph] = (first_onset_ms < 0 ? first_onset_ms - CONST_EPSILON2 : first_onset_ms);
+                }
+                send_moved_playhead_position((t_notation_obj *) x, 7, ph);
             }
-            send_moved_playhead_position((t_notation_obj *) x, 7);
             if (!x->r_ob.show_loop_region || modifiers & eShiftKey) {
                 x->r_ob.hscrollbar_pos = 0.;
                 redraw_hscrollbar((t_notation_obj *) x, 1);
             } else {
-                force_inscreen_ux_to_boundary(x, x->r_ob.play_head_start_ux, false, true, false);
+                force_inscreen_ux_to_boundary(x, x->r_ob.play_head_start_ux[x->r_ob.catch_playhead_which], false, true, false);
                 notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
             }
             send_domain(x, 7, NULL);
@@ -16876,11 +16890,8 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
     
     if (textcharacter == 32 && x->r_ob.allow_play_from_interface) {
         if (x->r_ob.playing) {
-            if (modifiers == eShiftKey) { // acts like a "pause" command: playhead stays visible where it is
-                x->r_ob.show_playhead = true;
-                x->r_ob.play_head_start_ms = x->r_ob.play_head_ms;
-                x->r_ob.play_head_start_ux = x->r_ob.play_head_ux;
-                notationobj_stop((t_notation_obj *)x, _llllobj_sym_pause, 0, NULL);
+            if (modifiers == eShiftKey) { 
+                notationobj_pause((t_notation_obj *)x, NULL, 0, NULL);
             } else
                 notationobj_stop((t_notation_obj *)x, NULL, 0, NULL);
         } else {

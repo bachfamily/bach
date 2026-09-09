@@ -147,7 +147,7 @@ void send_chord_as_llll(t_notation_obj *r_ob, t_chord *chord, long outlet, e_dat
     t_llll *outllll;
 
     lock_general_mutex(r_ob);
-    outllll = chord_get_as_llll_for_sending(r_ob, chord, mode, command_number, forced_routers, &references, &is_notewise);
+    outllll = chord_get_as_llll_for_sending(r_ob, chord, mode, command_number, forced_routers, &references, &is_notewise, 0);
     unlock_general_mutex(r_ob);
 
     //    send_sublists_through_playout_and_free(r_ob, outlet, outllll, references, is_notewise);
@@ -194,10 +194,10 @@ void send_note_as_llll(t_notation_obj *r_ob, t_note *note, long outlet, e_data_c
 		append_voice_or_full_path_to_playout_syntax(r_ob, out_llll, (t_notation_item *)note, mode);
 		if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
 			llll_appendlong(out_llll, note->parent->parent->voiceparent->v_ob.midichannel, 0, WHITENULL_llll);
-			llll_appendllll(out_llll, get_single_scorenote_values_as_llll(r_ob, note, mode), 0, WHITENULL_llll);
+			llll_appendllll(out_llll, get_single_scorenote_values_as_llll(r_ob, note, mode, 0), 0, WHITENULL_llll);
 		} else {
 			llll_appendlong(out_llll, note->parent->voiceparent->v_ob.midichannel, 0, WHITENULL_llll);
-			llll_appendllll(out_llll, get_single_rollnote_values_as_llll(r_ob, note, mode), 0, WHITENULL_llll);
+			llll_appendllll(out_llll, get_single_rollnote_values_as_llll(r_ob, note, mode, 0), 0, WHITENULL_llll);
 		}
 		unlock_general_mutex(r_ob);
 
@@ -425,7 +425,7 @@ t_llll *chord_get_as_llll_for_sending(t_notation_obj *r_ob, t_chord *chord, e_da
             llll_appendsym(out_llll, ((command_number < 0) || (command_number >= CONST_MAX_COMMANDS)) ? handle_router(_llllobj_sym_rest, forced_routers) : r_ob->commands[command_number].command_rest);
 			append_voice_or_full_path_to_playout_syntax(r_ob, out_llll, (t_notation_item *)chord, mode);
 			llll_appendlong(out_llll, chord->parent->voiceparent->v_ob.midichannel);
-			llll_appendllll(out_llll, get_scorechord_values_as_llll(r_ob, chord, mode, true));
+			llll_appendllll(out_llll, get_scorechord_values_as_llll(r_ob, chord, mode, true, playhead));
             if (should_append_playhead) {
                 llll_appendlong(out_llll, playhead+1);
             }
@@ -447,7 +447,7 @@ t_llll *chord_get_as_llll_for_sending(t_notation_obj *r_ob, t_chord *chord, e_da
                         llll_appendsym(out_llll, ((command_number < 0) || (command_number >= CONST_MAX_COMMANDS)) ? handle_router(_llllobj_sym_note, forced_routers) : r_ob->commands[command_number].command_note);
                         append_voice_or_full_path_to_playout_syntax(r_ob, out_llll, (t_notation_item *)note, mode);
                         llll_appendlong(out_llll, chord->parent->voiceparent->v_ob.midichannel);
-                        llll_appendllll(out_llll, get_single_scorenote_values_as_llll(r_ob, note, mode));
+                        llll_appendllll(out_llll, get_single_scorenote_values_as_llll(r_ob, note, mode, playhead));
                         if (should_append_playhead) {
                             llll_appendlong(out_llll, playhead+1);
                         }
@@ -480,7 +480,7 @@ t_llll *chord_get_as_llll_for_sending(t_notation_obj *r_ob, t_chord *chord, e_da
 				llll_appendsym(out_llll, ((command_number < 0) || (command_number >= CONST_MAX_COMMANDS)) ? handle_router(_llllobj_sym_note, forced_routers) : r_ob->commands[command_number].command_note);
 				append_voice_or_full_path_to_playout_syntax(r_ob, out_llll, (t_notation_item *)note, mode);
 				llll_appendlong(out_llll, chord->voiceparent->v_ob.midichannel);
-				llll_appendllll(out_llll, get_single_rollnote_values_as_llll(r_ob, note, mode));
+				llll_appendllll(out_llll, get_single_rollnote_values_as_llll(r_ob, note, mode, playhead));
                 if (should_append_playhead) {
                     llll_appendlong(out_llll, playhead+1);
                 }
@@ -515,11 +515,11 @@ t_llll *chord_get_as_llll_for_sending(t_notation_obj *r_ob, t_chord *chord, e_da
             if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
                 append_voice_or_full_path_to_playout_syntax(r_ob, out_llll, (t_notation_item *)chord, mode);
                 llll_appendlong(out_llll, chord->parent->voiceparent->v_ob.midichannel, 0, WHITENULL_llll);
-                llll_appendllll(out_llll, get_scorechord_values_as_llll(r_ob, chord, mode, false), 0, WHITENULL_llll);
+                llll_appendllll(out_llll, get_scorechord_values_as_llll(r_ob, chord, mode, false, playhead), 0, WHITENULL_llll);
             } else {
                 append_voice_or_full_path_to_playout_syntax(r_ob, out_llll, (t_notation_item *)chord, mode);
                 llll_appendlong(out_llll, chord->voiceparent->v_ob.midichannel, 0, WHITENULL_llll);
-                llll_appendllll(out_llll, get_rollchord_values_as_llll(r_ob, chord, mode, false), 0, WHITENULL_llll);
+                llll_appendllll(out_llll, get_rollchord_values_as_llll(r_ob, chord, mode, false, playhead), 0, WHITENULL_llll);
             }
 
             if (should_append_playhead) {
@@ -556,7 +556,7 @@ t_llll *get_single_tempo_values_as_llll(t_notation_obj *r_ob, t_tempo *tempo, e_
 
 
 
-t_llll *get_tempo_as_llll_for_sending(t_notation_obj *r_ob, t_tempo *tempo, e_data_considering_types mode)
+t_llll *get_tempo_as_llll_for_sending(t_notation_obj *r_ob, t_tempo *tempo, e_data_considering_types mode, long playhead)
 {
     t_llll *out_llll = llll_get();
     if (tempo) {
@@ -571,11 +571,16 @@ t_llll *get_tempo_as_llll_for_sending(t_notation_obj *r_ob, t_tempo *tempo, e_da
 
         // in any case: full tempo syntax
         llll_appendllll(out_llll, get_single_tempo_values_as_llll(r_ob, tempo, mode));
+        
+        if (r_ob->notify_playheads && playhead >= 0) {
+            llll_appendlong(out_llll, playhead+1);
+        }
+
     }
     return out_llll;
 }
 
-t_llll *measure_get_as_llll_for_sending(t_notation_obj *r_ob, t_measure *measure, e_data_considering_types mode)
+t_llll *measure_get_as_llll_for_sending(t_notation_obj *r_ob, t_measure *measure, e_data_considering_types mode, long playhead)
 {
     t_llll *out_llll = llll_get();
     if (measure) {
@@ -588,6 +593,10 @@ t_llll *measure_get_as_llll_for_sending(t_notation_obj *r_ob, t_measure *measure
         llll_appenddouble(sub_ll, notation_item_get_duration_ms(r_ob, (t_notation_item *)measure));
         llll_appenddouble(sub_ll, notation_item_get_onset_ms(r_ob, (t_notation_item *)measure));
         llll_appendllll(out_llll, sub_ll);
+        
+        if (r_ob->notify_playheads && playhead >= 0) {
+            llll_appendlong(out_llll, playhead+1);
+        }
     }
     return out_llll;
 }
@@ -2080,8 +2089,27 @@ void notation_class_add_color_attributes(t_class *c, char obj_type)
         CLASS_ATTR_STYLE_LABEL(c, "playcolor",0,"rgba","Play Color");
         CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"playcolor",0,"0.34 0.87 0.20 1.");
         // @exclude bach.slot
-        // @description Sets the color corresponding to notes being played, in RGBA format.
+        // @description Sets the color of the main playhead, in RGBA format.
 
+        CLASS_ATTR_RGBA(c,"playcolor2", 0, t_notation_obj, j_play2_rgba);
+        CLASS_ATTR_STYLE_LABEL(c, "playcolor2",0,"rgba","Play Color No.2");
+        CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"playcolor2",0,"0.876033 0.572457 0. 1.");
+        // @exclude bach.slot
+        // @description Sets the color of the second playhead, in RGBA format.
+
+        CLASS_ATTR_RGBA(c,"playcolor3", 0, t_notation_obj, j_play3_rgba);
+        CLASS_ATTR_STYLE_LABEL(c, "playcolor3",0,"rgba","Play Color No.3");
+        CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"playcolor3",0,"0.727273 0.712871 0. 1.");
+        // @exclude bach.slot
+        // @description Sets the color of the second playhead, in RGBA format.
+
+        CLASS_ATTR_RGBA(c,"playcolor4", 0, t_notation_obj, j_play4_rgba);
+        CLASS_ATTR_STYLE_LABEL(c, "playcolor4",0,"rgba","Play Color No.4");
+        CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"playcolor4",0,"0. 0.406677 0.578512 1.");
+        // @exclude bach.slot
+        // @description Sets the color of the fourth playhead, in RGBA format.
+
+        
         CLASS_ATTR_RGBA(c,"loopcolor", 0, t_notation_obj, j_loop_rgba);
         CLASS_ATTR_STYLE_LABEL(c, "loopcolor",0,"rgba","Loop Color");
         CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"loopcolor",0,"0.68 0.48 0.69 1.");
@@ -3776,7 +3804,9 @@ t_max_err notationobj_setattr_labelfamilies(t_notation_obj *r_ob, t_object *attr
 t_max_err notationobj_setattr_highlightplay(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && av) {
         r_ob->highlight_played_notes = CLAMP(atom_getlong(av), 0, 1);
-        llll_clear(r_ob->notes_being_played);
+        for (long ph = 0; ph < CONST_MAX_PLAYHEADS; ph++) {
+            llll_clear(r_ob->notes_being_played[ph]);
+        }
     }
 
     return MAX_ERR_NONE;
@@ -5874,8 +5904,10 @@ void notationobj_free(t_notation_obj *r_ob)
     // FREEING LLLLS IN STRUCTURE
     // **************************
 
-    if (r_ob->notes_being_played)
-        llll_free(r_ob->notes_being_played);
+    for (long ph = 0; ph < CONST_MAX_PLAYHEADS; ph++) {
+        if (r_ob->notes_being_played[ph])
+            llll_free(r_ob->notes_being_played[ph]);
+    }
 
     if (r_ob->stafflines_as_llll)
         llll_free(r_ob->stafflines_as_llll);

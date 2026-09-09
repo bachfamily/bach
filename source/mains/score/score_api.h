@@ -91,9 +91,6 @@ BEGIN_CHECK_LINKAGE
 void score_hidecursor(t_score *x);
 void score_showcursor(t_score *x);
 
-void scoreapi_setcursor_from_double(t_score *x, double pos);
-void scoreapi_setcursor_from_llll(t_score *x, t_llll *args, long flags);
-
 // inscreen and playing
 char scoreapi_inscreen(t_score *x, t_llll *inscreen);
 char scoreapi_inscreenpos(t_score *x, t_llll *inscreen);

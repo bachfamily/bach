@@ -566,7 +566,7 @@ void append_marker_onset_or_region_to_llll(t_notation_obj *r_ob, t_marker *marke
 
 
 // use marker = NULL to get all markers
-t_llll *marker_get_as_llll(t_notation_obj *r_ob, t_marker *marker, char namefirst, char prepend_marker_symbol, e_data_considering_types mode)
+t_llll *marker_get_as_llll(t_notation_obj *r_ob, t_marker *marker, char namefirst, char prepend_marker_symbol, e_data_considering_types mode, long playhead)
 {
     t_llll *outlist;
     
@@ -599,10 +599,14 @@ t_llll *marker_get_as_llll(t_notation_obj *r_ob, t_marker *marker, char namefirs
         if (marker->role != k_MARKER_ROLE_NONE && marker->content)
             llll_appendllll_clone(outlist, marker->content, 0, WHITENULL_llll, NULL);
         
-#ifdef BACH_NOTES_HAVE_ID
+#ifdef BACH_MARKERS_HAVE_ID
         if (mode == k_CONSIDER_FOR_UNDO)
             llll_appendllll(outlist, get_ID_as_llll((t_notation_item *)marker));
 #endif
+        
+        if (r_ob->notify_playheads && playhead >= 0) {
+            llll_appendlong(outlist, playhead+1);
+        }
     } else {
         outlist = get_markers_as_llll(r_ob, 0, 0, 0, namefirst, k_CONSIDER_FOR_DUMPING, 0, 0);
     }
@@ -1086,13 +1090,15 @@ void marker_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_marker
         close_bach_inspector(r_ob, &r_ob->m_inspector);
     
     if (r_ob->playing){
-        if (r_ob->scheduled_item == (t_notation_item *)marker) {
-            r_ob->scheduled_item = NULL;
-            check_correct_scheduling(r_ob, false);
-        }
+        for (long ph = 0; ph < r_ob->num_playheads; ph++) {
+            if (r_ob->scheduled_item[ph] == (t_notation_item *)marker) {
+                r_ob->scheduled_item[ph] = NULL;
+                check_correct_scheduling(r_ob, false);
+            }
         
-        if (r_ob->marker_play_cursor == marker)
-            r_ob->marker_play_cursor = marker->prev;
+            if (r_ob->marker_play_cursor[ph] == marker)
+                r_ob->marker_play_cursor[ph] = marker->prev;
+        }
     }
 }
 
