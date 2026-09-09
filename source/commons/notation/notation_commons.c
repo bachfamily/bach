@@ -41364,8 +41364,8 @@ void check_correct_scheduling(t_notation_obj *r_ob, char also_lock_general_mutex
             return;
         
         if (also_lock_general_mutex)
-            if (trylock_general_mutex(r_ob))
-                must_unlock_general_mutex = false;
+            if (trylock_general_mutex(r_ob)) // can't lock it, it's already locked
+                also_lock_general_mutex = false;
         
         temp1 = r_ob->dont_schedule_loop_start, temp2 = r_ob->dont_schedule_loop_end;
         r_ob->dont_schedule_loop_start = r_ob->dont_schedule_loop_end = false;
