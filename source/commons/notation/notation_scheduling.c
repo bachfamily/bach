@@ -616,7 +616,7 @@ void notationobj_task(t_notation_obj *r_ob)
 #endif
                 
                 if (specs->stop_ms_specified[ph] && earliest_item_to_schedule[ph] && earliest_item_to_schedule_onset[ph] >= specs->stop_ms[ph])
-                    earliest_item_to_schedule[ph] = NULL; // finished
+                    earliest_item_to_schedule[ph] = NULL; // playhead has finished
                 
                 // loop start must be scheduled once: if we schedule loop start, then we schedule a chord falling ON the loop start, we don't want next item to be the loop start again
                 // we check if we can resume scheduling the loop start or end
@@ -642,7 +642,8 @@ void notationobj_task(t_notation_obj *r_ob)
                     r_ob->num_scheduled_items++;
                 }
                     
-                double ms_till_scheduled_item = (r_ob->num_scheduled_items > 0 ? r_ob->scheduled_ms[0] : (r_ob->obj_type == k_NOTATION_OBJECT_SCORE ? r_ob->length_ms_till_last_note : r_ob->length_ms)) - specs->last_scheduled_ms[r_ob->scheduled_playhead[0]];
+                double ms_till_scheduled_item = (r_ob->num_scheduled_items > 0 ? r_ob->scheduled_ms[0] : (specs->stop_ms_specified[ph] ? specs->stop_ms[0] : (r_ob->obj_type == k_NOTATION_OBJECT_SCORE ? r_ob->length_ms_till_last_note : r_ob->length_ms))) - specs->last_scheduled_ms[r_ob->scheduled_playhead[0]];
+                
                 if (r_ob->theoretical_play_step_ms <= 0){
                     // just one step per scheduled event
                     r_ob->play_num_steps = 1;
@@ -1767,53 +1768,122 @@ void check_correct_scheduling_fn(t_bach_inspector_manager *man, void *obj, t_bac
 
 void check_correct_scheduling(t_notation_obj *r_ob, char also_lock_general_mutex)
 {
+    // TODO: Still this to be done
+    t_playback_specs *specs = &r_ob->playback_specs;
     if (r_ob->playing) {
         double this_clock_ms[CONST_MAX_PLAYHEADS];
         double supposed_next_item_to_play_onset = 0;
         t_notation_item *supposed_next_item_to_play;
-        char temp1, temp2;
+        bool temp1[CONST_MAX_PLAYHEADS], temp2[CONST_MAX_PLAYHEADS];
         
         for (long ph = 0; ph < r_ob->num_playheads; ph ++) {
             setclock_getftime(r_ob->setclock->s_thing, &this_clock_ms[ph]);
             //        this_clock_ms = this_clock_ms - r_ob->start_play_time + r_ob->play_head_start_ms;
-            this_clock_ms[ph] = this_clock_ms - r_ob->start_play_time[ph] + r_ob->playback_specs.start_ms[ph];
+            this_clock_ms[ph] = this_clock_ms[ph] - r_ob->start_play_time[ph] + r_ob->playback_specs.start_ms[ph];
         } // TODO: VERIFY THIS
 
         if (r_ob->scheduled_item && this_clock_ms > r_ob->scheduled_ms)
-            // very special case: if there's a delay and we should have already played the scheduled_ms, so we just play them!
+            // very special case: if there's a delay and we should have already played the scheduled_ms, so we just play it!
             return;
         
         if (also_lock_general_mutex)
             if (trylock_general_mutex(r_ob))
-                must_unlock_general_mutex = false;
+                also_lock_general_mutex = false;
         
-        temp1 = r_ob->dont_schedule_loop_start, temp2 = r_ob->dont_schedule_loop_end;
-        r_ob->dont_schedule_loop_start = r_ob->dont_schedule_loop_end = false;
+        //3. finding next items to schedule for each playhead
+        t_notation_item *earliest_item_to_schedule[CONST_MAX_PLAYHEADS];
+        double earliest_item_to_schedule_onset[CONST_MAX_PLAYHEADS];
+        t_notation_item *earliest_item_across_all_ph = NULL;
+        long num_scheduled_items = 0;
+        t_notation_item *scheduled_item[CONST_MAX_PLAYHEADS];
+        double scheduled_ms[CONST_MAX_PLAYHEADS];
+        long scheduled_playhead[CONST_MAX_PLAYHEADS];
+        double bestoffset = -DBL_MAX;
+        for (long ph = 0; ph < r_ob->num_playheads; ph++) {
+            earliest_item_to_schedule[ph] = NULL;
+        }
+        
+        for (long ph = 0; ph < r_ob->num_playheads; ph++) {
+            temp1[ph] = specs->dont_schedule_loop_start[ph];
+            temp2[ph] = specs->dont_schedule_loop_end[ph];
+            specs->dont_schedule_loop_start[ph] = specs->dont_schedule_loop_end[ph] = false;
 
-        if (r_ob->playhead_cant_trespass_loop_end && this_clock_ms >= r_ob->loop_region.end.position_ms) {
-            // we force the loop end to be scheduled.
-            // see the documentation of t_notation_obj::playhead_cant_trespass_loop_end to understand why!
-            supposed_next_item_to_play = &r_ob->loop_region.end.r_it;
-        } else
-            supposed_next_item_to_play = get_next_item_to_play(r_ob, this_clock_ms);
+            if (specs->playhead_cant_trespass_loop_end[ph] && this_clock_ms[ph] >= r_ob->loop_region.end.position_ms) {
+                // we force the loop end to be scheduled.
+                // see the documentation of t_notation_obj::playhead_cant_trespass_loop_end to understand why!
+                earliest_item_to_schedule[ph] = &r_ob->loop_region.end.r_it;
+            } else
+                earliest_item_to_schedule[ph] = get_next_item_to_play(r_ob, this_clock_ms[ph], ph);
+            
+            if (specs->stop_ms_specified[ph] && earliest_item_to_schedule[ph] && earliest_item_to_schedule_onset[ph] >= specs->stop_ms[ph])
+                earliest_item_to_schedule[ph] = NULL; // playhead has finished
 
-        r_ob->dont_schedule_loop_start = temp1;
-        r_ob->dont_schedule_loop_end = temp2;
+            specs->dont_schedule_loop_start[ph] = temp1[ph];
+            specs->dont_schedule_loop_end[ph] = temp2[ph];
         
-        if (supposed_next_item_to_play)
-            supposed_next_item_to_play_onset = notation_item_get_onset_ms(r_ob, supposed_next_item_to_play);
+            if (earliest_item_to_schedule[ph])
+                earliest_item_to_schedule_onset[ph] = notation_item_get_onset_ms(r_ob, earliest_item_to_schedule[ph]);
+            
+            num_scheduled_items = 0;
+            if (!earliest_item_across_all_ph || earliest_item_to_schedule_onset[ph] - specs->offset_ms[ph] < bestoffset) {
+                
+                num_scheduled_items = 1;
+                earliest_item_across_all_ph = earliest_item_to_schedule[ph];
+                scheduled_item[0] = earliest_item_to_schedule[ph];
+                scheduled_ms[0] = earliest_item_to_schedule[ph] ? earliest_item_to_schedule_onset[ph] : (specs->stop_ms_specified[ph] ? specs->stop_ms[ph] : (r_ob->obj_type == k_NOTATION_OBJECT_SCORE ? r_ob->length_ms : r_ob->length_ms_till_last_note));
+                scheduled_playhead[0] = ph;
+                bestoffset = earliest_item_to_schedule_onset[ph] - specs->offset_ms[ph];
+            } else if (earliest_item_to_schedule_onset[ph] - specs->offset_ms[ph] == bestoffset) { // same offset!
+                scheduled_item[r_ob->num_scheduled_items] = earliest_item_to_schedule[ph];
+                scheduled_ms[r_ob->num_scheduled_items] = earliest_item_to_schedule[ph] ? earliest_item_to_schedule_onset[ph] : (specs->stop_ms_specified[ph] ? specs->stop_ms[ph] : (r_ob->obj_type == k_NOTATION_OBJECT_SCORE ? r_ob->length_ms : r_ob->length_ms_till_last_note));
+                scheduled_playhead[r_ob->num_scheduled_items] = ph;
+                num_scheduled_items++;
+            }
+        }
         
-        if (supposed_next_item_to_play != r_ob->scheduled_item ||
-            (!supposed_next_item_to_play && !r_ob->scheduled_item && !r_ob->playback_specs->stop_ms_defined[ph] && r_ob->length_ms - r_ob->scheduled_ms > 1) ||
-            (supposed_next_item_to_play && fabs(r_ob->scheduled_ms - supposed_next_item_to_play_onset) > 1)){ // 1 ms is our threshold for not rescheduling
+        bool must_reschedule = false;
+        const double threshold_for_not_rescheduling = 1; // 1 ms is our threshold for not rescheduling
+
+        if (num_scheduled_items != r_ob->num_scheduled_items) {
+            must_reschedule = true;
+        } else {
+            for (long i = 0; i < num_scheduled_items; i++) {
+                long ph = scheduled_playhead[i];
+                if (scheduled_item[i] != r_ob->scheduled_item[i] || scheduled_playhead[i] != r_ob->scheduled_playhead[i]) {
+                    //TODO: actually these could be identical but changed in their place, right? should be perhaps sorted according to the playhead number...
+                    // SAME thing BELOW (if !scheduled_item[i]...)
+                    must_reschedule = true;
+                    break;
+                }
+                
+                // if the item has been moved or there has been a mishap by more than 1 ms
+                if (fabs(r_ob->scheduled_ms[i] - scheduled_ms[i]) > threshold_for_not_rescheduling) {
+                    must_reschedule = true;
+                    break;
+                }
+                
+                if (!scheduled_item[i] && !r_ob->scheduled_item[i] && !specs->stop_ms_specified[ph] && (r_ob->obj_type == k_NOTATION_OBJECT_SCORE ? r_ob->length_ms_till_last_note : r_ob->length_ms) - scheduled_ms[i] > threshold_for_not_rescheduling) {
+                    must_reschedule = true;
+                    break;
+                }
+            }
+        }
+
+        if (must_reschedule) {
+//        if (supposed_next_item_to_play != r_ob->scheduled_item ||
+//            (!supposed_next_item_to_play && !r_ob->scheduled_item && !r_ob->playback_specs->stop_ms_defined[ph] && r_ob->length_ms - r_ob->scheduled_ms > 1) ||
+//            (supposed_next_item_to_play && fabs(r_ob->scheduled_ms - supposed_next_item_to_play_onset) > 1)){ // 1 ms is our threshold for not rescheduling
             
             //            post("incorrect scheduling: this_clock_ms = %.2f, old_sched_ch onset: %.2f, new_sched_ch onset: %.2f", this_clock_ms, r_ob->scheduled_chord ? r_ob->scheduled_chord->onset : -1, supposed_next_chord_to_play ? supposed_next_chord_to_play->onset : -1);
-            
-            double new_scheduling_ms = supposed_next_item_to_play ? supposed_next_item_to_play_onset : (r_ob->playback_specs->stop_ms_defined[ph] ? r_ob->playback_specs->stop_ms[ph] : r_ob->length_ms);
-            double new_scheduling_interval = new_scheduling_ms - this_clock_ms;
-            
-            r_ob->scheduled_item = supposed_next_item_to_play;
-            r_ob->scheduled_ms = new_scheduling_ms;
+            long ph = num_scheduled_items > 0 ? scheduled_playhead[0] : 0;
+            double new_scheduling_interval = (num_scheduled_items > 0 ? scheduled_ms[ph] : (specs->stop_ms_specified[ph] ? specs->stop_ms[ph] : (r_ob->obj_type == k_NOTATION_OBJECT_SCORE ? r_ob->length_ms_till_last_note : r_ob->length_ms))) - this_clock_ms[ph];
+
+            r_ob->num_scheduled_items = num_scheduled_items;
+            for (long i = 0; i < num_scheduled_items; i++) {
+                r_ob->scheduled_item[i] = scheduled_item[i];
+                r_ob->scheduled_ms[i] = scheduled_ms[i];
+                r_ob->scheduled_playhead[i] = scheduled_playhead[i];
+            }
             
 #ifdef CONFIGURATION_Development
             {
@@ -1839,10 +1909,11 @@ void check_correct_scheduling(t_notation_obj *r_ob, char also_lock_general_mutex
             //            post("  . new_scheduled_interval: %f", r_ob->play_step_ms);
             
             r_ob->play_step_count = 0;
-            r_ob->play_head_ms = this_clock_ms;
-            
-            r_ob->dont_schedule_loop_end = r_ob->dont_schedule_loop_start = false;
-            
+            for (long ph = 0; ph < r_ob->num_playheads; ph++) {
+                r_ob->play_head_ms[ph] = this_clock_ms[ph];
+                specs->dont_schedule_loop_end[ph] = specs->dont_schedule_loop_start[ph] = false;
+            }
+
             if (also_lock_general_mutex)
                 unlock_general_mutex(r_ob);
             setclock_unset(r_ob->setclock->s_thing, r_ob->m_clock);
