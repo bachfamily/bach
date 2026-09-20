@@ -5878,6 +5878,20 @@ void refresh_all_tuttipoints_offset_ux(t_score *x)
     
     x->r_ob.length_ux = x->r_ob.lasttuttipoint->offset_ux + x->r_ob.lasttuttipoint->width_ux + CONST_SCORE_ADDITIONALS_UX_AT_THE_END;
     x->r_ob.length_ms_till_last_note = x->r_ob.length_ms = x->r_ob.lasttuttipoint->onset_ms + x->r_ob.lasttuttipoint->duration_ms;
+    
+    // possibly adding pad in order to display the ending barline
+    if (x->r_ob.lasttuttipoint && x->r_ob.lasttuttipoint->lastalignmentpoint) {
+        t_alignmentpoint *alpt = x->r_ob.lasttuttipoint->lastalignmentpoint;
+        double pad = 0;
+        for (long i = 0; i < alpt->num_aligned_obj; i++) {
+            if (alpt->aligned_obj[i] && alpt->aligned_obj[i]->type == k_MEASURE_END_BARLINE) {
+                if (((t_measure_end_barline  *)alpt->aligned_obj[i])->owner) {
+                    pad = MAX(pad, measure_get_barline_uwidth((t_notation_obj *)x, ((t_measure_end_barline  *)alpt->aligned_obj[i])->owner));
+                }
+            }
+        }
+        x->r_ob.length_ux += pad;
+    }
 }
 
 
@@ -6034,6 +6048,7 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
     wf = tpt->local_spacing_width_multiplier = first_tpt_measure ? first_tpt_measure->local_spacing_width_multiplier : 1.;
     tpt->fixed_spacing_uwidth = first_tpt_measure ? first_tpt_measure->fixed_spacing_uwidth : 0;
     tpt->is_spacing_fixed = first_tpt_measure ? first_tpt_measure->is_spacing_fixed : 0;
+    bool ACCOUNT_FOR_LEFT_BARLINE = false; // THIS DOESN'T WORK YET!!!!! LEAVE IT FALSE
     
     // first of all
     tuttipoint_free_alignmentpoints((t_notation_obj *)x, tpt);
@@ -6310,31 +6325,12 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
                                     if (ts_change_width < this_ts_spacing_width)
                                         ts_change_width = this_ts_spacing_width;
                                 }
-//                                barlinewidth = MAX(1., measure_get_barline_ux_width((t_notation_obj *)x, started_measure->prev) - 1);
-                                barlinewidth = MAX(1., measure_get_barline_uwidth((t_notation_obj *)x, started_measure->prev) - 0);
-/*                                switch (started_measure->prev->end_barline->barline_type) { // barline width
-                                    case k_BARLINE_SOLID: {
-                                        if (barlinewidth < 2.)
-                                            barlinewidth = 2.;
-                                        break;
-                                    }
-                                    case k_BARLINE_DOUBLE: {
-                                        if (barlinewidth < 3.)
-                                            barlinewidth = 3.;
-                                        break;
-                                    }
-                                    case k_BARLINE_FINAL: {
-                                        if (barlinewidth < 5.)
-                                            barlinewidth = 5.;
-                                        break;
-                                    }
-                                    default: {
-                                        if (barlinewidth < 1.)
-                                            barlinewidth = 1.;
-                                        break;
-                                    }
-                                } */
-                                
+                                if (ACCOUNT_FOR_LEFT_BARLINE) {
+                                    barlinewidth = MAX(1., measure_get_barline_right_offset_ux((t_notation_obj *)x, started_measure->prev) - 0);
+                                } else {
+                                    barlinewidth = MAX(1., measure_get_barline_uwidth((t_notation_obj *)x, started_measure->prev) - 0);
+                                }
+
                                 // special case: does it end an empty measure with no alignment point in between?
                                 if (lastalignmentpoint && lastalignmentpoint->prev) {
                                     long j;
@@ -6590,8 +6586,13 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
                     }
                     
                     // if the chord is the last chord in measure...
-                    if (!chords_to_align[i]->next)
+                    if (!chords_to_align[i]->next) {
+                        if (ACCOUNT_FOR_LEFT_BARLINE) {
+                            // we account for the left width of the barline
+                            rightlim[voices_i] += measure_get_barline_left_offset_ux((t_notation_obj *)x, chords_to_align[i]->parent);
+                        }
                         rightlim[voices_i] += CONST_SCORE_USPACE_BETWEEN_NOTE_AND_BARLINE;
+                    }
                     
                     // if the chord was shifted, gotta account for shifting
                     double acc_shift = 0;
@@ -8988,7 +8989,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
             double x_end = last_barline_x + 0.5;
             char barline_type = voice->lastmeasure->end_barline->barline_type;
             if (barline_type != k_BARLINE_NORMAL) {
-                x_end = last_barline_x + x->r_ob.zoom_y * measure_get_barline_uwidth((t_notation_obj *)x, voice->lastmeasure) - 0.5;
+                x_end = last_barline_x + x->r_ob.zoom_y * measure_get_barline_uwidth((t_notation_obj *)x, voice->lastmeasure) - 1.5;
             }
             
             if (x->r_ob.spacing_type == k_SPACING_PROPORTIONAL) {
