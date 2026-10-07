@@ -3873,7 +3873,9 @@ void paint_ruler_and_grid_for_roll(t_notation_obj *r_ob, t_jgraphics* g, t_rect 
         double pixel_delta = 0; 
         double ms_delta = r_ob->grid_step_ms;
         double ms_delta_sub = r_ob->grid_step_ms;
-        double start_ms = r_ob->grid_step_ms * (round(r_ob->screen_ms_start / r_ob->grid_step_ms) - 1);
+        // Grid lines fall at: grid_offset_ms + n * grid_step_ms
+        // Find the first grid line at or before screen_ms_start, minus one step for safety.
+        double start_ms = r_ob->grid_offset_ms + r_ob->grid_step_ms * (floor((r_ob->screen_ms_start - r_ob->grid_offset_ms) / r_ob->grid_step_ms) - 1);
         double start_x = onset_to_xposition_roll(r_ob, start_ms, NULL);
         double pix; 
         long i; 
@@ -3908,7 +3910,7 @@ void paint_ruler_and_grid_for_roll(t_notation_obj *r_ob, t_jgraphics* g, t_rect 
             ms_delta_sub = ms_delta / num_subdivisions;
             pix_delta_forsubdivisions = pixel_delta / num_subdivisions;
             
-            start_ms = floor(start_ms/ms_delta) * ms_delta;
+            start_ms = r_ob->grid_offset_ms + floor((start_ms - r_ob->grid_offset_ms)/ms_delta) * ms_delta;
             start_x = onset_to_xposition_roll(r_ob, start_ms, NULL);
             
             tick_offset = start_ms/ms_delta - floor(start_ms/ms_delta);

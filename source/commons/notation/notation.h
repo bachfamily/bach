@@ -4998,6 +4998,7 @@ typedef struct _notation_obj
     char        show_grid;                ///< Flag telling if we want to show the grid
     double        grid_step_ms;            ///< Step interval in milliseconds for the main grid, i.e. interval between two "long" ticks
     long        grid_subdivisions;        ///< Number of secondary subdivision of the main grid, i.e. number of "smaller" ticks between the "long" ticks (+ 1)
+    double        grid_offset_ms;            ///< Offset in milliseconds for the grid origin. Grid lines fall at offset + n * step. Defaults to 0.
     double        ruler_labels_font_size;    ///< Size in pt of the font for writing the ruler labels (for <zoom_y> = 1)
 
     double        current_first_grid_ms;            ///< (Internal) Current first (division or subdivision) "ticks" in the grid or rulers.
