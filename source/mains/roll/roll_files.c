@@ -70,7 +70,7 @@ void roll_read(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 void roll_doread(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 {
 	t_llll *arguments = (t_llll *) atom_getobj(argv);
-	t_symbol *filename_sym = NULL;
+	t_symbol *filename_sym = NULL, *read_mode = NULL;
 	t_filehandle fh;
 	double chord_thresh = 0;
     t_atom_long merging_policy = 0;
@@ -95,7 +95,7 @@ void roll_doread(t_roll *x, t_symbol *s, long argc, t_atom *argv)
     t_atom_long importdivisions = 1;
     t_atom_long importsubdivisions = 1;
 
-    llll_parseargs_and_attrs_destructive((t_object *) x, arguments, "disiiiiiii",
+    llll_parseargs_and_attrs_destructive((t_object *) x, arguments, "disiiiiiiis",
                                          gensym("chordthresh"), &chord_thresh,
                                          gensym("mergingpolicy"), &merging_policy,
                                          gensym("filename"), &filename_sym,
@@ -105,7 +105,8 @@ void roll_doread(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                                          gensym("markdivisions"), &markdivisions,
                                          gensym("importbarlines"), &importbarlines,
                                          gensym("importdivisions"), &importdivisions,
-                                         gensym("importsubdivisions"), &importsubdivisions
+                                         gensym("importsubdivisions"), &importsubdivisions,
+                                         gensym("mode"), &read_mode
                                          );
     
     if (arguments->l_size >= 1 && hatom_gettype(&arguments->l_head->l_hatom) == H_SYM) {
@@ -128,7 +129,7 @@ void roll_doread(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 			roll_ll = roll_readmidi_direct(x, fh, track2voice, chan2voice, markmeasures, markdivisions, importbarlines, importdivisions, importsubdivisions);
 			if (!roll_ll)
 				goto roll_doread_error_close;
-			set_roll_from_llll_from_read(x, roll_ll);
+			set_roll_from_llll_from_read(x, roll_ll, read_mode);
 			llll_free(roll_ll);
 			handle_rebuild_done((t_notation_obj *) x);
 			handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_IMPORT_MIDI_ROLL);
@@ -158,7 +159,7 @@ void roll_doread(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 
 			if (!roll_ll)
 				goto roll_doread_error_dontclose;
-			set_roll_from_llll_from_read(x, roll_ll);
+			set_roll_from_llll_from_read(x, roll_ll, read_mode);
 			llll_free(roll_ll);
 			handle_rebuild_done((t_notation_obj *) x);
 			handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_READ_ROLL);

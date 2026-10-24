@@ -49,7 +49,7 @@ typedef struct _roll // [bach.roll] structure
     void *m_proxy5;
 } t_roll;
 
-void set_roll_from_llll_from_read(t_roll *x, t_llll* inputlist);
+void set_roll_from_llll_from_read(t_roll *x, t_llll* inputlist, t_symbol *mode);
 void set_roll_from_llll(t_roll *x, t_llll* inputlist, char also_lock_general_mutex);
 t_llll* get_roll_values_as_llll_for_pwgl(t_roll *x);
 t_llll* get_roll_values_as_llll(t_roll *x, e_data_considering_types for_what, e_header_elems dump_what, char also_lock_general_mutex, char explicitly_get_also_default_stuff, t_symbol *router = NULL, bool selection_only = false);

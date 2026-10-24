@@ -427,7 +427,7 @@ void set_extras_values_from_llll(t_roll *x, t_llll* extras);
 void set_graphic_values_from_llll(t_roll *x, t_llll* graphics);
 void set_breakpoints_values_from_llll(t_roll *x, t_llll* breakpoints);
 void set_slots_values_from_llll(t_roll *x, t_llll* slots);
-void set_roll_from_llll(t_roll *x, t_llll* inputlist, char also_lock_general_mutex);
+void set_roll_from_llll(t_roll *x, t_llll* inputlist, char also_lock_general_mutex, t_symbol *mode = NULL);
 t_chord *addchord_from_llll(t_roll *x, t_llll* chord, t_rollvoice *voice, char also_lock_general_mutex, char also_recompute_total_length);
 void gluechord_from_llll(t_roll *x, t_llll* chord, t_rollvoice *voice, double threshold_ms, double threshold_cents, double smooth_ms, char also_select);
 
@@ -8215,20 +8215,7 @@ void roll_anything(t_roll *x, t_symbol *s, long argc, t_atom *argv)
         x->must_append_chords = false;
         x->must_apply_delta_onset = 0.;
 
-/*        if (s == _llllobj_sym_addchords) {
-            x->must_append_chords = true;
-            if (argc == 0) {
-                roll_bang(x);
-                return;
-            } else {
-                s = NULL;
-            }
-        } else {
-            x->must_append_chords = false;
-            x->must_apply_delta_onset = 0.;
-        } */
-
-        if (true) { //(!x->must_append_chords || (x->must_append_chords && !s)) { // should be always
+        if (true) { // should be always
             t_llll *inputlist = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, s, argc, argv, LLLL_PARSE_CLONE); // We clone it: we operate destructively
             if (inputlist && (inputlist->l_size > 0)) {
                 t_llllelem *firstelem = inputlist->l_head;
@@ -9825,15 +9812,15 @@ void create_whole_roll_undo_tick(t_roll *x, char also_lock_general_mutex)
     }
 }
 
-void set_roll_from_llll_from_read(t_roll *x, t_llll* inputlist)
-{  
+void set_roll_from_llll_from_read(t_roll *x, t_llll* inputlist, t_symbol *mode)
+{
     if (inputlist) {
         create_whole_roll_undo_tick(x); 
-        set_roll_from_llll(x, inputlist, true);
+        set_roll_from_llll(x, inputlist, true, mode);
     }
 }
 
-void set_roll_from_llll(t_roll *x, t_llll* inputlist, char also_lock_general_mutex)
+void set_roll_from_llll(t_roll *x, t_llll* inputlist, char also_lock_general_mutex, t_symbol *mode)
 {
 // set the whole roll, starting from a llll (it clones the llll)
 
