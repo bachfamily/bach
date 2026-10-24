@@ -67,10 +67,11 @@ void roll_read(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 	defer((t_object *) x, (method) roll_doread, s, 1, &a);
 }
 
+
 void roll_doread(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 {
 	t_llll *arguments = (t_llll *) atom_getobj(argv);
-	t_symbol *filename_sym = NULL, *read_mode = NULL;
+	t_symbol *filename_sym = NULL, *read_mode_sym = NULL;
 	t_filehandle fh;
 	double chord_thresh = 0;
     t_atom_long merging_policy = 0;
@@ -106,8 +107,10 @@ void roll_doread(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                                          gensym("importbarlines"), &importbarlines,
                                          gensym("importdivisions"), &importdivisions,
                                          gensym("importsubdivisions"), &importsubdivisions,
-                                         gensym("mode"), &read_mode
+                                         gensym("mode"), &read_mode_sym
                                          );
+    
+    e_construction_mode read_mode = symbol_to_construction_mode(read_mode_sym);
     
     if (arguments->l_size >= 1 && hatom_gettype(&arguments->l_head->l_hatom) == H_SYM) {
 		filename_sym = hatom_getsym(&arguments->l_head->l_hatom);
@@ -135,7 +138,7 @@ void roll_doread(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 			handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_IMPORT_MIDI_ROLL);
 			if (chord_thresh >= 0) {
                 lock_general_mutex((t_notation_obj *)x);
-                merge(x, chord_thresh, -1, merging_policy, merging_policy, 0, 0);
+                merge(x, chord_thresh, -1, merging_policy, merging_policy, read_mode == k_CONSTRUCTIONMODE_ADDANDSELECT || read_mode == k_CONSTRUCTIONMODE_REPLACESELECTION ? 1 : 0 , 0);
                 unlock_general_mutex((t_notation_obj *)x);
 			}
 			break;

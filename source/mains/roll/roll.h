@@ -36,7 +36,6 @@ typedef struct _roll // [bach.roll] structure
     
 
     // utilities
-    char        must_append_chords;
     char        must_preselect_appended_chords;
     double        must_apply_delta_onset;
     char        pasting_chords;
@@ -49,8 +48,11 @@ typedef struct _roll // [bach.roll] structure
     void *m_proxy5;
 } t_roll;
 
-void set_roll_from_llll_from_read(t_roll *x, t_llll* inputlist, t_symbol *mode);
-void set_roll_from_llll(t_roll *x, t_llll* inputlist, char also_lock_general_mutex);
+e_construction_mode symbol_to_construction_mode(t_symbol *s);
+
+void set_roll_from_llll_from_read(t_roll *x, t_llll* inputlist, e_construction_mode mode = k_CONSTRUCTIONMODE_FROMSCRATCH);
+void set_roll_from_llll(t_roll *x, t_llll* inputlist, char also_lock_general_mutex, e_construction_mode mode = k_CONSTRUCTIONMODE_FROMSCRATCH);
+void roll_reconstruct_from_separate_parameters(t_roll *x, e_construction_mode mode = k_CONSTRUCTIONMODE_FROMSCRATCH);
 t_llll* get_roll_values_as_llll_for_pwgl(t_roll *x);
 t_llll* get_roll_values_as_llll(t_roll *x, e_data_considering_types for_what, e_header_elems dump_what, char also_lock_general_mutex, char explicitly_get_also_default_stuff, t_symbol *router = NULL, bool selection_only = false);
 t_llll *get_roll_values_as_llll_for_undo(t_roll *x, e_header_elems dump_what, char also_lock_general_mutex);

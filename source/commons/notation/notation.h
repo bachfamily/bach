@@ -713,6 +713,13 @@ typedef enum _scheduling_type {
 } e_scheduling_type;
 
 
+typedef enum _construction_mode {
+    k_CONSTRUCTIONMODE_UNKNOWN = 0, // unknown mode
+    k_CONSTRUCTIONMODE_FROMSCRATCH = 1, // reconstruct the state of the object from scratch (=clear it first)
+    k_CONSTRUCTIONMODE_ADD = 2, // keep the existing, append new stuff
+    k_CONSTRUCTIONMODE_ADDANDSELECT = 3, // keep the existing, append new stuff, and select it
+    k_CONSTRUCTIONMODE_REPLACESELECTION = 4, // replace selection (deletes previous selection and selects new stuff)
+} e_construction_mode;
 
 typedef enum _nametoslot_chordname_policy {
     k_NAMETOSLOT_CHORDNAME_IGNORE = 0,

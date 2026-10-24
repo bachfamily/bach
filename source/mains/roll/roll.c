@@ -211,7 +211,7 @@ void roll_linear_edit_snap_cursor_to_grid(t_roll *x);
 
 
 
-void roll_delete_selection(t_roll *x, char ripple, t_llll *slots_to_transfer_to_next_note_in_chord_1based = NULL, char transfer_slots_even_if_empty = false);
+void roll_delete_selection(t_roll *x, char ripple, t_llll *slots_to_transfer_to_next_note_in_chord_1based = NULL, char transfer_slots_even_if_empty = false, char also_lock_general_mutex = true);
 void roll_delete_selection_and_transfer_default_slots(t_roll *x, char ripple);
 
 
@@ -427,7 +427,7 @@ void set_extras_values_from_llll(t_roll *x, t_llll* extras);
 void set_graphic_values_from_llll(t_roll *x, t_llll* graphics);
 void set_breakpoints_values_from_llll(t_roll *x, t_llll* breakpoints);
 void set_slots_values_from_llll(t_roll *x, t_llll* slots);
-void set_roll_from_llll(t_roll *x, t_llll* inputlist, char also_lock_general_mutex, t_symbol *mode = NULL);
+
 t_chord *addchord_from_llll(t_roll *x, t_llll* chord, t_rollvoice *voice, char also_lock_general_mutex, char also_recompute_total_length);
 void gluechord_from_llll(t_roll *x, t_llll* chord, t_rollvoice *voice, double threshold_ms, double threshold_cents, double smooth_ms, char also_select);
 
@@ -576,11 +576,12 @@ void remove_just_added_from_separate_parameters_flag(t_roll *x)
             chord->just_added_from_separate_parameters = false;
 }
 
-void roll_bang(t_roll *x)
+void roll_reconstruct_from_separate_parameters(t_roll *x, e_construction_mode mode)
 {
 // reconstruct roll!
 
     long i;
+    bool must_append_chords = (mode == k_CONSTRUCTIONMODE_ADD || mode == k_CONSTRUCTIONMODE_ADDANDSELECT || mode == k_CONSTRUCTIONMODE_REPLACESELECTION);
     t_llll *inlist[6];
     t_llll *onsets, *cents, *durations, *velocities, *extras;
     char more_than_one_extra_defined = false;
@@ -595,7 +596,7 @@ void roll_bang(t_roll *x)
 
     lock_general_mutex((t_notation_obj *)x);    
 
-    if (x->must_append_chords) {    // mode "addchords": we add some nils in each voice for each skip of existing chords!
+    if (must_append_chords) {    // mode "addchords": we add some nils in each voice for each skip of existing chords!
         long j;
         for (i = 1; i <= 5; i++) {
             if (inlist[i]) {
@@ -663,8 +664,8 @@ void roll_bang(t_roll *x)
     // or if there was "addchords" message, and the number of voices inserted is greater than the existing ones.
     if (x->r_ob.autosize) {
         if (num_introduced_voices > 0 &&
-            ((!x->must_append_chords && x->r_ob.num_voices != num_introduced_voices) ||
-             (x->must_append_chords && x->r_ob.num_voices < num_introduced_voices))) {
+            ((!must_append_chords && x->r_ob.num_voices != num_introduced_voices) ||
+             (must_append_chords && x->r_ob.num_voices < num_introduced_voices))) {
                 set_numvoices((t_notation_obj *)x, num_introduced_voices);
         }
     }
@@ -698,8 +699,6 @@ void roll_bang(t_roll *x)
     
     unlock_general_mutex((t_notation_obj *)x);    
 
-    x->must_append_chords = false;
-    x->must_preselect_appended_chords = false;
     x->must_apply_delta_onset = 0.;
     
     for (i = 0; i < 6; i++)
@@ -716,6 +715,10 @@ void roll_bang(t_roll *x)
 }
 
 
+void roll_bang(t_roll *x)
+{
+    roll_reconstruct_from_separate_parameters(x, k_CONSTRUCTIONMODE_FROMSCRATCH);
+}
 
 
 void roll_begin_preset(t_roll *x, t_symbol *s, long argc, t_atom *argv)
@@ -1440,7 +1443,7 @@ void roll_delete_selection_and_transfer_default_slots(t_roll *x, char ripple)
 }
 
 
-void roll_delete_selection(t_roll *x, char ripple, t_llll *slots_to_transfer_to_next_note_in_chord_1based, char transfer_slots_even_if_empty)
+void roll_delete_selection(t_roll *x, char ripple, t_llll *slots_to_transfer_to_next_note_in_chord_1based, char transfer_slots_even_if_empty, char also_lock_general_mutex)
 {
     t_notation_item *curr_it = x->r_ob.firstselecteditem;
     t_notation_item *curr_it2 = NULL;
@@ -1448,7 +1451,8 @@ void roll_delete_selection(t_roll *x, char ripple, t_llll *slots_to_transfer_to_
     char need_check_scheduling = false;
     t_notation_item *lambda_it = x->r_ob.lambda_selected_item_ID > 0 ? (t_notation_item *) shashtable_retrieve(x->r_ob.IDtable, x->r_ob.lambda_selected_item_ID) : NULL;
     
-    lock_general_mutex((t_notation_obj *)x);
+    if (also_lock_general_mutex)
+        lock_general_mutex((t_notation_obj *)x);
     
     double left_ms = ripple ? get_selection_leftmost_onset(x) : 0;
     double right_ms = ripple ? get_selection_rightmost_onset(x) : 0;
@@ -1487,7 +1491,8 @@ void roll_delete_selection(t_roll *x, char ripple, t_llll *slots_to_transfer_to_
         clear_selection((t_notation_obj *)x);
     }
     
-    unlock_general_mutex((t_notation_obj *)x);
+    if (also_lock_general_mutex)
+        unlock_general_mutex((t_notation_obj *)x);
     
 }
 
@@ -6088,7 +6093,10 @@ void C74_EXPORT ext_main(void *moduleRef){
     // If the message has no arguments, the chords parameters are supposed to have been inserted through the separate parameter inlets,
     // and the <m>addchords</m> message will essentially act like a <m>bang</m> which in turns will preserve the existing content, 
     // and add the newly introduced chords. Refer to the <m>llll</m> message to know more about separate parameter syntax of the inlets.<br />
-    // If the message has arguments, the first optional one is a number setting an offset (in millisecond) for the chords to be added.
+    // If the message has arguments, the first optional one is a symbol that determines the adding mode:
+    // "fromscratch" (replaces everything), "add" (append to existing ones, default), "addsel" (same, but select new stuff),
+    // "replacesel" (replace old selection with the new incoming chords.
+    // The second optional argument is a number setting an offset (in millisecond) for the chords to be added.
     // Further arguments are supposed to be llll form, exactly in in the same syntax as the whole <o>bach.roll</o>
     // gathered syntax (without header specification): one llll for each voice,
     // containing one llll for each chord to add (in chord gathered syntax, also see the <m>addchord</m> message). If for a given voice
@@ -6098,9 +6106,11 @@ void C74_EXPORT ext_main(void *moduleRef){
     // For instance, a valid message would be <b>addchords [[217. [7185. 492. 100]] [971. [6057. 492. 100]]] [[1665. [7157. 492. 100]]]</b>
     // <br /> <br />
     // @copy BACH_DOC_VOICE_GATHERED_SYNTAX_ROLL
-    // @marg 0 @name offset @optional 1 @type number
-    // @marg 1 @name chords @optional 1 @type llll
+    // @marg 0 @name mode @optional 1 @type symbol
+    // @marg 1 @name offset @optional 1 @type number
+    // @marg 2 @name chords @optional 1 @type llll
     // @example addchords [[217 [7185 492 100]] [971 [6057 492 100]]] [[1665 [7157 492 100]]] @caption add some chords in gathered syntax
+    // @example addchords addsel [[217 [7185 492 100]] [971 [6057 492 100]]] [[1665 [7157 492 100]]] @caption same thing, new chords are selected
     // @example addchords 1500 [[217 [7185 492 100]] [971 [6057 492 100]]] [[1665 [7157 492 100]]] @caption same thing, shifted by 1.5 seconds
     // @seealso addchord
     class_addmethod(c, (method) roll_anything, "addchords", A_GIMME, 0);
@@ -8210,9 +8220,7 @@ void roll_anything(t_roll *x, t_symbol *s, long argc, t_atom *argv)
         return;
 
     if (inlet == 0) {
-
-        x->must_preselect_appended_chords = false;
-        x->must_append_chords = false;
+        e_construction_mode mode = k_CONSTRUCTIONMODE_FROMSCRATCH;
         x->must_apply_delta_onset = 0.;
 
         if (true) { // should be always
@@ -8223,23 +8231,33 @@ void roll_anything(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 
                 if (is_firstelem_symbol && hatom_getsym(&firstelem->l_hatom) == _llllobj_sym_addchords) {
                     t_llllelem *el = firstelem->l_next;
-                    x->must_append_chords = true;
+                    mode = k_CONSTRUCTIONMODE_ADD;
                     if (!el) {
-                        roll_bang(x);
+                        roll_reconstruct_from_separate_parameters(x, mode);
                         llll_free(inputlist);
                         return;
                     } else {
+                        if (el && hatom_gettype(&el->l_hatom) == H_SYM) {
+                            e_construction_mode mode_wk = symbol_to_construction_mode(hatom_getsym(&el->l_hatom));
+                            if (mode_wk != k_CONSTRUCTIONMODE_UNKNOWN) {
+                                mode = mode_wk;
+                                llll_destroyelem(el);
+                            }
+                        }
+                        
+                        el = firstelem->l_next;
                         if (el && is_hatom_number(&el->l_hatom)) {
                             x->must_apply_delta_onset = hatom_getdouble(&el->l_hatom);
                             llll_destroyelem(el);
                         }
+                        
                         hatom_setsym(&firstelem->l_hatom, _llllobj_sym_roll);
                     }
                 }
                     
                 if (hatom_gettype(&firstelem->l_hatom) == H_LLLL || (is_firstelem_symbol && hatom_getsym(&firstelem->l_hatom) == _llllobj_sym_roll)) {
                     create_whole_roll_undo_tick(x);
-                    set_roll_from_llll(x, inputlist, true);
+                    set_roll_from_llll(x, inputlist, true, mode);
                     handle_rebuild_done((t_notation_obj *) x);
                     handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_ROLL);
                 
@@ -8436,9 +8454,7 @@ void roll_anything(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                                     llll_appendllll(ll, voice_content_ll);
                                     for (i = 0; i < voicenum; i++)
                                         llll_prependllll(ll, llll_get());
-                                    x->must_append_chords = true;
-                                    set_roll_from_llll(x, ll, true);
-                                    x->must_append_chords = false;
+                                    set_roll_from_llll(x, ll, true, k_CONSTRUCTIONMODE_ADD);
                                     llll_free(ll);
                                 }
                                 
@@ -9812,7 +9828,23 @@ void create_whole_roll_undo_tick(t_roll *x, char also_lock_general_mutex)
     }
 }
 
-void set_roll_from_llll_from_read(t_roll *x, t_llll* inputlist, t_symbol *mode)
+
+e_construction_mode symbol_to_construction_mode(t_symbol *s)
+{
+    if (s == gensym("fromscratch")) {
+        return k_CONSTRUCTIONMODE_FROMSCRATCH;
+    } else if (s == gensym("add")) {
+        return k_CONSTRUCTIONMODE_ADD;
+    } else if (s == gensym("addsel") || s == gensym("addselect")) {
+            return k_CONSTRUCTIONMODE_ADDANDSELECT;
+    } else if (s == gensym("replacesel") || s == gensym("replaceselection")) {
+        return k_CONSTRUCTIONMODE_REPLACESELECTION;
+    } else {
+        return k_CONSTRUCTIONMODE_UNKNOWN;
+    }
+}
+
+void set_roll_from_llll_from_read(t_roll *x, t_llll* inputlist, e_construction_mode mode)
 {
     if (inputlist) {
         create_whole_roll_undo_tick(x); 
@@ -9820,15 +9852,17 @@ void set_roll_from_llll_from_read(t_roll *x, t_llll* inputlist, t_symbol *mode)
     }
 }
 
-void set_roll_from_llll(t_roll *x, t_llll* inputlist, char also_lock_general_mutex, t_symbol *mode)
+void set_roll_from_llll(t_roll *x, t_llll* inputlist, char also_lock_general_mutex, e_construction_mode mode)
 {
 // set the whole roll, starting from a llll (it clones the llll)
 
     t_llll *wholeroll = llll_get();
     t_llll *groups = NULL;
     char markers_are_given = false;
+    bool must_append_chords = (mode == k_CONSTRUCTIONMODE_ADD || mode == k_CONSTRUCTIONMODE_ADDANDSELECT || mode == k_CONSTRUCTIONMODE_REPLACESELECTION);
+    bool must_select_appended_chords = (mode == k_CONSTRUCTIONMODE_REPLACESELECTION || mode == k_CONSTRUCTIONMODE_ADDANDSELECT);
     
-    if (!inputlist) { 
+    if (!inputlist) {
         llll_free(wholeroll); 
         return; 
     }
@@ -9901,9 +9935,22 @@ void set_roll_from_llll(t_roll *x, t_llll* inputlist, char also_lock_general_mut
                             if (firstllll && firstllll->l_head)
                                 set_stafflines_from_llll((t_notation_obj *)x, firstllll, true);
                         } else if (pivotsym == _llllobj_sym_clefs) {
-                            llll_destroyelem(pivot); 
-                            if (firstllll && firstllll->l_head)
-                                set_clefs_from_llll(x, firstllll);
+                            llll_destroyelem(pivot);
+                            if (firstllll && firstllll->l_head) {
+                                if (must_append_chords) {
+                                    // pad clefs with existing ones
+                                    t_llll *templl = llll_clone(firstllll);
+                                    for (t_voice *v = x->r_ob.firstvoice; v && v->number < x->r_ob.num_voices; v = voice_get_next((t_notation_obj *)x, v)) {
+                                        if (v->number >= templl->l_size) {
+                                            llll_appendsym(templl, clef_number_to_clef_symbol((t_notation_obj *)x, v->clef));
+                                        }
+                                    }
+                                    set_clefs_from_llll(x, templl);
+                                    llll_free(templl);
+                                } else {
+                                    set_clefs_from_llll(x, firstllll);
+                                }
+                            }
                         } else if (pivotsym == _llllobj_sym_voicespacing) {
                             llll_destroyelem(pivot);
                             if (firstllll && firstllll->l_head)
@@ -9953,13 +10000,15 @@ void set_roll_from_llll(t_roll *x, t_llll* inputlist, char also_lock_general_mut
             
         // now we're ready to iterate on rollvoices
         voiceelem = wholeroll->l_head; 
-        if (voiceelem && !x->must_append_chords) {
+        if (voiceelem && !must_append_chords) {
             // if there is some roll info, we clear the roll, as a very first thing.
             clear_roll_body(x, -1);
             if (x->r_ob.firstmarker && !markers_are_given) 
                 clear_all_markers((t_notation_obj *) x);
             close_slot_window((t_notation_obj *)x);
             clear_selection((t_notation_obj *) x);
+        } else if (mode == k_CONSTRUCTIONMODE_REPLACESELECTION) {
+            roll_delete_selection(x, false, NULL, false, false);
         }
         
         // autosizing the number of voices – NEW CODE: bach 0.7.4
@@ -9969,8 +10018,8 @@ void set_roll_from_llll(t_roll *x, t_llll* inputlist, char also_lock_general_mut
             // we change the number of voices if there was no "addchords" message and the number of voice inserted is different from the existing one,
             // or if there was "addchords" message, and the number of voices inserted is greater than the existing ones.
             if (num_voices > 0 && !x->pasting_chords && // if numvoices == 0 it means that there's only header in the incoming llll, if pasting_chords is true it means that we're copy pasting: no voice change in this case!
-                ((!x->must_append_chords && x->r_ob.num_voices != num_voices) ||
-                 (x->must_append_chords && x->r_ob.num_voices < num_voices)))
+                ((!must_append_chords && x->r_ob.num_voices != num_voices) ||
+                 (must_append_chords && x->r_ob.num_voices < num_voices)))
                 set_numvoices((t_notation_obj *)x, num_voices);
         }
         
@@ -10002,7 +10051,7 @@ void set_roll_from_llll(t_roll *x, t_llll* inputlist, char also_lock_general_mut
 #endif
                         
                         // now we're ready to iterate on chords
-                        chord = x->must_append_chords ? NULL : voice->firstchord;
+                        chord = must_append_chords ? NULL : voice->firstchord;
                         while (elem){
                             // is it a suitable llll for a chord?
                             if (hatom_gettype(&elem->l_hatom) == H_LLLL) {
@@ -10036,9 +10085,9 @@ void set_roll_from_llll(t_roll *x, t_llll* inputlist, char also_lock_general_mut
                                         if (newchord) {
                                             set_rollchord_values_from_llll((t_notation_obj *) x, newchord, elemllll, x->must_apply_delta_onset, true, false, false); // MUST NOT CHECK NOTES ORDER!!! Only at the end, otherwise it's a mess
                                             chord_set_recompute_parameters_flag((t_notation_obj *)x, newchord);
-                                            if (x->must_append_chords){
+                                            if (must_append_chords){
                                                 undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)newchord, k_UNDO_MODIFICATION_TYPE_REMOVE, _llllobj_sym_state);
-                                                if (x->must_preselect_appended_chords)
+                                                if (must_select_appended_chords)
                                                     notation_item_add_to_preselection((t_notation_obj *) x, (t_notation_item *)newchord);
                                             }
                                         }
@@ -10058,8 +10107,6 @@ void set_roll_from_llll(t_roll *x, t_llll* inputlist, char also_lock_general_mut
         }
     }
     
-    x->must_append_chords = false;
-    x->must_preselect_appended_chords = false;
     x->must_apply_delta_onset = 0.;
     check_all_chords_order(x); // this has to be done ONLY at the end! otherwise, it's a mess! :-)
 
@@ -10075,6 +10122,10 @@ void set_roll_from_llll(t_roll *x, t_llll* inputlist, char also_lock_general_mut
     notationobj_make_temporary_slurs_permanent((t_notation_obj *)x);
 
     process_chord_parameters_calculation_NOW(x);
+    
+    if (must_select_appended_chords) {
+        move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, false, false);
+    }
     
     if (also_lock_general_mutex)
         unlock_general_mutex((t_notation_obj *)x);    
@@ -11504,8 +11555,6 @@ t_roll* roll_new(t_symbol *s, long argc, t_atom *argv)
     x->r_ob.page_number_offset = 0; 
     x->r_ob.current_page = 0;
     x->r_ob.need_vscrollbar = 0;
-    x->must_append_chords = false;
-    x->must_preselect_appended_chords = false;
     x->pasting_chords = false;
      x->must_apply_delta_onset = 0.;
     x->r_ob.accidentals_preferences = k_ACC_AUTO;
@@ -16938,9 +16987,7 @@ void roll_paste_clipboard(t_roll *x, char keep_original_onsets, double force_ons
         clear_preselection((t_notation_obj *) x);
         clear_selection((t_notation_obj *) x);
     }
-    x->must_append_chords = true;
     x->pasting_chords = true;
-    x->must_preselect_appended_chords = true;
 
     if (keep_original_onsets) // shift the selection to the mouse position
         x->must_apply_delta_onset = 0.;
@@ -16978,14 +17025,15 @@ void roll_paste_clipboard(t_roll *x, char keep_original_onsets, double force_ons
 
     set_markers_from_llll((t_notation_obj *)x, markers_to_paste, true, true, true);
     
-    set_roll_from_llll(x, roll_to_paste, true);    // <<< with must_append_chords = true the undo ticks are automatically added inside here
+    set_roll_from_llll(x, roll_to_paste, true, k_CONSTRUCTIONMODE_ADDANDSELECT);    // <<< with must_append_chords = true the undo ticks are automatically added inside here
     x->pasting_chords = false;
     llll_free(roll_to_paste);
     llll_free(markers_to_paste);
     
-    lock_general_mutex((t_notation_obj *)x);    
+/*    lock_general_mutex((t_notation_obj *)x);
     move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, false, false);
     unlock_general_mutex((t_notation_obj *)x);
+  */
     
     if (snap)
         snap_onset_tail_pitch_to_grid_for_selection_if_needed(x);
