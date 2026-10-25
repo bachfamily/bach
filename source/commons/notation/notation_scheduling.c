@@ -281,7 +281,13 @@ void notationobj_task(t_notation_obj *r_ob)
             t_llll *to_send = llll_get();
             t_llll *to_send_references = llll_get();
             char is_notewise = true;
-
+            
+            double offset_ms_for_nonscheduled_voices = 0;
+            bool scheduled_ph[CONST_MAX_PLAYHEADS];
+            for (long ph = 0; ph < r_ob->num_playheads; ph++) {
+                scheduled_ph[ph] = 0;
+            }
+            
             /// 1: FINDING SYNCHRONOUS ITEMS TO THE SCHEDULED ONES
             for (long si = 0; si < r_ob->num_scheduled_items; si++) {
                 // every scheduled item corresponds to one of the playhead that need to send out something.
@@ -291,6 +297,16 @@ void notationobj_task(t_notation_obj *r_ob)
                 double scheduled_ms = r_ob->scheduled_ms[si];
                 long ph = r_ob->scheduled_playhead[si];
                 char scheduled_item_type = scheduled_item ? scheduled_item->type : k_ELEMENT_TYPES_UNDEFINED;
+                
+                scheduled_ph[ph] = true;
+                
+                if (offset_ms_for_nonscheduled_voices != 0) {
+                    if (scheduled_ms - specs->last_scheduled_ms[ph] != offset_ms_for_nonscheduled_voices) {
+                        // ERROR
+                        dev_post("(multihead playback error!)");
+                    }
+                }
+                offset_ms_for_nonscheduled_voices = scheduled_ms - specs->last_scheduled_ms[ph];
                 
                 if (!scheduled_item) {
                     //this means that the specific playhead ph has ended
@@ -526,8 +542,8 @@ void notationobj_task(t_notation_obj *r_ob)
                 llll_flatten(to_send_references, 0, 0);
                 
 
-                /// 2: JUMPING TO APPROPRIATE PLACES IF NEEDED
-                // we now have to find the next item to schedule
+                /// 3: JUMPING TO APPROPRIATE PLACES IF NEEDED
+                //
                 if (r_ob->playing_scheduling_type == k_SCHEDULING_STANDARD && scheduled_item_type == k_LOOP_END) {
                     // looping: setting the chord_play_cursor, measure_play_cursor and tempo_play_cursor to NULL for every voice
                     for (long i = 0; i < r_ob->num_voices; i++) {
@@ -606,7 +622,14 @@ void notationobj_task(t_notation_obj *r_ob)
                 
             }
             
-            //3. finding next items to schedule for each playhead
+            // update "last scheduled" offset for nonscheduled voices, to keep every playhead aligned
+            for (long ph = 0; ph < r_ob->num_playheads; ph++) {
+                if (!scheduled_ph[ph]) {
+                    specs->last_scheduled_ms[ph] += offset_ms_for_nonscheduled_voices;
+                }
+            }
+            
+            //4. finding next items to schedule for each playhead
             t_notation_item *earliest_item_to_schedule[CONST_MAX_PLAYHEADS];
             double earliest_item_to_schedule_onset[CONST_MAX_PLAYHEADS];
             t_notation_item *earliest_item_across_all_ph = NULL;
@@ -614,6 +637,7 @@ void notationobj_task(t_notation_obj *r_ob)
             for (long ph = 0; ph < r_ob->num_playheads; ph++) {
                 earliest_item_to_schedule[ph] = NULL;
             }
+            r_ob->num_scheduled_items = 0;
             for (long ph = 0; ph < r_ob->num_playheads; ph++) {
                 earliest_item_to_schedule[ph] = get_next_item_to_play(r_ob, specs->last_scheduled_ms[ph], ph);
                 if (earliest_item_to_schedule[ph])
@@ -635,7 +659,6 @@ void notationobj_task(t_notation_obj *r_ob)
                     specs->dont_schedule_loop_end[ph] = false;
                 
                 // we schedule the next item
-                r_ob->num_scheduled_items = 0;
                 if (!earliest_item_across_all_ph || earliest_item_to_schedule_onset[ph] - specs->offset_ms[ph] < bestoffset) {
                     
                     r_ob->num_scheduled_items = 1;
@@ -671,10 +694,9 @@ void notationobj_task(t_notation_obj *r_ob)
                         specs->dont_schedule_loop_end[r_ob->scheduled_playhead[si]] = true;
                     }
                 }
-                
-                r_ob->play_step_count = 0;
             }
-            
+            r_ob->play_step_count = 0;
+
             
             unlock_general_mutex(r_ob);
             
@@ -733,7 +755,6 @@ void notationobj_task(t_notation_obj *r_ob)
                 r_ob->play_head_ux[ph] = -1;
                 r_ob->scheduled_item[ph] = NULL;
             }
-            r_ob->only_play_selection = false;
             r_ob->playback_deferlow = false;
             r_ob->play_step_count = 0;
             
@@ -943,7 +964,6 @@ void notationobj_do_stop(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *a
             specs->dont_schedule_loop_end[ph] = specs->dont_schedule_loop_start[ph] = false;
         }
         setclock_unset(r_ob->setclock->s_thing, r_ob->m_clock);
-        r_ob->only_play_selection = false;
         r_ob->playback_deferlow = false;
         r_ob->play_step_count = 0;
         
@@ -990,32 +1010,43 @@ void notationobj_parse_playback_arguments(t_notation_obj *r_ob, t_symbol *s, lon
     long playheads_indices[CONST_MAX_PLAYHEADS];
     for (long ph = 0; ph < CONST_MAX_PLAYHEADS; ph++) {
         specs->playhead_active[ph] = false;
+        specs->start_ms_specified[ph] = false;
+        specs->stop_ms_specified[ph] = false;
         playheads_indices[ph] = ph;
     }
     
+    long argcoffset = 0;
     for (long i = 0; i < argc; i++) {
         if (atom_gettype(argv+i) == A_SYM) {
             if (atom_getsym(argv+i) == gensym("selection") || s == gensym("playselection")) {
                 specs->selection = true;
+                argcoffset = i+1;
             } else if (atom_getsym(argv+i) == gensym("offline")) {
                 specs->offline = true;
+                argcoffset = i+1;
             } else if (atom_getsym(argv+i) == gensym("preschedule")) {
                 specs->preschedule = true;
+                argcoffset = i+1;
             } else if (atom_getsym(argv+i) == gensym("deferlow")) {
                 specs->deferlow = true;
+                argcoffset = i+1;
             } else if (atom_getsym(argv+i) == _llllobj_sym_pause) {
                 specs->pause = true;
+                argcoffset = i+1;
             } else if (atom_getsym(argv+i) == _llllobj_sym_stop) {
                 specs->stop = true;
+                argcoffset = i+1;
             } else if (atom_getsym(argv+i) == gensym("@numplayheads") && i+1 < argc && atom_gettype(argv+i+1) == A_LONG) {
                 long numplayheads = CLAMP(atom_getlong(argv+i+1), 1, CONST_MAX_PLAYHEADS);
                 playheads_defined = true;
                 for (long ph = 0; ph < numplayheads; ph++) {
                     specs->playhead_active[ph] = true;
                 }
-                r_ob->num_playheads = numplayheads-1;
+                r_ob->num_playheads = numplayheads;
+                argcoffset = i+2;
             } else if ((atom_getsym(argv+i) == gensym("@playhead") || atom_getsym(argv+i) == gensym("@playheads"))) {
                 playheads_defined = true;
+                argcoffset = i+1;
                 for (long j = i+1; j < argc; j++) {
                     if (atom_gettype(argv+j) == A_SYM && atom_getsym(argv+j) && atom_getsym(argv+j)->s_name && atom_getsym(argv+j)->s_name[0] == '@') {
                         break;
@@ -1031,9 +1062,11 @@ void notationobj_parse_playback_arguments(t_notation_obj *r_ob, t_symbol *s, lon
                         if (ph > r_ob->num_playheads)
                             r_ob->num_playheads = ph;
                     }
+                    argcoffset = j+1;
                 }
             } else if (playheads_defined && (atom_getsym(argv+i) == gensym("@playheadstart") || atom_getsym(argv+i) == gensym("@playheadsstart"))) {
                 if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
+                    argcoffset = i+1;
                     for (long j = i+1; j < argc && j-(i+1) < CONST_MAX_PLAYHEADS; j++) {
                         if (atom_gettype(argv+j) == A_SYM && atom_getsym(argv+j) && atom_getsym(argv+j)->s_name && atom_getsym(argv+j)->s_name[0] == '@') {
                             break;
@@ -1044,12 +1077,14 @@ void notationobj_parse_playback_arguments(t_notation_obj *r_ob, t_symbol *s, lon
                             specs->start_ms_specified[ph] = true;
                             specs->start_ms[ph] = ms;
                         }
+                        argcoffset = j+1;
                     }
                 } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
                     // TODO: score
                 }
             } else if (playheads_defined && (atom_getsym(argv+i) == gensym("@playheadstop") || atom_getsym(argv+i) == gensym("@playheadsstop"))) {
                 if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
+                    argcoffset = i+1;
                     for (long j = i+1; j < argc && j-(i+1) < CONST_MAX_PLAYHEADS; j++) {
                         if (atom_gettype(argv+j) == A_SYM && atom_getsym(argv+j) && atom_getsym(argv+j)->s_name && atom_getsym(argv+j)->s_name[0] == '@') {
                             break;
@@ -1060,6 +1095,7 @@ void notationobj_parse_playback_arguments(t_notation_obj *r_ob, t_symbol *s, lon
                             specs->stop_ms_specified[ph] = true;
                             specs->stop_ms[ph] = ms;
                         }
+                        argcoffset = j+1;
                     }
                 } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
                     // TODO: score
@@ -1067,7 +1103,7 @@ void notationobj_parse_playback_arguments(t_notation_obj *r_ob, t_symbol *s, lon
             }
         }
     }
-    
+
     if (!playheads_defined) {
         // simple case, 1 playhead
         r_ob->num_playheads = 1;
@@ -1105,79 +1141,92 @@ void notationobj_parse_playback_arguments(t_notation_obj *r_ob, t_symbol *s, lon
             start_ms = 0.;
         
         for (long ph = 0; ph < r_ob->num_playheads; ph++) {
-            r_ob->play_head_start_ms[ph] = start_ms;
-            specs->start_ms[ph] = start_ms ;
+/*            r_ob->play_head_start_ms[ph] = start_ms;
             if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
                 r_ob->play_head_start_ux[ph] = ms_to_unscaled_xposition(r_ob, start_ms, 1);
-            }
+            } */ // NO; we don't change the playehad start for selection playback, otherwise when you play normally later it'll be from a different point
+            specs->start_ms[ph] = start_ms;
         }
         
     } else {
         
-        if (!playheads_defined) {
+//        if (!playheads_defined) {
+        for (long ph = 0; ph < r_ob->num_playheads; ph++) {
             // simple case
-            if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
-                specs->start_ms_specified[0] = false;
-                specs->start_ms[0] = r_ob->play_head_start_ms[0];
-                specs->stop_ms_specified[0] = false;
-                specs->stop_ms[0] = r_ob->length_ms;
-                if (argc > 0) {
-                    specs->start_ms_specified[0] = true;
-                    specs->start_ms[0] = (argc > 0) ? atom_getfloat(argv) : 0;
-                    
-                    // synchronizing the playhead with out start_ms
-                    r_ob->play_head_start_ms[0] = specs->start_ms[0];
-                    
-                    // detecting end_ms
-                    if (argc > 1 && is_atom_number(argv + 1)) {
-                        specs->stop_ms_specified[0] = true;
-                        specs->stop_ms[0] = atom_getfloat(argv + 1);
-                    }
-                }
-            } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-                r_ob->are_there_repeats = are_there_repeats(r_ob, true);
-                r_ob->play_head_reset_start_ms_when_play_ends[0] = -1; // which means: don't reset
-                
-                specs->start_ms_specified[0] = false;
-                specs->start_ms[0] = r_ob->play_head_start_ms[0];
-                specs->stop_ms_specified[0] = false;
-                specs->stop_ms[0] = r_ob->length_ms_till_last_note;
-                
-                // detecting start_ms
-                if (argc > 0) {
-                    char err;
-                    t_llll *start_timepoint_syntax = llllobj_parse_llll((t_object *) r_ob, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
-                    if (start_timepoint_syntax->l_size == 2) {
-                        char err2;
-                        t_llll *end_timepoint_syntax = llll_clone(start_timepoint_syntax);
-                        llll_behead(end_timepoint_syntax);
-                        llll_betail(start_timepoint_syntax);
-                        err2 = parse_open_timepoint_syntax(r_ob, end_timepoint_syntax, NULL, &specs->stop_ms[0], NULL);
-                        specs->stop_ms_specified[0] = true;
-                        llll_free(end_timepoint_syntax);
-                        if (err2) {
-                            object_error((t_object *) r_ob, "Error in defining play end position.");
-                            return;
+            if (!specs->start_ms_specified[ph] || !specs->stop_ms_specified[ph]) {
+                if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
+                    if (!specs->start_ms_specified[ph])
+                        specs->start_ms[ph] = r_ob->play_head_start_ms[ph];
+                    if (!specs->stop_ms_specified[ph])
+                        specs->stop_ms[ph] = r_ob->length_ms;
+                    if (argc > argcoffset) {
+                        if (is_atom_number(argv+argcoffset)) {
+                            if (!specs->start_ms_specified[ph]) {
+                                specs->start_ms_specified[ph] = true;
+                                specs->start_ms[ph] = (argc > 0) ? atom_getfloat(argv+argcoffset) : 0;
+                                
+                                // synchronizing the playhead with out start_ms
+                                r_ob->play_head_start_ms[ph] = specs->start_ms[ph];
+                            }
+                            
+                            if (!specs->stop_ms_specified[ph] && argc > argcoffset + 1) {
+                                // detecting end_ms
+                                if (argc > 1 && is_atom_number(argv + argcoffset + 1)) {
+                                    specs->stop_ms_specified[ph] = true;
+                                    specs->stop_ms[ph] = atom_getfloat(argv + argcoffset + 1);
+                                }
+                            }
+                            break;
                         }
                     }
-                    err = parse_open_timepoint_syntax(r_ob, start_timepoint_syntax, NULL, &specs->start_ms[0], NULL);
-                    specs->start_ms_specified[0] = true;
-                    llll_free(start_timepoint_syntax);
-                    if (err) {
-                        object_error((t_object *) r_ob, "Error in defining play start position.");
-                        return;
-                    }
-                    r_ob->play_head_start_ms[0] = specs->start_ms[0];
-                    r_ob->play_head_start_ux[0] = ms_to_unscaled_xposition(r_ob, specs->start_ms[0], 1);
+                } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
+                    r_ob->are_there_repeats = are_there_repeats(r_ob, true);
+                    r_ob->play_head_reset_start_ms_when_play_ends[ph] = -1; // which means: don't reset
                     
-                } else if (argc == 0) {
-                    specs->start_ms[0] = r_ob->play_head_start_ms[0];
-                } else {
-                    r_ob->play_head_start_ms[0] = specs->start_ms[0];
-                    r_ob->play_head_start_ux[0] = ms_to_unscaled_xposition(r_ob, specs->start_ms[0], 1);
+                    if (!specs->start_ms_specified[ph])
+                        specs->start_ms[ph] = r_ob->play_head_start_ms[ph];
+                    if (!specs->stop_ms_specified[ph])
+                        specs->stop_ms[ph] = r_ob->length_ms_till_last_note;
+                    
+                    // detecting start_ms
+                    if (argc > argcoffset) {
+                        char err = 0;
+                        t_llll *start_timepoint_syntax = llllobj_parse_llll((t_object *) r_ob, LLLL_OBJ_UI, NULL, argc - argcoffset, argv + argcoffset, LLLL_PARSE_CLONE);
+                        if (start_timepoint_syntax->l_size == 2) {
+                            char err2 = 0;
+                            t_llll *end_timepoint_syntax = llll_clone(start_timepoint_syntax);
+                            llll_behead(end_timepoint_syntax);
+                            llll_betail(start_timepoint_syntax);
+                            if (!specs->stop_ms_specified[ph]) {
+                                err2 = parse_open_timepoint_syntax(r_ob, end_timepoint_syntax, NULL, &specs->stop_ms[ph], NULL);
+                                specs->stop_ms_specified[0] = true;
+                            }
+                            llll_free(end_timepoint_syntax);
+                            if (err2) {
+                                object_error((t_object *) r_ob, "Error in defining play end position.");
+                                return;
+                            }
+                        }
+                        if (!specs->start_ms_specified[ph]) {
+                            err = parse_open_timepoint_syntax(r_ob, start_timepoint_syntax, NULL, &specs->start_ms[ph], NULL);
+                            specs->start_ms_specified[0] = true;
+                        }
+                        llll_free(start_timepoint_syntax);
+                        if (err) {
+                            object_error((t_object *) r_ob, "Error in defining play start position.");
+                            return;
+                        }
+                        r_ob->play_head_start_ms[ph] = specs->start_ms[ph];
+                        r_ob->play_head_start_ux[ph] = ms_to_unscaled_xposition(r_ob, specs->start_ms[ph], 1);
+                        
+                    } else {
+                        specs->start_ms[ph] = r_ob->play_head_start_ms[ph];
+//                        r_ob->play_head_start_ms[ph] = specs->start_ms[0];
+//                        r_ob->play_head_start_ux[0] = ms_to_unscaled_xposition(r_ob, specs->start_ms[0], 1);
+                    }
+                    
+                    
                 }
-                
-                
             }
         }
         
@@ -1230,6 +1279,7 @@ void notationobj_play(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv
     lock_general_mutex(r_ob);
     notationobj_parse_playback_arguments(r_ob, s, argc, argv); // this must be the only place where play specs are parsed and set, I suppose
     unlock_general_mutex(r_ob);
+    
     
     r_ob->are_there_solos = are_there_solos(r_ob);
 

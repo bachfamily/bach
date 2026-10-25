@@ -13893,13 +13893,15 @@ char chord_or_any_of_its_notes_are_selected(t_notation_obj *r_ob, t_chord *ch)
 }
 
 // supported element_types are chords and notes
-char should_element_be_played(t_notation_obj *r_ob, t_notation_item *item){
-    
+char should_element_be_played(t_notation_obj *r_ob, t_notation_item *item)
+{
+    t_playback_specs *specs = &r_ob->playback_specs;
+
     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && item->type == k_CHORD &&
         !r_ob->play_rests && (!((t_chord *)item)->firstnote || ((t_chord *)item)->r_sym_duration.r_num < 0))
         return 0;    // it's a rest
     
-    if (!r_ob->only_play_selection) {
+    if (!specs->selection) {
         char elem_or_subelems_solo = notation_item_is_globally_solo(r_ob, item);
         if (!elem_or_subelems_solo) {
             if (item->type == k_CHORD) {
@@ -32136,7 +32138,7 @@ t_llll* get_single_rollnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e
     } else
         llll_appenddouble(out_llll, note->parent->onset, 0, WHITENULL_llll);
     
-    llll_appendllll(out_llll, get_rollnote_values_as_llll(r_ob, note, mode, 0));
+    llll_appendllll(out_llll, get_rollnote_values_as_llll(r_ob, note, mode, playhead));
 
     llll_append_notationitem_flag(r_ob, out_llll, (t_notation_item *)note);
     
@@ -38050,7 +38052,6 @@ void notationobj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, n
     r_ob->num_selecteditems = 0;
     r_ob->is_editing_type = k_NONE;
     r_ob->is_editing_voice_name = -1;
-    r_ob->only_play_selection = false;
     r_ob->playback_deferlow = false;
     r_ob->automessage_ac = 0;
     r_ob->is_sending_automessage = false;
@@ -41517,7 +41518,7 @@ void handle_change_if_there_are_dangling_undo_ticks(t_notation_obj *r_ob, int ch
 }
 
 void handle_change_selection(t_notation_obj *r_ob) {
-    handle_change(r_ob, (r_ob->playing && r_ob->only_play_selection) ? k_CHANGED_CHECK_CORRECT_SCHEDULING + k_CHANGED_REDRAW_STATIC_LAYER : k_CHANGED_REDRAW_STATIC_LAYER, k_UNDO_OP_UNKNOWN);
+    handle_change(r_ob, (r_ob->playing && r_ob->playback_specs.selection) ? k_CHANGED_CHECK_CORRECT_SCHEDULING + k_CHANGED_REDRAW_STATIC_LAYER : k_CHANGED_REDRAW_STATIC_LAYER, k_UNDO_OP_UNKNOWN);
 }
 
 
