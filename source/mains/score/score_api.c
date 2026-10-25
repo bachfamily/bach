@@ -8731,7 +8731,7 @@ t_llll* get_all_extras_values_as_llll(t_score *x, char tree)
                     t_llll* slots_subllll = llll_get();
                     while (temp_note) { // append chord lllls
                         //                    llll_appendllll(graphic_subllll, note_get_graphic_values_no_router_as_llll((t_notation_obj *) x, temp_note), 0, WHITENULL_llll);
-                        llll_appendllll(breakpoints_subllll, note_get_breakpoints_values_no_router_as_llll((t_notation_obj *) x, temp_note));
+                        llll_appendllll(breakpoints_subllll, note_get_breakpoints_values_no_router_as_llll((t_notation_obj *) x, temp_note, 0));
                         llll_appendllll(slots_subllll, note_get_slots_values_no_header_as_llll((t_notation_obj *) x, temp_note, false));
                         temp_note = temp_note->next;
                     }
@@ -12046,7 +12046,7 @@ t_llll *score_get_interp_at_timepoint(t_score *x, t_timepoint tp)
                     for (note = chord->firstnote; note; note = note->next) {
                         t_llll *note_ll;
                         x->r_ob.curr_sampling_ms = timepoint_to_ms((t_notation_obj *)x, tp, voice->v_ob.number);
-                        note_ll = get_scorenote_values_as_llll((t_notation_obj *)x, note, k_CONSIDER_FOR_SAMPLING);
+                        note_ll = get_scorenote_values_as_llll((t_notation_obj *)x, note, k_CONSIDER_FOR_SAMPLING, 0);
                         llll_appendllll(chord_ll, note_ll, 0, WHITENULL_llll);
                     }
                     

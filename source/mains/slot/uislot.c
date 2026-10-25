@@ -1807,7 +1807,7 @@ t_llll* note_get_some_slots_values_as_llll(t_notation_obj *r_ob, t_note *note, c
     for (j=0; j<CONST_MAX_SLOTS; j++) {
         if ((!slot_indices_all_numerical || slot_indices_all_numerical->l_size == 0 || is_long_in_llll_first_level(slot_indices_all_numerical, j + 1)) && note->slot[j].firstitem) {
             
-            t_llll *thisslot_llll = note_get_single_slot_values_as_llll(r_ob, note, mode, j, false);
+            t_llll *thisslot_llll = note_get_single_slot_values_as_llll(r_ob, note, mode, j, false, 0);
             llll_appendllll(out_llll, thisslot_llll, 0, WHITENULL_llll);
         }
     }

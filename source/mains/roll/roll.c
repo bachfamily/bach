@@ -1027,7 +1027,7 @@ void roll_quantize(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 //                    llll_appenddouble(this_event_cents, note->midicents, 0, WHITENULL_llll);
                     llll_appendlong(this_event_velocities, note->velocity, 0, WHITENULL_llll);
                     llll_appendllll(this_event_graphic, note_get_graphic_values_no_router_as_llll((t_notation_obj *) x, note), 0, WHITENULL_llll);
-                    llll_appendllll(this_event_breakpoints, note_get_breakpoints_values_no_router_as_llll((t_notation_obj *) x, note), 0, WHITENULL_llll);
+                    llll_appendllll(this_event_breakpoints, note_get_breakpoints_values_no_router_as_llll((t_notation_obj *) x, note, 0), 0, WHITENULL_llll);
                     llll_appendllll(this_event_slots, note_get_slots_values_no_header_as_llll((t_notation_obj *) x, note, false), 0, WHITENULL_llll);
                     llll_appendlong(this_event_IDs, note->r_it.ID, 0, WHITENULL_llll);
                     if (tmp_chord->onset + MAX(0, note->duration) == next_onset) {
@@ -1333,7 +1333,7 @@ void roll_setcursor(t_roll *x, t_symbol *s, long argc, t_atom *argv){
 }
 
 void roll_getcursor(t_roll *x){
-    send_playhead_position((t_notation_obj *) x, 6);
+    send_playhead_position((t_notation_obj *) x, 6, false);
 }
 
 
@@ -3926,7 +3926,7 @@ void roll_getmarker(t_roll *x, t_symbol *s, long argc, t_atom *argv){
         lock_markers_mutex((t_notation_obj *)x);
         marker = markername2marker((t_notation_obj *) x, args);
         if (marker)
-            marker_llll = marker_get_as_llll((t_notation_obj *) x, marker, namefirst, true, k_CONSIDER_FOR_DUMPING);
+            marker_llll = marker_get_as_llll((t_notation_obj *) x, marker, namefirst, true, k_CONSIDER_FOR_DUMPING, 0);
         unlock_markers_mutex((t_notation_obj *)x);
         if (marker_llll) {
             llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 6, marker_llll);
@@ -10321,7 +10321,7 @@ char glue(t_roll *x, double threshold_ms, double threshold_cents, double smooth_
                                 // gotta glue with this note
                                 changed = true;
                                 
-                                t_llll *note2_ll = get_rollnote_values_as_llll((t_notation_obj *)x, note2, k_CONSIDER_FOR_SAVING);
+                                t_llll *note2_ll = get_rollnote_values_as_llll((t_notation_obj *)x, note2, k_CONSIDER_FOR_SAVING, 0);
                                 t_llll *note2_ll_as_chord = llll_get();
                                 llll_appenddouble(note2_ll_as_chord, chord2->onset);
                                 llll_appendllll(note2_ll_as_chord, note2_ll);
@@ -15438,7 +15438,7 @@ t_llll* get_subvoice_values_as_llll(t_roll *x, t_rollvoice *voice, double start_
             } else if ((temp_chord->onset >= start_ms && temp_chord->onset <= end_ms) || // onset is within boundaries
                        (temp_chord->onset + max_duration > start_ms && temp_chord->onset + max_duration <= end_ms) || // tail is within boundaries
                        (temp_chord->onset < start_ms && temp_chord->onset + max_duration > end_ms)) { // chord starts before the region beginning and ends after the region end
-                to_append = get_rollpartialchord_values_as_llll((t_notation_obj *) x, temp_chord, k_CONSIDER_FOR_SUBDUMPING, start_ms, end_ms);
+                to_append = get_rollpartialchord_values_as_llll((t_notation_obj *) x, temp_chord, k_CONSIDER_FOR_SUBDUMPING, start_ms, end_ms, 0);
             }
         }
         
@@ -15709,7 +15709,7 @@ t_llll* get_extras_values_as_llll(t_roll *x, bool selection_only)
                 while (temp_note) { // append chord lllls
                     //                llll_appendllll(graphic_subllll, note_get_graphic_values_no_router_as_llll((t_notation_obj *) x, temp_note), 0, WHITENULL_llll);
                     if (!selection_only || notation_item_is_globally_selected((t_notation_obj *)x, (t_notation_item *)temp_note)) {
-                        llll_appendllll(breakpoints_subllll, note_get_breakpoints_values_no_router_as_llll((t_notation_obj *) x, temp_note), 0, WHITENULL_llll);
+                        llll_appendllll(breakpoints_subllll, note_get_breakpoints_values_no_router_as_llll((t_notation_obj *) x, temp_note, 0), 0, WHITENULL_llll);
                         llll_appendllll(slots_subllll, note_get_slots_values_no_header_as_llll((t_notation_obj *) x, temp_note, false), 0, WHITENULL_llll);
                     }
                     temp_note = temp_note->next;
@@ -17048,7 +17048,7 @@ long roll_key(t_roll *x, t_object *patcherview, long keycode, long modifiers, lo
                 x->r_ob.hscrollbar_pos = 0.;
                 redraw_hscrollbar((t_notation_obj *) x, 1);
             } else {
-                force_inscreen_ms_to_boundary(x, x->r_ob.play_head_start_ms[x->r_ob.catch_playhead_which], false, true, true, false);
+                force_inscreen_ms_to_boundary(x, x->r_ob.play_head_start_ms[CLAMP(x->r_ob.catch_playhead_which-1, 0, CONST_MAX_PLAYHEADS-1)], false, true, true, false);
                 notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
             }
             send_domain(x, 6, NULL);

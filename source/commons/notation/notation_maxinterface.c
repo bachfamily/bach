@@ -1421,13 +1421,13 @@ void notationobj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_di
     long ac_backgroundslots, ac_mainstavescolor, ac_auxiliarystavescolor;
     t_atom *av_backgroundslots = NULL, *av_mainstavescolor = NULL, *av_auxiliarystavescolor = NULL;
     t_atom_long *av_long = NULL;
-    long has_backgroundslots = 0, has_slotsbgalpha = 0, has_backgroundslotfontsize = 0, has_velocityhandling = 0, has_notificationsformessages = 0, has_showtempointerpline = 0, has_continuousbang = 0, has_additionalstartpad = 0, has_annotationfontsize = 0, has_annotationalignment = 0, has_showpartbrackets = 0;
+    long has_backgroundslots = 0, has_slotsbgalpha = 0, has_backgroundslotfontsize = 0, has_velocityhandling = 0, has_notificationsformessages = 0, has_showtempointerpline = 0, has_continuousbang = 0, has_additionalstartpad = 0, has_annotationfontsize = 0, has_annotationalignment = 0, has_showpartbrackets = 0, has_playheadnotify = 0;
     t_atom_long dblclicksendsvalues = 0;
     double slotbgalpha = 0, backgroundslotfontsize = 0, additionalstartpad = 0;
     t_atom_long velocityhandling = -1, notificationsformessages = -1, showtempointerpline = 0, continuousbang = -1;
     char brand_new_creation = 0;
     double annotationfontsize = 0;
-    t_atom_long annotationalignment = 0, showpartbrackets = 0;
+    t_atom_long annotationalignment = 0, showpartbrackets = 0, playheadnotify = 0;
 
 
     long num_voices_from_argument = -1; // = no need to set num voices
@@ -1507,6 +1507,9 @@ void notationobj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_di
     if ((has_showpartbrackets = dictionary_hasentry(d, gensym("showpartbrackets"))))
         dictionary_getlong(d, gensym("showpartbrackets"), &showpartbrackets);
 
+    if ((has_playheadnotify = dictionary_hasentry(d, gensym("playheadnotify"))))
+        dictionary_getlong(d, gensym("playheadnotify"), &playheadnotify);
+
     if ((has_continuousbang = dictionary_hasentry(d, gensym("continuousbang"))))
         dictionary_getlong(d, gensym("continuousbang"), &continuousbang);
     
@@ -1585,6 +1588,10 @@ void notationobj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_di
             object_attr_setsym(x, gensym("partsaccollatura"), _llllobj_sym_none);
         else
             object_attr_setsym(x, gensym("partsaccollatura"), gensym("bracket"));
+    }
+
+    if (has_playheadnotify) {
+        object_attr_setchar(x, gensym("notifycursorcontinuously"), playheadnotify);
     }
 
     if (dblclicksendsvalues) {
@@ -2727,7 +2734,13 @@ void notation_class_add_play_attributes(t_class *c, char obj_type){
         // between two scheduled events (e.g.: two subsequent chord onsets), so this might slightly
         // vary in each scheduled interval
 
+        CLASS_ATTR_CHAR(c,"catchplayindex", 0, t_notation_obj, catch_playhead_which);
+        CLASS_ATTR_STYLE_LABEL(c,"catchplayindex",0,"text","Catch Playhead Index");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"catchplayindex", 0, "1");
+        // @exclude bach.slot
+        // @description Sets the index of the playhead to catch, in case of multiplayhead playback.
 
+        
         CLASS_ATTR_CHAR(c,"catchplay", 0, t_notation_obj, catch_playhead_mode);
         CLASS_ATTR_STYLE_LABEL(c,"catchplay",0,"enumindex","Catch Playhead");
         CLASS_ATTR_ENUMINDEX(c,"catchplay", 0, "Don't ChangePage FixedPlayhead");
@@ -2739,18 +2752,26 @@ void notation_class_add_play_attributes(t_class *c, char obj_type){
         // 1 = ChangePage: playhead moves, and domain changes once playhead gets to the end of the line; <br />
         // 2 = FixedPlayhead: playhead remains fixed at a specific position, set by the attribute <m>playheadfixedpos</m>; <br />
 
-        CLASS_ATTR_DOUBLE(c,"playheadfixedpos", 0, t_notation_obj, playhead_fixed_pos);
-        CLASS_ATTR_STYLE_LABEL(c,"playheadfixedpos",0,"text","Playhead Fixed Position");
-        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"playheadfixedpos", 0, "0");
-        CLASS_ATTR_FILTER_CLIP(c, "playheadfixedpos", 0., 1.);
+        CLASS_ATTR_DOUBLE(c,"catchplaypos", 0, t_notation_obj, catch_playhead_fixed_pos);
+        CLASS_ATTR_STYLE_LABEL(c,"catchplaypos",0,"text","Catch Playhead Position");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"catchplaypos", 0, "0");
+        CLASS_ATTR_FILTER_CLIP(c, "catchplaypos", 0., 1.);
         // @exclude bach.slot
-        // @description Fixed position of the playhead, only used if <m>catch_playhead</m> is set to 2 (FixedPlayhead).
+        // @description Fixed relative position in the domain for the playhead catching,
+        // only relevant if <m>catch_playhead</m> is set to 2 (FixedPlayhead).
 
-        CLASS_ATTR_CHAR(c,"playheadnotify", 0, t_notation_obj, playhead_notify_during_playback);
-        CLASS_ATTR_STYLE_LABEL(c,"playheadnotify",0,"onoff","Notify Playhead Position During Playback");
-        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"playheadnotify", 0, "0");
+        CLASS_ATTR_CHAR(c,"notifyplayheadindex", 0, t_notation_obj, notify_playheads);
+        CLASS_ATTR_STYLE_LABEL(c,"notifyplayheadindex",0,"onoff","Notify Playhead Index");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"notifyplayheadindex", 0, "0");
         // @exclude bach.slot
-        // @description Constantly notify playhead position during playback.
+        // @description Notify individual playhead numbers (indices) from the playout
+
+        // was: playheadnotify
+        CLASS_ATTR_CHAR(c,"notifycursorcontinuously", 0, t_notation_obj, notify_cursor_continuously_during_playback);
+        CLASS_ATTR_STYLE_LABEL(c,"notifycursorcontinuously",0,"onoff","Notify Cursor Position Continuously During Playback");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"notifycursorcontinuously", 0, "0");
+        // @exclude bach.slot
+        // @description Continuously notify playhead position(s) during playback.
         
         CLASS_ATTR_CHAR(c,"playmode", 0, t_notation_obj, play_mode);
         CLASS_ATTR_STYLE_LABEL(c,"playmode",0,"enumindex","Playout Mode");
@@ -4199,7 +4220,7 @@ void send_marker_as_llll(t_notation_obj *r_ob, t_marker *marker, char namefirst,
 {
 	t_llll *llll;
 	lock_markers_mutex(r_ob);
-	llll = marker_get_as_llll(r_ob, marker, namefirst, true, k_CONSIDER_FOR_DUMPING);
+	llll = marker_get_as_llll(r_ob, marker, namefirst, true, k_CONSIDER_FOR_DUMPING, 0);
     
     if (forced_routers && forced_routers->l_head && hatom_gettype(&forced_routers->l_head->l_hatom) == H_SYM &&
         llll && llll->l_head && hatom_getsym(&llll->l_head->l_hatom) == _llllobj_sym_marker)
@@ -6851,7 +6872,7 @@ void notationobj_copy_slot_selection(t_notation_obj *r_ob, t_clipboard *clipboar
         llll_free(clipboard->gathered_syntax);
 
     // we only copy the selected slot items
-    clipboard->gathered_syntax = notation_item_get_single_slot_values_as_llll(r_ob, nitem, k_CONSIDER_FOR_DUMPING, slot_num, true);
+    clipboard->gathered_syntax = notation_item_get_single_slot_values_as_llll(r_ob, nitem, k_CONSIDER_FOR_DUMPING, slot_num, true, 0);
     clipboard->type = k_SLOT_SELECTION;
     clipboard->object = k_NOTATION_OBJECT_ANY;
     if (cut) { // cut
@@ -6872,10 +6893,10 @@ void notationobj_copy_slot(t_notation_obj *r_ob, t_clipboard *clipboard, t_notat
 
     // we copy the entire slot
     if (slot_num < 0) // we copy all the (used) slots
-        clipboard->gathered_syntax = notation_item_get_slots_values_as_llll(r_ob, nitem, k_CONSIDER_FOR_DUMPING, false);
+        clipboard->gathered_syntax = notation_item_get_slots_values_as_llll(r_ob, nitem, k_CONSIDER_FOR_DUMPING, false, 0);
     else  {  // we just copy the active slot
         clipboard->gathered_syntax = llll_get();
-        llll_appendllll(clipboard->gathered_syntax, notation_item_get_single_slot_values_as_llll(r_ob, nitem, k_CONSIDER_FOR_DUMPING, slot_num, false), 0, WHITENULL_llll);
+        llll_appendllll(clipboard->gathered_syntax, notation_item_get_single_slot_values_as_llll(r_ob, nitem, k_CONSIDER_FOR_DUMPING, slot_num, false, 0), 0, WHITENULL_llll);
     }
     clipboard->type = k_SLOT;
     clipboard->object = k_NOTATION_OBJECT_ANY;
@@ -6922,7 +6943,7 @@ void notationobj_copy_durationline(t_notation_obj *r_ob, t_clipboard *clipboard,
             llll_free(clipboard->gathered_syntax);
 
         // we copy the duration line
-        clipboard->gathered_syntax = note_get_breakpoint_values_as_llll(r_ob, note, k_CONSIDER_FOR_DUMPING, NULL, NULL);
+        clipboard->gathered_syntax = note_get_breakpoint_values_as_llll(r_ob, note, k_CONSIDER_FOR_DUMPING, NULL, NULL, 0);
         clipboard->type = k_DURATION_LINE;
         clipboard->object = k_NOTATION_OBJECT_ANY;
 

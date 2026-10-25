@@ -2983,7 +2983,7 @@ void paint_annotation_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *c
         if (r_ob->slotinfo[slot].slot_type == k_SLOT_TYPE_TEXT)
             buf = note->slot[slot].firstitem ? (char *)note->slot[slot].firstitem->item : NULL;
         else {
-            t_llll *ll = note_get_single_slot_values_as_llll(r_ob, note, k_CONSIDER_FOR_DUMPING, slot, false);
+            t_llll *ll = note_get_single_slot_values_as_llll(r_ob, note, k_CONSIDER_FOR_DUMPING, slot, false, 0);
             if (ll) llll_behead(ll);
             llll_to_text_buf(ll, &buf, 0, BACH_DEFAULT_MAXDECIMALS, 0, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
             llll_free(ll);
@@ -29376,7 +29376,7 @@ void glue_portion_of_single_temporal_slot(t_notation_obj *r_ob, t_note *receiver
                                           double portion_duration_ratio_to_receiver, char direction, double smooth_ms,
                                           double giver_duration, double total_new_duration)
 {
-    t_llll *receiver_slot = note_get_single_slot_values_as_llll(r_ob, receiver, k_CONSIDER_FOR_SAVING, slotnum, false);
+    t_llll *receiver_slot = note_get_single_slot_values_as_llll(r_ob, receiver, k_CONSIDER_FOR_SAVING, slotnum, false, 0);
     t_llll *final_slot = llll_get();
     t_llllelem *elem;
     t_llll *ll;
@@ -29608,7 +29608,7 @@ void glue_portion_of_breakpoints(t_notation_obj *r_ob, t_note *receiver, t_llll 
     long idx_of_bpt_to_be_smoothed = -1;
     
     if (ll && ll->l_head && dummy_giver) {
-        t_llll *receiver_breakpoints = note_get_breakpoint_values_as_llll(r_ob, receiver, k_CONSIDER_FOR_SAVING, NULL, NULL);
+        t_llll *receiver_breakpoints = note_get_breakpoint_values_as_llll(r_ob, receiver, k_CONSIDER_FOR_SAVING, NULL, NULL, 0);
         t_llll *final_breakpoints = llll_get();
         t_llllelem *elem;
         t_llll *ll;
@@ -29770,7 +29770,7 @@ t_llll* notation_item_get_partial_single_slot_values_as_llll(t_notation_obj *r_o
         end_rel_x_pos = 1;
     
     if (!slot_is_temporal(r_ob, slotnum))
-        return notation_item_get_single_slot_values_as_llll(r_ob, nitem, mode, slotnum, false);
+        return notation_item_get_single_slot_values_as_llll(r_ob, nitem, mode, slotnum, false, 0);
     
     double domain_min = slot_get_domain_min(r_ob, slotnum);
     double domain_max = slot_get_domain_max(r_ob, slotnum, nitem);
@@ -29940,7 +29940,7 @@ t_llll* notation_item_get_partial_single_slot_values_as_llll(t_notation_obj *r_o
         
         default:
             llll_free(out_llll);
-            out_llll = notation_item_get_single_slot_values_as_llll(r_ob, nitem, mode, slotnum, false);
+            out_llll = notation_item_get_single_slot_values_as_llll(r_ob, nitem, mode, slotnum, false, 0);
             break;
 
     }
@@ -30557,9 +30557,9 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
 }
 
 
-t_llll* note_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_note *note, char mode, long slotnum, char only_get_selected_items)
+t_llll* note_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_note *note, char mode, long slotnum, char only_get_selected_items, long playhead)
 {
-    return notation_item_get_single_slot_values_as_llll(r_ob, (t_notation_item *)note, mode, slotnum, only_get_selected_items);
+    return notation_item_get_single_slot_values_as_llll(r_ob, (t_notation_item *)note, mode, slotnum, only_get_selected_items, playhead);
 }
 
 
@@ -30597,7 +30597,7 @@ t_llll* note_get_slots_values_as_llll(t_notation_obj *r_ob, t_note *note, char m
             note_for_slot = note_get_first_in_tieseq(note);
         if (note_for_slot->slot[j].firstitem || force_all_slots) { // do we need this slot?
             if (mode != k_CONSIDER_FOR_DUMPING_ONLY_TIE_SPANNING || r_ob->slotinfo[j].slot_singleslotfortiednotes) {
-                t_llll *thisslot_llll = note_get_single_slot_values_as_llll(r_ob, note_for_slot, mode, j, false);
+                t_llll *thisslot_llll = note_get_single_slot_values_as_llll(r_ob, note_for_slot, mode, j, false, 0);
                 llll_appendllll(out_llll, thisslot_llll);
             }
         }
@@ -30607,7 +30607,7 @@ t_llll* note_get_slots_values_as_llll(t_notation_obj *r_ob, t_note *note, char m
 }
 
 
-t_llll* notation_item_get_slots_values_as_llll(t_notation_obj *r_ob, t_notation_item *nitem, char mode, char get_even_if_empty)
+t_llll* notation_item_get_slots_values_as_llll(t_notation_obj *r_ob, t_notation_item *nitem, char mode, char get_even_if_empty, long playhead)
 {
     // if mode == 2 it's a partialnote
     
@@ -30619,7 +30619,7 @@ t_llll* notation_item_get_slots_values_as_llll(t_notation_obj *r_ob, t_notation_
     for (j = 0; j < CONST_MAX_SLOTS; j++) {
         if (notation_item_get_slot_firstitem(r_ob, nitem, j) || get_even_if_empty) { // do we need this slot?
             if (mode != k_CONSIDER_FOR_DUMPING_ONLY_TIE_SPANNING || r_ob->slotinfo[j].slot_singleslotfortiednotes) {
-                t_llll *thisslot_llll = notation_item_get_single_slot_values_as_llll(r_ob, nitem, mode, j, false);
+                t_llll *thisslot_llll = notation_item_get_single_slot_values_as_llll(r_ob, nitem, mode, j, false, playhead);
                 llll_appendllll(out_llll, thisslot_llll, 0, WHITENULL_llll);
             }
         }
@@ -30657,7 +30657,7 @@ t_llll* notation_item_get_multiple_slots_values_as_llll(t_notation_obj *r_ob, t_
         if (j >= 0 && j < CONST_MAX_SLOTS) {
             if (notation_item_get_slot_firstitem(r_ob, nitem, j) || get_even_if_empty) { // do we need this slot?
                 if (mode != k_CONSIDER_FOR_DUMPING_ONLY_TIE_SPANNING || r_ob->slotinfo[j].slot_singleslotfortiednotes) {
-                    t_llll *thisslot_llll = notation_item_get_single_slot_values_as_llll(r_ob, nitem, mode, j, false);
+                    t_llll *thisslot_llll = notation_item_get_single_slot_values_as_llll(r_ob, nitem, mode, j, false, 0);
                     llll_appendllll(out_llll, thisslot_llll, 0, WHITENULL_llll);
                 }
             }
@@ -30683,11 +30683,11 @@ t_llll* note_get_graphic_values_no_router_as_llll(t_notation_obj *r_ob, t_note *
 }
 
 
-t_llll* note_get_breakpoints_values_no_router_as_llll(t_notation_obj *r_ob, t_note *note){
+t_llll* note_get_breakpoints_values_no_router_as_llll(t_notation_obj *r_ob, t_note *note, long playhead){
     // see if we need breakpoint extras
     t_llll *outllll;
     if ((note->num_breakpoints > 2) || ((note->num_breakpoints == 2) && ((note->lastbreakpoint->slope != 0.) || (note->lastbreakpoint->delta_mc != 0.)))){
-        outllll = note_get_breakpoint_values_as_llll(r_ob, note, k_CONSIDER_FOR_DUMPING, NULL, NULL);
+        outllll = note_get_breakpoint_values_as_llll(r_ob, note, k_CONSIDER_FOR_DUMPING, NULL, NULL, playhead);
         llll_behead(outllll);
     } else {
         outllll = llll_get();
@@ -30706,7 +30706,7 @@ t_llll* notation_item_get_slots_values_no_header_as_llll(t_notation_obj *r_ob, t
         }
     }
     if (needslots) {
-        outllll = notation_item_get_slots_values_as_llll(r_ob, nitem, k_CONSIDER_FOR_DUMPING, force_all_slots);
+        outllll = notation_item_get_slots_values_as_llll(r_ob, nitem, k_CONSIDER_FOR_DUMPING, force_all_slots, 0);
         llll_behead(outllll);
     } else {
         outllll = llll_get();
@@ -30749,7 +30749,7 @@ t_llll* note_get_extras_values_as_llll(t_notation_obj *r_ob, t_note *note)
 
     // see if we need breakpoint extras
     if (note_breakpoints_are_nontrivial(r_ob, note))
-        llll_appendllll(out_llll, note_get_breakpoint_values_as_llll(r_ob, note, k_CONSIDER_FOR_DUMPING, NULL, NULL), 0, WHITENULL_llll);
+        llll_appendllll(out_llll, note_get_breakpoint_values_as_llll(r_ob, note, k_CONSIDER_FOR_DUMPING, NULL, NULL, 0), 0, WHITENULL_llll);
 
     // see if we need slots extras (if there's AT LEAST 1 slot, we put them all, so it's practical: slot n is at place n in the list
     for (i=0; i<CONST_MAX_SLOTS; i++) {
@@ -30802,7 +30802,7 @@ t_llll* get_rollnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_c
     
     // see if we need breakpoint extras
     if (note_breakpoints_are_nontrivial(r_ob, note)) {
-        llll_appendllll(out_llll, note_get_breakpoint_values_as_llll(r_ob, note, mode, &new_mc, &new_vel));
+        llll_appendllll(out_llll, note_get_breakpoint_values_as_llll(r_ob, note, mode, &new_mc, &new_vel, playhead));
         if (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_SAMPLING) {
             hatom_setdouble(&out_llll->l_head->l_hatom, new_mc);
             hatom_setlong(&out_llll->l_head->l_next->l_next->l_hatom, round(new_vel));
@@ -30907,7 +30907,7 @@ double get_breakpoints_interpolated_mc(t_notation_obj *r_ob, t_note *note, doubl
     return note->midicents;
 }
 
-t_llll* get_rollpartialnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_considering_types mode, double ms_start, double ms_end){
+t_llll* get_rollpartialnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_considering_types mode, double ms_start, double ms_end, long playhead){
     double original_onset = note->parent->onset;
     double new_onset;
     double new_duration = 0;
@@ -30983,7 +30983,7 @@ char note_breakpoints_are_nontrivial(t_notation_obj *r_ob, t_note *note) {
 
 
 // if mode >= 0 notes are returned only if not muted, if mode < 0 notes are always returned!
-t_llll* get_rollpartialchord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_data_considering_types mode, double start_ms, double end_ms){ // retrieve the chord values as an unmeasured chord, i.e. for [roll]
+t_llll* get_rollpartialchord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_data_considering_types mode, double start_ms, double end_ms, long playhead){ // retrieve the chord values as an unmeasured chord, i.e. for [roll]
     t_note *temp_note;
     t_llll* out_llll = llll_get(); 
     
@@ -31002,7 +31002,7 @@ t_llll* get_rollpartialchord_values_as_llll(t_notation_obj *r_ob, t_chord *chord
     while (temp_note) { // append notes lllls
         if (mode == k_CONSIDER_ALL_NOTES || !notation_item_is_globally_muted(r_ob, (t_notation_item *)temp_note)) { // we take into account the fact that if mode == k_CONSIDER_ALL_NOTES (all gathered syntax) we want to have ALL the notes
             if (new_onset < end_ms && (chord->onset + temp_note->duration >= start_ms))
-                llll_appendllll(out_llll, get_rollpartialnote_values_as_llll(r_ob, temp_note, mode, start_ms, end_ms), 0, WHITENULL_llll);
+                llll_appendllll(out_llll, get_rollpartialnote_values_as_llll(r_ob, temp_note, mode, start_ms, end_ms, playhead));
         }
         temp_note = temp_note->next;
     }
@@ -31076,7 +31076,7 @@ t_llll* get_rollchord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_dat
             (mode != k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE && mode != k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE &&
              mode != k_CONSIDER_FOR_SELECTION_COPYING && should_element_be_played(r_ob, (t_notation_item *)temp_note)) )
             if (!selection_only || notation_item_is_globally_selected(r_ob, (t_notation_item *)temp_note))
-                llll_appendllll(out_llll, get_rollnote_values_as_llll(r_ob, temp_note, mode));
+                llll_appendllll(out_llll, get_rollnote_values_as_llll(r_ob, temp_note, mode, 0));
         temp_note = temp_note->next;
     }
 
@@ -31106,7 +31106,7 @@ t_llll* get_rollchord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_dat
 // mode == k_CONSIDER_FOR_COLLAPSING_AS_NOTE_BEGINNING : note has been split through collapsing, and this is the beginning (uncompleted)
 // mode == k_CONSIDER_FOR_COLLAPSING_AS_NOTE_MIDDLE : note has been split through collapsing, and this is the middle (uncompleted)
 // mode == k_CONSIDER_FOR_COLLAPSING_AS_NOTE_END : note has been split through collapsing, and this is the end
-t_llll* get_scorenote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_considering_types mode)
+t_llll* get_scorenote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_considering_types mode, long playhead)
 {
     t_llll* out_llll = llll_get();
     double new_mc = 0., new_vel = 0.;
@@ -31147,7 +31147,7 @@ t_llll* get_scorenote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_
         if (mode == k_CONSIDER_FOR_SAMPLING && r_ob->dl_spans_ties)
             note_for_bpts = note_get_first_in_tieseq(note);
         if (note_breakpoints_are_nontrivial(r_ob, note_for_bpts)) {
-            llll_appendllll(out_llll, note_get_breakpoint_values_as_llll(r_ob, note_for_bpts, mode, &new_mc, &new_vel), 0, WHITENULL_llll);
+            llll_appendllll(out_llll, note_get_breakpoint_values_as_llll(r_ob, note_for_bpts, mode, &new_mc, &new_vel, playhead), 0, WHITENULL_llll);
             if (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_SAMPLING) {
                 hatom_setdouble(&out_llll->l_head->l_hatom, new_mc);
                 hatom_setlong(&out_llll->l_head->l_next->l_hatom, round(new_vel));
@@ -31907,7 +31907,8 @@ t_llll* measure_get_values_as_llll(t_notation_obj *r_ob, t_measure *measure, e_d
     return out_llll;
 }
 
-t_llll* get_scorechord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_data_considering_types mode, char put_grace_chord_sym_duration_to_zero, long playhead){
+t_llll* get_scorechord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_data_considering_types mode, char put_grace_chord_sym_duration_to_zero, long playhead)
+{
     // retrieve the chord values as a symbolic chord, i.e. for [score]
     t_llll* out_llll = llll_get(); 
     t_note *temp_note;
@@ -32001,14 +32002,14 @@ t_llll* get_scorechord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_da
             mode == k_CONSIDER_FOR_SLOT_LLLL_EDITOR ||
             mode == k_CONSIDER_FOR_EVALUATION ||
             !notation_item_is_globally_muted(r_ob, (t_notation_item *)temp_note)) 
-            llll_appendllll(out_llll, get_scorenote_values_as_llll(r_ob, temp_note, mode), 0, WHITENULL_llll);    
+            llll_appendllll(out_llll, get_scorenote_values_as_llll(r_ob, temp_note, mode, playhead));
         temp_note = temp_note->next;
     }
     
     // see if we need slots for the rest (if there's AT LEAST 1 slot, we put them all, so it's practical: slot n is at place n in the list
     // ONLY for rests!
     if (!chord->firstnote && notation_item_has_slot_content(r_ob, (t_notation_item *)chord) && mode != k_CONSIDER_FOR_COLLAPSING_AS_NOTE_MIDDLE && mode != k_CONSIDER_FOR_COLLAPSING_AS_NOTE_END)
-        llll_appendllll(out_llll, notation_item_get_slots_values_as_llll(r_ob, (t_notation_item *)chord, mode, false), 0, WHITENULL_llll);
+        llll_appendllll(out_llll, notation_item_get_slots_values_as_llll(r_ob, (t_notation_item *)chord, mode, false, playhead), 0, WHITENULL_llll);
 
 #ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
     if (chord->num_articulations > 0)
@@ -32114,7 +32115,7 @@ t_llll* get_single_scorenote_values_as_llll(t_notation_obj *r_ob, t_note *note, 
             llll_appenddouble(out_llll, chord->onset, 0, WHITENULL_llll); // ms_onset */
     }
     
-    llll_appendllll(out_llll, get_scorenote_values_as_llll(r_ob, note, mode), 0, WHITENULL_llll);    
+    llll_appendllll(out_llll, get_scorenote_values_as_llll(r_ob, note, mode, playhead));
 
     llll_append_notationitem_flag(r_ob, out_llll, (t_notation_item *)note);
 
@@ -32135,7 +32136,7 @@ t_llll* get_single_rollnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e
     } else
         llll_appenddouble(out_llll, note->parent->onset, 0, WHITENULL_llll);
     
-    llll_appendllll(out_llll, get_rollnote_values_as_llll(r_ob, note, mode), 0, WHITENULL_llll);    
+    llll_appendllll(out_llll, get_rollnote_values_as_llll(r_ob, note, mode, 0));
 
     llll_append_notationitem_flag(r_ob, out_llll, (t_notation_item *)note);
     
@@ -34461,7 +34462,7 @@ t_llll *notation_item_get_slots_to_be_copied(t_notation_obj *r_ob, t_notation_it
     
     // we copy the entire slot
     if (hatom_gettype(&which_slots_1based->l_head->l_hatom) == H_SYM && hatom_getsym(&which_slots_1based->l_head->l_hatom) == _llllobj_sym_all)
-        temp = notation_item_get_slots_values_as_llll(r_ob, from, k_CONSIDER_FOR_DUMPING, even_if_empty);
+        temp = notation_item_get_slots_values_as_llll(r_ob, from, k_CONSIDER_FOR_DUMPING, even_if_empty, 0);
     else if (hatom_gettype(&which_slots_1based->l_head->l_hatom) == H_SYM && hatom_getsym(&which_slots_1based->l_head->l_hatom) == _llllobj_sym_auto) {
         t_llll *sl = get_default_slots_to_transfer_1based(r_ob);
         temp = notation_item_get_multiple_slots_values_as_llll(r_ob, from, k_CONSIDER_FOR_DUMPING, even_if_empty, sl);
@@ -42735,7 +42736,7 @@ void note_slottoname_do(t_notation_obj *r_ob, t_note *nt, long slotnum)
 {
     t_notation_item *nt_it = (t_notation_item *)nt;
     t_notation_item *ch_it = (t_notation_item *)nt->parent;
-    t_llll *newnames = notation_item_get_single_slot_values_as_llll(r_ob, nt_it, k_CONSIDER_FOR_SLOT_VALUES_ONLY, slotnum, false);
+    t_llll *newnames = notation_item_get_single_slot_values_as_llll(r_ob, nt_it, k_CONSIDER_FOR_SLOT_VALUES_ONLY, slotnum, false, 0);
     
     if (ch_it->names && ch_it->names->l_size > 0) {
         t_llll *empty_ll = llll_get();
@@ -42769,7 +42770,7 @@ long notationobj_slottoname_do(t_notation_obj *r_ob, long slotnum)
                         note_slottoname_do(r_ob, nt, slotnum);
                 } else {
                     // it's a rest
-                    t_llll *newnames = notation_item_get_single_slot_values_as_llll(r_ob, curr_it, k_CONSIDER_FOR_SLOT_VALUES_ONLY, slotnum, false);
+                    t_llll *newnames = notation_item_get_single_slot_values_as_llll(r_ob, curr_it, k_CONSIDER_FOR_SLOT_VALUES_ONLY, slotnum, false, 0);
                     change_notation_item_names(r_ob, curr_it, newnames, true);
                     llll_free(newnames);
                 }
@@ -42861,7 +42862,7 @@ void notationobj_clear_names(t_notation_obj *r_ob, long voices, long measures, l
 
 void note_dltoslot_do(t_notation_obj *r_ob, t_note *nt, long pitchslotnum, long velslotnum, bool absolutepitch)
 {
-    t_llll *breakpoints = note_get_breakpoint_values_as_llll(r_ob, nt, k_CONSIDER_FOR_SELECTION_COPYING, NULL, NULL);
+    t_llll *breakpoints = note_get_breakpoint_values_as_llll(r_ob, nt, k_CONSIDER_FOR_SELECTION_COPYING, NULL, NULL, 0);
     if (breakpoints) {
         t_llll *slots_ll = llll_get();
         t_llll *pitchslot_ll = llll_get();
@@ -45630,9 +45631,9 @@ t_llll *notationobj_get_interp(t_notation_obj *r_ob, double ms)
                         
                         r_ob->curr_sampling_ms = ms;
                         if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
-                            note_ll = get_scorenote_values_as_llll(r_ob, note, k_CONSIDER_FOR_SAMPLING);
+                            note_ll = get_scorenote_values_as_llll(r_ob, note, k_CONSIDER_FOR_SAMPLING, 0);
                         else
-                            note_ll = get_rollnote_values_as_llll(r_ob, note, k_CONSIDER_FOR_SAMPLING);
+                            note_ll = get_rollnote_values_as_llll(r_ob, note, k_CONSIDER_FOR_SAMPLING, 0);
                         llll_appendllll(chord_ll, note_ll, 0, WHITENULL_llll);
                     }
                 }

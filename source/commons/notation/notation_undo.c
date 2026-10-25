@@ -1637,12 +1637,12 @@ t_undo_redo_information *undo_redo_information_reverse(t_notation_obj *r_ob, t_u
     } else if (type == k_CHORD) {
         if (modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE || modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE_CHECK_ORDER) {
             if (obj_is_score)
-                newcontent = get_scorechord_values_as_llll(r_ob, (t_chord *) item, k_CONSIDER_FOR_UNDO, false);
+                newcontent = get_scorechord_values_as_llll(r_ob, (t_chord *) item, k_CONSIDER_FOR_UNDO, false, 0);
             else
-                newcontent = get_rollchord_values_as_llll(r_ob, (t_chord *) item, k_CONSIDER_FOR_UNDO, false);
+                newcontent = get_rollchord_values_as_llll(r_ob, (t_chord *) item, k_CONSIDER_FOR_UNDO, false, 0);
             reverse_information = undo_redo_information_create(ID, k_CHORD, modif_type, param, path_after, path_before, k_HEADER_NONE, newcontent);
         } else if (modif_type == k_UNDO_MODIFICATION_TYPE_REMOVE) { // surely roll
-            newcontent = get_rollchord_values_as_llll(r_ob, (t_chord *) item, k_CONSIDER_FOR_UNDO, false);
+            newcontent = get_rollchord_values_as_llll(r_ob, (t_chord *) item, k_CONSIDER_FOR_UNDO, false, 0);
 //            newcontent = llll_clone(this_information->n_it_content);
             reverse_information = undo_redo_information_create(ID, k_CHORD, k_UNDO_MODIFICATION_TYPE_INSERT, param, path_after, path_before, k_HEADER_NONE, newcontent);
         } else if (modif_type == k_UNDO_MODIFICATION_TYPE_INSERT) { // surely roll
@@ -1652,10 +1652,10 @@ t_undo_redo_information *undo_redo_information_reverse(t_notation_obj *r_ob, t_u
         }
     } else if (type == k_MARKER) {
         if (modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE || modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE_CHECK_ORDER) {
-            newcontent = marker_get_as_llll(r_ob, (t_marker *)item, false, false, k_CONSIDER_FOR_UNDO);
+            newcontent = marker_get_as_llll(r_ob, (t_marker *)item, false, false, k_CONSIDER_FOR_UNDO, 0);
             reverse_information = undo_redo_information_create(ID, k_MARKER, modif_type, param, path_after, path_before, k_HEADER_NONE, newcontent);
         } else if (modif_type == k_UNDO_MODIFICATION_TYPE_REMOVE) { // surely roll
-            newcontent = marker_get_as_llll(r_ob, (t_marker *)item, false, false, k_CONSIDER_FOR_UNDO);
+            newcontent = marker_get_as_llll(r_ob, (t_marker *)item, false, false, k_CONSIDER_FOR_UNDO, 0);
             reverse_information = undo_redo_information_create(ID, k_MARKER, k_UNDO_MODIFICATION_TYPE_INSERT, param, path_after, path_before, k_HEADER_NONE, newcontent);
         } else if (modif_type == k_UNDO_MODIFICATION_TYPE_INSERT) { // surely roll
             newcontent = llll_get();
@@ -2132,18 +2132,18 @@ t_llll *notation_item_get_values_as_llll_for_undo(t_notation_obj *r_ob, t_notati
         return measure_get_values_as_llll(r_ob, (t_measure *)item, k_CONSIDER_FOR_UNDO, true, true);
     else if (item->type == k_CHORD) {
         if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
-            return get_rollchord_values_as_llll(r_ob, (t_chord *)item, k_CONSIDER_FOR_UNDO, false);
+            return get_rollchord_values_as_llll(r_ob, (t_chord *)item, k_CONSIDER_FOR_UNDO, false, 0);
         else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
-            return get_scorechord_values_as_llll(r_ob, (t_chord *)item, k_CONSIDER_FOR_UNDO, false);
+            return get_scorechord_values_as_llll(r_ob, (t_chord *)item, k_CONSIDER_FOR_UNDO, false, 0);
     } else if (item->type == k_NOTE) {
         if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
-            return get_rollnote_values_as_llll(r_ob, (t_note *) item, k_CONSIDER_FOR_UNDO);
+            return get_rollnote_values_as_llll(r_ob, (t_note *) item, k_CONSIDER_FOR_UNDO, 0);
         else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
-            return get_scorenote_values_as_llll(r_ob, (t_note *)item, k_CONSIDER_FOR_UNDO);
+            return get_scorenote_values_as_llll(r_ob, (t_note *)item, k_CONSIDER_FOR_UNDO, 0);
         else if (r_ob->obj_type == k_NOTATION_OBJECT_SLOT)
             return get_uislotnote_values_as_llll(r_ob, (t_note *)item, k_CONSIDER_FOR_UNDO);
     } else if (item->type == k_MARKER) {
-        return marker_get_as_llll(r_ob, (t_marker *)item, false, false, k_CONSIDER_FOR_UNDO);
+        return marker_get_as_llll(r_ob, (t_marker *)item, false, false, k_CONSIDER_FOR_UNDO, 0);
     }
     return NULL;
 }

@@ -5097,8 +5097,8 @@ typedef struct _notation_obj
 
     char        catch_playhead_mode;             ///< Handles how the playhead changes the domain during playback: one of the e_playhead_changedomain_modes
     long        catch_playhead_which;           ///< Which playhead to catch
-    double      playhead_fixed_pos;         ///< relative position of the playehad within the bar
-    char        playhead_notify_during_playback;    ///< Notify cursor position during playback
+    double      catch_playhead_fixed_pos;         ///< relative position of the playehad within the bar
+    char        notify_cursor_continuously_during_playback;    ///< Notify cursor position during playback
 
     char        highlight_played_notes;        ///< Highlights the played notes with the playcolor. It's a bit more CPU-expensive, but more clear.
     char        play_markers;                ///< Send markers during play
@@ -9084,7 +9084,7 @@ t_llll* note_get_slots_values_as_llll(t_notation_obj *r_ob, t_note *note, char m
 
 
 // TBD
-t_llll* notation_item_get_slots_values_as_llll(t_notation_obj *r_ob, t_notation_item *nitem, char mode, char get_even_if_empty);
+t_llll* notation_item_get_slots_values_as_llll(t_notation_obj *r_ob, t_notation_item *nitem, char mode, char get_even_if_empty, long playhead);
 t_llll* notation_item_get_multiple_slots_values_as_llll(t_notation_obj *r_ob, t_notation_item *nitem, char mode, char get_even_if_empty, t_llll *which_slots_1based);
 t_llll *notation_item_get_slots_to_be_copied(t_notation_obj *r_ob, t_notation_item *from, t_llll *which_slots_1based, char even_if_empty);// this one is private
 void notation_item_copy_slots(t_notation_obj *r_ob, t_notation_item *from, t_notation_item *to, t_llll *which_slots_1based, char even_if_empty);
@@ -9115,10 +9115,10 @@ t_llll* notation_item_get_partial_slots_values_as_llll(t_notation_obj *r_ob, t_n
                                         Important: setting non-zero flags is only effective with slots supporting selection! 
     @return                An llll containing the specified slot information.
  */
-t_llll* note_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_note *note, char mode, long slotnum, char only_get_selected_items);
+t_llll* note_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_note *note, char mode, long slotnum, char only_get_selected_items, long playhead);
 
 // TBD
-t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_notation_item *nitem, char mode, long slotnum, char only_get_selected_items);
+t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_notation_item *nitem, char mode, long slotnum, char only_get_selected_items, long playhead);
 
 t_notation_item *dynamics_get_owner(t_notation_obj *r_ob, t_dynamics *dyn);
 
@@ -12275,8 +12275,9 @@ void append_voice_or_full_path_to_playout_syntax(t_notation_obj *r_ob, t_llll *p
     @ingroup            notation_data_send
     @param    r_ob        The notation object
     @param    outlet        The outlet number
+    @param only_for_playing_playheads   If true, only outputs position of playing playheads
  */
-void send_playhead_position(t_notation_obj *r_ob, long outlet);
+void send_playhead_position(t_notation_obj *r_ob, long outlet, char only_for_playing_playheads);
 
 
 /**    Send the moved playhead position information through a given outlet. This will be in the form "movedcursor <ms>".
@@ -13090,19 +13091,21 @@ t_llll* note_get_graphic_values_no_router_as_llll(t_notation_obj *r_ob, t_note *
                                     unless the mode was a PARTIAL_NOTE or SAMPLE mode, in which case the note might be asked only from a given point in time.
     @param    new_start_midicents        Pointer which will be filled with the starting velocity of the note. This trivially coincides with the note midicents 
                                     unless the mode was a PARTIAL_NOTE or SAMPLE mode, in which case the note might be asked only from a given point in time.
+    @param playhead         The index of the playhead if relevant, leave 0 otherwise
     @return                The pitch breakpoints specification as an llll
 */
 t_llll* note_get_breakpoint_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_considering_types mode, 
-                                           double *new_start_midicents, double *new_start_velocity);
+                                           double *new_start_midicents, double *new_start_velocity, long playhead);
 
 
 /**    Same as note_get_breakpoint_values_as_llll() but without the "breakpoints" symbol at the beginning of the returned list 
     @ingroup            notation_data
     @param    r_ob        The notation object
     @param    note        The note
+    @param playhead         The index of the playhead if relevant, leave 0 otherwise
     @return        The graphic specification as an llll, without router symbol
 */
-t_llll* note_get_breakpoints_values_no_router_as_llll(t_notation_obj *r_ob, t_note *note);
+t_llll* note_get_breakpoints_values_no_router_as_llll(t_notation_obj *r_ob, t_note *note, long playhead);
 
 
 /**    Obtain all the "extra" information of a of a given note as an llll (such as breakpoints, graphics, slots, articulations).
@@ -13141,9 +13144,10 @@ void set_commands_from_llll(t_notation_obj *r_ob, t_llll* commands);
     @param    r_ob        The notation object
     @param    note        The note
     @param    mode        One of the possible #e_data_considering_types specifying the reason why the llll is asked, and thus returning slightly different specifications depending on the usage.
+     @param playhead     The playhead index, if relevant (use 0 as default or if not needed)
     @return                The gathered syntax of the note, as an llll
 */
-t_llll* get_rollnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_considering_types mode);
+t_llll* get_rollnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_considering_types mode, long playhead);
 
 
 /** Obtain all the information about a bach.roll note, in gathered syntax, but considering it as a part of a chord containing just this note.
@@ -13153,7 +13157,7 @@ t_llll* get_rollnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_c
     @param    r_ob        The notation object
     @param    note        The note
     @param    mode        One of the possible #e_data_considering_types specifying the reason why the llll is asked, and thus returning slightly different specifications depending on the usage.
-    @param playhead     THe playhead index, if relevant (use 0 as default or if not needed)
+    @param playhead     The playhead index, if relevant (use 0 as default or if not needed)
     @return                The llll gathered syntax of a chord containing the #note as a single note
 */
 t_llll* get_single_rollnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_considering_types mode, long playhead);
@@ -13188,7 +13192,7 @@ t_llll* get_scorenote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_
     @param    r_ob        The notation object
     @param    note        The note
     @param    mode        One of the possible #e_data_considering_types specifying the reason why the llll is asked, and thus returning slightly different specifications depending on the usage.
-    @param playhead     THe playhead index, if relevant (use 0 as default or if not needed)
+    @param playhead     The playhead index, if relevant (use 0 as default or if not needed)
     @return                The llll gathered syntax of a chord containing the #note as a single note
 */
 t_llll* get_single_scorenote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_considering_types mode, long playhead);
@@ -13257,9 +13261,10 @@ double get_breakpoints_interpolated_mc(t_notation_obj *r_ob, t_note *note, doubl
     @return                The gathered syntax of the requested part of the chord, as an llll
     @remark                The input interval(#start_ms, #end_ms) must overlap at least a little bit with the chord temporal position, 
                         otherwise a chord with no notes will be output.
+    @param playhead     The playhead index, if relevant (use 0 as default or if not needed)
     @see                get_rollchord_values_as_llll()
 */
-t_llll* get_rollpartialchord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_data_considering_types mode, double start_ms, double end_ms);
+t_llll* get_rollpartialchord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_data_considering_types mode, double start_ms, double end_ms, long playhead);
 
 
 /**    Obtain all the information about a specific part of a bach.roll note, in gathered syntax.
@@ -13273,9 +13278,10 @@ t_llll* get_rollpartialchord_values_as_llll(t_notation_obj *r_ob, t_chord *chord
     @return                The gathered syntax of the requested part of the note, as an llll
     @remark                The input interval(#start_ms, #end_ms) must overlap at least a little bit with the temporal position of the note's duration line, 
                         otherwise a note with no duration will be output.
+    @param playhead     The playhead index, if relevant (use 0 as default or if not needed)
     @see                get_rollnote_values_as_llll()
 */
-t_llll* get_rollpartialnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_considering_types mode, double ms_start, double ms_end);
+t_llll* get_rollpartialnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_considering_types mode, double ms_start, double ms_end, long playhead);
 
 
 
@@ -19458,7 +19464,7 @@ void notationobj_task(t_notation_obj *r_ob);
 void notationobj_clock(t_notation_obj *r_ob, t_symbol *s);
 void notationobj_preschedule_end(t_notation_obj *r_ob);
 void notationobj_stop(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
-void notationobj_do_stop(t_notation_obj *r_ob, t_symbol *s);
+void notationobj_do_stop(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 void notationobj_play(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 void notationobj_play_offline(t_notation_obj *r_ob);
 void notationobj_play_preschedule(t_notation_obj *r_ob);

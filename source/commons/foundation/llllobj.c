@@ -855,8 +855,8 @@ void llllobj_outlet_symbol_couple_as_llll(t_object *x, e_llllobj_obj_types llllo
 void llllobj_outlet_symbol_and_long_as_llll(t_object *x, e_llllobj_obj_types llllobj_obj_type, long outlet_num, t_symbol *sym, long num)
 {
 	t_llll *ll = llll_get();
-	llll_appendsym(ll, sym1, 0, WHITENULL_llll);
-	llll_appendlon(ll, num, 0, WHITENULL_llll);
+	llll_appendsym(ll, sym, 0, WHITENULL_llll);
+	llll_appendlong(ll, num, 0, WHITENULL_llll);
 	llllobj_outlet_llll((t_object *) x, llllobj_obj_type, outlet_num, ll);
 	llll_free(ll);
 }

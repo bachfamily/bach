@@ -814,7 +814,7 @@ void score_quantize(t_score *x, t_symbol *s, long argc, t_atom *argv)
 //                    llll_appenddouble(this_event_cents, note->midicents, 0, WHITENULL_llll);
                     llll_appendlong(this_event_velocities, note->velocity, 0, WHITENULL_llll);
                     llll_appendllll(this_event_graphic, note_get_graphic_values_no_router_as_llll((t_notation_obj *) x, note), 0, WHITENULL_llll);
-                    llll_appendllll(this_event_breakpoints, note_get_breakpoints_values_no_router_as_llll((t_notation_obj *) x, note), 0, WHITENULL_llll);
+                    llll_appendllll(this_event_breakpoints, note_get_breakpoints_values_no_router_as_llll((t_notation_obj *) x, note, 0), 0, WHITENULL_llll);
                     llll_appendllll(this_event_slots, note_get_slots_values_no_header_as_llll((t_notation_obj *) x, note, false), 0, WHITENULL_llll);
                     llll_appendlong(this_event_ties, note->tie_to ? (note->tie_to != WHITENULL ? note->tie_to->r_it.ID : 1) : 0, 0, WHITENULL_llll);
                     llll_appendlong(this_event_IDs, note->r_it.ID, 0, WHITENULL_llll);
@@ -1006,7 +1006,7 @@ void score_setcursor(t_score *x, t_symbol *s, long argc, t_atom *argv){
 }
 
 void score_getcursor(t_score *x){
-    send_playhead_position((t_notation_obj *) x, 7);
+    send_playhead_position((t_notation_obj *) x, 7, false);
 }
 
 
@@ -3122,7 +3122,7 @@ void score_getmarker(t_score *x, t_symbol *s, long argc, t_atom *argv){
         lock_markers_mutex((t_notation_obj *)x);
         marker = markername2marker((t_notation_obj *) x, args);
         if (marker)
-            marker_llll = marker_get_as_llll((t_notation_obj *) x, marker, namefirst, true, k_CONSIDER_FOR_DUMPING);
+            marker_llll = marker_get_as_llll((t_notation_obj *) x, marker, namefirst, true, k_CONSIDER_FOR_DUMPING, 0);
         unlock_markers_mutex((t_notation_obj *)x);
         if (marker_llll) {
             llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 7, marker_llll);
@@ -3450,7 +3450,7 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
                     }
                     
                     if (out_ch->l_size == 1 && chordref_slots) {
-                        llll_appendllll(out_ch, notation_item_get_slots_values_as_llll((t_notation_obj *)x, (t_notation_item *)chordref_slots, chordref_slots_mode, false));
+                        llll_appendllll(out_ch, notation_item_get_slots_values_as_llll((t_notation_obj *)x, (t_notation_item *)chordref_slots, chordref_slots_mode, false, 0));
                     }
                     
                     llll_appendlong(out_ch, 0, 0, WHITENULL_llll); // locked / muted
@@ -3572,7 +3572,7 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
                 }
                 
                 if (out_ch->l_size == 1 && chordref_slots) {
-                    llll_appendllll(out_ch, notation_item_get_slots_values_as_llll((t_notation_obj *)x, (t_notation_item *)chordref_slots, chordref_slots_mode, false));
+                    llll_appendllll(out_ch, notation_item_get_slots_values_as_llll((t_notation_obj *)x, (t_notation_item *)chordref_slots, chordref_slots_mode, false, 0));
                 }
 
                 llll_appendlong(out_ch, 0, 0, WHITENULL_llll); // locked / muted
@@ -15703,7 +15703,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                 x->r_ob.hscrollbar_pos = 0.;
                 redraw_hscrollbar((t_notation_obj *) x, 1);
             } else {
-                force_inscreen_ux_to_boundary(x, x->r_ob.play_head_start_ux[x->r_ob.catch_playhead_which], false, true, false);
+                force_inscreen_ux_to_boundary(x, x->r_ob.play_head_start_ux[CLAMP(x->r_ob.catch_playhead_which-1, 0, CONST_MAX_PLAYHEADS-1)], false, true, false);
                 notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
             }
             send_domain(x, 7, NULL);
