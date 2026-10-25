@@ -5757,6 +5757,13 @@ void C74_EXPORT ext_main(void *moduleRef){
     class_addmethod(c, (method) notationobj_play, "play", A_GIMME, 0);
     class_addmethod(c, (method) notationobj_play, "playselection", A_GIMME, 0);
     
+
+    // @method stop @digest Start
+    // @description The <m>start</m> message activates the playback of a new playhead.
+    // This differs from <m>play</m> in that <m>play</m> begins a brand new playback session.
+    // @seealso pause, play, stop, playselection
+    class_addmethod(c, (method) notationobj_start, "start", A_GIMME, 0);
+
     
     // @method stop @digest Stop
     // @description The <m>stop</m> message stops any ongoing playing, if <o>bach.roll</o> was in play mode (nothing happens otherwise).
@@ -11470,7 +11477,8 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
             char is_durationline_selected = is_note_selected;
             char is_tail_selected = (notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)curr_nt->lastbreakpoint) ^ notation_item_is_preselected((t_notation_obj *) x, (t_notation_item *)curr_nt->lastbreakpoint));
             char note_unselected = false;
-            char is_note_played, is_note_locked, is_note_muted, is_note_solo;
+            t_uint64 is_note_played = 0; // also carries info on the playheads playuing it
+            char is_note_locked, is_note_muted, is_note_solo;
             double note_y_real, note_x_real;
             double ledger_lines_y[CONST_MAX_LEDGER_LINES];
             int num_ledger_lines = 0; int i;
@@ -11486,7 +11494,8 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
             is_note_muted = notation_item_is_globally_muted((t_notation_obj *)x, (t_notation_item *)curr_nt);
             is_note_solo = notation_item_is_globally_solo((t_notation_obj *)x, (t_notation_item *)curr_nt);
             is_note_played = x->r_ob.highlight_played_notes ? (should_element_be_played((t_notation_obj *) x, (t_notation_item *)curr_nt) && (curr_ch->played || curr_nt->played)) : false;
-            
+            is_note_played = x->r_ob.highlight_played_notes  && should_element_be_played((t_notation_obj *) x, (t_notation_item *)curr_nt) ? (curr_ch->played | curr_nt->played) : 0;
+
             // get colors
             notecolor = note_get_color((t_notation_obj *) x, curr_nt, !note_unselected && (is_chord_selected || is_note_selected || is_durationline_selected), is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited, curr_nt->velocity);
             durationlinecolor = durationline_get_color((t_notation_obj *) x, curr_nt, !note_unselected && (is_chord_selected || is_note_selected || is_durationline_selected), is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited, curr_nt->velocity);
@@ -12191,7 +12200,7 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
     }
     unlock_general_mutex((t_notation_obj *)x);
 
-    paint_playheads((t_notation_obj *)x, main_g, rect);
+    paint_playheads((t_notation_obj *)x, main_g, rect, jf_text_fractions);
 
     assert(jf_text_small != NULL);
 
@@ -12662,7 +12671,7 @@ void roll_paint_ext(t_roll *x, t_object *view, t_jgraphics *g, t_rect rect)
         
         paint_static_stuff1(x, view, rect, jf, jf_acc, jf_text_fractions, jf_acc_bogus, g);
         
-        paint_playheads((t_notation_obj *)x, g, rect);
+        paint_playheads((t_notation_obj *)x, g, rect, jf_text_fractions);
         
         jgraphics_set_source_rgba(g, 0, 0, 0, 1);   // setting alpha to 1 before painting layers! otherwise we have blending issues
         
@@ -15612,7 +15621,7 @@ t_llll* get_voice_cents_values_as_llll(t_roll *x, t_rollvoice *voice, bool selec
             t_llll* in_llll = llll_get();
             while (temp_note) { // append chord lllls
                 if (!selection_only || notation_item_is_globally_selected((t_notation_obj *)x, (t_notation_item *)temp_note))
-                    note_appendpitch_to_llll_for_separate_syntax((t_notation_obj *)x, in_llll, temp_note, pitch_output_mode);
+                    note_appendpitchorcents_to_llll_for_separate_syntax((t_notation_obj *)x, in_llll, temp_note, pitch_output_mode);
                 temp_note = temp_note->next;
             }
             llll_appendllll(out_llll, in_llll, 0, WHITENULL_llll);

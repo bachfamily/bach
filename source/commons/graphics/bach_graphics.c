@@ -2350,16 +2350,22 @@ void paint_border(t_object *x, t_jgraphics *g, t_rect *rect, t_jrgba *border_col
     jgraphics_set_source_rgba(g, 0, 0, 0, 1);
 }
 
-void paint_playhead_line(t_jgraphics* g, t_jrgba color, double playhead_x, double playhead_y1, double playhead_y2, double width, double tip_size)
+void paint_playhead_line(t_jgraphics* g, t_jrgba color, double playhead_x, double playhead_y1, double playhead_y2, double width, double tip_size, bool downward_arrow)
 {
     paint_line(g, color, playhead_x, playhead_y1, playhead_x, playhead_y2, width);
-    jgraphics_move_to(g, playhead_x, playhead_y1);
-    jgraphics_line_to(g, playhead_x - tip_size, playhead_y1 - tip_size);
-    jgraphics_line_to(g, playhead_x + tip_size, playhead_y1 - tip_size);
+    if (downward_arrow) {
+        jgraphics_move_to(g, playhead_x, playhead_y2);
+        jgraphics_line_to(g, playhead_x - tip_size, playhead_y2 + tip_size);
+        jgraphics_line_to(g, playhead_x + tip_size, playhead_y1 + tip_size);
+    } else {
+        jgraphics_move_to(g, playhead_x, playhead_y1);
+        jgraphics_line_to(g, playhead_x - tip_size, playhead_y1 - tip_size);
+        jgraphics_line_to(g, playhead_x + tip_size, playhead_y1 - tip_size);
+    }
     jgraphics_close_path(g);
     jgraphics_set_source_jrgba(g, &color);
     jgraphics_fill_preserve(g);
-    jgraphics_stroke(g); 
+    jgraphics_stroke(g);
 }
 
 void paint_polygon(t_jgraphics* g, t_jrgba *border_color, t_jrgba *inner_color, double linewidth, t_polygon *poly)

@@ -1666,26 +1666,22 @@ void paint_accollatura(t_notation_obj *r_ob, t_jgraphics* g, double stafftop_y, 
     }
 }
 
-void paint_playheads(t_notation_obj *r_ob, t_jgraphics* g, t_rect rect)
+void paint_playheads(t_notation_obj *r_ob, t_jgraphics* g, t_rect rect, t_jfont *affinetransform_jf)
 {
     for (long ph = 0; ph < r_ob->num_playheads; ph++) {
         double playhead_y1, playhead_y2, play_head_pos;
-        t_jrgba color;
-        switch (ph % 4) {
-            case 0: color = r_ob->j_play_rgba; break;
-            case 1: color = r_ob->j_play2_rgba; break;
-            case 2: color = r_ob->j_play3_rgba; break;
-            case 3: color = r_ob->j_play4_rgba; break;
-            default: color = r_ob->j_play_rgba; break;
-        }
+        t_jrgba color = notationobj_get_playheadcolor(r_ob, ph);
         if (r_ob->playing) {
+            if (!r_ob->playback_specs.playhead_active[ph]) {
+                continue;
+            }
+            
             get_playhead_ypos(r_ob, &playhead_y1, &playhead_y2);
             if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
                 play_head_pos = unscaled_xposition_to_xposition(r_ob, r_ob->play_head_ux[ph]);
             else
                 play_head_pos = onset_to_xposition_roll(r_ob, r_ob->play_head_ms[ph], NULL);
             
-            paint_playhead_line(g, color, play_head_pos, playhead_y1, playhead_y2, r_ob->playhead_width, 3 * r_ob->zoom_y);
         } else if (r_ob->show_playhead) {
             if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
                 play_head_pos = unscaled_xposition_to_xposition(r_ob, r_ob->play_head_start_ux[ph]);
@@ -1693,8 +1689,39 @@ void paint_playheads(t_notation_obj *r_ob, t_jgraphics* g, t_rect rect)
                 play_head_pos = onset_to_xposition_roll(r_ob, r_ob->play_head_start_ms[ph], NULL);
             
             get_playhead_ypos(r_ob, &playhead_y1, &playhead_y2);
-            paint_playhead_line(g, color, play_head_pos, playhead_y1, playhead_y2, r_ob->playhead_width, 3 * r_ob->zoom_y);
+        } else {
+            continue; // no need to paint it
         }
+        
+#ifdef BACH_PLAYHEAD_HAVE_AFFINETRANSF
+        bool upsidedown = r_ob->playback_specs.affine_transform[ph].has_inversion;
+#else
+        bool upsidedown = false;
+#endif
+        
+        paint_playhead_line(g, color, play_head_pos, playhead_y1, playhead_y2, r_ob->playhead_width, 3 * r_ob->zoom_y, upsidedown);
+       
+#ifdef BACH_PLAYHEAD_HAVE_AFFINETRANSF
+        if (r_ob->playback_specs.affine_transform[ph].has_inversion) {
+            char buf[200];
+            if (r_ob->playback_specs.affine_transform[ph].translation_is_pitch) {
+                snprintf_zero(buf, 200, "%s", r_ob->playback_specs.affine_transform[ph].translation_amount.u_pitch.toString().c_str());
+            } else {
+                snprintf_zero(buf, 200, "%ld", (long)r_ob->playback_specs.affine_transform[ph].translation_amount.u_double);
+            }
+            write_text_standard(g, affinetransform_jf, color, buf, play_head_pos, (upsidedown ? playhead_y2 : playhead_y1) + 2 * r_ob->zoom_y, 200 * r_ob->zoom_y, 200 * r_ob->zoom_y);
+        }
+        if (r_ob->playback_specs.affine_transform[ph].has_translation) {
+            char buf[200];
+            if (r_ob->playback_specs.affine_transform[ph].translation_is_pitch) {
+                snprintf_zero(buf, 200, "%s", r_ob->playback_specs.affine_transform[ph].translation_amount.u_pitch.toString().c_str());
+            } else {
+                snprintf_zero(buf, 200, "%ld", (long)r_ob->playback_specs.affine_transform[ph].translation_amount.u_double);
+            }
+            write_text_standard(g, affinetransform_jf, color, buf, play_head_pos, (upsidedown ? playhead_y2 : playhead_y1), 200 * r_ob->zoom_y, 200 * r_ob->zoom_y);
+        }
+#endif
+        
     }
 }
 
@@ -6381,14 +6408,36 @@ void change_color_depending_on_part(t_notation_obj *r_ob, t_jrgba *color, t_voic
         *color = r_ob->part_colors[voice->part_index % CONST_NUM_PART_COLORS];
 }
 
+t_jrgba notationobj_get_playheadcolor(t_notation_obj *r_ob, long playhead)
+{
+    switch (playhead % 4) { // simple 4-step candycane for now
+        case 0: return r_ob->j_play_rgba; break;
+        case 1: return r_ob->j_play2_rgba; break;
+        case 2: return r_ob->j_play3_rgba; break;
+        case 3: return r_ob->j_play4_rgba; break;
+        default: return r_ob->j_play_rgba; break;
+    }
+}
 
-void change_color_depending_on_playlockmute(t_notation_obj *r_ob, t_jrgba *color, char selected, char play, char locked, char muted, char solo, char linear_edited)
+void change_color_depending_on_playlockmute(t_notation_obj *r_ob, t_jrgba *color, char selected, t_uint64 play, char locked, char muted, char solo, char linear_edited)
 {
     if (play) {
-        color->red = r_ob->j_play_rgba.red;
-        color->blue = r_ob->j_play_rgba.blue;
-        color->green = r_ob->j_play_rgba.green;
-        color->alpha = r_ob->j_play_rgba.alpha;
+        if (r_ob->num_playheads <= 1) {
+            *color = r_ob->j_play_rgba;
+        } else {
+            long playhead = -1;
+            for (long b = 0; b < r_ob->num_playheads && b < 64; b++) {
+                if (bit_is_set(play, b)) {
+                    playhead = b;
+                    break;
+                }
+            }
+            if (playhead >= 0) {
+                *color = notationobj_get_playheadcolor(r_ob, playhead);
+            } else {
+                *color = r_ob->j_play_rgba;
+            }
+        }
     } else {
         char sel = selected ? k_SHOW_WHEN_SELECTED : k_SHOW_WHEN_NOT_SELECTED; 
         if (linear_edited) {
@@ -6521,7 +6570,7 @@ t_jrgba floatlist_slot_to_color(t_slot *slot)
 
 
 
-t_jrgba note_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, char is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity)
+t_jrgba note_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, t_uint64 is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity)
 {
     t_jrgba notecolor = r_ob->j_note_rgba;
     
@@ -6529,7 +6578,7 @@ t_jrgba note_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected
 
     change_color_depending_on_group(r_ob, &notecolor, note, k_NOTE);
     
-    if (note && !is_note_played && !is_note_selected)
+    if (note && is_note_played == 0 && !is_note_selected)
         note_change_color_depending_on_slot_linkage(r_ob, &notecolor, note);
 
     change_color_depending_on_playlockmute(r_ob, &notecolor, is_note_selected, is_note_played, is_note_locked, is_note_muted, is_note_solo, is_note_linear_edited);
@@ -6543,7 +6592,7 @@ t_jrgba note_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected
 }
 
 
-t_jrgba durationline_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, char is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity)
+t_jrgba durationline_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, t_uint64 is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity)
 {
     t_jrgba dlcolor = r_ob->j_note_rgba;
     
@@ -6568,7 +6617,7 @@ t_jrgba durationline_get_color(t_notation_obj *r_ob, t_note* note, char is_note_
 
 
 
-t_jrgba accidental_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, char is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity)
+t_jrgba accidental_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, t_uint64 is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity)
 {
     t_jrgba accidentalcolor = r_ob->j_accidentals_rgba;
     
@@ -6590,7 +6639,7 @@ t_jrgba accidental_get_color(t_notation_obj *r_ob, t_note* note, char is_note_se
 }
 
 
-t_jrgba tail_get_color(t_notation_obj *r_ob, t_note* note, char is_tail_selected, char is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity)
+t_jrgba tail_get_color(t_notation_obj *r_ob, t_note* note, char is_tail_selected, t_uint64 is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity)
 {
     t_jrgba tailcolor = r_ob->j_note_rgba;
     
@@ -6611,7 +6660,7 @@ t_jrgba tail_get_color(t_notation_obj *r_ob, t_note* note, char is_tail_selected
 }
 
 
-t_jrgba stem_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited)
+t_jrgba stem_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_uint64 is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited)
 {
     t_jrgba stemcolor = r_ob->j_stem_rgba;
 
@@ -6660,7 +6709,7 @@ t_jrgba chord_get_stem_color(t_notation_obj *r_ob, t_chord* chord)
 }
 
 
-t_jrgba flag_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited)
+t_jrgba flag_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_uint64 is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited)
 {
     t_jrgba flagcolor = r_ob->j_flag_rgba;
 
@@ -6680,7 +6729,7 @@ t_jrgba flag_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selec
 }
 
 
-t_jrgba rest_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited)
+t_jrgba rest_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_uint64 is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited)
 {
     t_jrgba restcolor = r_ob->j_rest_rgba;
     
@@ -6715,7 +6764,7 @@ t_jrgba tuplet_get_color(t_notation_obj *r_ob, t_voice *voice)
 }
 
 
-t_jrgba articulation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited)
+t_jrgba articulation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_uint64 is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited)
 {
     t_jrgba articulationcolor = r_ob->j_articulations_rgba;
 
@@ -6746,7 +6795,7 @@ t_jrgba articulation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_cho
 }
 
 
-t_jrgba annotation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited)
+t_jrgba annotation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_uint64 is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited)
 {
     t_jrgba annotationcolor = r_ob->j_annotation_rgba;
     
@@ -6787,7 +6836,7 @@ const char *notationobj_get_dynamic_fontname(t_notation_obj *r_ob)
     return "November for bach";
 }
 
-t_jrgba dynamics_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited)
+t_jrgba dynamics_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_uint64 is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited)
 {
     t_jrgba dynamicscolor = r_ob->j_dynamics_rgba;
     
@@ -30779,7 +30828,22 @@ t_llll* get_uislotnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data
     return out_llll;
 }
 
-
+void adjust_duration_according_to_playhead_rate(t_notation_obj *r_ob, e_data_considering_types mode, long playhead, double *duration)
+{
+    switch (mode) {
+        case k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE:
+        case k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE:
+        case k_CONSIDER_FOR_PLAYING:
+        case k_CONSIDER_FOR_PLAYING_AND_ALLOW_PARTIAL_LOOPED_NOTES:
+            if (playhead >= 0 && playhead < CONST_MAX_PLAYHEADS) {
+                *duration = *duration * r_ob->playback_specs.playhead_rate[playhead];
+            }
+            break;
+            
+        default:
+            break;
+    }
+}
 
 t_llll* get_rollnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_considering_types mode, long playhead)
 {
@@ -30788,15 +30852,18 @@ t_llll* get_rollnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_c
 
     
     // pitch or midicents
-    note_appendpitch_to_llll_for_gathered_syntax_or_playout(r_ob, out_llll, note, mode);
+    note_appendpitchorcents_to_llll_for_gathered_syntax_or_playout(r_ob, out_llll, note, mode, playhead);
     
+    double duration = 0;
     if (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE)
-        llll_appenddouble(out_llll, (note->parent->onset + note->duration) - r_ob->play_head_start_ms[playhead]); // duration
+        duration = (note->parent->onset + note->duration) - r_ob->play_head_start_ms[playhead];
     else if (mode == k_CONSIDER_FOR_SAMPLING)
-        llll_appenddouble(out_llll, (note->parent->onset + note->duration) - r_ob->curr_sampling_ms); // duration
-    else 
-        llll_appenddouble(out_llll, note->duration); // duration
-    
+        duration = (note->parent->onset + note->duration) - r_ob->curr_sampling_ms;
+    else
+        duration = note->duration;
+    adjust_duration_according_to_playhead_rate(r_ob, mode, playhead, &duration);
+    llll_appenddouble(out_llll, duration);
+
     llll_appendlong(out_llll, note->velocity); // velocity
 
     if (should_output_note_graphics(r_ob, note, mode))
@@ -30940,12 +31007,14 @@ t_llll* get_rollpartialnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e
     
     // PITCH
     if (new_onset <= original_onset) {
-        note_appendpitch_to_llll_for_gathered_syntax_or_playout(r_ob, out_llll, note, mode);
+        note_appendpitchorcents_to_llll_for_gathered_syntax_or_playout(r_ob, out_llll, note, mode, playhead);
     } else {
         midicents = get_breakpoints_interpolated_mc(r_ob, note, (new_onset - original_onset)/note->duration, &velocity);
         llll_appenddouble(out_llll, midicents, 0, WHITENULL_llll); // midicents
     }
     
+    adjust_duration_according_to_playhead_rate(r_ob, mode, playhead, &new_duration);
+
     llll_appenddouble(out_llll, new_duration, 0, WHITENULL_llll); // duration
     llll_appendlong(out_llll, velocity, 0, WHITENULL_llll); // velocity
     
@@ -31078,7 +31147,7 @@ t_llll* get_rollchord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_dat
             (mode != k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE && mode != k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE &&
              mode != k_CONSIDER_FOR_SELECTION_COPYING && should_element_be_played(r_ob, (t_notation_item *)temp_note)) )
             if (!selection_only || notation_item_is_globally_selected(r_ob, (t_notation_item *)temp_note))
-                llll_appendllll(out_llll, get_rollnote_values_as_llll(r_ob, temp_note, mode, 0));
+                llll_appendllll(out_llll, get_rollnote_values_as_llll(r_ob, temp_note, mode, playhead));
         temp_note = temp_note->next;
     }
 
@@ -31114,7 +31183,7 @@ t_llll* get_scorenote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_
     double new_mc = 0., new_vel = 0.;
 
     // pitch or midicents
-    note_appendpitch_to_llll_for_gathered_syntax_or_playout(r_ob, out_llll, note, mode);
+    note_appendpitchorcents_to_llll_for_gathered_syntax_or_playout(r_ob, out_llll, note, mode, playhead);
     
     llll_appendlong(out_llll, note->velocity, 0, WHITENULL_llll); // velocity
     
@@ -31972,10 +32041,14 @@ t_llll* get_scorechord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_da
     
     if (mode != k_CONSIDER_ALL_NOTES && mode != k_CONSIDER_FOR_UNDO && mode != k_CONSIDER_FOR_SAVING && mode != k_CONSIDER_FOR_DUMPING_FIRST_OUTLET && mode != k_CONSIDER_FOR_EXPORT_OM
          && mode != k_CONSIDER_FOR_EXPORT_PWGL && mode != k_CONSIDER_FOR_SUBDUMPING) {
-        if (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE)
-            llll_appenddouble(out_llll, ms_duration - (r_ob->play_head_start_ms[playhead] - chord->onset), 0, WHITENULL_llll); // ms_duration
-        else
-            llll_appenddouble(out_llll, ms_duration); // ms_duration
+        
+        if (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) {
+            ms_duration = ms_duration - (r_ob->play_head_start_ms[playhead] - chord->onset);
+        }
+        
+        adjust_duration_according_to_playhead_rate(r_ob, mode, playhead, &ms_duration);
+        llll_appenddouble(out_llll, ms_duration);
+
         llll_appendrat(out_llll, chord->r_sym_onset); // rational_onset in measure
         
         if (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) {
@@ -32094,12 +32167,14 @@ t_llll* get_single_scorenote_values_as_llll(t_notation_obj *r_ob, t_note *note, 
     }
 
     if (mode != k_CONSIDER_ALL_NOTES) {
-        if (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE)
-            llll_appenddouble(out_llll, ms_duration - (r_ob->play_head_start_ms[playhead] - chord->onset), 0, WHITENULL_llll); // ms_duration
-        else
-            llll_appenddouble(out_llll, ms_duration, 0, WHITENULL_llll); // ms_duration
         
-        llll_appendrat(out_llll, chord->r_sym_onset, 0, WHITENULL_llll); // rational_onset in measure
+        if (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) {
+            ms_duration = ms_duration - (r_ob->play_head_start_ms[playhead] - chord->onset);
+        }
+        adjust_duration_according_to_playhead_rate(r_ob, mode, playhead, &ms_duration);
+        llll_appenddouble(out_llll, ms_duration); // ms_duration
+        
+        llll_appendrat(out_llll, chord->r_sym_onset); // rational_onset in measure
         
         if (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) {
             t_llll *ll = llll_get();
@@ -32109,7 +32184,7 @@ t_llll* get_single_scorenote_values_as_llll(t_notation_obj *r_ob, t_note *note, 
             llll_appenddouble(ll, r_ob->play_head_start_ms[playhead] - chord->onset);
             llll_appendllll(out_llll, ll);
         } else
-            llll_appenddouble(out_llll, chord->onset, 0, WHITENULL_llll); // ms_onset
+            llll_appenddouble(out_llll, chord->onset); // ms_onset
 /*
         if (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE)
             llll_appenddouble(out_llll, r_ob->play_head_start_ms, 0, WHITENULL_llll); // ms_onset
@@ -37790,6 +37865,40 @@ t_jrgba partidx_to_color(long part_idx)
     return double_to_color(((double)part_idx - 1)/CONST_NUM_PART_COLORS, 0., 1., false, CONST_GRAPHICS_COLOR_SATURATION_FACTOR);
 }
 
+void notationobj_reset_playback_specs(t_notation_obj *r_ob)
+{
+    r_ob->playback_specs.playing_scheduling_type = k_SCHEDULING_STANDARD;
+    r_ob->playback_specs.deferlow = false;
+    r_ob->playback_specs.preschedule = false;
+    r_ob->playback_specs.selection = false;
+    r_ob->playback_specs.offline = false;
+    r_ob->playback_specs.pause = false;
+    r_ob->playback_specs.stop = false;
+    r_ob->playback_specs.add_new_playback_voice = false;
+    for (long ph = 0; ph < CONST_MAX_PLAYHEADS; ph++) {
+        r_ob->playback_specs.playhead_active[ph] = false;
+        r_ob->playback_specs.playhead_rate[ph] = 1.;
+        r_ob->playback_specs.playhead_newly_activated[ph] = false;
+        r_ob->playback_specs.start_ms_specified[ph] = false;
+        r_ob->playback_specs.start_ms[ph] = 0;
+        r_ob->playback_specs.stop_ms_specified[ph] = false;
+        r_ob->playback_specs.stop_ms[ph] = 0;
+        r_ob->playback_specs.offset_ms[ph] = 0;
+        r_ob->playback_specs.last_scheduled_ms[ph] = 0;
+        r_ob->playback_specs.dont_schedule_loop_start[ph] = false;
+        r_ob->playback_specs.dont_schedule_loop_end[ph] = false;
+        r_ob->playback_specs.playhead_cant_trespass_loop_end[ph] = false;
+#ifdef BACH_PLAYHEAD_HAVE_AFFINETRANSF
+        r_ob->playback_specs.affine_transform[ph].has_inversion = false;
+        r_ob->playback_specs.affine_transform[ph].has_translation = false;
+        r_ob->playback_specs.affine_transform[ph].inversion_is_pitch = false;
+        r_ob->playback_specs.affine_transform[ph].translation_is_pitch = false;
+        r_ob->playback_specs.affine_transform[ph].translation_amount.u_double = 0;
+        r_ob->playback_specs.affine_transform[ph].inversion_mirror.u_double = 0;
+#endif
+    }
+}
+
 void notationobj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, notationobj_fn whole_undo_tick, notationobj_notation_item_fn force_notation_item_inscreen, notationobj_undo_redo_fn undo_redo_fn, bach_paint_ext_fn paint_extended, notationobj_fn clearall, getstate_for_undo_fn getstateforundo)
 {
     long i;
@@ -37959,7 +38068,7 @@ void notationobj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, n
     r_ob->num_markers = 0;
 
     r_ob->playing = false;
-    r_ob->playing_scheduling_type = k_SCHEDULING_STANDARD;
+    notationobj_reset_playback_specs(r_ob);
     for (long ph = 0; ph < CONST_MAX_PLAYHEADS; ph++)
         r_ob->notes_being_played[ph] = llll_get();
     

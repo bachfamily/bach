@@ -1010,7 +1010,7 @@ void paint_beziercs(t_jgraphics* g, t_jrgba *border_color, t_jrgba *inner_color,
     @param    tip_size            The size of the upper and lower part of the playhead 
     @param    r_ob                The notation object
  */ 
-void paint_playhead_line(t_jgraphics* g, t_jrgba color, double playhead_x, double playhead_y1, double playhead_y2, double width, double tip_size);
+void paint_playhead_line(t_jgraphics* g, t_jrgba color, double playhead_x, double playhead_y1, double playhead_y2, double width, double tip_size, bool downward_arrow);
 
 
 

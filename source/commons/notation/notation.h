@@ -71,6 +71,7 @@
 
     #define BACH_CHORDS_HAVE_SLOTS
 //    #define BACH_MARKERS_HAVE_SLOTS   ///< Not yet ready for this!
+//    #define BACH_PLAYHEAD_HAVE_AFFINETRANSF ///< Not worth the implementation: one can do this in Max customly by getting the playhead number
 
     // THESE THREE SHOULD NOT BE DEFINED; they increase the size of the t_note without actually gaining that much in CPU speed.
     //#define BACH_SLOTS_HAVE_LASTITEM              ///< Last item is saved inside slot structure
@@ -81,7 +82,7 @@
 //    #define BACH_PATTR_SUPPORT    ///< Pattr support? Really unadvisable. Should NOT be defined, too many weird things with PATTR.
 
 
-    #define BACH_NEW_LLLLSLOT_SYNTAX            ///< This one might or might not be advisable. Removes the outer ( ) in the llll and matrix slot syntax 
+    #define BACH_NEW_LLLLSLOT_SYNTAX            ///< By now, this is how bach works... (Previously: This one might or might not be advisable. Removes the outer ( ) in the llll and matrix slot syntax )
 
     #define BACH_SUPPORT_SLURS
     #define BACH_ALLOW_SLURS_ON_RESTS
@@ -4172,9 +4173,27 @@ typedef struct _playhead
 } t_playhead;
 
 
-    
+union pitch_or_double {
+    t_pitch u_pitch;
+    double  u_double;
+};
+
+#ifdef BACH_PLAYHEAD_HAVE_AFFINETRANSF
+typedef struct _playhead_affine_transformation
+{
+    bool has_translation;
+    bool has_inversion;
+    bool translation_is_pitch;
+    bool inversion_is_pitch;
+    union pitch_or_double translation_amount;
+    union pitch_or_double inversion_mirror;
+} t_playhead_affine_transformation;
+#endif
+
 typedef struct _playback_specs
 {
+    char            playing_scheduling_type;    ///< Scheduling type for playing, one of the #e_scheduling_type
+    
     bool            deferlow;
     bool            preschedule;
     bool            selection;
@@ -4182,8 +4201,14 @@ typedef struct _playback_specs
     bool            pause;
     bool            stop;
 
-    bool            playhead_active[CONST_MAX_PLAYHEADS];
+    bool            add_new_playback_voice;
+    double          global_start_play_time;
 
+    bool            playhead_active[CONST_MAX_PLAYHEADS];
+    bool            playhead_newly_activated[CONST_MAX_PLAYHEADS];
+
+    double          playhead_rate[CONST_MAX_PLAYHEADS];
+    
     bool            start_ms_specified[CONST_MAX_PLAYHEADS];
     double          start_ms[CONST_MAX_PLAYHEADS];
 
@@ -4194,8 +4219,10 @@ typedef struct _playback_specs
 
     double          last_scheduled_ms[CONST_MAX_PLAYHEADS];
     
-    double          msdiffwithfirst[CONST_MAX_PLAYHEADS];
-
+#ifdef BACH_PLAYHEAD_HAVE_AFFINETRANSF
+    t_playhead_affine_transformation affine_transform[CONST_MAX_PLAYHEADS];
+#endif
+    
     bool            dont_schedule_loop_start[CONST_MAX_PLAYHEADS];            ///< (PRIVATE, INTERNAL) Flag useful to avoid scheduling the loop start (for instance, because it had already been scheduled before)
     bool            dont_schedule_loop_end[CONST_MAX_PLAYHEADS];                ///< (PRIVATE, INTERNAL) Flag useful to avoid scheduling the loop end (for instance, because it had already been scheduled before)
     bool            playhead_cant_trespass_loop_end[CONST_MAX_PLAYHEADS];    ///< (PRIVATE, INTERNAL) If this flag is set, the playhead cannot trespass the end of the loop. This is extremely useful in this circumstance:
@@ -5071,10 +5098,9 @@ typedef struct _notation_obj
     
     // play
     char        allow_play_from_interface;              ///< Flag telling if we allow playing from the interface
-    t_playback_specs playback_specs;                    ///< Current playback specs
     char        playing;                                ///< Flag telling if the object is currently playing
-    long        num_playheads;                          ///< Maximum index of the active playhead
-    char        playing_scheduling_type;    ///< Scheduling type for playing, one of the #e_scheduling_type
+    t_playback_specs playback_specs;                    ///< Current playback specs
+    long        num_playheads;                          ///< Maximum index of the active playhead (outside t_playback_specs to possibly be easier used as attribute)
     t_llll      *to_preschedule;            ///< List containing t_scheduled_events to be scheduled, ONLY for the PRESCHEDULED mode.
     t_llllelem  *preschedule_cursor;        ///< Cursor while reading the prescheduled list
     
@@ -5811,8 +5837,8 @@ void note_set_displayed_user_enharmonicity(t_note *nt, t_pitch pitch);
 void note_set_to_best_jilimited_approximation_if_jivoice(t_notation_obj *r_ob, t_note *nt);
 char notationobj_set_selection_to_best_jilimited_approximation_if_jivoice(t_notation_obj *r_ob);
 
-void note_appendpitch_to_llll_for_gathered_syntax_or_playout(t_notation_obj *r_ob, t_llll *ll, t_note *note, e_data_considering_types mode);
-void note_appendpitch_to_llll_for_separate_syntax(t_notation_obj *r_ob, t_llll *ll, t_note *note, e_output_pitches pitch_output_mode = k_OUTPUT_PITCHES_DEFAULT);
+void note_appendpitchorcents_to_llll_for_gathered_syntax_or_playout(t_notation_obj *r_ob, t_llll *ll, t_note *note, e_data_considering_types mode, long playhead);
+void note_appendpitchorcents_to_llll_for_separate_syntax(t_notation_obj *r_ob, t_llll *ll, t_note *note, e_output_pitches pitch_output_mode = k_OUTPUT_PITCHES_DEFAULT);
 
 
 
@@ -6998,13 +7024,13 @@ const char *notationobj_get_dynamic_fontname(t_notation_obj *r_ob);
     @param r_ob            The notation object
     @param color        The color to be changed
     @param selected        Is element selected?
-    @param play            Is element played?
+    @param play            Is element played? This is a bitfield, where bit i is on if playhead i is playing it
     @param locked        Is element locked?
     @param muted        Is element muted?
     @param solo            Is element solo?
     @param linear_edited    Is element being speedy-edited? (for [bach.score] only)
  */
-void change_color_depending_on_playlockmute(t_notation_obj *r_ob, t_jrgba *color, char selected, char play, char locked, char muted, char solo, char linear_edited);
+void change_color_depending_on_playlockmute(t_notation_obj *r_ob, t_jrgba *color, char selected, t_uint64 play, char locked, char muted, char solo, char linear_edited);
 
 
 /**    Obtain the color of a notehead
@@ -7012,7 +7038,7 @@ void change_color_depending_on_playlockmute(t_notation_obj *r_ob, t_jrgba *color
     @param r_ob                        The notation object
     @param note                        Pointer to the note
     @param is_note_selected            Is note selected?
-    @param is_note_played            Is note played?
+    @param is_note_played            Is note played? This is a bitfield where bit i is on if playhead i plays the note
     @param is_note_locked            Is note locked?
     @param is_note_muted            Is note muted?
     @param is_note_solo                Is note solo?
@@ -7021,7 +7047,7 @@ void change_color_depending_on_playlockmute(t_notation_obj *r_ob, t_jrgba *color
     @return                            Resulting color for the notehead
     @remark                            This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba note_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, char is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity);
+t_jrgba note_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, t_uint64 is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity);
 
 
 /**    Obtain the color of a duration line
@@ -7029,7 +7055,7 @@ t_jrgba note_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected
     @param r_ob                        The notation object
     @param note                        Pointer to the note
     @param is_note_selected            Is note selected?
-    @param is_note_played            Is note played?
+    @param is_note_played            Is note played? This is a bitfield where bit i is on if playhead i plays the note
     @param is_note_locked            Is note locked?
     @param is_note_muted            Is note muted?
     @param is_note_solo                Is note solo?
@@ -7038,7 +7064,7 @@ t_jrgba note_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected
     @return                            Resulting color for the line
     @remark                            This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba durationline_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, char is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity);
+t_jrgba durationline_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, t_uint64 is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity);
 
 
 /**    Obtain the color of a accidental
@@ -7046,7 +7072,7 @@ t_jrgba durationline_get_color(t_notation_obj *r_ob, t_note* note, char is_note_
     @param r_ob                        The notation object
     @param note                        Pointer to the note beraing the accidental
     @param is_note_selected            Is note selected?
-    @param is_note_played            Is note played?
+    @param is_note_played            Is note played? This is a bitfield where bit i is on if playhead i plays the note
     @param is_note_locked            Is note locked?
     @param is_note_muted            Is note muted?
     @param is_note_solo                Is note solo?
@@ -7055,7 +7081,7 @@ t_jrgba durationline_get_color(t_notation_obj *r_ob, t_note* note, char is_note_
     @return                            Resulting color for the accidental
     @remark                            This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba accidental_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, char is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity);
+t_jrgba accidental_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, t_uint64 is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity);
 
 
 /**    Obtain the color of the note tail
@@ -7063,7 +7089,7 @@ t_jrgba accidental_get_color(t_notation_obj *r_ob, t_note* note, char is_note_se
     @param r_ob                        The notation object
     @param note                        Pointer to the note
     @param is_note_selected            Is note selected?
-    @param is_note_played            Is note played?
+    @param is_note_played            Is note played? This is a bitfield where bit i is on if playhead i plays the note
     @param is_note_locked            Is note locked?
     @param is_note_muted            Is note muted?
     @param is_note_solo                Is note solo?
@@ -7072,7 +7098,7 @@ t_jrgba accidental_get_color(t_notation_obj *r_ob, t_note* note, char is_note_se
     @return                            Resulting color for the note tail
     @remark                            This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba tail_get_color(t_notation_obj *r_ob, t_note* note, char is_tail_selected, char is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity);
+t_jrgba tail_get_color(t_notation_obj *r_ob, t_note* note, char is_tail_selected, t_uint64 is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity);
 
 
 /**    Obtain the color of a chord stem
@@ -7080,7 +7106,7 @@ t_jrgba tail_get_color(t_notation_obj *r_ob, t_note* note, char is_tail_selected
     @param r_ob                        The notation object
     @param chord                    Pointer to the chord
     @param is_chord_selected        Is chord selected?
-    @param is_chord_played            Is chord played?
+    @param is_chord_played            Is chord played? This is a bitfield where bit i is on if playhead i plays the note
     @param is_chord_locked            Is chord locked?
     @param is_chord_muted            Is chord muted?
     @param is_chord_solo            Is chord solo?
@@ -7088,7 +7114,7 @@ t_jrgba tail_get_color(t_notation_obj *r_ob, t_note* note, char is_tail_selected
     @return                            Resulting color for the chord stem
     @remark                            This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba stem_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
+t_jrgba stem_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_uint64 is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
 
 t_jrgba chord_get_stem_color(t_notation_obj *r_ob, t_chord* chord);
 
@@ -7098,7 +7124,7 @@ t_jrgba chord_get_stem_color(t_notation_obj *r_ob, t_chord* chord);
     @param r_ob                        The notation object
     @param chord                    Pointer to the chord
     @param is_chord_selected        Is chord selected?
-    @param is_chord_played            Is chord played?
+    @param is_chord_played            Is chord played? This is a bitfield where bit i is on if playhead i plays the note
     @param is_chord_locked            Is chord locked?
     @param is_chord_muted            Is chord muted?
     @param is_chord_solo            Is chord solo?
@@ -7106,7 +7132,7 @@ t_jrgba chord_get_stem_color(t_notation_obj *r_ob, t_chord* chord);
     @return                            Resulting color for the chord flag
     @remark                            This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba flag_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
+t_jrgba flag_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_uint64 is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
 
 
 /**    Obtain the color of a rest
@@ -7114,7 +7140,7 @@ t_jrgba flag_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selec
     @param r_ob                        The notation object
     @param chord                    Pointer to the chord
     @param is_chord_selected        Is chord selected?
-    @param is_chord_played            Is chord played?
+    @param is_chord_played            Is chord played? This is a bitfield where bit i is on if playhead i plays the note
     @param is_chord_locked            Is chord locked?
     @param is_chord_muted            Is chord muted?
     @param is_chord_solo            Is chord solo?
@@ -7122,14 +7148,14 @@ t_jrgba flag_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selec
     @return                            Resulting color for the rest
     @remark                            This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba rest_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
+t_jrgba rest_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_uint64 is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
 
 /**    Obtain the color of an articulation
     @ingroup                        notation_colors
     @param r_ob                        The notation object
     @param chord                    Pointer to the chord bearing the articulation
     @param is_chord_selected        Is chord selected?
-    @param is_chord_played            Is chord played?
+    @param is_chord_played            Is chord played? This is a bitfield where bit i is on if playhead i plays the note
     @param is_chord_locked            Is chord locked?
     @param is_chord_muted            Is chord muted?
     @param is_chord_solo            Is chord solo?
@@ -7137,7 +7163,7 @@ t_jrgba rest_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selec
     @return                            Resulting color for the articulation
     @remark                            This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba articulation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
+t_jrgba articulation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_uint64 is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
 
 
 /**    Obtain the color of a textual annotation
@@ -7145,7 +7171,7 @@ t_jrgba articulation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_cho
     @param r_ob                        The notation object
     @param chord                    Pointer to the chord bearing the annotation
     @param is_chord_selected        Is chord selected?
-    @param is_chord_played            Is chord played?
+    @param is_chord_played            Is chord played? This is a bitfield where bit i is on if playhead i plays the note
     @param is_chord_locked            Is chord locked?
     @param is_chord_muted            Is chord muted?
     @param is_chord_solo            Is chord solo?
@@ -7153,7 +7179,7 @@ t_jrgba articulation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_cho
     @return                            Resulting color for the text annotation
     @remark                            This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba annotation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
+t_jrgba annotation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_uint64 is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
 
 
 /**    Obtain the color of a dynamic marking
@@ -7161,7 +7187,7 @@ t_jrgba annotation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord
     @param r_ob                        The notation object
     @param chord                    Pointer to the chord bearing the dynamic
     @param is_chord_selected        Is chord selected?
-    @param is_chord_played            Is chord played?
+    @param is_chord_played            Is chord played? This is a bitfield where bit i is on if playhead i plays the note
     @param is_chord_locked            Is chord locked?
     @param is_chord_muted            Is chord muted?
     @param is_chord_solo            Is chord solo?
@@ -7169,7 +7195,7 @@ t_jrgba annotation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord
     @return                            Resulting color for the dynamic
     @remark                            This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba dynamics_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
+t_jrgba dynamics_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_uint64 is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
 
 
 /**    Get the color of beams.
@@ -10569,8 +10595,9 @@ void paint_accollatura(t_notation_obj *r_ob, t_jgraphics* g, double stafftop_y, 
 
 // TBD
 e_accollatura_type accollatura_symbol_to_type(t_notation_obj *r_ob, t_symbol *acc);
-void paint_playheads(t_notation_obj *r_ob, t_jgraphics* g, t_rect rect);
+void paint_playheads(t_notation_obj *r_ob, t_jgraphics* g, t_rect rect, t_jfont *affinetransform_jf);
 char is_clef_multistaff(t_notation_obj *r_ob, long clef);
+t_jrgba notationobj_get_playheadcolor(t_notation_obj *r_ob, long playhead);
 
 
 /**    Paint the key signature of a voice
@@ -12203,7 +12230,7 @@ t_llll *get_tempo_as_llll_for_sending(t_notation_obj *r_ob, t_tempo *tempo, e_da
 
 
 // Private
-t_llll *get_single_tempo_values_as_llll(t_notation_obj *r_ob, t_tempo *tempo, e_data_considering_types mode);
+t_llll *get_single_tempo_values_as_llll(t_notation_obj *r_ob, t_tempo *tempo, e_data_considering_types mode, double rate = 1);
 t_llll *measure_get_as_llll_for_sending(t_notation_obj *r_ob, t_measure *measure, e_data_considering_types mode, long playhead);
 
 
@@ -12278,6 +12305,7 @@ void append_voice_or_full_path_to_playout_syntax(t_notation_obj *r_ob, t_llll *p
  */
 void send_playhead_position(t_notation_obj *r_ob, long outlet, char only_for_playing_playheads);
 
+void send_single_playhead_position(t_notation_obj *r_ob, long outlet, long playhead);
 
 /**    Send the moved playhead position information through a given outlet. This will be in the form "movedcursor <ms>".
     @ingroup            notation_data_send
@@ -19464,6 +19492,8 @@ void notationobj_clock(t_notation_obj *r_ob, t_symbol *s);
 void notationobj_preschedule_end(t_notation_obj *r_ob);
 void notationobj_stop(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 void notationobj_do_stop(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_start(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_do_start(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 void notationobj_play(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 void notationobj_play_offline(t_notation_obj *r_ob);
 void notationobj_play_preschedule(t_notation_obj *r_ob);

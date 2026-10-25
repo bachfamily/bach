@@ -218,7 +218,7 @@ void send_llll_through_playout(t_notation_obj *r_ob, t_llll *llll, long outlet, 
     atom_setobj(outatoms + 2, related_object);
     atom_setlong(outatoms + 3, related_type);
 
-    if (r_ob->playing_scheduling_type == k_SCHEDULING_OFFLINE || r_ob->playing_scheduling_type == k_SCHEDULING_PRESCHEDULE)
+    if (r_ob->playback_specs.playing_scheduling_type == k_SCHEDULING_OFFLINE || r_ob->playback_specs.playing_scheduling_type == k_SCHEDULING_PRESCHEDULE)
         do_send_llll_through_playout(r_ob, NULL, 4, outatoms);
     else
         schedule_delay(r_ob, (method) do_send_llll_through_playout, 0, NULL, 4, outatoms);
@@ -236,7 +236,7 @@ void send_llll_through_playout_and_free(t_notation_obj *r_ob, t_llll *llll, long
     atom_setobj(outatoms + 2, related_object);
     atom_setlong(outatoms + 3, related_type);
 
-    if (r_ob->playing_scheduling_type == k_SCHEDULING_OFFLINE || r_ob->playing_scheduling_type == k_SCHEDULING_PRESCHEDULE)
+    if (r_ob->playback_specs.playing_scheduling_type == k_SCHEDULING_OFFLINE || r_ob->playback_specs.playing_scheduling_type == k_SCHEDULING_PRESCHEDULE)
         do_send_llll_through_playout_and_free(r_ob, NULL, 4, outatoms);
     else
         schedule_delay(r_ob, (method) do_send_llll_through_playout_and_free, 0, NULL, 4, outatoms);
@@ -251,7 +251,7 @@ void send_sublists_through_playout_and_free(t_notation_obj *r_ob, long outlet, t
     atom_setobj(outatoms + 2, to_send_references);
     atom_setlong(outatoms + 3, is_notewise);
 
-    if (r_ob->playing_scheduling_type == k_SCHEDULING_OFFLINE || r_ob->playing_scheduling_type == k_SCHEDULING_PRESCHEDULE)
+    if (r_ob->playback_specs.playing_scheduling_type == k_SCHEDULING_OFFLINE || r_ob->playback_specs.playing_scheduling_type == k_SCHEDULING_PRESCHEDULE)
         do_send_sublists_through_playout_and_free(r_ob, NULL, 4, outatoms);
     else
         schedule_delay(r_ob, (method) do_send_sublists_through_playout_and_free, 0, NULL, 4, outatoms);
@@ -542,18 +542,36 @@ t_llll *chord_get_as_llll_for_sending(t_notation_obj *r_ob, t_chord *chord, e_da
 
 
 
-t_llll *get_single_tempo_values_as_llll(t_notation_obj *r_ob, t_tempo *tempo, e_data_considering_types mode)
+t_llll *get_single_tempo_values_as_llll(t_notation_obj *r_ob, t_tempo *tempo, e_data_considering_types mode, double rate)
 {
     t_llll *out_llll = llll_get();
     if (tempo) {
         llll_appendrat(out_llll, tempo->tempo_figure);
-        llll_appenddouble(out_llll, rat2double(tempo->figure_tempo_value));
+        llll_appenddouble(out_llll, rat2double(tempo->figure_tempo_value) * rate);
         llll_appendrat(out_llll, tempo->changepoint);
         llll_appendlong(out_llll, tempo->interpolation_type);
     }
     return out_llll;
 }
 
+double get_tempo_rate_for_playhead(t_notation_obj *r_ob, e_data_considering_types mode, long playhead)
+{
+    switch (mode) {
+        case k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE:
+        case k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE:
+        case k_CONSIDER_FOR_PLAYING_AND_ALLOW_PARTIAL_LOOPED_NOTES:
+        case k_CONSIDER_FOR_PLAYING:
+            if (playhead >= 0 && playhead < CONST_MAX_PLAYHEADS)
+                return 1./r_ob->playback_specs.playhead_rate[playhead];
+            else
+                return 1.;
+            break;
+            
+        default:
+            return 1.;
+            break;
+    }
+}
 
 
 t_llll *get_tempo_as_llll_for_sending(t_notation_obj *r_ob, t_tempo *tempo, e_data_considering_types mode, long playhead)
@@ -561,16 +579,18 @@ t_llll *get_tempo_as_llll_for_sending(t_notation_obj *r_ob, t_tempo *tempo, e_da
     t_llll *out_llll = llll_get();
     if (tempo) {
         t_tempo *next_tempo = NULL;
+        double rate = get_tempo_rate_for_playhead(r_ob, mode, playhead);
+
         llll_appendsym(out_llll, _llllobj_sym_tempo);
         append_voice_or_full_path_to_playout_syntax(r_ob, out_llll, (t_notation_item *)tempo, mode);
 
         if (tempo->interpolation_type && (next_tempo = tempo_get_next(tempo)))
-            llll_appendllll(out_llll, double_triplet_to_llll(rat2double(tempo->tempo_value), rat2double(next_tempo->tempo_value), next_tempo->onset - tempo->onset));
+            llll_appendllll(out_llll, double_triplet_to_llll(rat2double(tempo->tempo_value) * rate, rat2double(next_tempo->tempo_value) * rate, next_tempo->onset - tempo->onset));
         else // no interpolation, single number
-            llll_appenddouble(out_llll, rat2double(tempo->tempo_value));
+            llll_appenddouble(out_llll, rat2double(tempo->tempo_value) * rate);
 
         // in any case: full tempo syntax
-        llll_appendllll(out_llll, get_single_tempo_values_as_llll(r_ob, tempo, mode));
+        llll_appendllll(out_llll, get_single_tempo_values_as_llll(r_ob, tempo, mode, rate));
         
         if (r_ob->notify_playheads && playhead >= 0) {
             llll_appendlong(out_llll, playhead+1);

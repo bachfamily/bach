@@ -8437,7 +8437,7 @@ t_llll *measure_get_cents_values_as_llll(t_score *x, t_measure *measure, char tr
         t_note *temp_note = temp_chord->firstnote;
         t_llll* in_llll = llll_get();
         while (temp_note) { // append chord lllls
-            note_appendpitch_to_llll_for_separate_syntax((t_notation_obj *)x, in_llll, temp_note, pitch_output_mode);
+            note_appendpitchorcents_to_llll_for_separate_syntax((t_notation_obj *)x, in_llll, temp_note, pitch_output_mode);
             temp_note = temp_note->next;
         }
         llll_appendllll(meas_llll, in_llll, 0, WHITENULL_llll);    
@@ -11026,7 +11026,7 @@ void score_paint_ext(t_score *x, t_object *view, t_jgraphics *g, t_rect rect)
     jgraphics_set_source_rgba(g, 0, 0, 0, 1);
     paint_static_stuff1(x, view, rect, jf, jf_acc, jf_text_fractions, jf_acc_bogus, jf_ts, jf_ts_big, jf_tempi, jf_text, jf_measure_num, g, repaint_measure_num);
     
-    paint_playheads((t_notation_obj *)x, g, rect);
+    paint_playheads((t_notation_obj *)x, g, rect, jf_text_fractions);
     
     // draw the legend
     if (x->r_ob.j_mouse_is_over && x->r_ob.legend == 2 && x->r_ob.j_mouse_x >= x->r_ob.j_inset_x && 
