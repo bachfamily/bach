@@ -9135,7 +9135,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
             char is_chord_selected = (notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)curr_ch) ^ notation_item_is_preselected((t_notation_obj *) x, (t_notation_item *)curr_ch)); // 1 if chord is selected
             
             // handling play
-            char is_chord_played = false;
+            t_uint64 is_chord_played = 0;
             
             if (is_grace_chord)
                 jf_grace = jfont_create_debug(x->r_ob.noteheads_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.notation_typo_preferences.base_pt * x->r_ob.zoom_y * grace_ratio);
@@ -9150,7 +9150,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                     for (long ph = 0; ph < x->r_ob.num_playheads; ph++) {
                         if (bit_is_set(curr_ch->played, ph)) {
                             if (lasttiedchord_forplay && x->r_ob.play_head_ms[ph] < lasttiedchord_forplay->onset + lasttiedchord_forplay->duration_ms) {
-                                is_chord_played = true;
+                                bit_set(&is_chord_played, ph);
                                 break;
                             }
                         }
@@ -9389,7 +9389,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                         char j;
                         double dot_x_offset, dot_y_offset;
                         t_bpt *selected_breakpoint = NULL;
-                        char is_note_played = false;
+                        t_uint64 is_note_played = false;
                         double note_end_pos = end_pos;
                         
 //                        if (x->r_ob.show_durations && x->r_ob.dl_spans_ties > 2 && curr_nt->tie_from)
@@ -9415,7 +9415,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                     for (long ph = 0; ph < x->r_ob.num_playheads; ph++) {
                                         if (bit_is_set(curr_ch->played, ph) || bit_is_set(curr_nt->played, ph)) {
                                             if (x->r_ob.play_head_ms[ph] < lasttiednote_forplay->parent->onset + lasttiednote_forplay->parent->duration_ms) {
-                                                is_note_played = true;
+                                                bit_set(&is_note_played, ph);
                                             }
                                         }
                                     }

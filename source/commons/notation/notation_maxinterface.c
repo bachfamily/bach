@@ -470,10 +470,13 @@ t_llll *chord_get_as_llll_for_sending(t_notation_obj *r_ob, t_chord *chord, e_da
 
         t_llll *all_notes_llll = llll_get();
         t_note *note;
+        bool cancrizans = (playhead >= 0 && playhead < CONST_MAX_PLAYHEADS ? (r_ob->playback_specs.playhead_rate[playhead] < 0) : false);
 
         for (note =  chord->firstnote; note; note = note->next) {
             if (should_element_be_played(r_ob, (t_notation_item *)note)) {
-                if ((mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) && (note->parent->onset + note->duration) < r_ob->play_head_start_ms[playhead])
+                if ((mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) && 
+                    ( (!cancrizans && note->parent->onset + note->duration < r_ob->play_head_start_ms[playhead]) ||
+                     (cancrizans && note->parent->onset > r_ob->play_head_start_ms[playhead])))
                     continue;
 
 				t_llll* out_llll = llll_get();

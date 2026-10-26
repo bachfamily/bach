@@ -14852,9 +14852,10 @@ void check_correct_scheduling(t_notation_obj *r_ob, char also_lock_general_mutex
     @param    current_ms    The last scheduled time or the "current" time (in milliseconds), in any case: a time limit BEFORE WHICH everything
                         is supposed to have been already properly scheduled, or ignored.
         @param playhead  THe 0-based index of the playhead that would play the item
+       @param   item_onset  Pointer to a double that will be filled with the item_onset if the pointer isn't null
     @return                The next notation item which should be played
 */
-t_notation_item *get_next_item_to_play(t_notation_obj *r_ob, double current_ms, long playhead);
+t_notation_item *get_next_item_to_play(t_notation_obj *r_ob, double current_ms, long playhead, double *item_onset);
 
 
 /** Check if some of the notes and chords which were played (i.e. had their t_chord::played and t_note::played fields set) have ended playing, and should be

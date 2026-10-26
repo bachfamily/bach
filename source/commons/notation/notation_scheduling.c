@@ -320,6 +320,7 @@ void notationobj_task(t_notation_obj *r_ob)
                 double scheduled_ms = r_ob->scheduled_ms[si];
                 long ph = r_ob->scheduled_playhead[si];
                 char scheduled_item_type = scheduled_item ? scheduled_item->type : k_ELEMENT_TYPES_UNDEFINED;
+                bool cancrizans = (specs->playhead_rate[ph] < 0);
                 
                 scheduled_ph[ph] = true;
                 
@@ -378,7 +379,11 @@ void notationobj_task(t_notation_obj *r_ob)
                             
                             if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
                                 if (r_ob->play_mode == k_PLAYMODE_CHORDWISE && !r_ob->play_tied_elements_separately && chord_is_all_tied_to(r_ob, (t_chord *)items_to_send[0], false, NULL)) {
-                                    r_ob->chord_play_cursor[ph][voice_num] = chord_get_last_in_tieseq((t_chord *)items_to_send[0]);
+                                    if (cancrizans) {
+                                        r_ob->chord_play_cursor[ph][voice_num] = chord_get_first_in_tieseq((t_chord *)items_to_send[0]);
+                                    } else {
+                                        r_ob->chord_play_cursor[ph][voice_num] = chord_get_last_in_tieseq((t_chord *)items_to_send[0]);
+                                    }
                                 }
                             }
                             
@@ -395,14 +400,16 @@ void notationobj_task(t_notation_obj *r_ob)
                         count = 1;
                         
                         if (r_ob->play_markers) {
-                            for (marker = r_ob->marker_play_cursor[ph] ? r_ob->marker_play_cursor[ph]->next : r_ob->firstmarker;
+                            for (marker = r_ob->marker_play_cursor[ph] ? (cancrizans ? r_ob->marker_play_cursor[ph]->prev : r_ob->marker_play_cursor[ph]->next) : (cancrizans ? r_ob->lastmarker : r_ob->firstmarker);
                                  marker && count < r_ob->max_num_chord_per_scheduler_event; marker = marker->next) {
                                 if (should_element_be_played(r_ob, (t_notation_item *)marker)) {
-                                    if (marker->position_ms == scheduled_ms) {
+                                    double position_ms = (cancrizans ? notation_item_get_tail_ms(r_ob, (t_notation_item *)marker) : marker->position_ms);
+                                    if (position_ms == scheduled_ms) {
                                         if (count < max_chord_per_scheduler_tick)
                                             items_to_send[count++] = (t_notation_item *)marker;
                                         r_ob->marker_play_cursor[ph] = marker;
-                                    } else if (marker->position_ms > scheduled_ms) {
+                                    } else if ((!cancrizans && position_ms > scheduled_ms) ||
+                                               (cancrizans && position_ms < scheduled_ms)) {
                                         break;
                                     }
                                 }
@@ -412,16 +419,20 @@ void notationobj_task(t_notation_obj *r_ob)
                         if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
                             if (r_ob->play_measures) {
                                 for (voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices && count < r_ob->max_num_chord_per_scheduler_event; voice = voice_get_next(r_ob, voice)){
-                                    for (measure = r_ob->measure_play_cursor[ph][voice->number] ? measure_get_next(r_ob->measure_play_cursor[ph][voice->number]) : ((t_scorevoice *)voice)->firstmeasure;
-                                         measure && count < r_ob->max_num_chord_per_scheduler_event; measure = measure_get_next(measure)){
+                                    for (measure = r_ob->measure_play_cursor[ph][voice->number] ?
+                                         (cancrizans ? measure_get_prev(r_ob->measure_play_cursor[ph][voice->number]) :
+                                          measure_get_next(r_ob->measure_play_cursor[ph][voice->number])) : 
+                                         (cancrizans ? ((t_scorevoice *)voice)->lastmeasure : ((t_scorevoice *)voice)->firstmeasure);
+                                         measure && count < r_ob->max_num_chord_per_scheduler_event; measure = cancrizans ? measure_get_prev(measure) : measure_get_next(measure)){
                                         
                                         if (should_element_be_played(r_ob, (t_notation_item *)measure)){
-                                            double measure_onset = notation_item_get_onset_ms(r_ob, (t_notation_item *)measure);
+                                            double measure_onset = cancrizans ? notation_item_get_tail_ms(r_ob, (t_notation_item *)measure) : notation_item_get_onset_ms(r_ob, (t_notation_item *)measure);
                                             if (measure_onset == scheduled_ms) {
                                                 if (count < max_chord_per_scheduler_tick)
                                                     items_to_send[count++] = (t_notation_item *)measure;
                                                 r_ob->measure_play_cursor[ph][voice->number] = measure;
-                                            } else if (measure_onset > scheduled_ms) {
+                                            } else if ((!cancrizans && measure_onset > scheduled_ms) ||
+                                                       (cancrizans && measure_onset < scheduled_ms)) {
                                                 break;
                                             }
                                         }
@@ -431,15 +442,20 @@ void notationobj_task(t_notation_obj *r_ob)
                             
                             if (r_ob->play_tempi) {
                                 for (voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices && count < r_ob->max_num_chord_per_scheduler_event; voice = voice_get_next(r_ob, voice)){
-                                    for (tempo = r_ob->tempo_play_cursor[ph][voice->number] ? tempo_get_next(r_ob->tempo_play_cursor[ph][voice->number]) : (((t_scorevoice *)voice)->firstmeasure ? ((t_scorevoice *)voice)->firstmeasure->firsttempo : NULL);
-                                         tempo && count < r_ob->max_num_chord_per_scheduler_event; tempo = tempo_get_next(tempo)){
+                                    for (tempo = r_ob->tempo_play_cursor[ph][voice->number] ? 
+                                         (cancrizans ? tempo_get_prev(r_ob->tempo_play_cursor[ph][voice->number]) : tempo_get_next(r_ob->tempo_play_cursor[ph][voice->number]))
+                                         : (cancrizans ?
+                                          (((t_scorevoice *)voice)->lastmeasure ? ((t_scorevoice *)voice)->lastmeasure->lasttempo : NULL) :
+                                         (((t_scorevoice *)voice)->firstmeasure ? ((t_scorevoice *)voice)->firstmeasure->firsttempo : NULL) );
+                                         tempo && count < r_ob->max_num_chord_per_scheduler_event; tempo = cancrizans ? tempo_get_prev(tempo) : tempo_get_next(tempo)){
                                         
                                         if (should_element_be_played(r_ob, (t_notation_item *)tempo)){
                                             if (tempo->onset == scheduled_ms) {
                                                 if (count < max_chord_per_scheduler_tick)
                                                     items_to_send[count++] = (t_notation_item *)tempo;
                                                 r_ob->tempo_play_cursor[ph][voice->number] = tempo;
-                                            } else if (tempo->onset > scheduled_ms) {
+                                            } else if ((!cancrizans && tempo->onset > scheduled_ms) ||
+                                                       (cancrizans && tempo->onset < scheduled_ms)) {
                                                 break;
                                             }
                                         }
@@ -450,26 +466,40 @@ void notationobj_task(t_notation_obj *r_ob)
                         
                         for (voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices && count < r_ob->max_num_chord_per_scheduler_event; voice = voice_get_next(r_ob, voice)){
                             for (temp_ch = r_ob->chord_play_cursor[ph][voice->number] ?
-                                 chord_get_next(r_ob->chord_play_cursor[ph][voice->number]) :
+                                 (cancrizans? chord_get_prev(r_ob->chord_play_cursor[ph][voice->number]) : chord_get_next(r_ob->chord_play_cursor[ph][voice->number])) :
+                                 (cancrizans ?
+                                  (r_ob->obj_type == k_NOTATION_OBJECT_SCORE ?
+                                   (((t_scorevoice *)voice)->lastmeasure ? ((t_scorevoice *)voice)->lastmeasure->lastchord : NULL) :
+                                   (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ?
+                                    (((t_rollvoice *)voice)->lastchord ? ((t_rollvoice *)voice)->lastchord : NULL) :
+                                    NULL)) :
                                  (r_ob->obj_type == k_NOTATION_OBJECT_SCORE ?
                                   (((t_scorevoice *)voice)->firstmeasure ? ((t_scorevoice *)voice)->firstmeasure->firstchord : NULL) :
                                   (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ?
                                    (((t_rollvoice *)voice)->firstchord ? ((t_rollvoice *)voice)->firstchord : NULL) :
-                                   NULL));
-                                 temp_ch && count < r_ob->max_num_chord_per_scheduler_event; temp_ch = chord_get_next(temp_ch)){
+                                   NULL)));
+                                 temp_ch && count < r_ob->max_num_chord_per_scheduler_event; temp_ch = cancrizans ? chord_get_prev(temp_ch) : chord_get_next(temp_ch)){
                                 
                                 if (should_element_be_played(r_ob, (t_notation_item *)temp_ch)){
-                                    if (temp_ch->onset == scheduled_ms) {
+                                    double temp_ch_onset = cancrizans ? notation_item_get_tail_ms(r_ob, (t_notation_item *)temp_ch) : temp_ch->onset;
+                                    if (temp_ch_onset == scheduled_ms) {
                                         if (count < max_chord_per_scheduler_tick)
                                             items_to_send[count++] = (t_notation_item *)temp_ch;
                                         r_ob->chord_play_cursor[ph][voice->number] = temp_ch;
                                         
                                         if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-                                            if (r_ob->play_mode == k_PLAYMODE_CHORDWISE && !r_ob->play_tied_elements_separately && chord_is_all_tied_to(r_ob, temp_ch, false, NULL)) {
-                                                r_ob->chord_play_cursor[ph][voice->number] = temp_ch = chord_get_last_in_tieseq(temp_ch);
+                                            if (cancrizans) {
+                                                if (r_ob->play_mode == k_PLAYMODE_CHORDWISE && !r_ob->play_tied_elements_separately && chord_is_all_tied_from(temp_ch, false)) {
+                                                    r_ob->chord_play_cursor[ph][voice->number] = temp_ch = chord_get_first_in_tieseq(temp_ch);
+                                                }
+                                            } else {
+                                                if (r_ob->play_mode == k_PLAYMODE_CHORDWISE && !r_ob->play_tied_elements_separately && chord_is_all_tied_to(r_ob, temp_ch, false, NULL)) {
+                                                    r_ob->chord_play_cursor[ph][voice->number] = temp_ch = chord_get_last_in_tieseq(temp_ch);
+                                                }
                                             }
                                         }
-                                    } else if (temp_ch->onset > scheduled_ms) {
+                                    } else if ((!cancrizans && temp_ch_onset > scheduled_ms) ||
+                                               (!cancrizans && temp_ch_onset < scheduled_ms)) {
                                         break;
                                     }
                                 }
@@ -568,7 +598,7 @@ void notationobj_task(t_notation_obj *r_ob)
 
                 /// 3: JUMPING TO APPROPRIATE PLACES IF NEEDED
                 //
-                if (specs->playing_scheduling_type == k_SCHEDULING_STANDARD && scheduled_item_type == k_LOOP_END) {
+                if (!cancrizans && specs->playing_scheduling_type == k_SCHEDULING_STANDARD && scheduled_item_type == k_LOOP_END) {
                     // looping: setting the chord_play_cursor, measure_play_cursor and tempo_play_cursor to NULL for every voice
                     for (long i = 0; i < r_ob->num_voices; i++) {
                         r_ob->chord_play_cursor[ph][i] = NULL;
@@ -594,6 +624,32 @@ void notationobj_task(t_notation_obj *r_ob)
                     specs->last_scheduled_ms[ph] = r_ob->loop_region.start.position_ms;
                     r_ob->play_head_ms[ph] = r_ob->loop_region.start.position_ms;
                     specs->dont_schedule_loop_start[ph] = false;
+                } else if (cancrizans && specs->playing_scheduling_type == k_SCHEDULING_STANDARD && scheduled_item_type == k_LOOP_START) {
+                    // looping: setting the chord_play_cursor, measure_play_cursor and tempo_play_cursor to NULL for every voice
+                    for (long i = 0; i < r_ob->num_voices; i++) {
+                        r_ob->chord_play_cursor[ph][i] = NULL;
+                        r_ob->tempo_play_cursor[ph][i] = NULL;
+                        r_ob->measure_play_cursor[ph][i] = NULL;
+                    }
+                    r_ob->marker_play_cursor[ph] = NULL;
+                    
+                    // we reset the start play time, and we set the starting playhead position to the loop start position
+                    setclock_getftime(r_ob->setclock->s_thing, &r_ob->start_play_time[ph]);
+                    /*                    if (r_ob->play_head_start_ms[ph] != r_ob->loop_region.start.position_ms) {
+                     r_ob->play_head_start_ms[ph] = r_ob->loop_region.start.position_ms;
+                     r_ob->play_head_start_ux[ph] = ms_to_unscaled_xposition(r_ob, r_ob->loop_region.start.position_ms, 1);
+                     } */
+                    if (specs->stop_ms[ph] != r_ob->loop_region.end.position_ms) {
+                        specs->stop_ms[ph] = r_ob->loop_region.end.position_ms;
+                    }
+                    
+                    
+                    // we update the playhead offset // TODO: CHECK and TEST!!!!!
+                    specs->offset_ms[ph] += (r_ob->loop_region.end.position_ms - r_ob->loop_region.start.position_ms);
+                    
+                    specs->last_scheduled_ms[ph] = r_ob->loop_region.end.position_ms;
+                    r_ob->play_head_ms[ph] = r_ob->loop_region.end.position_ms;
+                    specs->dont_schedule_loop_end[ph] = false;
                 } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && specs->playing_scheduling_type == k_SCHEDULING_STANDARD && scheduled_item_type == k_MEASURE_END_BARLINE) {
                     // scheduling repeat jump
                     // gotta find the position we jump to
@@ -650,7 +706,23 @@ void notationobj_task(t_notation_obj *r_ob)
             for (long ph = 0; ph < r_ob->num_playheads; ph++) {
                 if (specs->playhead_active[ph]) {
                     if (!scheduled_ph[ph]) {
-                        specs->last_scheduled_ms[ph] += offset_ms_for_nonscheduled_voices / specs->playhead_rate[ph];
+                        bool cancrizans = (specs->playhead_rate[ph] < 0);
+                        double new_last_scheduled_ms = specs->last_scheduled_ms[ph] + offset_ms_for_nonscheduled_voices / specs->playhead_rate[ph];
+                        // however, making sure that specs->last_scheduled_ms[ph] isn't greater than the next item to schedule,
+                        // which may happen with bad approximations...
+                        double earliest_item_to_schedule_onset = 0;
+                        t_notation_item *earliest_item_to_schedule = get_next_item_to_play(r_ob, specs->last_scheduled_ms[ph], ph, &earliest_item_to_schedule_onset);
+                        if (earliest_item_to_schedule) {
+                            if (earliest_item_to_schedule_onset != specs->last_scheduled_ms[ph] &&
+                                ( (cancrizans && earliest_item_to_schedule_onset > new_last_scheduled_ms) ||
+                                 (!cancrizans && earliest_item_to_schedule_onset < new_last_scheduled_ms))) {
+                                specs->last_scheduled_ms[ph] = earliest_item_to_schedule_onset - CONST_EPSILON5;
+                            } else {
+                                specs->last_scheduled_ms[ph] = new_last_scheduled_ms;
+                            }
+                        } else {
+                            specs->last_scheduled_ms[ph] = new_last_scheduled_ms;
+                        }
                     }
                 }
             }
@@ -668,20 +740,20 @@ void notationobj_task(t_notation_obj *r_ob)
             r_ob->num_scheduled_items = 0;
             double ms_till_scheduled_item = 0;
             for (long ph = 0; ph < r_ob->num_playheads; ph++) {
+                bool cancrizans = (specs->playhead_rate[ph] < 0);
                 if (specs->playhead_active[ph]) {
-                    earliest_item_to_schedule[ph] = get_next_item_to_play(r_ob, specs->last_scheduled_ms[ph], ph);
-                    if (earliest_item_to_schedule[ph])
-                        earliest_item_to_schedule_onset[ph] = notation_item_get_onset_ms(r_ob, earliest_item_to_schedule[ph]);
-                    else
-                        earliest_item_to_schedule_onset[ph] = specs->stop_ms[ph];
+                    earliest_item_to_schedule[ph] = get_next_item_to_play(r_ob, specs->last_scheduled_ms[ph], ph, &earliest_item_to_schedule_onset[ph]);
 
 #ifdef BACH_PLAY_DEBUG
                     if (nextitemtoplay)
                         post("Next item to play has onset: %.2f ms", nextitemtoplay_onset);
 #endif
                     
-                    if (specs->stop_ms_specified[ph] && earliest_item_to_schedule[ph] && earliest_item_to_schedule_onset[ph] >= specs->stop_ms[ph])
+                    if (specs->stop_ms_specified[ph] && earliest_item_to_schedule[ph] && 
+                        ((cancrizans && earliest_item_to_schedule_onset[ph] <= specs->start_ms[ph]) ||
+                         (!cancrizans && earliest_item_to_schedule_onset[ph] >= specs->stop_ms[ph]))) {
                         earliest_item_to_schedule[ph] = NULL; // playhead has finished
+                    }
                     
                     // loop start must be scheduled once: if we schedule loop start, then we schedule a chord falling ON the loop start, we don't want next item to be the loop start again
                     // we check if we can resume scheduling the loop start or end
@@ -697,21 +769,33 @@ void notationobj_task(t_notation_obj *r_ob)
                         r_ob->num_scheduled_items = 1;
                         earliest_item_across_all_ph = earliest_item_to_schedule[ph];
                         r_ob->scheduled_item[0] = earliest_item_to_schedule[ph];
-                        r_ob->scheduled_ms[0] = earliest_item_to_schedule[ph] ? earliest_item_to_schedule_onset[ph] : (specs->stop_ms_specified[ph] ? specs->stop_ms[ph] : (r_ob->obj_type == k_NOTATION_OBJECT_SCORE ? r_ob->length_ms : r_ob->length_ms_till_last_note));
+                        r_ob->scheduled_ms[0] = earliest_item_to_schedule[ph] ? earliest_item_to_schedule_onset[ph] : 
+                        (cancrizans ?
+                         (specs->start_ms_specified[ph] ? specs->start_ms[ph] : 0) :
+                         (specs->stop_ms_specified[ph] ? specs->stop_ms[ph] : (r_ob->obj_type == k_NOTATION_OBJECT_SCORE ? r_ob->length_ms : r_ob->length_ms_till_last_note)) );
                         r_ob->scheduled_playhead[0] = ph;
                         bestoffset = earliest_item_offset;
                         
-                        ms_till_scheduled_item = ((r_ob->num_scheduled_items > 0 ? r_ob->scheduled_ms[0] : (specs->stop_ms_specified[ph] ? specs->stop_ms[0] : (r_ob->obj_type == k_NOTATION_OBJECT_SCORE ? r_ob->length_ms_till_last_note : r_ob->length_ms))) - specs->last_scheduled_ms[r_ob->scheduled_playhead[0]]) * specs->playhead_rate[r_ob->scheduled_playhead[0]];
+                        ms_till_scheduled_item = (r_ob->scheduled_ms[0] - specs->last_scheduled_ms[r_ob->scheduled_playhead[0]]) * specs->playhead_rate[r_ob->scheduled_playhead[0]];
+                        
+//                        ms_till_scheduled_item = ((r_ob->num_scheduled_items > 0 ? r_ob->scheduled_ms[0] : (specs->stop_ms_specified[ph] ? specs->stop_ms[0] : (r_ob->obj_type == k_NOTATION_OBJECT_SCORE ? r_ob->length_ms_till_last_note : r_ob->length_ms))) - specs->last_scheduled_ms[r_ob->scheduled_playhead[0]]) * specs->playhead_rate[r_ob->scheduled_playhead[0]];
 
                         
                     } else if (earliest_item_offset == bestoffset) { // same offset!
                         r_ob->scheduled_item[r_ob->num_scheduled_items] = earliest_item_to_schedule[ph];
-                        r_ob->scheduled_ms[r_ob->num_scheduled_items] = earliest_item_to_schedule[ph] ? earliest_item_to_schedule_onset[ph] : (specs->stop_ms_specified[ph] ? specs->stop_ms[ph] : (r_ob->obj_type == k_NOTATION_OBJECT_SCORE ? r_ob->length_ms : r_ob->length_ms_till_last_note));
+                        r_ob->scheduled_ms[r_ob->num_scheduled_items] = earliest_item_to_schedule[ph] ? earliest_item_to_schedule_onset[ph] :
+                        (cancrizans  ?
+                         (specs->start_ms_specified[ph] ? specs->start_ms[ph] : 0) :
+                         (specs->stop_ms_specified[ph] ? specs->stop_ms[ph] : (r_ob->obj_type == k_NOTATION_OBJECT_SCORE ? r_ob->length_ms : r_ob->length_ms_till_last_note))
+                         );
                         r_ob->scheduled_playhead[r_ob->num_scheduled_items] = ph;
                         r_ob->num_scheduled_items++;
                     }
                 }
             }
+            
+            if (ms_till_scheduled_item < 0) // if cancrizans...
+                ms_till_scheduled_item *= -1;
             
             if (r_ob->theoretical_play_step_ms <= 0){
                 // just one step per scheduled event
@@ -1223,7 +1307,7 @@ void notationobj_parse_playback_arguments(t_notation_obj *r_ob, t_symbol *s, lon
                     }
                     llll_free(templl);
                     
-                    if (rate <= 0) {
+                    if (rate == 0) {
                         object_error((t_object *)r_ob, "Playhead rate cannot be zero or negative. Defaulting to 1.");
                         rate = 1.;
                     }
@@ -1336,6 +1420,7 @@ void notationobj_parse_playback_arguments(t_notation_obj *r_ob, t_symbol *s, lon
         
 //        if (!playheads_defined) {
         for (long ph = 0; ph < r_ob->num_playheads; ph++) {
+            bool cancrizans = (specs->playhead_rate[ph] < 0);
             // simple case
             if (!specs->start_ms_specified[ph] || !specs->stop_ms_specified[ph]) {
                 if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
@@ -1350,7 +1435,7 @@ void notationobj_parse_playback_arguments(t_notation_obj *r_ob, t_symbol *s, lon
                                 specs->start_ms[ph] = (argc > 0) ? atom_getfloat(argv+argcoffset) : 0;
                                 
                                 // synchronizing the playhead with out start_ms
-                                r_ob->play_head_start_ms[ph] = specs->start_ms[ph];
+                                r_ob->play_head_start_ms[ph] = cancrizans ? specs->stop_ms[ph] : specs->start_ms[ph];
                             }
                             
                             if (!specs->stop_ms_specified[ph] && argc > argcoffset + 1) {
@@ -1400,11 +1485,15 @@ void notationobj_parse_playback_arguments(t_notation_obj *r_ob, t_symbol *s, lon
                             object_error((t_object *) r_ob, "Error in defining play start position.");
                             return;
                         }
-                        r_ob->play_head_start_ms[ph] = specs->start_ms[ph];
-                        r_ob->play_head_start_ux[ph] = ms_to_unscaled_xposition(r_ob, specs->start_ms[ph], 1);
+                        r_ob->play_head_start_ms[ph] = cancrizans ? specs->stop_ms[ph] : specs->start_ms[ph];
+                        r_ob->play_head_start_ux[ph] = ms_to_unscaled_xposition(r_ob, r_ob->play_head_start_ms[ph], 1);
                         
                     } else {
-                        specs->start_ms[ph] = r_ob->play_head_start_ms[ph];
+                        if (cancrizans) {
+                            specs->stop_ms[ph] = r_ob->play_head_start_ms[ph];
+                        } else {
+                            specs->start_ms[ph] = r_ob->play_head_start_ms[ph];
+                        }
 //                        r_ob->play_head_start_ms[ph] = specs->start_ms[0];
 //                        r_ob->play_head_start_ux[0] = ms_to_unscaled_xposition(r_ob, specs->start_ms[0], 1);
                     }
@@ -1423,10 +1512,20 @@ void notationobj_parse_playback_arguments(t_notation_obj *r_ob, t_symbol *s, lon
         
         // synchronizing the playhead with out start_ms
         for (long ph = 0; ph < r_ob->num_playheads; ph++) {
-            if (specs->start_ms_specified[ph]) {
-                r_ob->play_head_start_ms[ph] = specs->start_ms[ph];
-                if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-                    r_ob->play_head_start_ux[ph] = ms_to_unscaled_xposition(r_ob, specs->start_ms[ph], 1);
+            bool cancrizans = (specs->playhead_rate[ph] < 0);
+            if (cancrizans) {
+                if (specs->stop_ms_specified[ph]) {
+                    r_ob->play_head_start_ms[ph] = specs->stop_ms[ph];
+                    if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
+                        r_ob->play_head_start_ux[ph] = ms_to_unscaled_xposition(r_ob, r_ob->play_head_start_ms[ph], 1);
+                    }
+                }
+            } else {
+                if (specs->start_ms_specified[ph]) {
+                    r_ob->play_head_start_ms[ph] = specs->start_ms[ph];
+                    if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
+                        r_ob->play_head_start_ux[ph] = ms_to_unscaled_xposition(r_ob, specs->start_ms[ph], 1);
+                    }
                 }
             }
         }
@@ -1606,7 +1705,8 @@ void notationobj_do_play(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *a
                 continue;
             
             
-            double start_ms = specs->start_ms[ph];
+            bool cancrizans = (specs->playhead_rate[ph] < 0);
+            double start_ms = cancrizans ? specs->stop_ms[ph] : specs->start_ms[ph];
             if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
                 
                 for (voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
@@ -1618,6 +1718,7 @@ void notationobj_do_play(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *a
                                 if (temp_ch->onset + temp_nt->duration - CONST_EPSILON1 > start_ms) {
                                     t_llll *this_llll, *references;
                                     t_note *nt;
+                                    // TODO: if we implement the cancrizans reading, then the partial portion must be the left one, not the right one
                                     this_llll = chord_get_as_llll_for_sending(r_ob, temp_ch, r_ob->play_partial_notes > 1 ? k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE : k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE, -1, NULL, &references, &is_notewise, ph);
                                     
                                     // we set the partial notes as played
@@ -1712,12 +1813,13 @@ void notationobj_do_play(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *a
     }
     
     for (long ph = 0; ph < r_ob->num_playheads; ph++) {
+        bool cancrizans = (specs->playhead_rate[ph] < 0);
         if (specs->add_new_playback_voice && !specs->playhead_newly_activated[ph])
             continue;
         
     // setting the chord_play_cursor to NULL for every voice (why for every voice and not just the used ones??? because if one changes the number
     // of voices during playback this could be an issue...)
-        specs->last_scheduled_ms[ph] = specs->start_ms[ph];
+        specs->last_scheduled_ms[ph] = cancrizans ? specs->stop_ms[ph] : specs->start_ms[ph];
         for (i = 0; i < CONST_MAX_VOICES; i++) {
             r_ob->chord_play_cursor[ph][i] = NULL;
             if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
@@ -1759,7 +1861,8 @@ void notationobj_do_play(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *a
         lock_general_mutex(r_ob);
 
         for (long ph = 0; ph < r_ob->num_playheads; ph++) {
-            specs->offset_ms[ph] = specs->start_ms[ph];
+            bool cancrizans = (specs->playhead_rate[ph] < 0);
+            specs->offset_ms[ph] = cancrizans ? specs->stop_ms[ph] : specs->start_ms[ph];
             specs->dont_schedule_loop_end[ph] = specs->dont_schedule_loop_start[ph] = false;
         }
         
@@ -1767,24 +1870,23 @@ void notationobj_do_play(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *a
         r_ob->num_scheduled_items = 0;
         double bestoffset = -DBL_MAX;
         for (long ph = 0; ph < r_ob->num_playheads; ph++) {
+            bool cancrizans = (specs->playhead_rate[ph] < 0);
             if (!specs->playhead_active[ph])
                 continue;
             
             double start_ms = specs->start_ms[ph];
             double stop_ms = specs->stop_ms[ph];
-            firstplayeditem = get_next_item_to_play(r_ob, start_ms, ph);
-            if (firstplayeditem)
-                firstplayeditem_onset = notation_item_get_onset_ms(r_ob, firstplayeditem);
-            else
-                firstplayeditem_onset = stop_ms;
+            firstplayeditem = get_next_item_to_play(r_ob, cancrizans ? stop_ms : start_ms, ph, &firstplayeditem_onset);
             
             // if the first chord is beyond the end limit, we stop
-            if (firstplayeditem && firstplayeditem_onset >= stop_ms)
+            if (firstplayeditem &&
+                ((cancrizans && firstplayeditem_onset <= start_ms) ||
+                (!cancrizans && firstplayeditem_onset >= stop_ms)))
                 firstplayeditem = NULL;
             
             if (firstplayeditem || start_ms <= stop_ms) {
                 double this_offset = (firstplayeditem_onset - specs->offset_ms[ph]) * specs->playhead_rate[ph];
-                if (r_ob->num_scheduled_items == 0 || firstplayeditem_onset - specs->offset_ms[ph] < bestoffset) {
+                if (r_ob->num_scheduled_items == 0 || this_offset < bestoffset) {
                     
                     r_ob->num_scheduled_items = 1;
                     r_ob->scheduled_item[0] = firstplayeditem;
@@ -1817,9 +1919,10 @@ void notationobj_do_play(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *a
                 }
             }
             
-            // update playhead start again – not sure it's needed
+            // update playhead start
             for (long ph = 0; ph < r_ob->num_playheads; ph++) {
-                r_ob->play_head_ms[ph] = specs->start_ms[ph];
+                bool cancrizans = (specs->playhead_rate[ph] < 0);
+                r_ob->play_head_ms[ph] = cancrizans ? specs->stop_ms[ph] : specs->start_ms[ph];
                 if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
                     r_ob->play_head_ux[ph] = ms_to_unscaled_xposition(r_ob, r_ob->play_head_ms[ph], 1);
                 }
@@ -1834,7 +1937,7 @@ void notationobj_do_play(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *a
             
             notationobj_notify_play(r_ob);
             
-            double new_scheduling_interval = (r_ob->scheduled_ms[0] - specs->start_ms[r_ob->scheduled_playhead[0]]) * specs->playhead_rate[r_ob->scheduled_playhead[0]];
+            double new_scheduling_interval = specs->playhead_rate[0] < 0 ? ((r_ob->scheduled_ms[0] - specs->stop_ms[r_ob->scheduled_playhead[0]]) * specs->playhead_rate[r_ob->scheduled_playhead[0]]) : ((r_ob->scheduled_ms[0] - specs->start_ms[r_ob->scheduled_playhead[0]]) * specs->playhead_rate[r_ob->scheduled_playhead[0]]);
             
             if (r_ob->theoretical_play_step_ms <= 0) {
                 // step at each scheduled event
@@ -1889,14 +1992,181 @@ void notationobj_pause(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *arg
     }
 }
 
-
-t_notation_item *get_next_item_to_play(t_notation_obj *r_ob, double current_ms, long playhead)
+t_notation_item *get_next_item_to_play_cancrizans(t_notation_obj *r_ob, double current_ms, long playhead, double *onset)
 {
     t_notation_item *nextitemtoplay = NULL;
     double best_difference = 0.;
     long ph = playhead;
     t_voice *voice;
     t_chord *temp_ch;
+    
+    if (r_ob->play_markers) {
+        t_marker *marker;
+        for (marker = r_ob->marker_play_cursor[ph] ? r_ob->marker_play_cursor[ph]->prev : r_ob->lastmarker; marker; marker = marker->next){
+            if (marker->position_ms > current_ms) {
+                // we don't have to play it, but we update our chord_play_cursor
+                r_ob->marker_play_cursor[ph] = marker;
+            } else {
+                if (should_element_be_played(r_ob, (t_notation_item *)marker)) {
+                    double position_ms_cancrizans = notation_item_get_tail_ms(r_ob, (t_notation_item *)marker);
+                    if (position_ms_cancrizans <= current_ms && (!nextitemtoplay || current_ms - position_ms_cancrizans < best_difference)) {
+                        best_difference = current_ms - position_ms_cancrizans;
+                        nextitemtoplay = (t_notation_item *)marker;
+                    } else if (position_ms_cancrizans <= current_ms) {
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    
+    if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && (r_ob->play_measures || r_ob->are_there_repeats)) {
+        t_measure *measure;
+        for (voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)){
+            for (measure = r_ob->measure_play_cursor[ph][voice->number] ? measure_get_prev(r_ob->measure_play_cursor[ph][voice->number]) :
+                 ((t_scorevoice *)voice)->lastmeasure;
+                 measure; measure = measure_get_prev(measure)){
+                
+                double measure_onset = notation_item_get_tail_ms(r_ob, (t_notation_item *)measure);
+                if (measure_onset > current_ms) {
+                    // we don't have to play it, but we update our chord_play_cursor
+                    if (voice->number >= 0 && voice->number < CONST_MAX_VOICES)
+                        r_ob->measure_play_cursor[ph][voice->number] = measure;
+                    else
+                        notationobj_throw_issue(r_ob);
+                } else {
+                    if (r_ob->are_there_repeats || (r_ob->play_measures && should_element_be_played(r_ob, (t_notation_item *)measure))) {
+                        if (measure_onset <= current_ms && (!nextitemtoplay || current_ms - measure_onset < best_difference)) {
+                            /*
+                            if (r_ob->are_there_repeats && voice->number == 0 && //< we only repeats on the first voice, otherwise it's potentially a mess! We don't have independent play cursors for different voices...
+                                // TODO: THIS IS A MESSS....
+                                measure->prev &&
+                                (measure->prev->end_barline->barline_type == k_BARLINE_REPEAT_END || measure->prev->end_barline->barline_type == k_BARLINE_REPEAT_END_AND_START) &&
+                                measure->prev->end_barline->repeat_count[ph] < measure->prev->end_barline->repeat_num - 1) {
+                                // scheduling repeat!
+                                best_difference = current_ms - measure_onset;
+                                nextitemtoplay = (t_notation_item *)measure->prev->end_barline;
+                            } else */ if (r_ob->play_measures) {
+                                best_difference = current_ms - measure_onset;
+                                nextitemtoplay = (t_notation_item *)measure;
+                            }
+                        } else if (measure_onset >= current_ms) {
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            /* // no repeats for now
+            // scheduling repeat at the last measure?
+            if (!measure && r_ob->are_there_repeats && voice->number == 0 &&
+                (((t_scorevoice *)voice)->lastmeasure->end_barline->barline_type == k_BARLINE_REPEAT_END ||
+                 ((t_scorevoice *)voice)->lastmeasure->end_barline->barline_type == k_BARLINE_REPEAT_END_AND_START) &&
+                ((t_scorevoice *)voice)->lastmeasure->end_barline->repeat_count[ph] < ((t_scorevoice *)voice)->lastmeasure->end_barline->repeat_num - 1) {
+                double end_onset = notation_item_get_tail_ms(r_ob, (t_notation_item *)(((t_scorevoice *)voice)->lastmeasure));
+                if (!nextitemtoplay || end_onset - current_ms < best_difference) {
+                    best_difference = end_onset - current_ms;
+                    nextitemtoplay = (t_notation_item *)((t_scorevoice *)voice)->lastmeasure->end_barline;
+                }
+            } */
+            
+            if (!r_ob->play_measures)
+                break; //< we only needed the first voice for the repeat scheduling
+        }
+    }
+    
+    if (r_ob->play_tempi && r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
+        t_tempo *tempo;
+        for (voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)){
+            for (tempo = r_ob->tempo_play_cursor[ph][voice->number] ? tempo_get_prev(r_ob->tempo_play_cursor[ph][voice->number]) :
+                 (((t_scorevoice *)voice)->lastmeasure ? ((t_scorevoice *)voice)->lastmeasure->lasttempo : NULL);
+                 tempo; tempo = tempo_get_prev(tempo)){
+                
+                if (tempo->onset > current_ms) {
+                    // we don't have to play it, but we update our chord_play_cursor
+                    if (voice->number >= 0 && voice->number < CONST_MAX_VOICES)
+                        r_ob->tempo_play_cursor[ph][voice->number] = tempo;
+                    else
+                        notationobj_throw_issue(r_ob);
+                } else if (should_element_be_played(r_ob, (t_notation_item *)tempo)) {
+                    if (tempo->onset <= current_ms && (!nextitemtoplay || current_ms - tempo->onset < best_difference)) {
+                        best_difference = current_ms - tempo->onset;
+                        nextitemtoplay = (t_notation_item *)tempo;
+                    } else if (tempo->onset <= current_ms) {
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    for (voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)){
+        for (temp_ch = r_ob->chord_play_cursor[ph][voice->number] ? chord_get_prev(r_ob->chord_play_cursor[ph][voice->number]) :
+                                                                        (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? ((t_rollvoice *)voice)->lastchord : (((t_scorevoice *)voice)->lastmeasure ? ((t_scorevoice *)voice)->lastmeasure->lastchord : NULL));
+             temp_ch; temp_ch = chord_get_prev(temp_ch)){
+            
+//            check_chord(r_ob, temp_ch);
+            
+            if (temp_ch->onset > current_ms) {
+                // we don't have to play it, but we update our chord_play_cursor
+                if (voice->number >= 0 && voice->number < CONST_MAX_VOICES)
+                    r_ob->chord_play_cursor[ph][voice->number] = temp_ch;
+                else
+                    notationobj_throw_issue(r_ob);
+            } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE &&
+                       ((temp_ch->r_sym_duration.r_num < 0 && !r_ob->play_rests_separately && is_chord_followed_by_rest(r_ob, temp_ch, 0)) ||
+                        (temp_ch->r_sym_duration.r_num >= 0 && !r_ob->play_tied_elements_separately && chord_is_all_tied_to(r_ob, temp_ch, 0, NULL)))) {
+                // nothing to do, actually, this is a tied-to chord, we ignore it.
+                // but we do NOT update the cursor, since we're not sure the first of the tied-chord-sequence starts before the cursor
+            } else {
+                if (should_element_be_played(r_ob, (t_notation_item *)temp_ch)) {
+                    double onset_cancrizans = notation_item_get_tail_ms(r_ob, (t_notation_item *)temp_ch); //was: temp_ch->onset
+                    if (onset_cancrizans <= current_ms && (!nextitemtoplay || current_ms - onset_cancrizans < best_difference)) {
+                        best_difference = current_ms - onset_cancrizans;
+                        nextitemtoplay = (t_notation_item *)temp_ch;
+                    } else if (onset_cancrizans <= current_ms) {
+                        break;
+                    }
+                }
+            }
+            
+        }
+    }
+    
+    if (r_ob->use_loop_region && r_ob->show_loop_region) {
+        double nextitemonset = nextitemtoplay ? notation_item_get_onset_ms(r_ob, nextitemtoplay) : 0;
+        if (!r_ob->playback_specs.dont_schedule_loop_start[ph] && r_ob->loop_region.start.position_ms <= current_ms) {
+            if (!nextitemtoplay || nextitemonset <= r_ob->loop_region.start.position_ms)
+                return &r_ob->loop_region.start.r_it;
+        }
+        if (!r_ob->playback_specs.dont_schedule_loop_end[ph] &&r_ob->loop_region.end.position_ms <= current_ms) {
+            if (!nextitemtoplay || nextitemonset <= r_ob->loop_region.end.position_ms)
+                return &r_ob->loop_region.end.r_it;
+        }
+    }
+    
+    if (onset) {
+        if (nextitemtoplay) {
+            *onset = notation_item_get_tail_ms(r_ob, nextitemtoplay);
+        } else {
+            *onset = r_ob->playback_specs.start_ms[ph];
+        }
+    }
+    return nextitemtoplay;
+}
+
+
+t_notation_item *get_next_item_to_play(t_notation_obj *r_ob, double current_ms, long playhead, double *onset)
+{
+    t_notation_item *nextitemtoplay = NULL;
+    double best_difference = 0.;
+    long ph = playhead;
+    t_voice *voice;
+    t_chord *temp_ch;
+    bool cancrizans = (r_ob->playback_specs.playhead_rate[playhead] < 0);
+    if (cancrizans) {
+        return get_next_item_to_play_cancrizans(r_ob, current_ms, playhead, onset);
+    }
     
     if (r_ob->play_markers) {
         t_marker *marker;
@@ -2038,8 +2308,17 @@ t_notation_item *get_next_item_to_play(t_notation_obj *r_ob, double current_ms, 
         }
     }
     
+    if (onset) {
+        if (nextitemtoplay) {
+            *onset = notation_item_get_onset_ms(r_ob, nextitemtoplay);
+        } else {
+            *onset = r_ob->playback_specs.stop_ms[ph];
+        }
+    }
     return nextitemtoplay;
 }
+
+
 
 
 void check_correct_scheduling_fn(t_bach_inspector_manager *man, void *obj, t_bach_attribute *attr)
@@ -2095,17 +2374,16 @@ void check_correct_scheduling(t_notation_obj *r_ob, char also_lock_general_mutex
                 // we force the loop end to be scheduled.
                 // see the documentation of t_notation_obj::playhead_cant_trespass_loop_end to understand why!
                 earliest_item_to_schedule[ph] = &r_ob->loop_region.end.r_it;
-            } else
-                earliest_item_to_schedule[ph] = get_next_item_to_play(r_ob, this_clock_ms[ph], ph);
+                earliest_item_to_schedule_onset[ph] = notation_item_get_onset_ms(r_ob, earliest_item_to_schedule[ph]);
+            } else {
+                earliest_item_to_schedule[ph] = get_next_item_to_play(r_ob, this_clock_ms[ph], ph, &earliest_item_to_schedule_onset[ph]);
+            }
             
             if (specs->stop_ms_specified[ph] && earliest_item_to_schedule[ph] && earliest_item_to_schedule_onset[ph] >= specs->stop_ms[ph])
                 earliest_item_to_schedule[ph] = NULL; // playhead has finished
 
             specs->dont_schedule_loop_start[ph] = temp1[ph];
             specs->dont_schedule_loop_end[ph] = temp2[ph];
-        
-            if (earliest_item_to_schedule[ph])
-                earliest_item_to_schedule_onset[ph] = notation_item_get_onset_ms(r_ob, earliest_item_to_schedule[ph]);
             
             num_scheduled_items = 0;
             double earliest_item_offset = (earliest_item_to_schedule_onset[ph] - specs->offset_ms[ph]) * specs->playhead_rate[ph];
