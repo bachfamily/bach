@@ -25,7 +25,7 @@ VERSION NOTES:
         (Also a global @showaccollature attribute has been added.)
     á Showvelocity had an option called "Note Size" which was actually "Notehead Size". This typo has been corrected.
         and a true "Note Size" option (combining both notehead size and duration line width) has been added.
-
+    
 - bach.score:
     á fixed bug causing wrong playback for grace notes!
     á fixed bug causing wrong playback (missing notes) when some time-changing operations were performed on a score with measure-attached markers.
@@ -61,7 +61,9 @@ VERSION NOTES:
 - bach.roll, bach.score:
     á With respect to former 0.9 development prerelease, the llll syntax for slurs in roll/score contains the router "slurs" and not "slur".
     á the @showpartbrackets that was present in a dev prerelease is now subsumed by @partsaccollatura
-
+    á Both objects now include in the element flag the information on selection, as bit corresponding to 16 in the flag bitfield
+        (---> this could break compatibility of patches that used the flag but weren't too careful in its bit handling...)
+    
 - bach.roll: the subroll message doesn't output partial notes of duration 0 any longer
 
 - bach.stream: 

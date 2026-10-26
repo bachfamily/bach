@@ -382,10 +382,10 @@
 			},
 			"Scopeoflocalvariables" : {
 				"filename" : [ "bach.help.bell.060_functions.050_scopeoflocalvariables.maxpat" ],
-				"objects" : [  ],
-				"seealso" : [  ],
-				"tags" : [  ],
-				"title" : [ "" ]
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ ":" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "variable", "local", "assignment", "scope", "visibility", "dynamic", "scoping", "propagation" ],
+				"title" : [ "Scope of local variables" ]
 			},
 			"Liftedvariables" : {
 				"filename" : [ "bach.help.bell.060_functions.060_liftedvariables.maxpat" ],
@@ -431,10 +431,10 @@
 			},
 			"Argumentnames" : {
 				"filename" : [ "bach.help.bell.060_functions.080_argumentnames.maxpat" ],
-				"objects" : [  ],
-				"seealso" : [  ],
-				"tags" : [  ],
-				"title" : [ "" ]
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ ": global+variable", "global+function" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "argument", "variable", "local", "passing" ],
+				"title" : [ "Argument names" ]
 			},
 			"Functionfun" : {
 				"filename" : [ "bach.help.bell.060_functions.090_functionfun.maxpat" ],
@@ -537,10 +537,10 @@
 			"Built-in functions reference" : {
 				"Mathfunctions" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.00_mathfunctions.maxpat" ],
-					"objects" : [  ],
-					"seealso" : [  ],
-					"tags" : [  ],
-					"title" : [ "" ]
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ ":" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "math", "mathematics", "functional", "form", "operator", "#!", "#~", "#u-", "abs", "acos", "acosh", "asin", "asinh", "atan", "atanh", "ceil", "cos", "cosh", "den", "exp", "exp2", "float", "floor", "int", "log", "log10", "log2", "num", "rat", "round" ],
+					"title" : [ "Math functions reference" ]
 				},
 				"Alter" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.alter.maxpat" ],
@@ -712,10 +712,10 @@
 				},
 				"Findaddrs" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.findaddrs.maxpat" ],
-					"objects" : [  ],
-					"seealso" : [  ],
-					"tags" : [  ],
-					"title" : [ "" ]
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ ": find", "finditems", "lambda" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "findaddrs", "find", "search", "address" ],
+					"title" : [ "findaddrs() function reference" ]
 				},
 				"Finditems" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.finditems.maxpat" ],
@@ -733,10 +733,10 @@
 				},
 				"Foldratio" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.foldratio.maxpat" ],
-					"objects" : [  ],
-					"seealso" : [  ],
-					"tags" : [  ],
-					"title" : [ "" ]
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ ": degree", "octave", "alter", "pitchkeys", "jisharps", "etsharps" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "pitch", "just", "intonation", "fold", "ratio", "foldratio", "modulo" ],
+					"title" : [ "foldratio() function reference" ]
 				},
 				"Geomser" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.geomser.maxpat" ],
@@ -768,10 +768,10 @@
 				},
 				"Intersection" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.intersection.maxpat" ],
-					"objects" : [  ],
-					"seealso" : [  ],
-					"tags" : [  ],
-					"title" : [ "" ]
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ ": diff", "union", "symdiff", "lambda" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet", "intersection", "set" ],
+					"title" : [ "intersection() function reference" ]
 				},
 				"Ji" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.ji.maxpat" ],
@@ -866,10 +866,10 @@
 				},
 				"Maximum" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.maximum.maxpat" ],
-					"objects" : [  ],
-					"seealso" : [  ],
-					"tags" : [  ],
-					"title" : [ "" ]
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ ": minmax", "minimum", "max" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "maximum" ],
+					"title" : [ "maximum() function reference" ]
 				},
 				"Mc2f" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.mc2f.maxpat" ],
@@ -964,10 +964,10 @@
 				},
 				"Rev" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.rev.maxpat" ],
-					"objects" : [  ],
-					"seealso" : [  ],
-					"tags" : [  ],
-					"title" : [ "" ]
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ ": rot", "scramble", "perm", "colon" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "rev", "reverse", "permutation", "llll" ],
+					"title" : [ "rev() function reference" ]
 				},
 				"Right" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.right.maxpat" ],
@@ -2521,8 +2521,8 @@
 				"Intro" : {
 					"filename" : [ "bach.help.notation.editing.32_inspector.01_intro.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
-					"seealso" : [ "slotinfo", "breakpointshavenoteheads" ],
-					"tags" : [ "editing", "edit", "interface", "inspector", "external", "dedicated", "using" ],
+					"seealso" : [ ": slotinfo", "breakpointshavenoteheads" ],
+					"tags" : [ "editing", "edit", "interface", "inspector", "external", "dedicated", "using", "openinspector", "open", "popup" ],
 					"title" : [ "Using the bach inspector" ]
 				},
 				"Voices" : {
@@ -3094,19 +3094,28 @@
 			}
 		},
 		"Messages" : {
-			"Addchord" : {
-				"filename" : [ "bach.help.notation.messages.01_addchord.maxpat" ],
-				"objects" : [ "bach.roll" ],
-				"seealso" : [ "addchords", "gluechord", "sel" ],
-				"tags" : [ "message", "addchord", "add", "chord", "adding", "select", "sel", "selection", "note" ],
-				"title" : [ "Adding a chord in bach.roll" ]
-			},
-			"B_addchords" : {
-				"filename" : [ "bach.help.notation.messages.01b_addchords.maxpat" ],
-				"objects" : [ "bach.roll" ],
-				"seealso" : [ "addchord", "gluechord", "autosize" ],
-				"tags" : [ "message", "addchords", "add", "chord", "adding", "offset", "shift", "append", "several", "at", "once" ],
-				"title" : [ "Adding several chords at once in bach.roll" ]
+			"Chords" : {
+				"Addchord" : {
+					"filename" : [ "bach.help.notation.messages.01_chords.01_addchord.maxpat" ],
+					"objects" : [ "bach.roll" ],
+					"seealso" : [ "addchords", "gluechord", "sel" ],
+					"tags" : [ "message", "addchord", "add", "chord", "adding", "select", "sel", "selection", "note" ],
+					"title" : [ "Adding a chord in bach.roll" ]
+				},
+				"Addchords" : {
+					"filename" : [ "bach.help.notation.messages.01_chords.10_addchords.maxpat" ],
+					"objects" : [ "bach.roll" ],
+					"seealso" : [ ": addchord", "gluechord", "autosize" ],
+					"tags" : [ "message", "addchords", "add", "chord", "adding", "offset", "shift", "append", "several", "at", "once" ],
+					"title" : [ "Adding several chords at once in bach.roll" ]
+				},
+				"Addchordsmodes" : {
+					"filename" : [ "bach.help.notation.messages.01_chords.20_addchordsmodes.maxpat" ],
+					"objects" : [ "bach.roll" ],
+					"seealso" : [ ": read+mode" ],
+					"tags" : [ "message", "addchords", "add", "chord", "adding", "offset", "append", "several", "roll", "fromscratch", "scratch", "from", "sel", "addsel", "replace", "replacesel" ],
+					"title" : [ "Addchords modes in bach.roll" ]
+				}
 			},
 			"Addtempo" : {
 				"filename" : [ "bach.help.notation.messages.02_addtempo.maxpat" ],
@@ -3280,10 +3289,10 @@
 			},
 			"B_glueroll" : {
 				"filename" : [ "bach.help.notation.messages.16b_glueroll.maxpat" ],
-				"objects" : [  ],
-				"seealso" : [  ],
-				"tags" : [  ],
-				"title" : [ "" ]
+				"objects" : [ "bach.roll" ],
+				"seealso" : [ ": gluechord", "merge" ],
+				"tags" : [ "message", "glue", "gluing", "join", "merge", "connect", "track", "partial", "glueing", "note" ],
+				"title" : [ "Gluing or connecting notes in bach.roll" ]
 			},
 			"Explodechords" : {
 				"filename" : [ "bach.help.notation.messages.17_explodechords.maxpat" ],
@@ -5036,6 +5045,13 @@
 				"tags" : [ "data", "write", "writetxt", "read", "save", "open", "load", "file", "message", "drag", "dragndrop", "drop" ],
 				"title" : [ "Save and load files" ]
 			},
+			"B_loadmodes" : {
+				"filename" : [ "bach.help.notation.save and load.03b_loadmodes.maxpat" ],
+				"objects" : [ "bach.roll" ],
+				"seealso" : [ ": addchords+modes" ],
+				"tags" : [ "data", "read", "open", "load", "file", "mode", "append", "selection", "sel", "replace", "preserve", "add", "addse", "replacesel" ],
+				"title" : [ "Loading modes" ]
+			},
 			"Saveandloadtrees" : {
 				"filename" : [ "bach.help.notation.save and load.04_saveandloadtrees.maxpat" ],
 				"objects" : [ "bach.score" ],
@@ -5363,10 +5379,10 @@
 			},
 			"B_playslurs" : {
 				"filename" : [ "bach.help.notation.sequencing.19b_playslurs.maxpat" ],
-				"objects" : [  ],
-				"seealso" : [  ],
-				"tags" : [  ],
-				"title" : [ "" ]
+				"objects" : [ "bach.score", "bach.roll" ],
+				"seealso" : [ ": play", "playmode", "playout+syntax", "play+offline", "slur" ],
+				"tags" : [ "sequencer", "sequencing", "play", "slur", "playslur", "playslurs", "playslursend", "playslurend", "end", "slurend", "begin", "start", "stop" ],
+				"title" : [ "Sequencing slurs" ]
 			},
 			"Tracktempo" : {
 				"filename" : [ "bach.help.notation.sequencing.20_tracktempo.maxpat" ],
@@ -6270,8 +6286,8 @@
 				"Flags" : {
 					"filename" : [ "bach.help.notation.syntax.20_gathered syntax.21_flags.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
-					"seealso" : [ "lock", "mute", "solo", "lock+rhythmic+tree" ],
-					"tags" : [ "gathered", "syntax", "flag", "notation", "item", "lock", "mute", "solo", "rhythmic", "tree" ],
+					"seealso" : [ ": lock", "mute", "solo", "lock+rhythmic+tree", "sel", "select", "unsel" ],
+					"tags" : [ "gathered", "syntax", "flag", "notation", "item", "lock", "mute", "solo", "rhythmic", "tree", "selected", "select", "selection", "sel" ],
 					"title" : [ "Notation item flags" ]
 				},
 				"Slurs" : {

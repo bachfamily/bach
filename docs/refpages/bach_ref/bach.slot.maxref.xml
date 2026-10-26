@@ -926,6 +926,16 @@
 				If last slot is reached, the first slot window will be opened.
 			</description>
 		</method>
+		<method name="openinspector">
+			<arglist />
+			<digest>
+				Open bach inspector for selection
+			</digest>
+			<description>
+				The <m>openinspector</m> message opens the bach inspector for the selected notation item or for the slotinfo, in case
+				a slot window is open.
+			</description>
+		</method>
 		<method name="openslotwin">
 			<arg name="slot_number_or_name" optional="0" type="int/symbol" />
 			<digest>

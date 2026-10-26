@@ -15992,7 +15992,11 @@ t_symbol *notationitemflag2symbol(long flag)
         buf[cur++] = 's';
     if (flag & k_FLAG_ELEMENT_BEAMING_TREE_LOCKED)
         buf[cur++] = 'b';
-
+#ifdef BACH_NOTATIONITEM_FLAG_HAS_SELECTION
+    if (flag & k_FLAG_ELEMENT_SELECTED)
+        buf[cur++] = 'x';
+#endif
+    
     buf[cur++] = 0;
     return buf[0] ? gensym(buf) : NULL;
 }
@@ -16023,6 +16027,12 @@ long symbol2notationitemflag(t_symbol *sym)
             case 'b':
                 res += k_FLAG_ELEMENT_BEAMING_TREE_LOCKED;
                 break;
+
+#ifdef BACH_NOTATIONITEM_FLAG_HAS_SELECTION
+            case 'x':
+                res += k_FLAG_ELEMENT_SELECTED;
+                break;
+#endif
                 
             default:
                 break;
@@ -29058,17 +29068,26 @@ void set_multiple_flags_from_llll_for_undo(t_notation_obj *r_ob, t_llll *ll, t_n
         }
     } else 
         notation_item_set_flags_from_llllelem(r_ob, ll->l_head, father_item, false);
+
+#ifdef BACH_NOTATIONITEM_FLAG_HAS_SELECTION
+    // this is useful if's any selection flag in the object
+    move_preselecteditems_to_selection(r_ob, k_SELECTION_MODE_FORCE_SELECT, false, false);
+#endif
 }
 
 
 // beware!! DESTRUCTIVE: destroys *elem ONLY if it is really a mutelock flag 
-char notation_item_set_flags_from_llllelem(t_notation_obj *r_ob, t_llllelem *elem, t_notation_item *item, char destroy_flag_llllelem){
+char notation_item_set_flags_from_llllelem(t_notation_obj *r_ob, t_llllelem *elem, t_notation_item *item, char destroy_flag_llllelem)
+{
     if (elem && (hatom_gettype(&elem->l_hatom) == H_LONG || hatom_gettype(&elem->l_hatom) == H_SYM)) {
         long flags = hatom_gettype(&elem->l_hatom) == H_LONG ? hatom_getlong(&elem->l_hatom) : symbol2notationitemflag(hatom_getsym(&elem->l_hatom));
         char locked = (flags & k_FLAG_ELEMENT_LOCKED) ? 1 : 0;
         char muted = (flags & k_FLAG_ELEMENT_MUTED) ? 1 : 0;
         char solo = (flags & k_FLAG_ELEMENT_SOLO) ? 1 : 0;
         char tree_locked = (flags & k_FLAG_ELEMENT_BEAMING_TREE_LOCKED) ? 1 : 0;
+#ifdef BACH_NOTATIONITEM_FLAG_HAS_SELECTION
+        char selected = (flags & k_FLAG_ELEMENT_SELECTED) ? 1 : 0;
+#endif
         if (item->type == k_MEASURE) {
             ((t_measure *) item)->locked = locked;
             ((t_measure *) item)->muted = muted;
@@ -29089,6 +29108,15 @@ char notation_item_set_flags_from_llllelem(t_notation_obj *r_ob, t_llllelem *ele
         }
         if (destroy_flag_llllelem)
             llll_destroyelem(elem);
+#ifdef BACH_NOTATIONITEM_FLAG_HAS_SELECTION
+        if (selected) {
+            notation_item_add_to_preselection(r_ob, item);
+        } else {
+            if (item->selected) {
+                notation_item_delete_from_selection(r_ob, item);
+            }
+        }
+#endif
         return 1;
     } else {
         if (item->type == k_MEASURE){
@@ -31593,11 +31621,15 @@ void select_single_notation_item_and_force_inscreen(t_notation_obj *r_ob, t_nota
 
 long get_element_global_flag(t_notation_obj *r_ob, t_notation_item *item){
     long val = k_FLAG_ELEMENT_LOCKED * notation_item_is_globally_locked(r_ob, item) + k_FLAG_ELEMENT_MUTED * notation_item_is_globally_muted(r_ob, item) + k_FLAG_ELEMENT_SOLO * notation_item_is_globally_solo(r_ob, item);
+
+#ifdef BACH_NOTATIONITEM_FLAG_HAS_SELECTION
+    val += k_FLAG_ELEMENT_SELECTED * notation_item_is_globally_selected(r_ob, item);
+#endif
     
     if (item->type == k_MEASURE)
         val += k_FLAG_ELEMENT_BEAMING_TREE_LOCKED * ((t_measure *) item)->lock_rhythmic_tree;
     
-    return 0;
+    return val;
 }
 
 long get_element_flag(t_notation_obj *r_ob, t_notation_item *item)
@@ -31611,6 +31643,10 @@ long get_element_flag(t_notation_obj *r_ob, t_notation_item *item)
         val = k_FLAG_ELEMENT_LOCKED * ((t_measure *) item)->locked + k_FLAG_ELEMENT_MUTED * ((t_measure *) item)->muted + k_FLAG_ELEMENT_SOLO * ((t_measure *) item)->solo + k_FLAG_ELEMENT_BEAMING_TREE_LOCKED * ((t_measure *) item)->lock_rhythmic_tree;
     else if (item->type == k_VOICE)
         val = k_FLAG_ELEMENT_LOCKED * ((t_voice *) item)->locked + k_FLAG_ELEMENT_MUTED * ((t_voice *) item)->muted + k_FLAG_ELEMENT_SOLO * ((t_voice *) item)->solo;
+#ifdef BACH_NOTATIONITEM_FLAG_HAS_SELECTION
+    if (item->selected)
+        val += k_FLAG_ELEMENT_SELECTED;
+#endif
     return val;
 }
 

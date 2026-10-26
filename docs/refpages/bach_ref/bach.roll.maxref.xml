@@ -1021,22 +1021,27 @@
 			</description>
 		</method>
 		<method name="addchords">
+			<arg name="mode" optional="1" type="symbol" />
 			<arg name="offset" optional="1" type="number" />
 			<arg name="chords" optional="1" type="llll" />
 			<digest>
 				Add several chords
 			</digest>
 			<description>
-				Syntax: <b>addchords <m>[&lt;number: offset&gt;]</m> <m>[&lt;llll: chords&gt;]</m> </b><br />
+				Syntax: <b>addchords <m>[&lt;symbol: mode&gt;]</m> <m>[&lt;number: offset&gt;]</m> <m>[&lt;llll: chords&gt;]</m> </b><br />
 				Examples:<br />
 				• <b>addchords [[217 [7185 492 100]] [971 [6057 492 100]]] [[1665 [7157 492 100]]]</b>   <i>→ add some chords in gathered syntax</i><br />
+				• <b>addchords addsel [[217 [7185 492 100]] [971 [6057 492 100]]] [[1665 [7157 492 100]]]</b>   <i>→ same thing, new chords are selected</i><br />
 				• <b>addchords 1500 [[217 [7185 492 100]] [971 [6057 492 100]]] [[1665 [7157 492 100]]]</b>   <i>→ same thing, shifted by 1.5 seconds</i><br />
 				<br />
 				An <m>addchords</m> message will add several chords to the existing ones.
 				If the message has no arguments, the chords parameters are supposed to have been inserted through the separate parameter inlets,
 				and the <m>addchords</m> message will essentially act like a <m>bang</m> which in turns will preserve the existing content,
 				and add the newly introduced chords. Refer to the <m>llll</m> message to know more about separate parameter syntax of the inlets.<br />
-				If the message has arguments, the first optional one is a number setting an offset (in millisecond) for the chords to be added.
+				If the message has arguments, the first optional one is a symbol that determines the adding mode:
+				"fromscratch" (replaces everything), "add" (append to existing ones, default), "addsel" (same, but select new stuff),
+				"replacesel" (replace old selection with the new incoming chords.
+				The second optional argument is a number setting an offset (in millisecond) for the chords to be added.
 				Further arguments are supposed to be llll form, exactly in in the same syntax as the whole <o>bach.roll</o>
 				gathered syntax (without header specification): one llll for each voice,
 				containing one llll for each chord to add (in chord gathered syntax, also see the <m>addchord</m> message). If for a given voice
@@ -4751,6 +4756,16 @@
 				<br />				See also:<m>distribute</m><br />
 			</description>
 		</method>
+		<method name="openinspector">
+			<arglist />
+			<digest>
+				Open bach inspector for selection
+			</digest>
+			<description>
+				The <m>openinspector</m> message opens the bach inspector for the selected notation item or for the slotinfo, in case
+				a slot window is open.
+			</description>
+		</method>
 		<method name="openslotwin">
 			<arg name="slot_number_or_name" optional="0" type="int/symbol" />
 			<digest>
@@ -5342,6 +5357,16 @@
 		<method name="resetslotinfo">
 			<arglist />
 			<digest>
+				Reset the custom articulations definition to the default one
+			</digest>
+			<description>
+				A <m>resetarticulationinfo</m> message will reset the all the <m>articulationinfo</m> to the original one, i.e. will delete
+				all the user-defined articulations.
+			</description>
+		</method>
+		<method name="resetslotinfo">
+			<arglist />
+			<digest>
 				Reset the slotinfo to the default one
 			</digest>
 			<description>
@@ -5360,16 +5385,6 @@
 			</digest>
 			<description>
 				A <m>resetcommands</m> message will reset the all the <m>comnands</m> to the original ones
-			</description>
-		</method>
-		<method name="resetslotinfo">
-			<arglist />
-			<digest>
-				Reset the custom articulations definition to the default one
-			</digest>
-			<description>
-				A <m>resetarticulationinfo</m> message will reset the all the <m>articulationinfo</m> to the original one, i.e. will delete
-				all the user-defined articulations.
 			</description>
 		</method>
 		<method name="resetslotinfo">

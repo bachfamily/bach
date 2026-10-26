@@ -9,7 +9,7 @@
             "modernui": 1
         },
         "classnamespace": "box",
-        "rect": [ 133.0, 172.0, 617.0, 539.0 ],
+        "rect": [ 449.0, 250.0, 617.0, 539.0 ],
         "boxes": [
             {
                 "box": {
@@ -147,7 +147,7 @@
                     "numinlets": 2,
                     "numoutlets": 1,
                     "outlettype": [ "" ],
-                    "patching_rect": [ -187.0, 82.5, 129.0, 89.0 ],
+                    "patching_rect": [ -187.0, 82.5, 132.0, 89.0 ],
                     "text": "roll [ [ 1811.428589 [ 8000. 492. 100 0 ] 0 ] [ 2582.857178 [ 5900. 492. 100 0 ] 0 ] [ 3277.142822 [ 8400. 492. 100 0 ] 0 ] 0 ]"
                 }
             },
@@ -244,7 +244,7 @@
                     "numinlets": 1,
                     "numoutlets": 0,
                     "patching_rect": [ 6.0, 8.0, 403.0, 23.0 ],
-                    "text": "Adding chord modes in bach.roll",
+                    "text": "Addchords modes in bach.roll",
                     "varname": "title"
                 }
             },
@@ -258,7 +258,7 @@
                     "numinlets": 1,
                     "numoutlets": 0,
                     "patching_rect": [ 6.0, 476.0, 585.0, 31.0 ],
-                    "text": "Tags: message, addchords, add, chord, adding, offset, append, several, roll, fromscratch, scratch, from, sel, addsel, replace, replacesel",
+                    "text": "Tags: message, addchords, add, chord, adding, offset, append, several, roll, fromscratch, scratch, from, sel, addsel, replace, replacesel, mode",
                     "textcolor": [ 0.5, 0.5, 0.5, 1.0 ],
                     "varname": "tags"
                 }

@@ -89,6 +89,8 @@
 
 //    #define BACH_GROUPS_ARE_DOUBLY_LINKED     ///< Commenting this line saves 8 bytes in the t_notation_item structure
 
+    #define BACH_NOTATIONITEM_FLAG_HAS_SELECTION    ///< Flags contain info on selection
+
 
     #ifdef CONFIGURATION_Development
 
@@ -1089,6 +1091,7 @@ typedef enum _bach_element_flags {
     k_FLAG_ELEMENT_MUTED = 2,                ///< The element is muted
     k_FLAG_ELEMENT_SOLO = 4,                ///< The element is solo
     k_FLAG_ELEMENT_BEAMING_TREE_LOCKED = 8,    ///< The element (measure) has a locked rhythmic tree
+    k_FLAG_ELEMENT_SELECTED = 16,           ///< The element is selected
 } e_notation_item_flags;
 
 

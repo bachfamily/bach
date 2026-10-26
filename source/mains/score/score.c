@@ -3624,8 +3624,10 @@ char legato(t_score *x, long mode)
                             localcopy = llll_clone(last_nonrest_chord_llll);
                             set_scorechord_values_from_llll((t_notation_obj *) x, chord, localcopy, false, false);
                             llll_free(localcopy);
-                            
-                            for (nt = chord->firstnote; nt; nt = nt->next)    
+#ifdef BACH_NOTATIONITEM_FLAG_HAS_SELECTION
+    move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_FORCE_SELECT, false, false);
+#endif
+                            for (nt = chord->firstnote; nt; nt = nt->next)
                                 note_compute_approximation((t_notation_obj *) x, nt); 
                             
                             chord->r_sym_duration = duration_to_set;

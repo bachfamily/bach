@@ -9504,6 +9504,9 @@ t_chord *addchord_from_llll(t_roll *x, t_llll* chord, t_rollvoice* voice, char a
             newchord = addchord_from_values(x, voice->v_ob.number, num_notes, onset, -1, 2 * num_notes, argv, NULL, NULL, 0, NULL, false, forced_chord_ID, forced_note_IDs, false);
             if (newchord) {
                 set_rollchord_values_from_llll((t_notation_obj *) x, newchord, chord, 0., true, also_recompute_total_length, true);
+#ifdef BACH_NOTATIONITEM_FLAG_HAS_SELECTION // because flags that could be added could mean selecting the object
+                move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_FORCE_SELECT, false, false);
+#endif
                 chord_compute_note_approximations((t_notation_obj *)x, newchord, false);
                 chord_set_recompute_parameters_flag((t_notation_obj *)x, newchord);
             }
@@ -10123,12 +10126,17 @@ void set_roll_from_llll(t_roll *x, t_llll* inputlist, char also_lock_general_mut
 
     process_chord_parameters_calculation_NOW(x);
     
+#ifdef BACH_NOTATIONITEM_FLAG_HAS_SELECTION
+    // this is useful either if  "must_select_appended_chords" is active, or if there's any selection flag in the object
+    move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_FORCE_SELECT, false, false);
+#else
     if (must_select_appended_chords) {
-        move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, false, false);
+        move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_FORCE_SELECT, false, false);
     }
-    
+#endif
+
     if (also_lock_general_mutex)
-        unlock_general_mutex((t_notation_obj *)x);    
+        unlock_general_mutex((t_notation_obj *)x);
     
     check_correct_scheduling((t_notation_obj *)x, also_lock_general_mutex);
     

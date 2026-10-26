@@ -1762,6 +1762,9 @@ long undo_redo_information_apply(t_notation_obj *r_ob, t_undo_redo_information *
                     if (modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE_CHECK_ORDER)
                         (*flags) |= k_UNDO_PERFORM_FLAG_CHECK_ORDER_FOR_CHORDS;
                 }
+#ifdef BACH_NOTATIONITEM_FLAG_HAS_SELECTION // because flags that could be added could mean selecting the object
+                move_preselecteditems_to_selection(r_ob, k_SELECTION_MODE_FORCE_SELECT, false, false);
+#endif
                 notationobj_make_temporary_slurs_permanent(r_ob);
             } else if (modif_type == k_UNDO_MODIFICATION_TYPE_REMOVE) { // surely roll
                 (*flags) |= k_UNDO_PERFORM_FLAG_RECOMPUTE_TOTAL_LENGTH;
