@@ -84,6 +84,7 @@
 
     #define BACH_NEW_LLLLSLOT_SYNTAX            ///< By now, this is how bach works... (Previously: This one might or might not be advisable. Removes the outer ( ) in the llll and matrix slot syntax )
 
+    #define BACH_ONLY_MARK_AS_PLAYED_LATEST_PLAYHEAD ///< If defined, it only keeps the info about the latest playhead being played. Advantage: the color of notes changes according to the lastest playhead; disadvantage: you won't know all the playhead that are playing a given note, just the latest one
     #define BACH_SUPPORT_SLURS
     #define BACH_ALLOW_SLURS_ON_RESTS
 //    #define BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX ///< Disabled from bach 0.9; re-enable it for old syntax support
@@ -167,7 +168,7 @@
 #define    CONST_MAX_NESTED_TUPLETS_FOR_SPEEDY 1                ///< Maximum nested tuplet insertion while speedy editing
 #define CONST_MAX_CENTS 100000                                ///< Loose upper bound for the midicents of a note, only when setting them via the bach inspector 
 #define CONST_MIN_SYM_DURATION_FOR_CHORD (genrat(1,8192))    ///< Minimum symbolic duration for a chord (this is due to the fact that going under this duration may cause problems with beaming tree algorithms, and so on...) 
-#define CONST_MAX_PLAYHEADS 8                                ///< Maximum number of playheads
+#define CONST_MAX_PLAYHEADS 8                                ///< Maximum number of playheads; must be less than 54 otherwise one needs to change the "played" interface attributes
 
 /** @}*/
 
@@ -2556,6 +2557,9 @@ typedef struct _slur
 } t_slur;
 
 
+typedef t_uint64 t_playedby_info;
+
+
 /** The data structure representing a note. Notes, inside a chord, form a double linked list.
     @remark        VERY IMPORTANT - A general remark throughout all bach notationAPI:
                 Some pixel values are marked as "unscaled" and have an "u" in their name.
@@ -2607,7 +2611,7 @@ typedef struct _note
     // lock/mute/play/solo
     char        locked;                    ///< Flag telling if the note is locked
     char        muted;                    ///< Flag telling if the note is muted
-    t_uint64    played;                    ///< Flag telling if the note is being played and by which voice(s): it's a bit-field!
+    t_playedby_info    played;                    ///< Flag telling if the note is being played and by which playheads (and which is the latest one)
     char        solo;                    ///< Flag telling if the note is soloed
 
 #ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
@@ -2851,7 +2855,7 @@ typedef struct _chord
     
     char        locked;                            ///< Flag telling if the chord is locked
     char        muted;                            ///< Flag telling if the chord is muted
-    t_uint64    played;                            ///< Flag telling if AT LEAST one note of the chord is being played, and by which playhead (it's a bit field!)
+    t_playedby_info    played;                    ///< Flag telling if AT LEAST one note of the chord is being played, and by which playhead (it contains a bitfield) and which is the latest
     char        solo;                            ///< Flag telling if the chord is soloed
 
     char        just_added_from_separate_parameters;        ///< Private flag, used in [bach.roll], telling if the chord has just been added from a separate parameters input
@@ -7030,7 +7034,7 @@ const char *notationobj_get_dynamic_fontname(t_notation_obj *r_ob);
     @param solo            Is element solo?
     @param linear_edited    Is element being speedy-edited? (for [bach.score] only)
  */
-void change_color_depending_on_playlockmute(t_notation_obj *r_ob, t_jrgba *color, char selected, t_uint64 play, char locked, char muted, char solo, char linear_edited);
+void change_color_depending_on_playlockmute(t_notation_obj *r_ob, t_jrgba *color, char selected, t_playedby_info play, char locked, char muted, char solo, char linear_edited);
 
 
 /**    Obtain the color of a notehead
@@ -7047,7 +7051,7 @@ void change_color_depending_on_playlockmute(t_notation_obj *r_ob, t_jrgba *color
     @return                            Resulting color for the notehead
     @remark                            This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba note_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, t_uint64 is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity);
+t_jrgba note_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, t_playedby_info is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity);
 
 
 /**    Obtain the color of a duration line
@@ -7064,7 +7068,7 @@ t_jrgba note_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected
     @return                            Resulting color for the line
     @remark                            This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba durationline_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, t_uint64 is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity);
+t_jrgba durationline_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, t_playedby_info is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity);
 
 
 /**    Obtain the color of a accidental
@@ -7081,7 +7085,7 @@ t_jrgba durationline_get_color(t_notation_obj *r_ob, t_note* note, char is_note_
     @return                            Resulting color for the accidental
     @remark                            This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba accidental_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, t_uint64 is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity);
+t_jrgba accidental_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, t_playedby_info is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity);
 
 
 /**    Obtain the color of the note tail
@@ -7098,7 +7102,7 @@ t_jrgba accidental_get_color(t_notation_obj *r_ob, t_note* note, char is_note_se
     @return                            Resulting color for the note tail
     @remark                            This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba tail_get_color(t_notation_obj *r_ob, t_note* note, char is_tail_selected, t_uint64 is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity);
+t_jrgba tail_get_color(t_notation_obj *r_ob, t_note* note, char is_tail_selected, t_playedby_info is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity);
 
 
 /**    Obtain the color of a chord stem
@@ -7114,7 +7118,7 @@ t_jrgba tail_get_color(t_notation_obj *r_ob, t_note* note, char is_tail_selected
     @return                            Resulting color for the chord stem
     @remark                            This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba stem_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_uint64 is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
+t_jrgba stem_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_playedby_info is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
 
 t_jrgba chord_get_stem_color(t_notation_obj *r_ob, t_chord* chord);
 
@@ -7132,7 +7136,7 @@ t_jrgba chord_get_stem_color(t_notation_obj *r_ob, t_chord* chord);
     @return                            Resulting color for the chord flag
     @remark                            This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba flag_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_uint64 is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
+t_jrgba flag_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_playedby_info is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
 
 
 /**    Obtain the color of a rest
@@ -7148,7 +7152,7 @@ t_jrgba flag_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selec
     @return                            Resulting color for the rest
     @remark                            This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba rest_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_uint64 is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
+t_jrgba rest_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_playedby_info is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
 
 /**    Obtain the color of an articulation
     @ingroup                        notation_colors
@@ -7163,7 +7167,7 @@ t_jrgba rest_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selec
     @return                            Resulting color for the articulation
     @remark                            This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba articulation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_uint64 is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
+t_jrgba articulation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_playedby_info is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
 
 
 /**    Obtain the color of a textual annotation
@@ -7179,7 +7183,7 @@ t_jrgba articulation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_cho
     @return                            Resulting color for the text annotation
     @remark                            This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba annotation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_uint64 is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
+t_jrgba annotation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_playedby_info is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
 
 
 /**    Obtain the color of a dynamic marking
@@ -7195,7 +7199,7 @@ t_jrgba annotation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord
     @return                            Resulting color for the dynamic
     @remark                            This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba dynamics_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_uint64 is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
+t_jrgba dynamics_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_playedby_info is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
 
 
 /**    Get the color of beams.
@@ -19509,9 +19513,21 @@ long hatom_to_playhead_index(t_notation_obj *r_ob, t_hatom *h);
 long atom_to_playhead_index(t_notation_obj *r_ob, t_atom *a);
 
 // utilities to manipulate the ->played bitfield of t_note and t_chord
-void bit_set(t_uint64 *played, long whichbit);
-void bit_unset(t_uint64 *played, long whichbit);
-bool bit_is_set(t_uint64 played, long whichbit);
+void mark_as_played(t_playedby_info *played, t_uint8 playhead);
+void mark_as_unplayed(t_playedby_info *played, t_uint8 playhead);
+
+t_uint64 get_playheads(t_playedby_info x);
+t_uint8 get_latest_playhead(t_playedby_info x);
+t_playedby_info make_playedby_info(t_uint64 playheads, t_uint8 latest_playhead);
+t_bool is_playhead_bit_set(t_playedby_info x, t_uint8 playhead);
+void set_playhead_bit(t_playedby_info *x, t_uint8 playhead);
+void clear_playhead_bit(t_playedby_info *x, t_uint8 playhead);
+void clear_playheads(t_playedby_info *x);
+void set_latest_playhead(t_playedby_info *x, t_uint8 latest_playhead);
+
+//void bit_set(t_uint64 *played, long whichbit);
+//void bit_unset(t_uint64 *played, long whichbit);
+//bool bit_is_set(t_uint64 played, long whichbit);
 
 
 // PRE-SCHEDULING

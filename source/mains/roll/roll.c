@@ -11336,7 +11336,7 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
 {
     double chord_alignment_x, stem_x;
     char is_chord_selected, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited;
-    char is_chord_played;
+    t_playedby_info is_chord_played;
     long num_notes = curr_ch->num_notes;
     double first_note_y_real, last_note_y_real;
     t_note *curr_nt;
@@ -11477,7 +11477,7 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
             char is_durationline_selected = is_note_selected;
             char is_tail_selected = (notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)curr_nt->lastbreakpoint) ^ notation_item_is_preselected((t_notation_obj *) x, (t_notation_item *)curr_nt->lastbreakpoint));
             char note_unselected = false;
-            t_uint64 is_note_played = 0; // also carries info on the playheads playuing it
+            t_playedby_info is_note_played = 0; // also carries info on the playheads playuing it
             char is_note_locked, is_note_muted, is_note_solo;
             double note_y_real, note_x_real;
             double ledger_lines_y[CONST_MAX_LEDGER_LINES];

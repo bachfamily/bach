@@ -6419,19 +6419,13 @@ t_jrgba notationobj_get_playheadcolor(t_notation_obj *r_ob, long playhead)
     }
 }
 
-void change_color_depending_on_playlockmute(t_notation_obj *r_ob, t_jrgba *color, char selected, t_uint64 play, char locked, char muted, char solo, char linear_edited)
+void change_color_depending_on_playlockmute(t_notation_obj *r_ob, t_jrgba *color, char selected, t_playedby_info play, char locked, char muted, char solo, char linear_edited)
 {
-    if (play) {
+    if (get_playheads(play) != 0) {
         if (r_ob->num_playheads <= 1) {
             *color = r_ob->j_play_rgba;
         } else {
-            long playhead = -1;
-            for (long b = 0; b < r_ob->num_playheads && b < 64; b++) {
-                if (bit_is_set(play, b)) {
-                    playhead = b;
-                    break;
-                }
-            }
+            long playhead = get_latest_playhead(play);
             if (playhead >= 0) {
                 *color = notationobj_get_playheadcolor(r_ob, playhead);
             } else {
@@ -6570,7 +6564,7 @@ t_jrgba floatlist_slot_to_color(t_slot *slot)
 
 
 
-t_jrgba note_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, t_uint64 is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity)
+t_jrgba note_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, t_playedby_info is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity)
 {
     t_jrgba notecolor = r_ob->j_note_rgba;
     
@@ -6592,7 +6586,7 @@ t_jrgba note_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected
 }
 
 
-t_jrgba durationline_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, t_uint64 is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity)
+t_jrgba durationline_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, t_playedby_info is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity)
 {
     t_jrgba dlcolor = r_ob->j_note_rgba;
     
@@ -6617,7 +6611,7 @@ t_jrgba durationline_get_color(t_notation_obj *r_ob, t_note* note, char is_note_
 
 
 
-t_jrgba accidental_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, t_uint64 is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity)
+t_jrgba accidental_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, t_playedby_info is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity)
 {
     t_jrgba accidentalcolor = r_ob->j_accidentals_rgba;
     
@@ -6639,7 +6633,7 @@ t_jrgba accidental_get_color(t_notation_obj *r_ob, t_note* note, char is_note_se
 }
 
 
-t_jrgba tail_get_color(t_notation_obj *r_ob, t_note* note, char is_tail_selected, t_uint64 is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity)
+t_jrgba tail_get_color(t_notation_obj *r_ob, t_note* note, char is_tail_selected, t_playedby_info is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity)
 {
     t_jrgba tailcolor = r_ob->j_note_rgba;
     
@@ -6660,7 +6654,7 @@ t_jrgba tail_get_color(t_notation_obj *r_ob, t_note* note, char is_tail_selected
 }
 
 
-t_jrgba stem_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_uint64 is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited)
+t_jrgba stem_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_playedby_info is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited)
 {
     t_jrgba stemcolor = r_ob->j_stem_rgba;
 
@@ -6709,7 +6703,7 @@ t_jrgba chord_get_stem_color(t_notation_obj *r_ob, t_chord* chord)
 }
 
 
-t_jrgba flag_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_uint64 is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited)
+t_jrgba flag_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_playedby_info is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited)
 {
     t_jrgba flagcolor = r_ob->j_flag_rgba;
 
@@ -6729,7 +6723,7 @@ t_jrgba flag_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selec
 }
 
 
-t_jrgba rest_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_uint64 is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited)
+t_jrgba rest_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_playedby_info is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited)
 {
     t_jrgba restcolor = r_ob->j_rest_rgba;
     
@@ -6764,7 +6758,7 @@ t_jrgba tuplet_get_color(t_notation_obj *r_ob, t_voice *voice)
 }
 
 
-t_jrgba articulation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_uint64 is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited)
+t_jrgba articulation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_playedby_info is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited)
 {
     t_jrgba articulationcolor = r_ob->j_articulations_rgba;
 
@@ -6795,7 +6789,7 @@ t_jrgba articulation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_cho
 }
 
 
-t_jrgba annotation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_uint64 is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited)
+t_jrgba annotation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_playedby_info is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited)
 {
     t_jrgba annotationcolor = r_ob->j_annotation_rgba;
     
@@ -6836,7 +6830,7 @@ const char *notationobj_get_dynamic_fontname(t_notation_obj *r_ob)
     return "November for bach";
 }
 
-t_jrgba dynamics_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_uint64 is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited)
+t_jrgba dynamics_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_playedby_info is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited)
 {
     t_jrgba dynamicscolor = r_ob->j_dynamics_rgba;
     
@@ -23211,7 +23205,7 @@ void note_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_note *no
 
     if (note->played) {
         for (long ph = 0; ph < r_ob->num_playheads; ph++) {
-            if (bit_is_set(note->played, ph)) {
+            if (is_playhead_bit_set(note->played, ph)) {
                 t_llllelem *playedelem = r_ob->notes_being_played[ph]->l_head, *nextplayedelem;
                 while (playedelem) {
                     nextplayedelem = playedelem->l_next;
@@ -30093,6 +30087,7 @@ t_llll* note_get_breakpoint_values_as_llll(t_notation_obj *r_ob, t_note *note, e
         double duration = note->duration;
         if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && mode == k_CONSIDER_FOR_SAMPLING && r_ob->dl_spans_ties)
             duration = get_all_tied_note_sequence_duration_ms(note);
+        // TODO: IF CANCRIZANS....
         while (temp && note->parent->onset + temp->rel_x_pos * duration < hot_point)
             temp = temp->next;
         if (temp && temp->prev && (note->parent->onset + temp->rel_x_pos * duration != hot_point)) {

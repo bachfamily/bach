@@ -9135,22 +9135,22 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
             char is_chord_selected = (notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)curr_ch) ^ notation_item_is_preselected((t_notation_obj *) x, (t_notation_item *)curr_ch)); // 1 if chord is selected
             
             // handling play
-            t_uint64 is_chord_played = 0;
+            t_playedby_info is_chord_played = make_playedby_info(0, 0);
             
             if (is_grace_chord)
                 jf_grace = jfont_create_debug(x->r_ob.noteheads_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.notation_typo_preferences.base_pt * x->r_ob.zoom_y * grace_ratio);
             
             if (x->r_ob.playing && x->r_ob.play_mode == k_PLAYMODE_CHORDWISE && x->r_ob.highlight_played_notes) {
-                if (curr_ch->played) {
+                if (get_playheads(curr_ch->played) != 0) {
                     t_chord *lasttiedchord_forplay;
                     if (curr_ch->firstnote)
                         lasttiedchord_forplay = x->r_ob.play_tied_elements_separately ? curr_ch : last_all_tied_chord(curr_ch, false);
                     else
                         lasttiedchord_forplay = x->r_ob.play_rests_separately ? curr_ch : rest_get_last_in_seq(curr_ch, false);
                     for (long ph = 0; ph < x->r_ob.num_playheads; ph++) {
-                        if (bit_is_set(curr_ch->played, ph)) {
+                        if (is_playhead_bit_set(curr_ch->played, ph)) {
                             if (lasttiedchord_forplay && x->r_ob.play_head_ms[ph] < lasttiedchord_forplay->onset + lasttiedchord_forplay->duration_ms) {
-                                bit_set(&is_chord_played, ph);
+                                mark_as_played(&is_chord_played, ph);
                                 break;
                             }
                         }
@@ -9389,9 +9389,9 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                         char j;
                         double dot_x_offset, dot_y_offset;
                         t_bpt *selected_breakpoint = NULL;
-                        t_uint64 is_note_played = false;
                         double note_end_pos = end_pos;
-                        
+                        t_playedby_info is_note_played = make_playedby_info(0, 0);
+
 //                        if (x->r_ob.show_durations && x->r_ob.dl_spans_ties > 2 && curr_nt->tie_from)
 //                            continue;
                         
@@ -9413,9 +9413,9 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
 								if (should_element_be_played((t_notation_obj *) x, (t_notation_item *)curr_nt) && (curr_ch->played || curr_nt->played)) {
 									t_note *lasttiednote_forplay = x->r_ob.play_tied_elements_separately ? curr_nt : note_get_last_in_tieseq(curr_nt);
                                     for (long ph = 0; ph < x->r_ob.num_playheads; ph++) {
-                                        if (bit_is_set(curr_ch->played, ph) || bit_is_set(curr_nt->played, ph)) {
+                                        if (is_playhead_bit_set(curr_ch->played, ph) || is_playhead_bit_set(curr_nt->played, ph)) {
                                             if (x->r_ob.play_head_ms[ph] < lasttiednote_forplay->parent->onset + lasttiednote_forplay->parent->duration_ms) {
-                                                bit_set(&is_note_played, ph);
+                                                mark_as_played(&is_note_played, ph);
                                             }
                                         }
                                     }
