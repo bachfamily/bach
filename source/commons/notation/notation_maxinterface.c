@@ -470,7 +470,7 @@ t_llll *chord_get_as_llll_for_sending(t_notation_obj *r_ob, t_chord *chord, e_da
 
         t_llll *all_notes_llll = llll_get();
         t_note *note;
-        bool cancrizans = (playhead >= 0 && playhead < CONST_MAX_PLAYHEADS ? (r_ob->playback_specs.playhead_rate[playhead] < 0) : false);
+        bool cancrizans = playhead_is_cancrizans(r_ob, playhead);
 
         for (note =  chord->firstnote; note; note = note->next) {
             if (should_element_be_played(r_ob, (t_notation_item *)note)) {

@@ -19515,6 +19515,7 @@ long atom_to_playhead_index(t_notation_obj *r_ob, t_atom *a);
 // utilities to manipulate the ->played bitfield of t_note and t_chord
 void mark_as_played(t_playedby_info *played, t_uint8 playhead);
 void mark_as_unplayed(t_playedby_info *played, t_uint8 playhead);
+bool playhead_is_cancrizans(t_notation_obj *r_ob, long playhead);
 
 t_uint64 get_playheads(t_playedby_info x);
 t_uint8 get_latest_playhead(t_playedby_info x);

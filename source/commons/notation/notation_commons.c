@@ -30850,8 +30850,7 @@ t_llll* get_rollnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_c
     
     double duration = 0;
     if (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) {
-        bool cancrizans = (playhead >= 0 && playhead < CONST_MAX_PLAYHEADS ? (r_ob->playback_specs.playhead_rate[playhead] < 0) : false);
-        if (cancrizans) {
+        if (playhead_is_cancrizans(r_ob, playhead)) {
             duration = r_ob->play_head_start_ms[playhead] - note->parent->onset;
         } else {
             duration = (note->parent->onset + note->duration) - r_ob->play_head_start_ms[playhead];
@@ -32042,8 +32041,7 @@ t_llll* get_scorechord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_da
          && mode != k_CONSIDER_FOR_EXPORT_PWGL && mode != k_CONSIDER_FOR_SUBDUMPING) {
         
         if (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) {
-            bool cancrizans = (playhead >= 0 && playhead < CONST_MAX_PLAYHEADS ? (r_ob->playback_specs.playhead_rate[playhead] < 0) : false);
-            if (cancrizans) {
+            if (playhead_is_cancrizans(r_ob, playhead)) {
                 ms_duration = ms_duration - (notation_item_get_tail_ms(r_ob, (t_notation_item *)chord) - r_ob->play_head_start_ms[playhead]);
             } else {
                 ms_duration = ms_duration - (r_ob->play_head_start_ms[playhead] - chord->onset);
@@ -32173,8 +32171,7 @@ t_llll* get_single_scorenote_values_as_llll(t_notation_obj *r_ob, t_note *note, 
     if (mode != k_CONSIDER_ALL_NOTES) {
         
         if (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) {
-            bool cancrizans = (playhead >= 0 && playhead < CONST_MAX_PLAYHEADS ? (r_ob->playback_specs.playhead_rate[playhead] < 0) : false);
-            if (cancrizans) {
+            if (playhead_is_cancrizans(r_ob, playhead)) {
                 ms_duration = ms_duration - (notation_item_get_tail_ms(r_ob, (t_notation_item *)chord) - r_ob->play_head_start_ms[playhead]);
             } else {
                 ms_duration = ms_duration - (r_ob->play_head_start_ms[playhead] - chord->onset);
@@ -32211,12 +32208,11 @@ t_llll* get_single_scorenote_values_as_llll(t_notation_obj *r_ob, t_note *note, 
 t_llll* get_single_rollnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_considering_types mode, long playhead)
 {
     t_llll* out_llll = llll_get();
-    bool cancrizans = (playhead >= 0 && playhead < CONST_MAX_PLAYHEADS ? (r_ob->playback_specs.playhead_rate[playhead] < 0) : false);
 
     if (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) {
         t_llll *ll = llll_get();
         llll_appendsym(ll, gensym("partial"));
-        if (cancrizans) {
+        if (playhead_is_cancrizans(r_ob, playhead)) {
             llll_appenddouble(ll, note->parent->onset);
             llll_appenddouble(ll, r_ob->play_head_start_ms[playhead]);
             llll_appenddouble(ll, r_ob->play_head_start_ms[playhead] - note->parent->onset);
