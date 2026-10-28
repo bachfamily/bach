@@ -84,7 +84,6 @@
 
     #define BACH_NEW_LLLLSLOT_SYNTAX            ///< By now, this is how bach works... (Previously: This one might or might not be advisable. Removes the outer ( ) in the llll and matrix slot syntax )
 
-    #define BACH_ONLY_MARK_AS_PLAYED_LATEST_PLAYHEAD ///< If defined, it only keeps the info about the latest playhead being played. Advantage: the color of notes changes according to the lastest playhead; disadvantage: you won't know all the playhead that are playing a given note, just the latest one
     #define BACH_SUPPORT_SLURS
     #define BACH_ALLOW_SLURS_ON_RESTS
 //    #define BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX ///< Disabled from bach 0.9; re-enable it for old syntax support
@@ -4206,10 +4205,14 @@ typedef struct _playback_specs
     bool            stop;
 
     bool            add_new_playback_voice;
-    double          global_start_play_time;
 
     bool            playhead_active[CONST_MAX_PLAYHEADS];
     bool            playhead_newly_activated[CONST_MAX_PLAYHEADS];
+    
+    bool            restrict_playback_to_name[CONST_MAX_PLAYHEADS];
+    t_symbol        *playhead_name[CONST_MAX_PLAYHEADS];
+
+    double          global_start_play_time;
 
     double          playhead_rate[CONST_MAX_PLAYHEADS];
     
@@ -5107,7 +5110,8 @@ typedef struct _notation_obj
     long        num_playheads;                          ///< Maximum index of the active playhead (outside t_playback_specs to possibly be easier used as attribute)
     t_llll      *to_preschedule;            ///< List containing t_scheduled_events to be scheduled, ONLY for the PRESCHEDULED mode.
     t_llllelem  *preschedule_cursor;        ///< Cursor while reading the prescheduled list
-    
+    char        show_playhead_names;               ///< Do we want to show the playhead names (if any) to be displayed?
+
     double        play_head_start_ms[CONST_MAX_PLAYHEADS];        ///< Position in milliseconds of the OFFLINE play cursor
     double        play_head_start_ux[CONST_MAX_PLAYHEADS];        ///< Unscaled x pixel of the OFFLINE play cursor (only used in [bach.score])
     double        play_head_ms[CONST_MAX_PLAYHEADS];            ///< Current position in milliseconds of the PLAYTIME play cursor
@@ -10599,7 +10603,7 @@ void paint_accollatura(t_notation_obj *r_ob, t_jgraphics* g, double stafftop_y, 
 
 // TBD
 e_accollatura_type accollatura_symbol_to_type(t_notation_obj *r_ob, t_symbol *acc);
-void paint_playheads(t_notation_obj *r_ob, t_jgraphics* g, t_rect rect, t_jfont *affinetransform_jf);
+void paint_playheads(t_notation_obj *r_ob, t_jgraphics* g, t_rect rect, t_jfont *playhead_jf);
 char is_clef_multistaff(t_notation_obj *r_ob, long clef);
 t_jrgba notationobj_get_playheadcolor(t_notation_obj *r_ob, long playhead);
 
@@ -15447,9 +15451,10 @@ char is_solo_with_progeny(t_notation_obj *r_ob, t_notation_item *item);
     @ingroup    play
     @param    r_ob            The notation object
     @param    item            The notation item
+       @param playhead  The playhead index if relevant, negative numbers otherwise
     @return                    1 if the element is to be played, 0 otherwise.
 */
-char should_element_be_played(t_notation_obj *r_ob, t_notation_item *item);
+char should_element_be_played(t_notation_obj *r_ob, t_notation_item *item, long playhead = -1);
 
 
 /**    Lock a chord.
@@ -19104,6 +19109,7 @@ void get_voicenames_as_text(t_notation_obj *r_ob, t_voice *voice, char *buf, lon
     @return    1 if the given name is contained inside the names, 0 otherwise.
  */
 char is_name_contained(t_hatom *contained, t_llll *container);
+char is_name_as_sym_contained(t_symbol *contained, t_llll *container);
 
 
 /** Tell if each name of a given array is contained inside an array of names.
@@ -19505,7 +19511,8 @@ void notationobj_play_preschedule(t_notation_obj *r_ob);
 void notationobj_do_play(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 void notationobj_pause(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 void notationobj_set_everything_unplayed(t_notation_obj *r_ob);
-void notationobj_parse_play_arguments(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_reset_playback_specs(t_notation_obj *r_ob);
+void notationobj_parse_playback_arguments(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 
 void notationobj_setcursor_from_double(t_notation_obj *r_ob, double pos, long playhead);
 void notationobj_setcursor_from_llll(t_notation_obj *r_ob, t_llll *args, long flags, long playhead);

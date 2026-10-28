@@ -1666,7 +1666,7 @@ void paint_accollatura(t_notation_obj *r_ob, t_jgraphics* g, double stafftop_y, 
     }
 }
 
-void paint_playheads(t_notation_obj *r_ob, t_jgraphics* g, t_rect rect, t_jfont *affinetransform_jf)
+void paint_playheads(t_notation_obj *r_ob, t_jgraphics* g, t_rect rect, t_jfont *playhead_jf)
 {
     for (long ph = 0; ph < r_ob->num_playheads; ph++) {
         double playhead_y1, playhead_y2, play_head_pos;
@@ -1701,6 +1701,12 @@ void paint_playheads(t_notation_obj *r_ob, t_jgraphics* g, t_rect rect, t_jfont 
         
         paint_playhead_line(g, color, play_head_pos, playhead_y1, playhead_y2, r_ob->playhead_width, 3 * r_ob->zoom_y, upsidedown);
        
+        if (r_ob->show_playhead_names && r_ob->playback_specs.playhead_name[ph]) {
+            char buf[4096];
+            snprintf(buf, 4096, "%s", r_ob->playback_specs.playhead_name[ph]->s_name);
+            write_text_standard(g, playhead_jf, color, buf, play_head_pos + 3 * r_ob->zoom_x, (upsidedown ? playhead_y2 : playhead_y1) + 0 * r_ob->zoom_y, 200 * r_ob->zoom_y, 200 * r_ob->zoom_y);
+        }
+        
 #ifdef BACH_PLAYHEAD_HAVE_AFFINETRANSF
         if (r_ob->playback_specs.affine_transform[ph].has_inversion) {
             char buf[200];
@@ -5124,20 +5130,26 @@ char parse_open_timepoint_syntax(t_notation_obj *r_ob, t_llll *arguments, double
         if (is_hatom_number(&arguments->l_head->l_hatom)) {
             // This is just a single number: milliseconds
             arguments_ms = hatom_getdouble(&arguments->l_head->l_hatom);
-            unscaled_x = ms_to_unscaled_xposition(r_ob, arguments_ms, 1);
-            if (syntaxtype) *syntaxtype = k_PARSETIMEPOINT_SYNTAXTYPE_MS;
+            if (ux)
+                unscaled_x = ms_to_unscaled_xposition(r_ob, arguments_ms, 1);
+            if (syntaxtype) 
+                *syntaxtype = k_PARSETIMEPOINT_SYNTAXTYPE_MS;
         } else {
             // This is possibly a name
             t_notation_item *it;
-            lock_general_mutex(r_ob);
+            bool must_unlock = true;
+            if (trylock_general_mutex(r_ob))
+                must_unlock = false; // already locked
             it = names_to_single_notation_item(r_ob, arguments);
             if (it) {
                 arguments_ms = notation_item_get_onset_ms(r_ob, it);
                 if (ux)
                     unscaled_x = ms_to_unscaled_xposition(r_ob, arguments_ms, 1);
             }
-            unlock_general_mutex(r_ob);
-            if (syntaxtype) *syntaxtype = k_PARSETIMEPOINT_SYNTAXTYPE_NAME;
+            if (must_unlock)
+                unlock_general_mutex(r_ob);
+            if (syntaxtype) 
+                *syntaxtype = k_PARSETIMEPOINT_SYNTAXTYPE_NAME;
         }
         if (tp)
             *tp = ms_to_timepoint(r_ob, arguments_ms, 0, k_MS_TO_TP_RETURN_INTERPOLATION);
@@ -13936,7 +13948,7 @@ char chord_or_any_of_its_notes_are_selected(t_notation_obj *r_ob, t_chord *ch)
 }
 
 // supported element_types are chords and notes
-char should_element_be_played(t_notation_obj *r_ob, t_notation_item *item)
+char should_element_be_played(t_notation_obj *r_ob, t_notation_item *item, long playhead)
 {
     t_playback_specs *specs = &r_ob->playback_specs;
 
@@ -13958,7 +13970,8 @@ char should_element_be_played(t_notation_obj *r_ob, t_notation_item *item)
                 }
             }
         }
-        return !notation_item_is_globally_muted(r_ob, item) && (!r_ob->are_there_solos || elem_or_subelems_solo);
+        return !notation_item_is_globally_muted(r_ob, item) && (!r_ob->are_there_solos || elem_or_subelems_solo) &&
+        (playhead < 0 || specs->restrict_playback_to_name[playhead] == false || is_name_as_sym_contained(specs->playhead_name[playhead], item->names));
     } else {
         char elem_or_subelems_selected = notation_item_is_globally_selected(r_ob, item);
         char elem_or_subelems_solo = notation_item_is_globally_solo(r_ob, item);
@@ -13987,7 +14000,9 @@ char should_element_be_played(t_notation_obj *r_ob, t_notation_item *item)
             }
         }
         return (elem_or_subelems_selected && 
-                !notation_item_is_globally_muted(r_ob, item) && (!r_ob->are_there_solos || elem_or_subelems_solo));
+                !notation_item_is_globally_muted(r_ob, item) && 
+                (!r_ob->are_there_solos || elem_or_subelems_solo)) &&
+        (playhead < 0 || specs->restrict_playback_to_name[playhead] == false || is_name_as_sym_contained(specs->playhead_name[playhead], item->names));
     }
     return true;
 }
@@ -37878,39 +37893,6 @@ t_jrgba partidx_to_color(long part_idx)
     return double_to_color(((double)part_idx - 1)/CONST_NUM_PART_COLORS, 0., 1., false, CONST_GRAPHICS_COLOR_SATURATION_FACTOR);
 }
 
-void notationobj_reset_playback_specs(t_notation_obj *r_ob)
-{
-    r_ob->playback_specs.playing_scheduling_type = k_SCHEDULING_STANDARD;
-    r_ob->playback_specs.deferlow = false;
-    r_ob->playback_specs.preschedule = false;
-    r_ob->playback_specs.selection = false;
-    r_ob->playback_specs.offline = false;
-    r_ob->playback_specs.pause = false;
-    r_ob->playback_specs.stop = false;
-    r_ob->playback_specs.add_new_playback_voice = false;
-    for (long ph = 0; ph < CONST_MAX_PLAYHEADS; ph++) {
-        r_ob->playback_specs.playhead_active[ph] = false;
-        r_ob->playback_specs.playhead_rate[ph] = 1.;
-        r_ob->playback_specs.playhead_newly_activated[ph] = false;
-        r_ob->playback_specs.start_ms_specified[ph] = false;
-        r_ob->playback_specs.start_ms[ph] = 0;
-        r_ob->playback_specs.stop_ms_specified[ph] = false;
-        r_ob->playback_specs.stop_ms[ph] = 0;
-        r_ob->playback_specs.offset_ms[ph] = 0;
-        r_ob->playback_specs.last_scheduled_ms[ph] = 0;
-        r_ob->playback_specs.dont_schedule_loop_start[ph] = false;
-        r_ob->playback_specs.dont_schedule_loop_end[ph] = false;
-        r_ob->playback_specs.playhead_cant_trespass_loop_end[ph] = false;
-#ifdef BACH_PLAYHEAD_HAVE_AFFINETRANSF
-        r_ob->playback_specs.affine_transform[ph].has_inversion = false;
-        r_ob->playback_specs.affine_transform[ph].has_translation = false;
-        r_ob->playback_specs.affine_transform[ph].inversion_is_pitch = false;
-        r_ob->playback_specs.affine_transform[ph].translation_is_pitch = false;
-        r_ob->playback_specs.affine_transform[ph].translation_amount.u_double = 0;
-        r_ob->playback_specs.affine_transform[ph].inversion_mirror.u_double = 0;
-#endif
-    }
-}
 
 void notationobj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, notationobj_fn whole_undo_tick, notationobj_notation_item_fn force_notation_item_inscreen, notationobj_undo_redo_fn undo_redo_fn, bach_paint_ext_fn paint_extended, notationobj_fn clearall, getstate_for_undo_fn getstateforundo)
 {
@@ -39456,7 +39438,18 @@ long is_name_contained_fn(t_hatom *h, t_llll *what)
     return is_hatom_in_llll_root_level(h, what);
 }
 
-char is_name_contained(t_hatom *contained, t_llll *container) 
+char is_name_as_sym_contained(t_symbol *contained, t_llll *container)
+{
+    char res = 0;
+  
+    if (!container)
+        return 0;
+    
+    res = is_symbol_in_llll_first_level(container, contained);
+    return res;
+}
+
+char is_name_contained(t_hatom *contained, t_llll *container)
 {
     char res = 0;
   

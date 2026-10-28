@@ -3406,6 +3406,11 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type)
         // @exclude bach.slot
         // @description Toggles the constant display of the playhead line (even while not playing).
 
+        CLASS_ATTR_CHAR(c, "showplayheadnames", 0, t_notation_obj, show_playhead_names);
+        CLASS_ATTR_STYLE_LABEL(c,"showplayheadnames",0,"onoff","Show Playhead Names");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showplayheadnames",0,"1");
+        // @description Toggles the display of playhead names if any
+
         CLASS_ATTR_CHAR(c,"showledgerlines",0, t_notation_obj, show_ledger_lines);
         CLASS_ATTR_STYLE_LABEL(c,"showledgerlines",0,"enumindex","Show Ledger Lines");
         CLASS_ATTR_FILTER_CLIP(c, "showledgerlines", 0, 2);

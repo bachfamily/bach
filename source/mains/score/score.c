@@ -3775,6 +3775,7 @@ void score_split(t_score *x, t_symbol *s, long argc, t_atom *argv)
                 }
             }
         }
+        llll_free(proportions_ll);
     } else {
         if (ll && ll->l_head && is_hatom_number(&ll->l_head->l_hatom)) {
             how_many = hatom_getlong(&ll->l_head->l_hatom);
@@ -5024,6 +5025,13 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example playselection offline @caption the same, in non-realtime mode ("uzi-like")
     // @seealso stop, pause, play
     class_addmethod(c, (method) notationobj_play, "playselection", A_GIMME, 0);
+
+    // @method stop @digest Start
+    // @description The <m>start</m> message activates the playback of a new playhead.
+    // This differs from <m>play</m> in that <m>play</m> begins a brand new playback session.
+    // @marg 0 @name playhead_index @optional 1 @type int
+    // @seealso pause, play, stop, playselection
+    class_addmethod(c, (method) notationobj_start, "start", A_GIMME, 0);
 
 
     // @method stop @digest Stop
