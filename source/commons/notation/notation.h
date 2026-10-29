@@ -5162,11 +5162,6 @@ typedef struct _notation_obj
     long                  scheduled_playhead[CONST_MAX_PLAYHEADS];  ///< Scheduled playhead(s) as a bitfield
     long                  num_scheduled_items;
     
-    double                start_play_time[CONST_MAX_PLAYHEADS];    ///< Time (in milliseconds) obtained by setclock_getftime() at the very beginning of the play.
-                                            ///< We'll use this time to handle rescheduling if needed. Indeed the play system is robust to score changes:
-                                            ///< if you add a note (having onset later than the current playtime playhead), bach will try to reschedule events,
-                                            ///< in order to play the note. This rescheduling is performed in the check_correct_scheduling() routine, where this 
-                                            ///< <start_play_time> is essential.
     t_llll        *notes_being_played[CONST_MAX_PLAYHEADS];        ///< llll containing all the notes (as #H_OBJ elements) currently being played. 
                                             ///< Important: for bach.score, this llll will only contain the starting note of a tied sequence of notes (if any, and if playtiedelementsseparately is set to 0).
     
@@ -19505,6 +19500,8 @@ void notationobj_stop(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv
 void notationobj_do_stop(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 void notationobj_start(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 void notationobj_do_start(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_seek(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_do_seek(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 void notationobj_play(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 void notationobj_play_offline(t_notation_obj *r_ob);
 void notationobj_play_preschedule(t_notation_obj *r_ob);

@@ -5033,6 +5033,8 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @seealso pause, play, stop, playselection
     class_addmethod(c, (method) notationobj_start, "start", A_GIMME, 0);
 
+    class_addmethod(c, (method) notationobj_seek, "seek", A_GIMME, 0);
+
 
     // @method stop @digest Stop
     // @description The <m>stop</m> message stops any ongoing playing, if <o>bach.score</o> was in play mode (nothing happens otherwise).

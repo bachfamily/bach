@@ -714,8 +714,9 @@ void notationobj_task(t_notation_obj *r_ob)
                     // we update the playhead offset // TODO: CHECK and TEST!!!!!
                     specs->offset_ms[ph] -= (r_ob->loop_region.end.position_ms - r_ob->loop_region.start.position_ms);
                     
-                    //                    setclock_getftime(r_ob->setclock->s_thing, &r_ob->start_play_time[ph]);
-                    //                    specs->offset_ms[ph] = -(r_ob->start_play_time[ph] - specs->global_start_play_time);
+                    //                    double start_play_time;
+                    //                    setclock_getftime(r_ob->setclock->s_thing, &start_play_time);
+                    //                    specs->offset_ms[ph] = -(start_play_time - specs->global_start_play_time);
                     
                     specs->last_scheduled_ms[ph] = r_ob->loop_region.start.position_ms;
                     r_ob->play_head_ms[ph] = r_ob->loop_region.start.position_ms;
@@ -733,9 +734,10 @@ void notationobj_task(t_notation_obj *r_ob)
                     // we update the playhead offset // TODO: CHECK and TEST!!!!!
                     specs->offset_ms[ph] += (r_ob->loop_region.end.position_ms - r_ob->loop_region.start.position_ms);
                     
-                    //                    setclock_getftime(r_ob->setclock->s_thing, &r_ob->start_play_time[ph]);
-                    //                    specs->offset_ms[ph] = -(r_ob->start_play_time[ph] - specs->global_start_play_time);
-                    
+                    //                    double start_play_time;
+                    //                    setclock_getftime(r_ob->setclock->s_thing, &start_play_time);
+                    //                    specs->offset_ms[ph] = -(start_play_time - specs->global_start_play_time);
+
                     specs->last_scheduled_ms[ph] = r_ob->loop_region.end.position_ms;
                     r_ob->play_head_ms[ph] = r_ob->loop_region.end.position_ms;
                     specs->dont_schedule_loop_end[ph] = false;
@@ -766,7 +768,6 @@ void notationobj_task(t_notation_obj *r_ob)
                     
                     specs->last_scheduled_ms[ph] = teleport_to_ms;
                     r_ob->play_head_ms[ph] = teleport_to_ms;
-                    setclock_getftime(r_ob->setclock->s_thing, &r_ob->start_play_time[ph]);
                     //                x->r_ob.dont_schedule_loop_start = false;
                     
                 } else {
@@ -1067,6 +1068,15 @@ void notationobj_clear_prescheduled_events(t_notation_obj *r_ob)
 
 
 
+void notationobj_seek(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv)
+{
+    if (r_ob->playing && r_ob->playback_specs.playing_scheduling_type == k_SCHEDULING_PRESCHEDULE) {
+        object_warn((t_object *)r_ob, "Can't use 'seek' message during prescheduled playback.");
+    }
+    schedule_delay(r_ob, (method) notationobj_do_seek, 0, s, argc, argv);
+}
+
+
 void notationobj_start(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv)
 {
     if (r_ob->playing && r_ob->playback_specs.playing_scheduling_type == k_SCHEDULING_PRESCHEDULE) {
@@ -1113,8 +1123,12 @@ void notationobj_set_everything_unplayed(t_notation_obj *r_ob)
 
 long hatom_to_playhead_index(t_notation_obj *r_ob, t_hatom *h)
 {
-    if (hatom_gettype(h) == H_SYM) {
-        // TODO: handle symbols
+    if (hatom_gettype(h) == H_SYM) { // it's perhaps a playhead name?
+        t_symbol *s = hatom_getsym(h);
+        for (long ph = 0; ph < r_ob->num_playheads; ph++) {
+            if (r_ob->playback_specs.playhead_name[ph] == s)
+                return ph;
+        }
     } else if (hatom_gettype(h) == H_LONG) {
         long l = hatom_getlong(h);
         if (l >= 1 && l <= CONST_MAX_PLAYHEADS) {
@@ -1249,11 +1263,11 @@ void notationobj_do_start(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *
             specs->restrict_playback_to_name[ph] = namerestrict;
         }
 
-        if (specs->start_ms_specified[ph]) {
+        if (!specs->start_ms_specified[ph]) {
             specs->start_ms[ph] = 0;
         }
 
-        if (specs->stop_ms_specified[ph]) {
+        if (!specs->stop_ms_specified[ph]) {
             specs->stop_ms[ph] = (r_ob->obj_type == k_NOTATION_OBJECT_SCORE ? r_ob->length_ms : r_ob->length_ms_till_last_note);
         }
 
@@ -1265,6 +1279,10 @@ void notationobj_do_start(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *
 
         unlock_general_mutex(r_ob);
         
+        r_ob->play_head_ms[ph] = specs->start_ms[ph];
+        if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
+            r_ob->play_head_ux[ph] = ms_to_unscaled_xposition(r_ob, r_ob->play_head_ms[ph], 1);
+
         if (r_ob->notify_playheads) {
             send_single_playhead_position(r_ob, notationobj_get_playout(r_ob), ph);
         }
@@ -1291,6 +1309,69 @@ void notationobj_do_start(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *
         llll_free(stop);
     if (rate)
         llll_free(rate);
+    llll_free(args);
+    
+    
+}
+
+
+void notationobj_do_seek(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv)
+{
+    t_playback_specs *specs = &r_ob->playback_specs;
+    t_llll *args = llllobj_parse_llll((t_object *) r_ob, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
+
+    long ph = args && args->l_head ? hatom_to_playhead_index(r_ob, &args->l_head->l_hatom) : -1;
+    double jump_to_ms = 0.;
+    
+    if (ph >= 0 && ph < CONST_MAX_PLAYHEADS && args && args->l_head) {
+        llll_behead(args);
+        if (parse_open_timepoint_syntax(r_ob, args, NULL, &jump_to_ms, NULL)) {
+            object_error((t_object *) r_ob, "Error in defining playhead seek position.");
+        } else {
+            lock_general_mutex(r_ob);
+            
+            notationobj_reset_play_cursors(r_ob, ph);
+            
+//            if (specs->start_ms[ph] != jump_to_ms) {
+//                specs->start_ms[ph] = jump_to_ms;
+//            }
+            
+            
+            specs->offset_ms[ph] -= (r_ob->play_head_ms[ph] - jump_to_ms);
+
+            //                    double start_play_time;
+            //                    setclock_getftime(r_ob->setclock->s_thing, &start_play_time);
+            //                    specs->offset_ms[ph] = -(start_play_time - specs->global_start_play_time);
+            
+//            specs->last_scheduled_ms[ph] = jump_to_ms;
+            
+            r_ob->play_head_ms[ph] = jump_to_ms;
+            if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
+                r_ob->play_head_ux[ph] = ms_to_unscaled_xposition(r_ob, r_ob->play_head_ms[ph], 1);
+            
+            if (r_ob->notify_playheads) {
+                send_single_playhead_position(r_ob, notationobj_get_playout(r_ob), ph);
+            }
+            
+            specs->dont_schedule_loop_end[ph] = specs->dont_schedule_loop_start[ph] = false;
+            
+            check_correct_scheduling(r_ob, false);
+            unlock_general_mutex(r_ob);
+            
+            if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
+                if (r_ob->highlight_played_notes)
+                    notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+                else
+                    notationobj_redraw(r_ob);
+            } else {
+                notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+            }
+            
+        }
+    } else {
+        object_error((t_object *) r_ob, "Error in defining playhead.");
+    }
+    
     llll_free(args);
     
     
@@ -1889,14 +1970,11 @@ void notationobj_do_play(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *a
 
         for (long ph = 0; ph < r_ob->num_playheads; ph++) {
             if (specs->playhead_newly_activated[ph]) {
-                specs->offset_ms[ph] = -(start_play_time - specs->global_start_play_time);
-                post("start_play_time: %.2f,  global start play time: %.2f, offset: %.2f", start_play_time, specs->global_start_play_time, specs->offset_ms[ph]);
+                specs->offset_ms[ph] = -(start_play_time - specs->global_start_play_time) / specs->playhead_rate[ph] +                (playhead_is_cancrizans(r_ob, ph) ? specs->stop_ms[ph] : specs->start_ms[ph]);
+                post("start_play_time: %.2f,  global start play time: %.2f, offset_ms: %.2f", start_play_time, specs->global_start_play_time, specs->offset_ms[ph]);
 
                 notationobj_reset_play_cursors(r_ob, ph);
-                
-                if (specs->playing_scheduling_type == k_SCHEDULING_STANDARD) {
-                    r_ob->start_play_time[ph] = start_play_time;
-                }
+
                 r_ob->play_head_ms[ph] = specs->start_ms[ph];
             }
         }
@@ -2002,8 +2080,6 @@ void notationobj_do_play(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *a
                 double start_play_time;
                 setclock_getftime(r_ob->setclock->s_thing, &start_play_time);
                 specs->global_start_play_time = start_play_time;
-                for (long ph = 0; ph < r_ob->num_playheads; ph++)
-                    r_ob->start_play_time[ph] = start_play_time;
                 setclock_fdelay(r_ob->setclock->s_thing, r_ob->m_clock, r_ob->play_step_ms);
                 if (r_ob->highlight_played_notes)
                     notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
@@ -2393,8 +2469,8 @@ void check_correct_scheduling(t_notation_obj *r_ob, char also_lock_general_mutex
         
         setclock_getftime(r_ob->setclock->s_thing, &this_clock_ms_glob);
         for (long ph = 0; ph < r_ob->num_playheads; ph ++) {
-            if (specs->playhead_active[ph]) {
-                this_clock_ms[ph] = (this_clock_ms_glob - r_ob->start_play_time[ph]) / specs->playhead_rate[ph] + specs->offset_ms[ph];
+            if (specs->playhead_active[ph]) { // TODO: rate deve essere 1/rate oppure factor
+                this_clock_ms[ph] = (this_clock_ms_glob - specs->global_start_play_time) / specs->playhead_rate[ph] + specs->offset_ms[ph];
             }
         }
 
@@ -2471,6 +2547,9 @@ void check_correct_scheduling(t_notation_obj *r_ob, char also_lock_general_mutex
                 
 //                double earliest_item_offset = (earliest_item_to_schedule_onset[ph] - specs->offset_ms[ph]) * specs->playhead_rate[ph];
                 double earliest_item_offset = (earliest_item_to_schedule_onset[ph] - this_clock_ms[ph]) * specs->playhead_rate[ph];
+
+                post("ccPH: %ld,  eioffs: %.2f, onset: %.2f, clock_ms: %.2f, phoffset: %.2f", ph, earliest_item_offset, earliest_item_to_schedule_onset[ph], this_clock_ms[ph], specs->offset_ms[ph]);
+
                 if (!earliest_item_across_all_ph || earliest_item_offset < bestoffset) {
                     num_scheduled_items = 1;
                     earliest_item_across_all_ph = earliest_item_to_schedule[ph];
@@ -2554,10 +2633,7 @@ void check_correct_scheduling(t_notation_obj *r_ob, char also_lock_general_mutex
                 r_ob->play_num_steps = MAX(1, round(new_scheduling_interval / r_ob->theoretical_play_step_ms));
                 r_ob->play_step_ms = new_scheduling_interval/r_ob->play_num_steps;
             }
-            
-            //            post("  . first_time: %f, now time: %f", r_ob->start_play_time, this_clock_ms);
-            //            post("  . new_scheduled_interval: %f", r_ob->play_step_ms);
-            
+                        
             r_ob->play_step_count = 0;
             for (long ph = 0; ph < r_ob->num_playheads; ph++) {
                 r_ob->play_head_ms[ph] = this_clock_ms[ph];
