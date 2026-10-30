@@ -4207,6 +4207,7 @@ typedef struct _playback_specs
     bool            add_new_playback_voice;
 
     bool            playhead_active[CONST_MAX_PLAYHEADS];
+    bool            playhead_paused[CONST_MAX_PLAYHEADS];
     bool            playhead_newly_activated[CONST_MAX_PLAYHEADS];
     
     bool            restrict_playback_to_name[CONST_MAX_PLAYHEADS];
@@ -4700,7 +4701,7 @@ typedef struct _notation_obj
     char        play_partial_notes;                    ///< Flag telling if we want to play a note whose head is before the starting playhead position, but whose tail is after it.
                                                     ///< More simply: if this is 1, when a play command starts, first of all the notes who are "active" at the play cursor position are output,
                                                     ///< with the correctly reduced duration (as if they started at the play cursor)
-    char        show_playhead;                        ///< Flag telling if we want to show the play cursor or not
+    char        show_playhead;                        ///< Flag telling if we want to show the play cursor(s) or not
     double      playhead_width;                     ///< Width of the playhead in pixels
     char        playhead_dragging_mode;                ///< Dragging mode for the playhead: 0 = absolute (where one alt+clicks, there the playhead goes), 1 = relative (just clicking won't move the playhead, only pixel differences account)
     char        align_chords_with_what;                ///< (For bach.roll only) One of the #e_chord_align_mode specifying the
@@ -10737,7 +10738,7 @@ void paint_notehead(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t_jfon
  */ 
 void paint_duration_line(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t_jrgba notecolor, t_jrgba tailcolor, t_note *curr_nt, 
                             double end_pos, double system_shift, double system_jump, char note_unselected, char is_chord_selected, 
-                            char is_note_selected, char is_durationline_selected, char is_note_played, char is_note_locked,
+                            char is_note_selected, char is_durationline_selected, t_playedby_info is_note_played, char is_note_locked,
                             char is_note_muted, char is_note_solo, t_bpt **selected_breakpoint, double note_y_real);
     
 
@@ -14845,8 +14846,9 @@ long chord_get_max_velocity(t_notation_obj *r_ob, t_chord *chord);
     @ingroup play
     @param    r_ob        The notation object
     @param    lock_general_mutex    If this is non-zero, the t_notation_obj::c_general_mutex mutex is locked and unlocked before checking and changing
+ @param reschedule_everything_for_this_playhead Possibly a bitfield of playback indices to force rescheduling for this specific playhead; use 0 to ignore
 */
-void check_correct_scheduling(t_notation_obj *r_ob, char also_lock_general_mutex);
+void check_correct_scheduling(t_notation_obj *r_ob, char also_lock_general_mutex, t_playedby_info reschedule_everything_for_this_playhead = 0);
 
 
 /** Obtain the next notation item which is supposed to be played.
@@ -19498,8 +19500,10 @@ void notationobj_clock(t_notation_obj *r_ob, t_symbol *s);
 void notationobj_preschedule_end(t_notation_obj *r_ob);
 void notationobj_stop(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 void notationobj_do_stop(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
-void notationobj_start(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
-void notationobj_do_start(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_launch(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_do_launch(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_resume(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_do_resume(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 void notationobj_seek(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 void notationobj_do_seek(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 void notationobj_play(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);

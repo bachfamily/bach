@@ -1672,7 +1672,7 @@ void paint_playheads(t_notation_obj *r_ob, t_jgraphics* g, t_rect rect, t_jfont 
         double playhead_y1, playhead_y2, play_head_pos;
         t_jrgba color = notationobj_get_playheadcolor(r_ob, ph);
         if (r_ob->playing) {
-            if (!r_ob->playback_specs.playhead_active[ph]) {
+            if (!r_ob->playback_specs.playhead_active[ph] && !r_ob->playback_specs.playhead_paused[ph]) {
                 continue;
             }
             
@@ -1902,7 +1902,7 @@ double breakpoint_get_x(t_notation_obj *r_ob, t_bpt *bpt)
 }
 */
 
-void paint_duration_line(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t_jrgba notecolor, t_jrgba tailcolor, t_note *curr_nt, double end_pos, double system_shift, double system_jump, char note_unselected, char is_chord_selected, char is_note_selected, char is_durationline_selected, char is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, t_bpt **selected_breakpoint, double note_y_real){
+void paint_duration_line(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t_jrgba notecolor, t_jrgba tailcolor, t_note *curr_nt, double end_pos, double system_shift, double system_jump, char note_unselected, char is_chord_selected, char is_note_selected, char is_durationline_selected, t_playedby_info is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, t_bpt **selected_breakpoint, double note_y_real){
     
     t_voice *voice = r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *)curr_nt->parent->voiceparent : (t_voice *)curr_nt->parent->parent->voiceparent;
     
@@ -1987,10 +1987,8 @@ void paint_duration_line(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t
             else if ((r_ob->velocity_handling == k_VELOCITY_HANDLING_COLORSCALE || r_ob->velocity_handling == k_VELOCITY_HANDLING_ALPHACHANNEL || 
                       r_ob->velocity_handling == k_VELOCITY_HANDLING_COLORSPECTRUM) && r_ob->breakpoints_have_velocity) {
                 long vel1 = temp->prev->prev ? temp->prev->velocity : curr_nt->velocity;
-                t_jrgba color_start = note_get_color(r_ob, curr_nt, !note_unselected && (is_chord_selected || is_note_selected || is_durationline_selected), 
-                                                     is_note_played, is_note_locked, is_note_muted, is_note_solo, false, vel1);
-                t_jrgba color_end = note_get_color(r_ob, curr_nt, !note_unselected && (is_chord_selected || is_note_selected || is_durationline_selected), 
-                                                   is_note_played, is_note_locked, is_note_muted, is_note_solo, false, temp->velocity);
+                t_jrgba color_start = note_get_color(r_ob, curr_nt, !note_unselected && (is_chord_selected || is_note_selected || is_durationline_selected), is_note_played, is_note_locked, is_note_muted, is_note_solo, false, vel1);
+                t_jrgba color_end = note_get_color(r_ob, curr_nt, !note_unselected && (is_chord_selected || is_note_selected || is_durationline_selected), is_note_played, is_note_locked, is_note_muted, is_note_solo, false, temp->velocity);
                 long num_steps = MAX(labs(vel1 - CLAMP(temp->velocity, 0, CONST_MAX_VELOCITY)) * 1, 1);
                 notationobj_paint_colorgradient_curve(r_ob, g, color_start, color_end, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope, r_ob->durations_line_width * r_ob->zoom_y, num_steps,
                                           r_ob->velocity_handling == k_VELOCITY_HANDLING_COLORSPECTRUM && 

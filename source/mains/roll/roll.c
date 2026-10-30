@@ -5764,9 +5764,10 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @description The <m>start</m> message activates the playback of a new playhead.
     // This differs from <m>play</m> in that <m>play</m> begins a brand new playback session.
     // @seealso pause, play, stop, playselection
-    class_addmethod(c, (method) notationobj_start, "start", A_GIMME, 0);
+    class_addmethod(c, (method) notationobj_launch, "launch", A_GIMME, 0);
 
-    
+    class_addmethod(c, (method) notationobj_seek, "seek", A_GIMME, 0);
+
     // @method stop @digest Stop
     // @description The <m>stop</m> message stops any ongoing playing, if <o>bach.roll</o> was in play mode (nothing happens otherwise).
     // @seealso pause, play, playselection
@@ -10777,6 +10778,60 @@ t_chord *get_nearest_chord(t_roll *x, double ms)
     return best_chord;
 }
 
+double snap_ms_to_nearest_chord_or_tail_or_marker(t_roll *x, double ms)
+{
+    bool snapped = false;
+    double best_diff = 0, best_ms_snapped = ms;
+    for (t_rollvoice *voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next) {
+        for (t_chord *chord = voice->firstchord; chord; chord = chord->next) {
+            double this_diff = fabs(chord->onset - ms);
+            if (!snapped || this_diff < best_diff) {
+                snapped = true;
+                best_ms_snapped = chord->onset;
+                best_diff = this_diff;
+            }
+            double max_note_tail = chord->onset;
+            for (t_note *nt = chord->firstnote; nt; nt = nt->next) {
+                double this_note_tail = chord->onset + nt->duration;
+                if (this_note_tail > max_note_tail)
+                    max_note_tail = this_note_tail;
+                this_diff = fabs(this_note_tail - ms);
+                if (!snapped || this_diff < best_diff) {
+                    snapped = true;
+                    best_ms_snapped = this_note_tail;
+                    best_diff = this_diff;
+                }
+            }
+            if (chord->onset > ms) {
+                break;
+            }
+        }
+    }
+
+    
+    for (t_marker *marker = x->r_ob.firstmarker; marker; marker = marker->next) {
+        double this_diff = fabs(marker->position_ms - ms);
+        if (!snapped || this_diff < best_diff) {
+            snapped = true;
+            best_ms_snapped = marker->position_ms;
+            best_diff = this_diff;
+        }
+        if (marker->duration_ms > 0) {
+            this_diff = fabs(marker->position_ms + marker->duration_ms - ms);
+            if (!snapped || this_diff < best_diff) {
+                snapped = true;
+                best_ms_snapped = marker->position_ms + marker->duration_ms;
+                best_diff = this_diff;
+            }
+        }
+        if (marker->position_ms > ms) {
+            break;
+        }
+    }
+    
+    return best_ms_snapped;
+}
+
 
 t_atom_long roll_acceptsdrag_unlocked(t_roll *x, t_object *drag, t_object *view)
 {
@@ -11601,7 +11656,12 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
                         char is_note_locked = notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)curr_nt);
                         char is_note_muted = notation_item_is_globally_muted((t_notation_obj *)x, (t_notation_item *)curr_nt);
                         char is_note_solo = notation_item_is_globally_solo((t_notation_obj *)x, (t_notation_item *)curr_nt);
-                        char is_note_played = x->r_ob.highlight_played_notes ? (should_element_be_played((t_notation_obj *) x, (t_notation_item *)curr_nt) && (curr_ch->played || curr_nt->played)) : false;
+
+                        t_playedby_info is_note_played = make_playedby_info(0, 0);
+                        if (should_element_be_played((t_notation_obj *) x, (t_notation_item *)curr_nt)) {
+                            is_note_played = make_playedby_info(get_playheads(curr_ch->played) | get_playheads(curr_nt->played), curr_nt->played);
+                        }
+
                         char is_articulation_selected = notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)art);
                         double end_pos = onset_to_xposition_roll((t_notation_obj *) x,curr_ch->onset+curr_nt->duration, NULL);
                         t_jrgba articulationcolor = articulation_get_color((t_notation_obj *) x, curr_ch, is_articulation_selected, is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited);
@@ -11621,7 +11681,12 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
                     char is_note_locked = notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)curr_nt);
                     char is_note_muted = notation_item_is_globally_muted((t_notation_obj *)x, (t_notation_item *)curr_nt);
                     char is_note_solo = notation_item_is_globally_solo((t_notation_obj *)x, (t_notation_item *)curr_nt);
-                    char is_note_played = x->r_ob.highlight_played_notes ? (should_element_be_played((t_notation_obj *) x, (t_notation_item *)curr_nt) && (curr_ch->played || curr_nt->played)) : false;
+
+                    t_playedby_info is_note_played = make_playedby_info(0, 0);
+                    if (should_element_be_played((t_notation_obj *) x, (t_notation_item *)curr_nt)) {
+                        is_note_played = make_playedby_info(get_playheads(curr_ch->played) | get_playheads(curr_nt->played), curr_nt->played);
+                    }
+
                     t_jrgba annotationcolor = annotation_get_color((t_notation_obj *) x, curr_ch, false, is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited);
                     paint_annotation_from_slot((t_notation_obj *) x, g, &annotationcolor, (t_notation_item *)curr_nt, s, jf_ann, staff_top_y, last_annotation_text, annotation_sequence_start_x_pos, annotation_sequence_end_x_pos, annotation_line_y_pos);
                 }
@@ -13099,9 +13164,7 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
         this_ms = MAX(this_ms, 0);
         
         if (modifiers & eShiftKey) {
-            t_chord *nearest_chord = get_nearest_chord(x, this_ms);
-            if (nearest_chord)
-                this_ms = nearest_chord->onset;
+            this_ms = snap_ms_to_nearest_chord_or_tail_or_marker(x, this_ms);
         }
         
         force_inscreen_ms_to_boundary_and_set_mouse_position(x, this_ms, patcherview, pt, false);

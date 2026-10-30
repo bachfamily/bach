@@ -4088,28 +4088,28 @@ void C74_EXPORT ext_main(void *moduleRef){
     llllobj_common_symbols_init();
     
     bach_inspector_ui_classinit();
-
+    
     if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
         error("bach: bad installation");
         return;
     }
     
-    CLASS_NEW_CHECK_SIZE(c, "bach.score", 
-                            (method)score_new,
-                            (method)score_free,
-                            sizeof(t_score),
-                            (method)NULL,
-                            A_GIMME,
-                            0L);
+    CLASS_NEW_CHECK_SIZE(c, "bach.score",
+                         (method)score_new,
+                         (method)score_free,
+                         sizeof(t_score),
+                         (method)NULL,
+                         A_GIMME,
+                         0L);
     
     c->c_flags |= CLASS_FLAG_NEWDICTIONARY;
-
-//    jbox_initclass(c, JBOX_COLOR | JBOX_FIXWIDTH | JBOX_FONTATTR);
+    
+    //    jbox_initclass(c, JBOX_COLOR | JBOX_FIXWIDTH | JBOX_FONTATTR);
     jbox_initclass(c, JBOX_TEXTFIELD);
     
     class_addmethod(c, (method) score_paint, "paint", A_CANT, 0);
-
-
+    
+    
     // @method subscore @digest Output a portion of <o>bach.score</o>
     // @description The <m>subscore</m> message outputs the gathered syntax information of a portion of the <o>bach.score</o>,
     // namely it outputs only certain voices and within a certain time interval.
@@ -4118,7 +4118,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // <m>VOICES</m> is an llll of the kind <b>[<m>voice_number1</m> <m>voice_number2</m>...]</b>
     // containing the number of the voices to be output; leave <b>nil</b> or <b>[]</b> if you want to output all voices. <br />
     // <m>MEASURE_RANGE</m> is an llll of the kind <b>[<m>start_measure_number</m> <m>end_measure_number</m>]</b> representing the
-    // range of measures that has to be output (the defined one are included). 
+    // range of measures that has to be output (the defined one are included).
     // Leave such list as <b>nil</b> or <b>[]</b> if you want this range to be all the measures of the <o>bach.score</o>.
     // Otherwise <m>start_measure_number</m> is the number of the starting measure in the range, and
     // <m>end_measure_number</m> is the number of the ending measure in the range; leave any negative value
@@ -4127,7 +4127,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // which handles what part of the header should be dumped. By default all header is output. Options for these symbols are exactly
     // the same as for the <m>dump</m> message (see its documentation to know more). For instance <b>subscore [4 5] [4 9] [clefs markers body]</b>
     // output voices 4 and 5 in the portion of the <o>bach.score</o> going from measure 4 to measure 9, and outputs in addition to the musical content (the body)
-    // the information about clefs and the markers. 
+    // the information about clefs and the markers.
     // Leave <b>[body]</b> as third parameter if you only want to dump the music content, and no header information
     // @marg 0 @name voices @optional 0 @type llll
     // @marg 1 @name measure_range @optional 0 @type llll
@@ -4140,20 +4140,20 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example subroll [1 3] [4 -1] [clefs markers body] @caption only dump clefs, markers and body
     // @seealso dump
     class_addmethod(c, (method) score_subscore, "subscore", A_GIMME, 0);
-
-
+    
+    
     // @method merge @digest Merge notes or chords
-    // @description You can use the <m>merge</m> message to perform a merging of chords whose duration is too small, 
-    // and/or of notes too near (with respect to the pitch). The two tasks are separate: the first implies that small chords will be deleted, 
-    // and their duration will increase other chords' duration; the second implies that notes whose pitches differ by less then a pitch 
+    // @description You can use the <m>merge</m> message to perform a merging of chords whose duration is too small,
+    // and/or of notes too near (with respect to the pitch). The two tasks are separate: the first implies that small chords will be deleted,
+    // and their duration will increase other chords' duration; the second implies that notes whose pitches differ by less then a pitch
     // threshold will be merged to a single one. <br />
     // Two arguments are needed for the "merge" command: the time threshold (in symbolic units, e.g.: <b>1/32</b> merges all the
     // chords whose duration is less or equal to 1/32) and the pitch threshold (in cents).
     // If any of the two threshold is set as negative, this means that there will be no corresponding merging: leave the time threshold as negative
     // if you only want to merge in the pitch direction, leave the pitch threshold as negative if you only want to merge chords in the time coordinate. <br />
-    // Two additional optional arguments can be given specifying, respectively: the time merging policy (-1 = merge towards the left chord, 
-    // 0 = split small chord's duration between left and right chords, 1 = merge towards the right chord), the pitch merging policy (-1 = set pitch to the bottommost 
-    // pitch, 0 = set pitch to the average of pitches, 1 = set pitch to the topmost pitch). 
+    // Two additional optional arguments can be given specifying, respectively: the time merging policy (-1 = merge towards the left chord,
+    // 0 = split small chord's duration between left and right chords, 1 = merge towards the right chord), the pitch merging policy (-1 = set pitch to the bottommost
+    // pitch, 0 = set pitch to the average of pitches, 1 = set pitch to the topmost pitch).
     // The merging policies are optional parameters: if you don't specify them, by default they are 0 (= merge to the average). <br />
     // If an optional "selection" symbol is put in front of the time threshold argument, the merging is performend only on the current selection,
     // otherwise it is performed on the whole score.
@@ -4172,7 +4172,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example merge 1/32 10 0 -1 @caption merge chords to the average and notes to the lowest one
     // @seealso split
     class_addmethod(c, (method) score_merge, "merge", A_GIMME, 0);
-
+    
     
     // @method overtype @digest Replace score content at given points
     // @description You can use the <m>overtype</m> message to replace the score content at given points in time for given voices, independently
@@ -4199,12 +4199,12 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example overtype [[1 1 3/8] [2 2 1/4]] [[[1/8 [C4 100 0]] [1/8 [E4 100 0]] [1/8 [G4 100 0]]] [[[leveltype 25] [1/12 [7200. 100 0]] [1/12 [7400 100 0]] [1/12 [7600. 100 0]]] [[1/8 [7700 100 0]] [1/8 [7900 100 0]]] [[-1/8] [1/8 [7700 100 0]]]]] @caption replace portion of score spanning multiple voices, with content containing rhythmic tree specification
     // @seealso llll, autobeam
     class_addmethod(c, (method) score_anything, "overtype", A_GIMME, 0);
-
-
+    
+    
     // @method collapse @digest Collapse score to a single voice
     // @description Use the <m>collapse</m> message to reduce the score to a single voice, containing the .
     // Polyphonies are collapsed to sequence of chords whose notes are properly tied (exactly as the original content).
-    // A simple <m>collapse</m> message will collapse the content of all voices. You can add up to two llll optional arguments, 
+    // A simple <m>collapse</m> message will collapse the content of all voices. You can add up to two llll optional arguments,
     // to obtain the general syntax:
     // <b>collapse <m>VOICES</m> <m>SELECTIVE_OPTIONS</m></b>,
     // <m>VOICES</m> is an llll of the kind <b>[<m>voice_number1</m> <m>voice_number2</m>...]</b>
@@ -4213,7 +4213,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // which handle what part of the header should be dumped. By default all header is output. Options for these symbols are exactly
     // the same as for the <m>dump</m> message (see its documentation to know more). For instance <b>collapse [4 5 8] [markers body]</b>
     // will collapse voices 4, 5 and 8 into a single voice, preserving also markers. <br />
-    // By default the measureinfo (see <m>llll</m> message) of the first voice is kept. If a <m>VOICES</m> llll is specified, the measureinfo 
+    // By default the measureinfo (see <m>llll</m> message) of the first voice is kept. If a <m>VOICES</m> llll is specified, the measureinfo
     // of the first entered voice number is kept as reference. If you want to change such reference, just change the order of the numbers inside
     // <m>VOICES</m>. For instance <b>collapse [5 4 8] [markers body]</b> will act as before, but keeping measureinfo of voice 5.
     // @marg 0 @name voices @optional 0 @type llll
@@ -4224,11 +4224,11 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example collapse [] [body] @caption collapse all voices, but only send out the body
     // @seealso quantize
     class_addmethod(c, (method) score_collapse, "collapse", A_GIMME, 0);
-
-
+    
+    
     // @method ceilmeasures @digest Pad measures
     // @description The message <m>ceilmeasures</m> forces all voices have the same number of measures,
-    // by possibly appending blank measures at the end of some voice. 
+    // by possibly appending blank measures at the end of some voice.
     // If the voice have the same tempi and time signatures, this message force all voices to end together
     // (otherwise this is not necessarily the case). <br />
     // If an integer argument is provided, then all voices are padded so to have that number of measures.
@@ -4236,7 +4236,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example ceilmeasures @caption Make all voice have the same number of measures
     // @example ceilmeasures 100 @caption Pad all voices to have 100 measures
     class_addmethod(c, (method) score_ceilmeasures, "ceilmeasures", A_GIMME, 0);
-
+    
     
     // @method filltiesequenceswithslots @digest Fill tie sequences with slots
     // @description Fills each note in a sequence of ties with the slots of the first tied note, provided that the <m>singleslotfortiednotes</m> specification
@@ -4244,7 +4244,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // while preserving the correct slot information.
     // @seealso setslot
     class_addmethod(c, (method) score_copy_slots_to_tied_noted_sequences, "filltiesequenceswithslots", 0);
-
+    
     
     // @method clear @digest Clear all the measures or a specific parameter inlet
     // @description A <m>clear</m> message sent in the first inlet will delete all the measures the <o>bach.score</o>, and all the markers.
@@ -4256,23 +4256,23 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example clear 3 @caption the same, only for voice 3
     // @seealso clearall, clearbreakpoints, delete
     class_addmethod(c, (method) score_anything, "clear", A_GIMME, 0);
-
-
+    
+    
     // @method clearall @digest Clear all separate parameters inlets
     // @description @copy BACH_DOC_MESSAGE_CLEARALL
     // @seealso clear
     class_addmethod(c, (method) score_anything, "clearall", A_GIMME, 0);
-
+    
     // @method clearmarkers @digest Delete all markers
     // @description @copy BACH_DOC_MESSAGE_CLEARMARKERS
     // @seealso addmarker, deletemarker
     class_addmethod(c, (method) score_clearmarkers, "clearmarkers", 0);
-
+    
     // @method clearslurs @digest Delete all slurs
     // @description @copy BACH_DOC_MESSAGE_CLEARSLURS
     // @seealso addslur
     class_addmethod(c, (method) score_clearslurs, "clearslurs", 0);
-
+    
     
     // @method addslur @digest Add a slur
     // @description @copy BACH_DOC_MESSAGE_ADDSLUR
@@ -4286,12 +4286,12 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example addslur [1 1 1] [1 3 2] @name john @caption the same, with a name
     // @seealso clearslur
     class_addmethod(c, (method) score_addslur, "addslur", A_GIMME, 0);
-
+    
     
     // @method appendmeasures @digest Append several measures
     // @description An <m>appendmeasures</m> message will append one or more measures to the existing ones.
     // If the message has no arguments, the separate parameters are supposed to have been inserted through the separate parameter inlets,
-    // and the <m>addmeasures</m> message will essentially act like a <m>bang</m> which in turns will preserve the existing content, 
+    // and the <m>addmeasures</m> message will essentially act like a <m>bang</m> which in turns will preserve the existing content,
     // and append the newly introduced measures. Refer to the <m>llll</m> message to know more about separate parameter syntax of the inlets.<br />
     // If the message has a single integer argument <m>N</m>, <m>N</m> empty measures will be appended to all voices. <br />
     // If the message has a two arguments <m>voice_num</m> and <m>N</m>, <m>N</m> measures will be appended to the specified voice; <m>voice_num</m>
@@ -4320,7 +4320,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @seealso llll, appendmeasure, insertmeasure, insertmeasures, deletemeasures
     class_addmethod(c, (method) score_anything, "appendmeasures", A_GIMME, 0);
     class_addmethod(c, (method) score_anything, "addmeasures", A_GIMME, 0);
-
+    
     
     
     
@@ -4337,7 +4337,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example addtempo 2 [1/4 30 1/3] @voices 1 3 @caption add the tempo quarter = 30 in measure 2, with offset 1/3
     // @seealso cleartempi
     class_addmethod(c, (method) score_anything, "addtempo", A_GIMME, 0);
-
+    
     
     
     // @method appendmeasure @digest Append a single measure
@@ -4361,7 +4361,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example appendmeasure [2 3] [[[[3 2] 8] []] [3/8 [6000 100]] [-1/4]] [[[5 8] []] [1/4 [5900 100]] [-3/4]] @caption append first measure to voice 2, second measure to voice 3
     // @seealso appendmeasures, insertmeasure, insertmeasures, deletemeasures
     class_addmethod(c, (method) score_anything, "appendmeasure", A_GIMME, 0);
-
+    
     
     // @method insertmeasures @digest Insert several measures
     // @description An <m>insertmeasures</m> message will insert one or more measures at a given score position.
@@ -4444,7 +4444,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @seealso deletevoice
     class_addmethod(c, (method) score_anything, "insertvoice", A_GIMME, 0);
     
-
+    
     // @method clearnotes @digest Clear all the chords
     // @description A <m>clearnotes</m> message sent in the first inlet will delete all the chords the <o>bach.score</o>, but will keep the existing measures
     // as they are (only they will be voided).
@@ -4465,7 +4465,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @seealso clearchords, clearbreakpoints, cleararticulations, delete, clear
     class_addmethod(c, (method) score_cleartempi, "cleartempi", A_GIMME, 0);
     
-
+    
     // @method clearbreakpoints @digest Clear all the pitch breakpoints
     // @description A <m>clearbreakpoints</m> message sent in the first inlet will delete all the pitch breakpoints inside the <o>bach.score</o>, and
     // reset the note tails.
@@ -4475,7 +4475,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example clearbreakpoints 2 @caption clear all the clearbreakpoints in voice 2
     // @seealso clearchords, cleartempi, cleararticulations, delete, clear
     class_addmethod(c, (method) score_anything, "clearbreakpoints", A_GIMME, 0);
-
+    
     
     // @method cleararticulations @digest Clear all the articulations
     // @description A <m>cleararticulations</m> message sent in the first inlet will delete all the articulations inside the <o>bach.score</o>.
@@ -4485,14 +4485,14 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example cleararticulations 2 @caption clear all the articulations in voice 2
     // @seealso clearchords, cleartempi, clearbreakpoints, delete, clear
     class_addmethod(c, (method) score_cleararticulations, "cleararticulations", A_GIMME, 0);
-
+    
     
     // @method interp @digest Obtain active notes data at a given instant
     // @description The <m>interp</m> message, followed by a time value (in milliseconds) retrieves
     // the instantaneous data of all the notes which are active at the given time instant.
     // The answer is sent through the playout in the following form: <b>interp <m>VOICE1</m> <m>VOICE2</m>...</b>
-    // where each <m>VOICE</m> is in the form <b>[<m>CHORD</m>]</b>, being the chord active at the 
-    // given time instant (if any, or null if none), with <m>CHORD</m> being in the form <b>[<m>NOTE1</m> <m>NOTE2</m>...]</b>, 
+    // where each <m>VOICE</m> is in the form <b>[<m>CHORD</m>]</b>, being the chord active at the
+    // given time instant (if any, or null if none), with <m>CHORD</m> being in the form <b>[<m>NOTE1</m> <m>NOTE2</m>...]</b>,
     // being the chord notes active at
     // the given time instant, each in the standard note gathered syntax, with two important variations:
     // there is no tie element, and for each slot marked as temporal only the slot element at the given time instant
@@ -4521,8 +4521,8 @@ void C74_EXPORT ext_main(void *moduleRef){
     
     
     // @method sample @digest Sample score data
-    // @description The <m>sample</m> message, followed by a integer (the number of sampling points), 
-    // samples the note data (exactly as <m>interp</m> does) throughout the score, at the (uniformly taken) sampling point. 
+    // @description The <m>sample</m> message, followed by a integer (the number of sampling points),
+    // samples the note data (exactly as <m>interp</m> does) throughout the score, at the (uniformly taken) sampling point.
     // The answer is sent through the playout in the following form: <b>sample [<m>t1</m> <m>t2</m>...] [<m>RES1</m> <m>RES2</m>...]...</b>
     // where each <m>t</m> is an instant in milliseconds, and each <m>RES</m> is the result of the <m>interp</m> message performed
     // on such instant (see <m>interp</m> to know more). <br />
@@ -4545,10 +4545,10 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @seealso interp, getcurrentchord
     class_addmethod(c, (method) score_anything, "sample", A_GIMME, 0);
     
-
+    
     // @method dump @digest Dump information
-    // @description A <m>dump</m> message will simply output 
-    // the content of all separate parameters from all separate outlets (in separate syntax, right-to-left), and 
+    // @description A <m>dump</m> message will simply output
+    // the content of all separate parameters from all separate outlets (in separate syntax, right-to-left), and
     // all the content of <o>bach.score</o> in gathered syntax from the first outlet (header information included). See below to know more
     // about gathered and separate syntaxes. <br />
     // The <m>dump</m> message also accepts as argument one of the following symbols, which will only dump a portion of the global information: <br />
@@ -4562,18 +4562,18 @@ void C74_EXPORT ext_main(void *moduleRef){
     // - <b>ties</b>: only dump the velocities (in separate syntax) from the fifth outlet. <br />
     // - <b>extras</b>: only dump the extras (in separate syntax) from the sixth outlet. <br />
     // - <b>score</b>: only dump the whole <o>bach.score</o> gathered syntax from the first outlet (and nothing from the separate parameters outlets). <br />
-    // - <b>body</b>: only dump the whole <o>bach.score</o> gathered syntax from the first outlet, and drop all the header specifications: only dump the 
+    // - <b>body</b>: only dump the whole <o>bach.score</o> gathered syntax from the first outlet, and drop all the header specifications: only dump the
     // body (content) of the <o>bach.score</o>. <br />
-    // - <b>header</b>: only dump the whole <o>bach.score</o> from the first outlet, dropping all the content (body) specification, and only 
+    // - <b>header</b>: only dump the whole <o>bach.score</o> from the first outlet, dropping all the content (body) specification, and only
     // outputting all the header specification. <br />
     // Moreover, if one needs to only dump specific header elements, the <m>dump</m> message may also accept a list of symbols referring to them.
     // Namely, the possibilities are the following ones: "keys", "clefs", "voicenames", "midichannels", "markers", "slotinfo", "command".
     // Also the "body" symbol can always be added, in order to also dump the music content.
-    // For instance, <b>dump keys slotinfo voicenames</b> will dump the key signatures, the slotinfo and the voicenames, 
-    // while, <b>dump keys slotinfo voicenames body</b> will do the same but will also output the music content (body). 
+    // For instance, <b>dump keys slotinfo voicenames</b> will dump the key signatures, the slotinfo and the voicenames,
+    // while, <b>dump keys slotinfo voicenames body</b> will do the same but will also output the music content (body).
     // The order of the dumped elements does not correspond in general to the order of the symbols in the list.
     // <br /> <br />
-    // @copy BACH_DOC_SCORE_GATHERED_SYNTAX 
+    // @copy BACH_DOC_SCORE_GATHERED_SYNTAX
     // @copy BACH_DOC_SCORE_SEPARATE_SYNTAX
     // @copy BACH_DOC_SEPARATE_SYNTAX_EXTRAS
     // @marg 0 @name selective_dump_options @optional 1 @type list
@@ -4604,8 +4604,8 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @mattr markdivisions @type int @default 0 @digest If non-zero, converts measure divisions to markers
     // @example score2roll @markmeasures 1 @caption convert score to roll and put a marker at each measure
     class_addmethod(c, (method) score_score2roll, "score2roll", A_GIMME, 0);
-
-
+    
+    
     // @method openslotwin @digest Open a slot window
     // @description @copy BACH_DOC_MESSAGE_OPENSLOTWINS
     // @marg 0 @name slot_number_or_name @optional 0 @type int/symbol
@@ -4613,20 +4613,20 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example openslotwin amplienv @caption open slot window for slot named 'amplienv'
     // @seealso setslot
     class_addmethod(c, (method) score_openslotwin, "openslotwin", A_GIMME, 0);
-
-
+    
+    
     // @method getfocus @digest Query whether the object has focus
     // @description The <m>getfocus</m> message outputs a <b>focus 1</b> message from the playout if the object has focus, and <b>focus 0</b> otherwise.
     // @copy BACH_DOC_QUERY_LABELS
     // @marg 0 @name query_label @optional 1 @type llll
     class_addmethod(c, (method) score_getfocus, "getfocus", A_GIMME, 0);
-
+    
     
     // @method getdomain @digest Get the current domain
     // @description The <m>getdomain</m> message forces <o>bach.score</o> to output from the playout the current domain,
     // i.e. the portion of <o>bach.score</o> currently displayed inside the screen. The output information is both in milliseconds
     // and in timepoints.
-    // The syntax of the output answer is: <b>domain <m>start_ms</m> <m>end_ms</m> <m>VOICE1</m> <m>VOICE2</m>...</b>, where the 
+    // The syntax of the output answer is: <b>domain <m>start_ms</m> <m>end_ms</m> <m>VOICE1</m> <m>VOICE2</m>...</b>, where the
     // two elements following the "domain" symbol are the starting and ending point of the domain in milliseconds,
     // and each <m>VOICE</m> is an llll containing the information about the timepoints of each voice (i.e. at which measure and point in measure,
     // for each voice, the domain starts and ends]: its syntax is: <b>[[<m>start_measure_number</m> <m>start_sym_onset</m>]
@@ -4638,28 +4638,28 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @copy BACH_DOC_QUERY_LABELS
     // @marg 0 @name query_label @optional 1 @type llll
     class_addmethod(c, (method) score_getdomain, "getdomain", A_GIMME, 0);
-
-
+    
+    
     // @method getdomainpixels @digest Get the pixel position of the domain
     // @description The <m>getdomainpixels</m> message forces <o>bach.score</o> to output from the playout the current position
     // (in pixels) of the domain, i.e. the starting (left) and ending (right) pixels of the currently displayed portion of music.
     // These pixels are referred to the notation object box.
-    // The syntax of the output answer is: <b>domainpixels <m>start_pixel</m> <m>end_pixel</m></b>, where the 
+    // The syntax of the output answer is: <b>domainpixels <m>start_pixel</m> <m>end_pixel</m></b>, where the
     // two elements following the "domainpixels" symbol are the leftmost and rightmost horizontal points (in pixels) of the domain. <br />
     // @copy BACH_DOC_QUERY_LABELS
     // @marg 0 @name query_label @optional 1 @type llll
     // @seealso getdomainpixels, domain, getlength, testdomain
     class_addmethod(c, (method) score_getdomainpixels, "getdomainpixels", A_GIMME, 0);
-
-
-    // @method testdomain @digest Test hypotetical domain 
-    // @description The <m>testdomain</m> message forces <o>bach.score</o> to output from the playout a hypotetical domain, 
+    
+    
+    // @method testdomain @digest Test hypotetical domain
+    // @description The <m>testdomain</m> message forces <o>bach.score</o> to output from the playout a hypotetical domain,
     // given a fixed domain starting point. The idea is that the user asks <o>bach.score</o> which would be the complete domain if such domain
-    // started at a given point. 
+    // started at a given point.
     // The hypotetical starting point of the domain is given as argument, and can be expressed either as absolute millisecond position (a single floating point
     // number) or as a timepoint (an llll).
     // @copy BACH_DOC_TIMEPOINT_SYNTAX_SCORE
-    // The syntax of the output answer is: <b>testdomain <m>start_ms</m> <m>end_ms</m> <m>VOICE1</m> <m>VOICE2</m>...</b>, where the 
+    // The syntax of the output answer is: <b>testdomain <m>start_ms</m> <m>end_ms</m> <m>VOICE1</m> <m>VOICE2</m>...</b>, where the
     // two elements following the "testdomain" symbol are the starting and ending point of the hypotetical domain in milliseconds,
     // and each <m>VOICE</m> is an llll containing the information about the timepoints of each voice (i.e. at which measure and point in measure,
     // for each voice, the domain would start and end]: its syntax is: <b>[[<m>start_measure_number</m> <m>start_sym_onset</m>]
@@ -4719,7 +4719,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @seealso pixeltotime, timepoint
     class_addmethod(c, (method) score_timetopixel, "timetopixel", A_GIMME, 0);
     class_addmethod(c, (method) score_getpixelpos, "getpixelpos", A_GIMME, 0); // old, deprecated
-
+    
     
     // @method timepoint @digest Perform conversions between timepoint and millisecond syntaxes
     // @description The <m>timepoint</m> message, either followed by a single number, considered as milliseconds position,
@@ -4740,7 +4740,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example timepoint [4 2 3/8] @caption the same for position at measure 2, after 3/8, for voice 4
     // @seealso timetopixel, pixeltotime
     class_addmethod(c, (method) score_timepoint, "timepoint", A_GIMME, 0);
-
+    
     
     // @method pixeltotime @digest Convert a pixel position into a time position
     // @description The <m>pixeltotime</m> message converts a position given in pixels (as argument) into a temporal position, output both in milliseconds and
@@ -4751,7 +4751,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // for each voice, fall on the introduced pixel): its syntax is: <b>[<m>measure_number</m> <m>sym_onset</m>]</b>, where <m>measure_number</m> is the measure number of the
     // measure where the pixel lies, and <m>sym_onset</m> is the symbolic onset (point inside the measure) to which the pixel correspond.
     // If the pixel does not fall exactly on a chord, by default, the timepoints are output by properly interpolating the timepoints of the chords whose onset are
-    // immediately at left and at right of the pixels. On the other hand, one can modify this behavior by introducing a final symbol argument (the "snap" type), which can be one 
+    // immediately at left and at right of the pixels. On the other hand, one can modify this behavior by introducing a final symbol argument (the "snap" type), which can be one
     // of the followings: <br />
     // - <b>left</b>: always return the timepoint of the chord whose onset falls immediately at left of the inserted pixel. <br />
     // - <b>right</b>: always return the timepoint of the chord whose onset falls immediately at right of the inserted pixel. <br />
@@ -4769,13 +4769,13 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @seealso timetopixel, timepoint
     class_addmethod(c, (method) score_pixeltotime, "pixeltotime", A_GIMME, 0);
     class_addmethod(c, (method) score_gettimeatpixel, "gettimeatpixel", A_GIMME, 0); // old deprecated
-
+    
     
     // @method refresh @digest Force recomputation and redraw
     // @description The <m>refresh</m> message forces the recomputation of all the features and forces the object box to be redrawn.
     class_addmethod(c, (method) score_anything, "refresh", A_GIMME, 0);
-
-
+    
+    
     // @method realtime @digest Toggle real-time mode
     // @description The <m>realtime 1</m> message will toggle the real-time mode, i.e. will change some attribute values in order to
     // disable the play highlight, the undo system and the legend. This will increase the object performance for real-time tasks.
@@ -4784,15 +4784,15 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example realtime 1 @caption turn real-time mode on
     // @example realtime 0 @caption turn real-time mode off
     class_addmethod(c, (method) score_anything, "realtime", A_GIMME, 0);
-
+    
     
     // @method dumpnotepixelpos @digest Retrieve pixel position of every chord and note
     // @description The <m>dumpnotepixelpos</m> message retrieves the pixel position of any chord and note, and outputs it from the playout.
-    // The output answer has the syntax: 
+    // The output answer has the syntax:
     // <b>notepixelpos <m>VOICE1</m> <m>VOICE2</m>...</b>, where each <m>VOICE</m> is an llll of the form:
-    // <b>[<m>MEASURE1</m> <m>MEASURE2</m>...]</b>, and where each <m>MEASURE</m> is in turn an llll of the form 
+    // <b>[<m>MEASURE1</m> <m>MEASURE2</m>...]</b>, and where each <m>MEASURE</m> is in turn an llll of the form
     // <b>[<m>CHORD1</m> <m>CHORD2</m>...]</b>, and where each <m>CHORD</m> is an llll accounting for the pixel position of the chord
-    // and all its notes, in the form: 
+    // and all its notes, in the form:
     // <b>(<m>x-pixel_onset</m> (<m>duration_in_horizontal_pixels_note1</m>  <m>duration_in_horizontal_pixels_note2</m> ...)
     // (<m>y_pixel_noteheadcenter_note1</m>   <m>y_pixel_noteheadcenter_note2</m> ...)
     // (<m>x_pixel_accidental_left_position_note1</m> <m>x_pixel_accidental_left_position_note2</m> ...))</b>.
@@ -4801,12 +4801,12 @@ void C74_EXPORT ext_main(void *moduleRef){
     // of the noteheads, and each <m>x_pixel_accidental_left_position_note</m> is the pixel position of the left boundary of the leftmost accidental
     // for each note (or, if a note has no accidentals, the leftmost point of the notehead). <br />
     // @copy BACH_DOC_QUERY_LABELS
-    // @marg 0 @name query_label @optional 1 @type llll    
+    // @marg 0 @name query_label @optional 1 @type llll
     // @seealso dumpvoicepixelpos, dumpmeasurepixelpos
     class_addmethod(c, (method) score_dumpnotepixelpos, "dumpnotepixelpos", A_GIMME, 0);
     class_addmethod(c, (method) score_dumpnotepixelpos, "dumppixelpos", A_GIMME, 0); // old, deprecated
-
-
+    
+    
     
     // @method dumpvoicepixelpos @digest Retrieve pixel position of every voice
     // @description @copy BACH_DOC_MESSAGE_DUMPVOICEPIXELPOS
@@ -4814,7 +4814,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @seealso dumpnotepixelpos, dumpmeasurepixelpos
     class_addmethod(c, (method) score_dumpvoicepixelpos, "dumpvoicepixelpos", A_GIMME, 0);
     class_addmethod(c, (method) score_dumpvoicepixelpos, "getvoicepixelpos", A_GIMME, 0); // old, deprecated
-
+    
     
     // @method dumpmeasurepixelpos @digest Retrieve pixel position of every measure
     // @description The <m>dumpmeasurepixelpos</m> message retrieves the pixel position of any measure, and outputs it from the playout.
@@ -4827,29 +4827,29 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @marg 0 @name query_label @optional 1 @type llll
     // @seealso dumpvoicepixelpos, dumpnotepixelpos
     class_addmethod(c, (method) score_dumpmeasurepixelpos, "dumpmeasurepixelpos", A_GIMME, 0);
-
     
-
+    
+    
     // @method getvzoom @digest Retrieve the current vertical zoom
     // @description @copy BACH_DOC_MESSAGE_GETVZOOM
     // @marg 0 @name query_label @optional 1 @type llll
     // @seealso getzoom, fixvzoom
     class_addmethod(c, (method) score_getvzoom, "getvzoom", A_GIMME, 0);
-
-
+    
+    
     // @method getzoom @digest Retrieve the current horizontal zoom
     // @description @copy BACH_DOC_MESSAGE_GETZOOM
     // @marg 0 @name query_label @optional 1 @type llll
     // @seealso getvzoom
     class_addmethod(c, (method) score_getzoom, "getzoom", A_GIMME, 0);
-
-
+    
+    
     // @method getlength @digest Get the total length
     // @description @copy BACH_DOC_MESSAGE_GETLENGTH
     // @marg 0 @name query_label @optional 1 @type llll
     class_addmethod(c, (method) score_getlength, "getlength", A_GIMME, 0);
-
-
+    
+    
     // @method getnumvoices @digest Get the number of voices
     // @description The <m>getnumvoices</m> message forces <o>bach.score</o> to output from the playout the current number of voices.
     // The syntax of the output answer is: <b>numvoices <m>num_voices</m></b>, where the last element is the number of voices. <br />
@@ -4857,47 +4857,47 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @marg 0 @name query_label @optional 1 @type llll
     // @seealso getnummeasures, getnumchords, getnumnotes
     class_addmethod(c, (method) score_getnumvoices, "getnumvoices", A_GIMME, 0);
-
-
+    
+    
     // @method getnummeasures @digest Get the number of measures
     // @description The <m>getnummeasures</m> message forces <o>bach.score</o> to output from the playout the current number of measures, for each voice.
-    // The syntax of the output answer is: <b>nummeasures <m>num_measures_voice1</m> <m>num_measures_voice2</m>...</b>, 
+    // The syntax of the output answer is: <b>nummeasures <m>num_measures_voice1</m> <m>num_measures_voice2</m>...</b>,
     // i.e. after the "nummeasures" symbol, a list of integers is given, representing the number of measures for each one of the voices. <br />
     // @copy BACH_DOC_QUERY_LABELS
     // @marg 0 @name query_label @optional 1 @type llll
     // @seealso getnumvoices, getnumchords, getnumnotes
     class_addmethod(c, (method) score_getnummeasures, "getnummeasures", A_GIMME, 0);
-
-
+    
+    
     // @method getnumchords @digest Get the number of chords
     // @description The <m>getnumchords</m> message forces <o>bach.score</o> to output from the playout the number of chord, for each measure and for each voice.
     // The syntax of the output answer is: <b>numchords <m>VOICE1</m> <m>VOICE2</m>...</b>, where each <m>VOICE</m> is an llll of the form
-    // <b>[<m>num_chords_measure1</m> <m>num_chords_measure1</m>...]</b>, 
+    // <b>[<m>num_chords_measure1</m> <m>num_chords_measure1</m>...]</b>,
     // i.e. after the "numchords" symbol, a list of lists is given: each outer list represents a voice, and innerly contains an integer for each one
     // of its measures: such integer is the number of chords of the measure. <br />
     // @copy BACH_DOC_QUERY_LABELS
     // @marg 0 @name query_label @optional 1 @type llll
     // @seealso getnumvoices, getnummeasures, getnumnotes
     class_addmethod(c, (method) score_getnumchords, "getnumchords", A_GIMME, 0);
-
-
+    
+    
     // @method getnumnotes @digest Get the number of notes
     // @description The <m>getnumnotes</m> message forces <o>bach.score</o> to output from the playout the number of notes, for each chord, for each measure and for each voice.
     // The syntax of the output answer is: <b>numnotes <m>VOICE1</m> <m>VOICE2</m>...</b>, where each <m>VOICE</m> is an llll of the form
     // <b>[<m>MEASURE1</m> <m>MEASURE2</m>...]</b>, and each <m>MEASURE</m> is in turn an llll of the form <b>[<m>num_notes_chord1</m> <m>num_notes_chord2</m>...]</b>,
-    // i.e. after the "numnotes" symbol, a list of lists of lists is given: each outer list represents a voice, then one has a level for each measure, 
+    // i.e. after the "numnotes" symbol, a list of lists of lists is given: each outer list represents a voice, then one has a level for each measure,
     // containing contains an integer for each one of its chords: such integer is the number of notes of the chord. <br />
     // @copy BACH_DOC_QUERY_LABELS
     // @marg 0 @name query_label @optional 1 @type llll
     // @seealso getnumvoices, getnummeasures, getnumchords
     class_addmethod(c, (method) score_getnumnotes, "getnumnotes", A_GIMME, 0);
-
-
-    // @method fixvzoom @digest Fix the vertical zoom value 
+    
+    
+    // @method fixvzoom @digest Fix the vertical zoom value
     // @description @copy BACH_DOC_MESSAGE_FIXVZOOM
     // @seealso getvzoom
     class_addmethod(c, (method) score_fixvzoom, "fixvzoom", 0);
-
+    
     class_addmethod(c, (method) score_preset, "preset", 0);
     class_addmethod(c, (method) score_begin_preset, "begin_preset", A_GIMME, 0);
     class_addmethod(c, (method) score_restore_preset, "restore_preset", A_GIMME, 0);
@@ -4905,16 +4905,16 @@ void C74_EXPORT ext_main(void *moduleRef){
     CLASS_METHOD_ATTR_PARSE(c, "begin_preset", "undocumented", gensym("long"), 0L, "1");
     CLASS_METHOD_ATTR_PARSE(c, "restore_preset", "undocumented", gensym("long"), 0L, "1");
     CLASS_METHOD_ATTR_PARSE(c, "end_preset", "undocumented", gensym("long"), 0L, "1");
-
-
+    
+    
     // @method paintjit @digest Draw the score onto a jitter matrix
     // @description @copy BACH_DOC_PAINTJIT
     class_addmethod(c, (method) score_paint_to_jitter_matrix, "paintjit", A_SYM, 0);
-
+    
     
     // @method llll @digest Function depends on inlet
     // @description In the first inlet, an llll is expected to be a gathered syntax content of the entire <o>bach.score</o> (building
-    // the new <o>bach.score</o> content from scratch), or an llll containing just some header specification 
+    // the new <o>bach.score</o> content from scratch), or an llll containing just some header specification
     // (thus not affecting the body of the object). See below for more information on the gathered syntax. <br />
     // In any of the other inlets, an llll is expected to contain the separate syntax of some parameter. Namely: <br />
     // - second inlet: Measureinfo <br />
@@ -4932,35 +4932,35 @@ void C74_EXPORT ext_main(void *moduleRef){
     class_addmethod(c, (method) score_anything, "anything", A_GIMME, 0);
     class_addmethod(c, (method) score_int, "int", A_LONG, 0);
     class_addmethod(c, (method) score_float, "float", A_FLOAT, 0);
-
+    
     // multitouch handling from Mira/MiraWeb
     class_addmethod(c, (method) notationobj_mt, "mt", A_GIMME, 0);
-
+    
     // @method bang @digest Build content from separate parameters
     // @description A <m>bang</m> in any of the inlets will first rebuild new <o>bach.score</o> content starting from
-    // the parameters given as input in the separate inlets (see <m>llll</m> method). 
-    // If the <m>autoclear</m> attribute is set to 1, 
+    // the parameters given as input in the separate inlets (see <m>llll</m> method).
+    // If the <m>autoclear</m> attribute is set to 1,
     // first of all the <m>bang</m> will clear the content of the <o>bach.score</o>; if on the other hand
     // the <m>autoclear</m> attribute is set to 0, the new parameter will modify the existing content.
     // Not all the separate parameters need to be given to build the new content: if some are not given, default values
-    // will be used instead. Default measureinfo is a 4/4 time signature, with quarter = 60 tempo. 
+    // will be used instead. Default measureinfo is a 4/4 time signature, with quarter = 60 tempo.
     // Default durations are given by the equal division of the measure duration by the number of chords (i.e. if eight chords are needed in a 4/4 measure,
     // default duration will be 1/8 each). Default pitch in cents is 6000 (middle C).
     // Default velocity is 100, but the last one is padded if more chords than the input velocities are
-    // to be created. Default extras are no extras. 
+    // to be created. Default extras are no extras.
     class_addmethod(c, (method) score_bang, "bang", 0);
-
-
+    
+    
     // @method clock @digest Select a clock source
-    // @description The word <m>clock</m>, followed by the name of an existing <m>setclock</m> objects, sets the <o>bach.roll</o> 
-    // object to be controlled by that <m>setclock</m> object rather than by Max's internal millisecond clock. 
+    // @description The word <m>clock</m>, followed by the name of an existing <m>setclock</m> objects, sets the <o>bach.roll</o>
+    // object to be controlled by that <m>setclock</m> object rather than by Max's internal millisecond clock.
     // The word <m>clock</m> by itself sets the <o>bach.roll</o> object back to using Max's regular millisecond clock.
     // @marg 0 @name setclock_name @optional 1 @type symbol
     // @example clock ticker @caption link to 'ticker' setclock
     // @example clock @caption link to default clock
     class_addmethod(c, (method) notationobj_clock, "clock", A_DEFSYM, 0);
-
-
+    
+    
     // @method play @digest Play
     // @description The <m>play</m> message plays a portion or all the <o>bach.score</o>.
     // "Playing" means that <o>bach.score</o> sends from the "playout" outlet, at the timing corresponding to each chord onset,
@@ -4973,11 +4973,11 @@ void C74_EXPORT ext_main(void *moduleRef){
     // if elements are muted, they will not be sequences; if some elements are set as "solo", just those elements will be sequenced.
     // If multiple chords or notes are simultaneous, the order is from topmost voice to bottommost voice, then from lowest note to highest note.
     // Sequencing can be controlled with a variable speed via the <m>clock</m> message and the <o>setclock</o> object.
-    // The <m>play</m> message, without any further argument, plays the <o>bach.score</o> from the current playhead cursor position 
+    // The <m>play</m> message, without any further argument, plays the <o>bach.score</o> from the current playhead cursor position
     // (by default: the beginning of the <o>bach.score</o>) to the end. <br />
     // If you put as first optional argument the "selection" symbol, only the selected content is played:
     // playback starts at the beginning of the selection and ends once the last selected item is played. <br />
-     // If you put as additional argument the "offset" symbol, all the playing will be done in non-real-time mode, i.e. with no sequencing involved; playing messages
+    // If you put as additional argument the "offset" symbol, all the playing will be done in non-real-time mode, i.e. with no sequencing involved; playing messages
     // will be still output from the playout, but one after another, "immediately". <br />
     // If you put as additional argument the "preschedule" symbol, all the playing events will be prescheduled.
     // @copy BACH_DOC_PRESCHEDULED_PLAYBACK
@@ -5010,8 +5010,8 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example play [3.5] [10] @caption play from half of measure 3 to beginning of measure 10 (i.e. end of measure 9)
     // @seealso stop, pause, setcursor, playselection
     class_addmethod(c, (method) notationobj_play, "play", A_GIMME, 0);
-
-
+    
+    
     // @method playselection @digest Only play selected items
     // @description The <m>playselection</m> message only plays the selected content. It works exactly like <m>play</m>, but it starts playing
     // at the beginning of the selection, and ends playing at the end of the last selected item. Only selected items are sequenced.
@@ -5025,28 +5025,78 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example playselection offline @caption the same, in non-realtime mode ("uzi-like")
     // @seealso stop, pause, play
     class_addmethod(c, (method) notationobj_play, "playselection", A_GIMME, 0);
-
-    // @method stop @digest Start
-    // @description The <m>start</m> message activates the playback of a new playhead.
+    
+    // @method launch @digest Launch
+    // @description The <m>launch</m> message activates the playback of a new playhead during
+    // an existing playback session.
     // This differs from <m>play</m> in that <m>play</m> begins a brand new playback session.
+    // The optional argument sets the index of the playhead to be launched; if the argument isn't set,
+    // the next available playhead is launched.
+    // Additional attribute-like arguments may set: <br />
+    // - the starting and stopping point for the playback
+    // (respectively: "@start" and "@stop" attributes), which can be either in milliseconds or in
+    // timepoint syntax (see below); <br />
+    // - the playback rate, via the "@rate" attribute; <br />
+    // - the playhead name, via the "@name" attribute; <br />
+    // - a flag telling whether the playback should be limited to items bearing the same name
+    // (via the "@namerestrict attribute). <br /> <br />
+    // @copy BACH_DOC_TIMEPOINT_SYNTAX_SCORE
     // @marg 0 @name playhead_index @optional 1 @type int
-    // @seealso pause, play, stop, playselection
-    class_addmethod(c, (method) notationobj_start, "start", A_GIMME, 0);
+    // @mattr start @type number/llll @default none @digest Sets the starting position, in milliseconds or as a timepoint
+    // @mattr stop @type number/llll @default none @digest Sets the stopping position, in milliseconds or as a timepoint
+    // @mattr rate @type number @default 1 @digest Sets the playback rate
+    // @mattr name @type number @default none @digest Sets the playhead name
+    // @mattr namerestrict @type 0/1 @default 0 @digest If set to 1, it restricts playback to notation items bearing the same name as the playhead.
+    // @seealso play
+    // @example launch @caption launch a new playhead from the beginning
+    // @example launch 2 @start 1000 @caption launch playhead 2 from 1s
+    // @example launch 3 @start [10] @end [13] @caption launch playhead 3 from measure 10 to 13
+    // @example launch 2 @start 2000 @rate 3 @caption launch playhead 2 from 2s at triple speed
+    // @example launch 2 @start 2000 @rate 1/2 @caption same, at half speed
+    // @example launch 4 @name bass @namerestrict 1 @caption activate playhead 4, called bass, only playing notation items bearing the same name
+    class_addmethod(c, (method) notationobj_launch, "launch", A_GIMME, 0);
 
+    
+    // @method resume @digest Resume
+    // @description The <m>resume</m> message reactivates the playback of a new playhead after having been paused.
+    // @marg 0 @name playhead_index @optional 0 @type int
+    // @seealso pause, play, stop
+    // @example resume 3 @caption resume playing of third playhead
+    class_addmethod(c, (method) notationobj_resume, "resume", A_GIMME, 0);
+
+    // @method seek @digest Seek
+    // @description The <m>seek</m> message instantly moves a given playhead to a new location during playback.
+    // The first argument is the playhead index, while the second argument is the new location, either in milliseconds
+    // or as a timepoint.
+    // @marg 0 @name playhead_index @optional 0 @type int
+    // @marg 1 @name new_position @optional 0 @type number/llll
+    // @example seek 2 2000 @caption moves second playhead to 2sec
+    // @example seek 3 [5 1/4] @caption moves third playhead to measure 5, after 1/4
+    // @seealso pause, play, stop
     class_addmethod(c, (method) notationobj_seek, "seek", A_GIMME, 0);
 
 
     // @method stop @digest Stop
-    // @description The <m>stop</m> message stops any ongoing playing, if <o>bach.score</o> was in play mode (nothing happens otherwise).
+    // @description The <m>stop</m> message stops any ongoing playing, if the object was in play mode (nothing happens otherwise).
+    // An optional argument sets the number of the playhead to be stopped (if no argument is given, all playheads are stopped).
+    // @marg 0 @name playhead_index @optional 1 @type int
+    // @example stop 3 @caption stop third playhead
+    // @example stop @caption stop all playheads
     // @seealso pause, play, playselection
     class_addmethod(c, (method) notationobj_stop, "stop", A_GIMME, 0);
 
 
     // @method pause @digest Pause
-    // @description The <m>pause</m> message pause any ongoing playing, if <o>bach.score</o> was in play mode (nothing happens otherwise).
-    // When paused, the play head cursor is updated to its last reached position while playing, so that a new play will begin by default
-    // @seealso play, playselection, stop
-    // at that position. 
+    // @description The <m>pause</m> message pause any ongoing playing, if <o>bach.score</o> was in play mode 
+    // (nothing happens otherwise).
+    // When paused, the play head cursor is updated to its last reached position while playing, so that a new play will begin
+    // by default at that position.
+    // An optional argument sets the number of the playhead to be paused (if no argument is given, all playheads are paused).
+    // A paused playback can be resumed via the <m>resume</m> message.
+    // @marg 0 @name playhead_index @optional 1 @type int
+    // @example pause 3 @caption pause third playhead
+    // @example pause @caption pause all playheads
+    // @seealso resume, play, stop.
     // @seealso play, playselection, stop
     class_addmethod(c, (method) notationobj_pause, "pause", A_GIMME, 0);
 
