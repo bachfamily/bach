@@ -5719,64 +5719,146 @@ void C74_EXPORT ext_main(void *moduleRef){
 
 
     // @method play @digest Play
-    // @description The <m>play</m> message plays a portion or all the <o>bach.roll</o>.
+    // @description The <m>play</m> message plays a portion or all the <o>bach.roll</o> (with one or multiple playheads).
     // "Playing" means that <o>bach.roll</o> sends from the "playout" outlet, at the timing corresponding to each chord onset,
     // the information about all the chord, or about all the notes of the chord (depending on the <m>playmode</m> attribute, to which you
-    // should refer to know more). Markers are also sequenced if the <m>playmarkers</m> attribute is set to 1. 
+    // should refer to know more). Rests are sequenced if the <m>playrests</m> attribute is set to 1.
+    // Markers are sequenced if the <m>playmarkers</m> attribute is set to 1. Tempi are sequenced
+    // if the <m>playtempi</m> attribute is set to 1. Measure starting barlines (along with the corresponding measureinfo) are sequenced if
+    // the <m>playmeasures</m> attribute is set to 1. <br />
     // The sequencing takes into account the solo and mute state of each element (see <m>solo</m>, <m>unsolo</m>, <m>mute</m> and <m>unmute</m> messages):
     // if elements are muted, they will not be sequences; if some elements are set as "solo", just those elements will be sequenced.
     // If multiple chords or notes are simultaneous, the order is from topmost voice to bottommost voice, then from lowest note to highest note.
     // Sequencing can be controlled with a variable speed via the <m>clock</m> message and the <o>setclock</o> object.
-    // The <m>play</m> message, without any further argument, plays the <o>bach.roll</o> from the current playhead cursor position 
+    // The <m>play</m> message, without any further argument, plays the <o>bach.roll</o> from the current playhead cursor position
     // (by default: the beginning of the <o>bach.roll</o>) to the end. <br />
     // If you put as first optional argument the "selection" symbol, only the selected content is played:
     // playback starts at the beginning of the selection and ends once the last selected item is played. <br />
-    // If you put as additional argument the "offline" symbol, all the playing will be done in non-real-time mode, i.e. with no sequencing involved; playing messages
+    // If you put as additional argument the "offset" symbol, all the playing will be done in non-real-time mode, i.e. with no sequencing involved; playing messages
     // will be still output from the playout, but one after another, "immediately". <br />
     // If you put as additional argument the "preschedule" symbol, all the playing events will be prescheduled.
     // @copy BACH_DOC_PRESCHEDULED_PLAYBACK
     // The "selection" symbol can be combined with both "offline" and "preschedule" symbols, but "offline" and
     // "preschedule" are mutually exclusive. <br />
     // If you use the "offline" symbol, you can follow it by a "deferlow" symbol to force a defer-low operation for every output note. <br />
+    // You can always add a "loop" symbol to only play the current loop region. <br />
+    // After the symbolic argument(s) come the numeric ones.
     // If you give a single numeric argument, it will be the starting point in milliseconds
     // of the region to be played: <o>bach.roll</o> will play from that point to the end. If you give two numeric arguments, they will be the starting and
     // ending point in milliseconds of the region to be played.
-    // <br /> <br />
+    // Additional attribute-like specifications address multi-playhead playback: <br />
+    // - a "numplayheads" message attribute specifies the number of playheads that the playback should have;
+    // - the "start" and "stop" message attributes specify the limits of the playback in milliseconds,
+    // and expect a list with one element for each playhead (you can also use "loop" to refer to the loop start/end);
+    // - the "rate" message attribute specifies the playback speed (2 meaning: double speed; 1/2 meaning half speed; -1 meaning:
+    // reading backward; and so on), one element for each playhead is expected;
+    // - the "name" message attribute sets playhead names as a list of symbols, one element for each playhead;
+    // - the "namerestrict" message attribute specifies, with a 0 or 1 integer, whether the playhead only plays the notation items
+    // bearing that same name, with one element for each playhead, once again. <br /> <br />
     // @copy BACH_DOC_PLAYOUT_SYNTAX_ROLL
     // @marg 0 @name scheduling_mode @optional 1 @type symbol
-    // @marg 1 @name start_ms @optional 1 @type float
-    // @marg 2 @name end_ms @optional 1 @type float
+    // @marg 1 @name start @optional 1 @type float/llll
+    // @marg 2 @name stop @optional 2 @type float/llll
+    // @mattr start @type number/llll @default none @digest Starting position for each playhead, in milliseconds or as a timepoint
+    // @mattr stop @type number/llll @default none @digest Stopping position for each playhead, in milliseconds or as a timepoint
+    // @mattr rate @type number/llll @default 1 @digest Playback rate for each playhead
+    // @mattr name @type symbol/llll @default none @digest Name of each playhead
+    // @mattr namerestrict @type number/llll @default 0 @digest List of 0/1s, possibly restricting playback to items with the same name
     // @example play @caption play from current playhead position
-    // @example play 2000 @caption play starting from 2s till the end
-    // @example play 2000 4000 @caption play starting from 2s, stop at 4s
     // @example play offline @caption play in non-realtime mode ("uzi-like")
-    // @example play offline 2000 4000 @caption play from 2s to 4s in non-realtime mode
+    // @example play preschedule @caption accurate prescheduled playback (with limitations)
     // @example play selection @caption play selected items only
     // @example play selection offline @caption the same, in non-realtime mode ("uzi-like")
     // @example play selection offline deferlow @caption play selection offline but deferlow between consecutive outputs
-    // @example play preschedule @caption accurate prescheduled playback (with limitations)
-    // @seealso stop, pause, setcursor
+    // @example play 2000 @caption play starting from 2s till the end
+    // @example play 2000 4000 @caption play starting from 2s, stop at 4s
+    // @example play @numplayheads 2 @start 0 -2000 @caption activates two playheads, in a 2sec canon
+    // @example play @numplayheads 3 @rate 1 2 1/2 @caption activates three playheads, the second at double speed, the third at half speed
+    // @example play @numplayheads 2 @start 0 -2000 @name dux comes @caption same, with two names for the playheads
+    // @example play @numplayheads 2 @start 0 -2000 @name dux comes @namerestrict 1 @caption same, but each playhead only plays elements bearing the same name
+    // @seealso stop, pause, setcursor, playselection
     class_addmethod(c, (method) notationobj_play, "play", A_GIMME, 0);
+    
+    // @method playselection @digest Only play selected items
+    // @description The <m>playselection</m> message only plays the selected content. It works exactly like <m>play</m>,
+    // but it starts playing at the beginning of the selection, and ends playing at the end of the last selected item.
+    // Only selected items are sequenced. This is equivalent to <m>play selection</m>, so please refer to the documentation
+    // for the <m>play</m> method to have information on all the relevant arguments ("offline", "preschedule"...) and attributes
+    // (handling the properties of playheads).
+    // @marg 0 @name scheduling_mode @optional 1 @type symbol
+    // @example playselection @caption play selected items only
+    // @example playselection offline @caption the same, in non-realtime mode ("uzi-like")
+    // @seealso stop, pause, play
     class_addmethod(c, (method) notationobj_play, "playselection", A_GIMME, 0);
     
 
-    // @method stop @digest Start
-    // @description The <m>start</m> message activates the playback of a new playhead.
+    // @method launch @digest Launch
+    // @description The <m>launch</m> message activates the playback of a new playhead during
+    // an existing playback session.
     // This differs from <m>play</m> in that <m>play</m> begins a brand new playback session.
-    // @seealso pause, play, stop, playselection
+    // The optional argument sets the index of the playhead to be launched; if the argument isn't set,
+    // the first available playhead is launched.
+    // Additional attribute-like arguments may set: <br />
+    // - the starting and stopping point for the playback
+    // (respectively: "start" and "stop" attributes) in milliseconds (you can also use "loop" to refer to the loop start/end); <br />
+    // - the playback rate, via the "rate" attribute; <br />
+    // - the playhead name, via the "name" attribute; <br />
+    // - a flag telling whether the playback should be limited to items bearing the same name
+    // (via the "@namerestrict attribute). <br /> <br />
+    // @marg 0 @name playhead_index @optional 1 @type int
+    // @mattr start @type number/llll @default none @digest Sets the starting position, in milliseconds or as a timepoint
+    // @mattr stop @type number/llll @default none @digest Sets the stopping position, in milliseconds or as a timepoint
+    // @mattr rate @type number @default 1 @digest Sets the playback rate
+    // @mattr name @type symbol @default none @digest Sets the playhead name
+    // @mattr namerestrict @type 0/1 @default 0 @digest If set to 1, it restricts playback to notation items bearing the same name as the playhead.
+    // @seealso play
+    // @example launch @caption launch a new playhead from the beginning
+    // @example launch 2 @start 1000 @caption launch playhead 2 from 1s
+    // @example launch 3 @start [10] @end [13] @caption launch playhead 3 from measure 10 to 13
+    // @example launch 2 @start 2000 @rate 3 @caption launch playhead 2 from 2s at triple speed
+    // @example launch 2 @start 2000 @rate 1/2 @caption same, at half speed
+    // @example launch 4 @name bass @namerestrict 1 @caption activate playhead 4, called bass, only playing notation items bearing the same name    
     class_addmethod(c, (method) notationobj_launch, "launch", A_GIMME, 0);
+    
+    // @method resume @digest Resume
+    // @description The <m>resume</m> message reactivates the playback of a new playhead after having been paused.
+    // @marg 0 @name playhead_index @optional 0 @type int
+    // @seealso pause, play, stop
+    // @example resume 3 @caption resume playing of third playhead
+    class_addmethod(c, (method) notationobj_resume, "resume", A_GIMME, 0);
 
+    // @method seek @digest Seek
+    // @description The <m>seek</m> message instantly moves a given playhead to a new location during playback.
+    // The first argument is the playhead index, while the second argument is the new location, either in milliseconds
+    // or as a timepoint.
+    // @marg 0 @name playhead_index @optional 0 @type int
+    // @marg 1 @name new_position @optional 0 @type number/llll
+    // @example seek 2 2000 @caption moves second playhead to 2sec
+    // @example seek 3 [5 1/4] @caption moves third playhead to measure 5, after 1/4
+    // @seealso pause, play, stop
     class_addmethod(c, (method) notationobj_seek, "seek", A_GIMME, 0);
-
+    
     // @method stop @digest Stop
-    // @description The <m>stop</m> message stops any ongoing playing, if <o>bach.roll</o> was in play mode (nothing happens otherwise).
+    // @description The <m>stop</m> message stops any ongoing playing, if the object was in play mode (nothing happens otherwise).
+    // An optional argument sets the number of the playhead to be stopped (if no argument is given, all playheads are stopped).
+    // @marg 0 @name playhead_index @optional 1 @type int
+    // @example stop 3 @caption stop third playhead
+    // @example stop @caption stop all playheads
     // @seealso pause, play, playselection
     class_addmethod(c, (method) notationobj_stop, "stop", A_GIMME, 0);
 
+
     // @method pause @digest Pause
-    // @description The <m>pause</m> message pause any ongoing playing, if <o>bach.roll</o> was in play mode (nothing happens otherwise).
-    // When paused, the play head cursor is updated to its last reached position while playing, so that a new play will begin by default
-    // at that position.
+    // @description The <m>pause</m> message pause any ongoing playing, if <o>bach.score</o> was in play mode
+    // (nothing happens otherwise).
+    // When paused, the play head cursor is updated to its last reached position while playing, so that a new play will begin
+    // by default at that position.
+    // An optional argument sets the number of the playhead to be paused (if no argument is given, all playheads are paused).
+    // A paused playback can be resumed via the <m>resume</m> message.
+    // @marg 0 @name playhead_index @optional 1 @type int
+    // @example pause 3 @caption pause third playhead
+    // @example pause @caption pause all playheads
+    // @seealso resume, play, stop.
     // @seealso play, playselection, stop
     class_addmethod(c, (method) notationobj_pause, "pause", A_GIMME, 0);
 
@@ -11659,7 +11741,7 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
 
                         t_playedby_info is_note_played = make_playedby_info(0, 0);
                         if (should_element_be_played((t_notation_obj *) x, (t_notation_item *)curr_nt)) {
-                            is_note_played = make_playedby_info(get_playheads(curr_ch->played) | get_playheads(curr_nt->played), curr_nt->played);
+                            is_note_played = make_playedby_info(get_playheads(curr_ch->played) | get_playheads(curr_nt->played), get_latest_playhead(curr_nt->played));
                         }
 
                         char is_articulation_selected = notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)art);
@@ -11684,7 +11766,7 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
 
                     t_playedby_info is_note_played = make_playedby_info(0, 0);
                     if (should_element_be_played((t_notation_obj *) x, (t_notation_item *)curr_nt)) {
-                        is_note_played = make_playedby_info(get_playheads(curr_ch->played) | get_playheads(curr_nt->played), curr_nt->played);
+                        is_note_played = make_playedby_info(get_playheads(curr_ch->played) | get_playheads(curr_nt->played), get_latest_playhead(curr_nt->played));
                     }
 
                     t_jrgba annotationcolor = annotation_get_color((t_notation_obj *) x, curr_ch, false, is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited);

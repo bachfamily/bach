@@ -4962,7 +4962,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     
     
     // @method play @digest Play
-    // @description The <m>play</m> message plays a portion or all the <o>bach.score</o>.
+    // @description The <m>play</m> message plays a portion or all the <o>bach.score</o> (with one or multiple playheads).
     // "Playing" means that <o>bach.score</o> sends from the "playout" outlet, at the timing corresponding to each chord onset,
     // the information about all the chord, or about all the notes of the chord (depending on the <m>playmode</m> attribute, to which you
     // should refer to know more). Rests are sequenced if the <m>playrests</m> attribute is set to 1.
@@ -4984,15 +4984,31 @@ void C74_EXPORT ext_main(void *moduleRef){
     // The "selection" symbol can be combined with both "offline" and "preschedule" symbols, but "offline" and
     // "preschedule" are mutually exclusive. <br />
     // If you use the "offline" symbol, you can follow it by a "deferlow" symbol to force a defer-low operation for every output note. <br />
+    // You can always add a "loop" symbol to only play the current loop region. <br />
+    // After the symbolic argument(s) come the numeric ones.
     // If you give a single numeric argument, it will be the starting point in milliseconds
     // of the region to be played: <o>bach.roll</o> will play from that point to the end. If you give two numeric arguments, they will be the starting and
     // ending point in milliseconds of the region to be played.
-    // Each one of such numbers can be replaced by a <o>bach.score</o> timepoint. <br />
+    // Each one of such numbers can be replaced by a <o>bach.score</o> timepoint (more about this at the bottom). <br />
+    // Additional attribute-like specifications address multi-playhead playback: <br />
+    // - a "numplayheads" message attribute specifies the number of playheads that the playback should have;
+    // - the "start" and "stop" message attributes specify the limits of the playback (in milliseconds or as timepoints),
+    // and expect a list with one element for each playhead (you can also use "loop" to refer to the loop start/end);
+    // - the "rate" message attribute specifies the playback speed (2 meaning: double speed; 1/2 meaning half speed; -1 meaning:
+    // reading backward; and so on), one element for each playhead is expected;
+    // - the "name" message attribute sets playhead names as a list of symbols, one element for each playhead;
+    // - the "namerestrict" message attribute specifies, with a 0 or 1 integer, whether the playhead only plays the notation items
+    // bearing that same name, with one element for each playhead, once again. <br /> <br />
     // @copy BACH_DOC_TIMEPOINT_SYNTAX_SCORE
     // @copy BACH_DOC_PLAYOUT_SYNTAX_SCORE
     // @marg 0 @name scheduling_mode @optional 1 @type symbol
     // @marg 1 @name start @optional 1 @type float/llll
-    // @marg 2 @name end @optional 2 @type float/llll
+    // @marg 2 @name stop @optional 2 @type float/llll
+    // @mattr start @type number/llll @default none @digest Starting position for each playhead, in milliseconds or as a timepoint
+    // @mattr stop @type number/llll @default none @digest Stopping position for each playhead, in milliseconds or as a timepoint
+    // @mattr rate @type number/llll @default 1 @digest Playback rate for each playhead
+    // @mattr name @type symbol/llll @default none @digest Name of each playhead
+    // @mattr namerestrict @type number/llll @default 0 @digest List of 0/1s, possibly restricting playback to items with the same name
     // @example play @caption play from current playhead position
     // @example play offline @caption play in non-realtime mode ("uzi-like")
     // @example play preschedule @caption accurate prescheduled playback (with limitations)
@@ -5008,18 +5024,20 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example play [2 4 1/4] [5 10 1/12] @caption the same, but only till measure 10 of voice 5, after 1/12
     // @example play offline [2 4 1/4] [5 10 1/12] @caption the same, in non-realtime mode
     // @example play [3.5] [10] @caption play from half of measure 3 to beginning of measure 10 (i.e. end of measure 9)
+    // @example play @numplayheads 2 @start 0 -2000 @caption activates two playheads, in a 2sec canon
+    // @example play @numplayheads 3 @rate 1 2 1/2 @caption activates three playheads, the second at double speed, the third at half speed
+    // @example play @numplayheads 2 @start 0 -2000 @name dux comes @caption same, with two names for the playheads
+    // @example play @numplayheads 2 @start 0 -2000 @name dux comes @namerestrict 1 @caption same, but each playhead only plays elements bearing the same name
     // @seealso stop, pause, setcursor, playselection
     class_addmethod(c, (method) notationobj_play, "play", A_GIMME, 0);
     
     
     // @method playselection @digest Only play selected items
-    // @description The <m>playselection</m> message only plays the selected content. It works exactly like <m>play</m>, but it starts playing
-    // at the beginning of the selection, and ends playing at the end of the last selected item. Only selected items are sequenced.
-    // Mute and solo status are also taken into account (see <m>play</m>). <br />
-    // If you put as first argument the "offset" symbol, all the playing will be done in non-real-time mode, i.e. with no sequencing involved; playing messages
-    // will be still output from the playout, but one after another, "immediately", in the low-priority queue. <br />
-    // If you put as first argument the "preschedule" symbol, all the playing events will be prescheduled.
-    // @copy BACH_DOC_PRESCHEDULED_PLAYBACK
+    // @description The <m>playselection</m> message only plays the selected content. It works exactly like <m>play</m>, 
+    // but it starts playing at the beginning of the selection, and ends playing at the end of the last selected item.
+    // Only selected items are sequenced. This is equivalent to <m>play selection</m>, so please refer to the documentation
+    // for the <m>play</m> method to have information on all the relevant arguments ("offline", "preschedule"...) and attributes
+    // (handling the properties of playheads).
     // @marg 0 @name scheduling_mode @optional 1 @type symbol
     // @example playselection @caption play selected items only
     // @example playselection offline @caption the same, in non-realtime mode ("uzi-like")
@@ -5031,13 +5049,13 @@ void C74_EXPORT ext_main(void *moduleRef){
     // an existing playback session.
     // This differs from <m>play</m> in that <m>play</m> begins a brand new playback session.
     // The optional argument sets the index of the playhead to be launched; if the argument isn't set,
-    // the next available playhead is launched.
+    // the first available playhead is launched.
     // Additional attribute-like arguments may set: <br />
     // - the starting and stopping point for the playback
-    // (respectively: "@start" and "@stop" attributes), which can be either in milliseconds or in
-    // timepoint syntax (see below); <br />
-    // - the playback rate, via the "@rate" attribute; <br />
-    // - the playhead name, via the "@name" attribute; <br />
+    // (respectively: "start" and "stop" attributes), which can be either in milliseconds or in
+    // timepoint syntax, explained below (you can also use "loop" to refer to the loop start/end); <br />
+    // - the playback rate, via the "rate" attribute; <br />
+    // - the playhead name, via the "name" attribute; <br />
     // - a flag telling whether the playback should be limited to items bearing the same name
     // (via the "@namerestrict attribute). <br /> <br />
     // @copy BACH_DOC_TIMEPOINT_SYNTAX_SCORE
@@ -5045,7 +5063,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @mattr start @type number/llll @default none @digest Sets the starting position, in milliseconds or as a timepoint
     // @mattr stop @type number/llll @default none @digest Sets the stopping position, in milliseconds or as a timepoint
     // @mattr rate @type number @default 1 @digest Sets the playback rate
-    // @mattr name @type number @default none @digest Sets the playhead name
+    // @mattr name @type symbol @default none @digest Sets the playhead name
     // @mattr namerestrict @type 0/1 @default 0 @digest If set to 1, it restricts playback to notation items bearing the same name as the playhead.
     // @seealso play
     // @example launch @caption launch a new playhead from the beginning

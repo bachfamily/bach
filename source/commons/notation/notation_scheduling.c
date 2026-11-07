@@ -345,7 +345,7 @@ void notationobj_task(t_notation_obj *r_ob)
     
     for (long ph = 0; ph < r_ob->num_playheads; ph++) {
         if (specs->playhead_active[ph])
-            r_ob->play_head_ms[ph] += r_ob->play_step_ms / specs->playhead_rate[ph];
+            r_ob->play_head_ms[ph] += r_ob->play_step_ms * specs->playhead_rate[ph];
     }
     r_ob->play_step_count++;
     
@@ -436,7 +436,7 @@ void notationobj_task(t_notation_obj *r_ob)
                  //                        dev_post("(multihead playback error!)");
                  }
                  }
-                 offset_ms_for_nonscheduled_voices = (scheduled_ms - specs->last_scheduled_ms[ph]) * specs->playhead_rate[ph];
+                 offset_ms_for_nonscheduled_voices = (scheduled_ms - specs->last_scheduled_ms[ph]) / specs->playhead_rate[ph];
                  */
                 if (!scheduled_item) {
                     //this means that the specific playhead ph has ended
@@ -784,7 +784,7 @@ void notationobj_task(t_notation_obj *r_ob)
                 if (specs->playhead_active[ph]) {
                     if (!scheduled_ph[ph]) {
                         bool cancrizans = playhead_is_cancrizans(r_ob, ph);
-                        //                        double new_last_scheduled_ms = specs->last_scheduled_ms[ph] + offset_ms_for_nonscheduled_voices / specs->playhead_rate[ph]; //< we used to use this but then offset_ms_for_nonscheduled voices was trickier than just picking up the ms, which were updated anyway
+                        //                        double new_last_scheduled_ms = specs->last_scheduled_ms[ph] + offset_ms_for_nonscheduled_voices * specs->playhead_rate[ph]; //< we used to use this but then offset_ms_for_nonscheduled voices was trickier than just picking up the ms, which were updated anyway
                         double new_last_scheduled_ms = r_ob->play_head_ms[ph];
                         // however, making sure that specs->last_scheduled_ms[ph] isn't greater than the next item to schedule,
                         // which may happen with bad approximations...
@@ -837,7 +837,7 @@ void notationobj_task(t_notation_obj *r_ob)
                     }
                     
                     // we schedule the next item
-                    double earliest_item_offset = (earliest_item_to_schedule_onset[ph] - specs->offset_ms[ph]) * specs->playhead_rate[ph];
+                    double earliest_item_offset = (earliest_item_to_schedule_onset[ph] - specs->offset_ms[ph]) / specs->playhead_rate[ph];
                     // if (!earliest_item_across_all_ph || earliest_item_offset < bestoffset) {
 
                     //post("PH: %ld,  eioffs: %.2f, onset: %.2f, phoffset: %.2f", ph, earliest_item_offset, earliest_item_to_schedule_onset[ph], specs->offset_ms[ph]);
@@ -853,9 +853,9 @@ void notationobj_task(t_notation_obj *r_ob)
                         r_ob->scheduled_playhead[0] = ph;
                         bestoffset = earliest_item_offset;
                         
-                        ms_till_scheduled_item = (r_ob->scheduled_ms[0] - specs->last_scheduled_ms[r_ob->scheduled_playhead[0]]) * specs->playhead_rate[r_ob->scheduled_playhead[0]];
+                        ms_till_scheduled_item = (r_ob->scheduled_ms[0] - specs->last_scheduled_ms[r_ob->scheduled_playhead[0]]) / specs->playhead_rate[r_ob->scheduled_playhead[0]];
                         
-                        //                        ms_till_scheduled_item = ((r_ob->num_scheduled_items > 0 ? r_ob->scheduled_ms[0] : (specs->stop_ms_specified[ph] ? specs->stop_ms[0] : (r_ob->obj_type == k_NOTATION_OBJECT_SCORE ? r_ob->length_ms_till_last_note : r_ob->length_ms))) - specs->last_scheduled_ms[r_ob->scheduled_playhead[0]]) * specs->playhead_rate[r_ob->scheduled_playhead[0]];
+                        //                        ms_till_scheduled_item = ((r_ob->num_scheduled_items > 0 ? r_ob->scheduled_ms[0] : (specs->stop_ms_specified[ph] ? specs->stop_ms[0] : (r_ob->obj_type == k_NOTATION_OBJECT_SCORE ? r_ob->length_ms_till_last_note : r_ob->length_ms))) - specs->last_scheduled_ms[r_ob->scheduled_playhead[0]]) / specs->playhead_rate[r_ob->scheduled_playhead[0]];
                         
                         
                     } else if (earliest_item_offset == bestoffset) { // same offset!
@@ -1265,15 +1265,25 @@ void notationobj_do_launch(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom 
     t_symbol *name = NULL;
     long namerestrict = 0;
     t_llll *args = llllobj_parse_llll((t_object *) r_ob, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
-
+    
     llll_parseargs_and_attrs_destructive((t_object *) r_ob, args, "lllsi", gensym("start"), &start, gensym("stop"), &stop, gensym("rate"), &rate, gensym("name"), &name, gensym("namerestrict"), &namerestrict);
-
-    long which_playhead = args && args->l_head ? hatom_to_playhead_index(r_ob, &args->l_head->l_hatom) : r_ob->num_playheads;
+    
+    lock_general_mutex(r_ob);
+    long which_playhead = r_ob->num_playheads; // default
+    if (args && args->l_head) {
+        which_playhead = hatom_to_playhead_index(r_ob, &args->l_head->l_hatom);
+    } else {
+        for (long ph = 0; ph < r_ob->num_playheads; ph++) {
+            if (!specs->playhead_active[ph] && !specs->playhead_paused[ph]) {
+                which_playhead = ph; // first free
+                break;
+            }
+        }
+    }
     
     if (which_playhead >= 0 && which_playhead < CONST_MAX_PLAYHEADS) {
         long ph = which_playhead;
 
-        lock_general_mutex(r_ob);
         specs->start_ms_specified[ph] = specs->stop_ms_specified[ph] = false;
         specs->playhead_rate[ph] = 1.;
         if (start) {
@@ -1338,6 +1348,8 @@ void notationobj_do_launch(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom 
         } else {
             notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
         }
+    } else {
+        unlock_general_mutex(r_ob);
     }
     
     if (start)
@@ -2063,8 +2075,8 @@ void notationobj_do_play(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *a
         for (long ph = 0; ph < r_ob->num_playheads; ph++) {
             if (specs->playhead_newly_activated[ph]) {
                 mark_as_played(&activated_voices, ph);
-                specs->offset_ms[ph] = -(start_play_time - specs->global_start_play_time) / specs->playhead_rate[ph] +                (playhead_is_cancrizans(r_ob, ph) ? specs->stop_ms[ph] : specs->start_ms[ph]);
-                post("start_play_time: %.2f,  global start play time: %.2f, offset_ms: %.2f", start_play_time, specs->global_start_play_time, specs->offset_ms[ph]);
+                specs->offset_ms[ph] = -(start_play_time - specs->global_start_play_time) * specs->playhead_rate[ph] +                (playhead_is_cancrizans(r_ob, ph) ? specs->stop_ms[ph] : specs->start_ms[ph]);
+                // post("start_play_time: %.2f,  global start play time: %.2f, offset_ms: %.2f", start_play_time, specs->global_start_play_time, specs->offset_ms[ph]);
 
                 notationobj_reset_play_cursors(r_ob, ph);
 
@@ -2104,7 +2116,7 @@ void notationobj_do_play(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *a
                 firstplayeditem = NULL;
             
             if (firstplayeditem || start_ms <= stop_ms) {
-                double this_offset = (firstplayeditem_onset - specs->offset_ms[ph]) * specs->playhead_rate[ph];
+                double this_offset = (firstplayeditem_onset - specs->offset_ms[ph]) / specs->playhead_rate[ph];
                 if (r_ob->num_scheduled_items == 0 || this_offset < bestoffset) {
                     
                     r_ob->num_scheduled_items = 1;
@@ -2156,7 +2168,7 @@ void notationobj_do_play(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *a
             notationobj_notify_play(r_ob);
             
             long phz = r_ob->scheduled_playhead[0] >= 0 && r_ob->scheduled_playhead[0] < CONST_MAX_PLAYHEADS ? r_ob->scheduled_playhead[0] : 0;
-            double new_scheduling_interval = specs->playhead_rate[phz] < 0 ? ((r_ob->scheduled_ms[0] - specs->stop_ms[phz]) * specs->playhead_rate[phz]) : ((r_ob->scheduled_ms[0] - specs->start_ms[phz]) * specs->playhead_rate[phz]);
+            double new_scheduling_interval = specs->playhead_rate[phz] < 0 ? ((r_ob->scheduled_ms[0] - specs->stop_ms[phz]) / specs->playhead_rate[phz]) : ((r_ob->scheduled_ms[0] - specs->start_ms[phz]) / specs->playhead_rate[phz]);
             
             if (r_ob->theoretical_play_step_ms <= 0) {
                 // step at each scheduled event
@@ -2555,7 +2567,7 @@ void check_correct_scheduling(t_notation_obj *r_ob, char also_lock_general_mutex
         setclock_getftime(r_ob->setclock->s_thing, &this_clock_ms_glob);
         for (long ph = 0; ph < r_ob->num_playheads; ph ++) {
             if (specs->playhead_active[ph]) { // TODO: rate deve essere 1/rate oppure factor
-                this_clock_ms[ph] = (this_clock_ms_glob - specs->global_start_play_time) / specs->playhead_rate[ph] + specs->offset_ms[ph];
+                this_clock_ms[ph] = (this_clock_ms_glob - specs->global_start_play_time) * specs->playhead_rate[ph] + specs->offset_ms[ph];
             }
         }
 
@@ -2630,8 +2642,8 @@ void check_correct_scheduling(t_notation_obj *r_ob, char also_lock_general_mutex
                 specs->dont_schedule_loop_start[ph] = temp1[ph];
                 specs->dont_schedule_loop_end[ph] = temp2[ph];
                 
-//                double earliest_item_offset = (earliest_item_to_schedule_onset[ph] - specs->offset_ms[ph]) * specs->playhead_rate[ph];
-                double earliest_item_offset = (earliest_item_to_schedule_onset[ph] - this_clock_ms[ph]) * specs->playhead_rate[ph];
+//                double earliest_item_offset = (earliest_item_to_schedule_onset[ph] - specs->offset_ms[ph]) / specs->playhead_rate[ph];
+                double earliest_item_offset = (earliest_item_to_schedule_onset[ph] - this_clock_ms[ph]) / specs->playhead_rate[ph];
 
 //                post("ccPH: %ld,  eioffs: %.2f, onset: %.2f, clock_ms: %.2f, phoffset: %.2f", ph, earliest_item_offset, earliest_item_to_schedule_onset[ph], this_clock_ms[ph], specs->offset_ms[ph]);
 
@@ -2699,8 +2711,8 @@ void check_correct_scheduling(t_notation_obj *r_ob, char also_lock_general_mutex
             
             //            post("incorrect scheduling: this_clock_ms = %.2f, old_sched_ch onset: %.2f, new_sched_ch onset: %.2f", this_clock_ms, r_ob->scheduled_chord ? r_ob->scheduled_chord->onset : -1, supposed_next_chord_to_play ? supposed_next_chord_to_play->onset : -1);
             long ph = num_scheduled_items > 0 ? scheduled_playhead[0] : 0;
-            double new_scheduling_interval = playhead_is_cancrizans(r_ob, ph) ? (((num_scheduled_items > 0 ? scheduled_ms[0] : (specs->start_ms_specified[ph] ? specs->start_ms[ph] : 0)) - this_clock_ms[ph]) * specs->playhead_rate[ph]) :
-                (((num_scheduled_items > 0 ? scheduled_ms[0] : (specs->stop_ms_specified[ph] ? specs->stop_ms[ph] : (r_ob->obj_type == k_NOTATION_OBJECT_SCORE ? r_ob->length_ms_till_last_note : r_ob->length_ms))) - this_clock_ms[ph]) * specs->playhead_rate[ph]);
+            double new_scheduling_interval = playhead_is_cancrizans(r_ob, ph) ? (((num_scheduled_items > 0 ? scheduled_ms[0] : (specs->start_ms_specified[ph] ? specs->start_ms[ph] : 0)) - this_clock_ms[ph]) / specs->playhead_rate[ph]) :
+                (((num_scheduled_items > 0 ? scheduled_ms[0] : (specs->stop_ms_specified[ph] ? specs->stop_ms[ph] : (r_ob->obj_type == k_NOTATION_OBJECT_SCORE ? r_ob->length_ms_till_last_note : r_ob->length_ms))) - this_clock_ms[ph]) / specs->playhead_rate[ph]);
 
 
             r_ob->num_scheduled_items = num_scheduled_items;

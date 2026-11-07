@@ -30844,7 +30844,7 @@ void adjust_duration_according_to_playhead_rate(t_notation_obj *r_ob, e_data_con
         case k_CONSIDER_FOR_PLAYING:
         case k_CONSIDER_FOR_PLAYING_AND_ALLOW_PARTIAL_LOOPED_NOTES:
             if (playhead >= 0 && playhead < CONST_MAX_PLAYHEADS) {
-                *duration = *duration * r_ob->playback_specs.playhead_rate[playhead];
+                *duration = *duration / r_ob->playback_specs.playhead_rate[playhead];
             }
             break;
             

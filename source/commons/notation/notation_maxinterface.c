@@ -565,7 +565,7 @@ double get_tempo_rate_for_playhead(t_notation_obj *r_ob, e_data_considering_type
         case k_CONSIDER_FOR_PLAYING_AND_ALLOW_PARTIAL_LOOPED_NOTES:
         case k_CONSIDER_FOR_PLAYING:
             if (playhead >= 0 && playhead < CONST_MAX_PLAYHEADS)
-                return 1./r_ob->playback_specs.playhead_rate[playhead];
+                return 1. * r_ob->playback_specs.playhead_rate[playhead];
             else
                 return 1.;
             break;
