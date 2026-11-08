@@ -79,9 +79,10 @@ void send_changed_bang_and_automessage_if_needed(t_notation_obj *r_ob);
     @ingroup        undo
     @param    r_ob    The notation object
     @param    also_return_true_if_undo_is_empty    If this is non-zero, function returns 1 also if undo llll is empty
+    @param only_non_selection_ticks     If non-zero, only accounts for non-selection undo ticks
     @return            1 if there are free undo ticks, 0 otherwise.
  */
-char undo_ticks_are_dangling(t_notation_obj *r_ob, char also_return_true_if_undo_is_empty);
+char undo_ticks_are_dangling(t_notation_obj *r_ob, char also_return_true_if_undo_is_empty, char only_non_selection_ticks);
 
 
 /** Delete and properly free all the free undo ticks (see handle_change_if_there_are_dangling_undo_ticks() for more information)

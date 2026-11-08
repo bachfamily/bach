@@ -2027,7 +2027,9 @@ typedef enum _undo_operations
     k_UNDO_OP_CHANGE_BACH_ATTRIBUTE,
     k_UNDO_OP_SLICE,
     k_UNDO_OP_AUTOSPELL,
-    k_UNDO_OP_TAILS_TO_GRACES
+    k_UNDO_OP_TAILS_TO_GRACES,
+    
+    k_UNDO_OP_CHANGE_SELECTION
 } e_undo_operations;
 
 
@@ -4864,7 +4866,8 @@ typedef struct _notation_obj
     char        inhibited_undo;                        ///< Flag which, if it is 1, will inhibit the creation of undo ticks and steps. Of course, by default it is 0.
                                                     ///< It is put to 1 only by messages like "inhibitundo 1", and put back to 0 by "inhibitundo 0"
     char        send_undo_redo_bang;                ///< Flag which tells if the changed bang must be sent for "undo"/"redo" actions (by default it is on)
-    t_llll        *undo_llll;                            ///< List containing undo information (see the Undo module for more information) 
+    char        undo_selection;                ///< Flag which tells if we undo the changes in selection
+    t_llll        *undo_llll;                            ///< List containing undo information (see the Undo module for more information)
     t_llll        *redo_llll;                            ///< List containing redo information (see the Undo module for more information)
     t_atom        max_undo_steps;                        ///< Maximum number of undo steps. If this is 0, the undo is turned off. If this is the symbol gensym("inf"), the number of undo steps is unlimited.
     long        num_undo_steps;                        ///< Current number of undo steps stored in the undo llll (it corresponds to the number of undo markers inside it) 
@@ -11829,7 +11832,7 @@ e_selection_modes symbol_to_mode(t_notation_obj *r_ob, t_symbol *s);
                         item itsself, but to every item in their group.
     @param  add_all_tied_notes  If a note is selected, also add to the selection all the notes tied to/from it.
  */ 
-void move_preselecteditems_to_selection(t_notation_obj *r_ob, e_selection_modes mode, char use_groups, char add_all_tied_notes);
+void move_preselecteditems_to_selection(t_notation_obj *r_ob, e_selection_modes mode, char use_groups, char add_all_tied_notes, char add_undo_step_if_necessary);
 
 
 /**    Sort all selection by onset. 

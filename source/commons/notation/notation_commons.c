@@ -17776,7 +17776,7 @@ void transfer_selection_and_cursor(t_notation_obj *r_ob, t_chord *from, t_chord 
         notation_item_add_to_preselection(r_ob, (t_notation_item *)to);
     if (r_ob->notation_cursor.chord == from)
         r_ob->notation_cursor.chord = to;
-    move_preselecteditems_to_selection(r_ob, k_SELECTION_MODE_FORCE_SELECT, false, false);
+    move_preselecteditems_to_selection(r_ob, k_SELECTION_MODE_FORCE_SELECT, false, false, true);
 }
 
 
@@ -27991,6 +27991,10 @@ void test_selection(t_notation_obj *r_ob)
 void clear_selection(t_notation_obj *r_ob)
 {
 // clear all the "selection"-linkedlist
+    if (r_ob->undo_selection) {
+        undo_tick_create_for_multiple_selected_notation_items(r_ob, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_selection);
+    }
+
     t_notation_item *temp = r_ob->firstselecteditem;
     while (temp){
         t_notation_item *next = temp->next_selected;
@@ -28313,12 +28317,17 @@ e_selection_modes symbol_to_mode(t_notation_obj *r_ob, t_symbol *s)
 }
 
 // mode is one of the e_selection_modes
-void move_preselecteditems_to_selection(t_notation_obj *r_ob, e_selection_modes mode, char use_groups, char add_all_tied_notes)
+void move_preselecteditems_to_selection(t_notation_obj *r_ob, e_selection_modes mode, char use_groups, char add_all_tied_notes, char add_undo_step_if_necessary)
 {
 // merge the "preselection" linkedlist with the "selection"-linkedlist
     
     t_notation_item *this_notation_item_preselected2 = r_ob->firstpreselecteditem;
     while (this_notation_item_preselected2) {
+        
+        if (add_undo_step_if_necessary && r_ob->undo_selection) {
+            undo_tick_create_for_selected_notation_item(r_ob, this_notation_item_preselected2, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_selection);
+        }
+
         // let's see if the object is already selected
         char el_is_selected = notation_item_is_selected(r_ob, this_notation_item_preselected2);
         long type = this_notation_item_preselected2->type;
@@ -29071,7 +29080,7 @@ void set_multiple_flags_from_llll_for_undo(t_notation_obj *r_ob, t_llll *ll, t_n
 
 #ifdef BACH_NOTATIONITEM_FLAG_HAS_SELECTION
     // this is useful if's any selection flag in the object
-    move_preselecteditems_to_selection(r_ob, k_SELECTION_MODE_FORCE_SELECT, false, false);
+    move_preselecteditems_to_selection(r_ob, k_SELECTION_MODE_FORCE_SELECT, false, false, false);
 #endif
 }
 
@@ -31487,7 +31496,7 @@ void select_notes_with_lexpr(t_notation_obj *r_ob, e_selection_modes mode)
             }
         }
     }
-    move_preselecteditems_to_selection(r_ob, mode, false, false);
+    move_preselecteditems_to_selection(r_ob, mode, false, false, true);
     unlock_general_mutex(r_ob);
 }
 
@@ -31499,7 +31508,7 @@ void select_chords_with_lexpr(t_notation_obj *r_ob, e_selection_modes mode)
             preselect_notation_item_with_lexpr(r_ob, (t_notation_item *)chord);
         }
     }
-    move_preselecteditems_to_selection(r_ob, mode, false, false);
+    move_preselecteditems_to_selection(r_ob, mode, false, false, true);
     unlock_general_mutex(r_ob);
 }
 
@@ -31514,7 +31523,7 @@ void select_rests_with_lexpr(t_notation_obj *r_ob, e_selection_modes mode)
                 preselect_notation_item_with_lexpr(r_ob, (t_notation_item *)chord);
             }
         }
-        move_preselecteditems_to_selection(r_ob, mode, false, false);
+        move_preselecteditems_to_selection(r_ob, mode, false, false, true);
         unlock_general_mutex(r_ob);
     }
 }
@@ -31528,7 +31537,7 @@ void select_measures_with_lexpr(t_notation_obj *r_ob, e_selection_modes mode)
                 preselect_notation_item_with_lexpr(r_ob, (t_notation_item *)measure);
             }
         }
-        move_preselecteditems_to_selection(r_ob, mode, false, false);
+        move_preselecteditems_to_selection(r_ob, mode, false, false, true);
         unlock_general_mutex(r_ob);
     }
 }
@@ -31539,7 +31548,7 @@ void select_voices_with_lexpr(t_notation_obj *r_ob, e_selection_modes mode)
     for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)){
         preselect_notation_item_with_lexpr(r_ob, (t_notation_item *)voice);
     }
-    move_preselecteditems_to_selection(r_ob, mode, false, false);
+    move_preselecteditems_to_selection(r_ob, mode, false, false, true);
     unlock_general_mutex(r_ob);
 }
 
@@ -31550,7 +31559,7 @@ void select_markers_with_lexpr(t_notation_obj *r_ob, e_selection_modes mode)
     for (marker = r_ob->firstmarker; marker; marker = marker->next) {
         preselect_notation_item_with_lexpr(r_ob, (t_notation_item *)marker);
     }
-    move_preselecteditems_to_selection(r_ob, mode, false, false);
+    move_preselecteditems_to_selection(r_ob, mode, false, false, true);
     unlock_general_mutex(r_ob);
 }
 
@@ -31567,7 +31576,7 @@ void select_breakpoints_with_lexpr(t_notation_obj *r_ob, e_selection_modes mode,
                 for (bpt = tails_only ? note->lastbreakpoint : (note->firstbreakpoint ? note->firstbreakpoint->next : NULL); bpt; bpt = bpt->next) {
                     preselect_notation_item_with_lexpr(r_ob, (t_notation_item *)bpt);
                 }
-    move_preselecteditems_to_selection(r_ob, mode, false, false);
+    move_preselecteditems_to_selection(r_ob, mode, false, false, true);
     unlock_general_mutex(r_ob);
 }
 
@@ -31579,7 +31588,7 @@ void select_single_notation_item(t_notation_obj *r_ob, t_notation_item *item)
     clear_selection(r_ob);
     clear_preselection(r_ob);
     notation_item_add_to_preselection(r_ob, item);
-    move_preselecteditems_to_selection(r_ob, k_SELECTION_MODE_FORCE_SELECT, true, r_ob->edit_tied_notes_together);
+    move_preselecteditems_to_selection(r_ob, k_SELECTION_MODE_FORCE_SELECT, true, r_ob->edit_tied_notes_together, true);
     handle_change_selection(r_ob);
     unlock_markers_mutex(r_ob);
     unlock_general_mutex(r_ob);
@@ -36966,7 +36975,7 @@ void select_all_markers(t_notation_obj *r_ob, e_selection_modes mode, long only_
     for (marker = r_ob->firstmarker; marker; marker = marker->next)
         if (only_this_marker_role < 0 || marker->role == only_this_marker_role)
             notation_item_add_to_preselection(r_ob, (t_notation_item *)marker);
-    move_preselecteditems_to_selection(r_ob, mode, false, false);
+    move_preselecteditems_to_selection(r_ob, mode, false, false, true);
 }
 
 void select_all_voices(t_notation_obj *r_ob, e_selection_modes mode)
@@ -36974,7 +36983,7 @@ void select_all_voices(t_notation_obj *r_ob, e_selection_modes mode)
     t_voice *voice;
     for (voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice))
         notation_item_add_to_preselection(r_ob, (t_notation_item *)voice);
-    move_preselecteditems_to_selection(r_ob, mode, false, false);
+    move_preselecteditems_to_selection(r_ob, mode, false, false, true);
 }
 
 void select_all_notes(t_notation_obj *r_ob, e_selection_modes mode)
@@ -36985,7 +36994,7 @@ void select_all_notes(t_notation_obj *r_ob, e_selection_modes mode)
         for (chord = chord_get_first(r_ob, voice); chord; chord = chord_get_next(chord))
             if (chord->firstnote)
                 notation_item_add_to_preselection(r_ob, (t_notation_item *)chord);
-    move_preselecteditems_to_selection(r_ob, mode, false, false);
+    move_preselecteditems_to_selection(r_ob, mode, false, false, true);
 }
 
 void select_all_rests(t_notation_obj *r_ob, e_selection_modes mode)
@@ -36996,7 +37005,7 @@ void select_all_rests(t_notation_obj *r_ob, e_selection_modes mode)
         for (chord = chord_get_first(r_ob, voice); chord; chord = chord_get_next(chord))
             if (!chord->firstnote)
                 notation_item_add_to_preselection(r_ob, (t_notation_item *)chord);
-    move_preselecteditems_to_selection(r_ob, mode, false, false);
+    move_preselecteditems_to_selection(r_ob, mode, false, false, true);
 }
 
 
@@ -37007,7 +37016,7 @@ void select_all_chords(t_notation_obj *r_ob, e_selection_modes mode)
     for (voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice))
         for (chord = chord_get_first(r_ob, voice); chord; chord = chord_get_next(chord))
             notation_item_add_to_preselection(r_ob, (t_notation_item *)chord);
-    move_preselecteditems_to_selection(r_ob, mode, false, false);
+    move_preselecteditems_to_selection(r_ob, mode, false, false, true);
 }
 
 void select_all_breakpoints(t_notation_obj *r_ob, e_selection_modes mode, char tails_only)
@@ -37021,7 +37030,7 @@ void select_all_breakpoints(t_notation_obj *r_ob, e_selection_modes mode, char t
             for (note = chord->firstnote; note; note = note->next)
                 for (bpt = tails_only ? note->lastbreakpoint : (note->firstbreakpoint ? note->firstbreakpoint->next : NULL); bpt; bpt = bpt->next)
                     notation_item_add_to_preselection(r_ob, (t_notation_item *)bpt);
-    move_preselecteditems_to_selection(r_ob, mode, false, false);
+    move_preselecteditems_to_selection(r_ob, mode, false, false, true);
 }
 
 void select_all_measures(t_notation_obj *r_ob, e_selection_modes mode)
@@ -37031,7 +37040,7 @@ void select_all_measures(t_notation_obj *r_ob, e_selection_modes mode)
     for (voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice))
         for (measure = ((t_scorevoice *)voice)->firstmeasure; measure; measure = measure->next)
             notation_item_add_to_preselection(r_ob, (t_notation_item *)measure);
-    move_preselecteditems_to_selection(r_ob, mode, false, false);
+    move_preselecteditems_to_selection(r_ob, mode, false, false, true);
 }
 
 
@@ -41774,12 +41783,16 @@ char notation_item_is_ancestor_of(t_notation_obj *r_ob, t_notation_item *dad, t_
     
 
 void handle_change_if_there_are_dangling_undo_ticks(t_notation_obj *r_ob, int change_type, e_undo_operations undo_op) {
-    if (undo_ticks_are_dangling(r_ob, true))
+    if (undo_ticks_are_dangling(r_ob, true, false))
         handle_change(r_ob, change_type, undo_op);
 }
 
 void handle_change_selection(t_notation_obj *r_ob) {
-    handle_change(r_ob, (r_ob->playing && r_ob->only_play_selection) ? k_CHANGED_CHECK_CORRECT_SCHEDULING + k_CHANGED_REDRAW_STATIC_LAYER : k_CHANGED_REDRAW_STATIC_LAYER, k_UNDO_OP_UNKNOWN);
+    if (r_ob->undo_selection) {
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, (r_ob->playing && r_ob->only_play_selection) ? k_CHANGED_CHECK_CORRECT_SCHEDULING + k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG : k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_SELECTION);
+    } else {
+        handle_change(r_ob, (r_ob->playing && r_ob->only_play_selection) ? k_CHANGED_CHECK_CORRECT_SCHEDULING + k_CHANGED_REDRAW_STATIC_LAYER : k_CHANGED_REDRAW_STATIC_LAYER, k_UNDO_OP_UNKNOWN);
+    }
 }
 
 
@@ -41822,7 +41835,7 @@ void resync_selection_with_bach_inspector(t_notation_obj *r_ob){
             r_ob->m_inspector.active_bach_inspector_obj_type == k_PITCH_BREAKPOINT) {
             clear_selection(r_ob);
             notation_item_add_to_preselection(r_ob, (t_notation_item *) r_ob->m_inspector.active_bach_inspector_item);
-            move_preselecteditems_to_selection(r_ob, k_SELECTION_MODE_FORCE_SELECT, false, false);
+            move_preselecteditems_to_selection(r_ob, k_SELECTION_MODE_FORCE_SELECT, false, false, true);
             notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
         } else if (r_ob->m_inspector.active_bach_inspector_obj_type == k_SLOTINFO){
             if (r_ob->active_slot_notationitem){
@@ -41871,7 +41884,7 @@ void handle_change(t_notation_obj *r_ob, int change_actions, e_undo_operations u
             jbox_redraw((t_jbox *)r_ob->m_inspector.inspector_ui);
     }
 
-//    char there_are_dangling_undo_ticks = undo_ticks_are_dangling(r_ob, false);
+//    char there_are_dangling_undo_ticks = undo_ticks_are_dangling(r_ob, false, false);
     
     // need to check for families update?
     if (r_ob->show_label_families == k_SHOW_LABEL_FAMILIES_BOUNDINGBOX) 

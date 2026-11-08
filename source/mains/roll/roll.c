@@ -1484,7 +1484,7 @@ void roll_delete_selection(t_roll *x, char ripple, t_llll *slots_to_transfer_to_
     if (ripple) {
         preselect_notes_in_region((t_notation_obj *)x, right_ms, x->r_ob.length_ms + 1000, -320000, 36000, 0, x->r_ob.num_voices, true, true);
         preselect_markers_in_region((t_notation_obj *)x, right_ms, x->r_ob.length_ms + 1000);
-        move_preselecteditems_to_selection((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT, false, false);
+        move_preselecteditems_to_selection((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT, false, false, false);
         unlock_general_mutex((t_notation_obj *)x);
         change_selection_onset(x, &delta);
         lock_general_mutex((t_notation_obj *)x);
@@ -1884,7 +1884,7 @@ void roll_select(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                         if ((to_select = chord_get_from_path_as_llllelem_range((t_notation_obj *)x, hatom_getllll(&elem->l_hatom)->l_head, 0, 0, 0)))
                             add_all_chord_notes_to_preselection((t_notation_obj *)x, to_select);
             }
-            move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
+            move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false, true);
             unlock_general_mutex((t_notation_obj *)x);
             
             
@@ -1902,7 +1902,7 @@ void roll_select(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                         if ((to_select = get_marker_from_path_as_llllelem_range((t_notation_obj *)x, hatom_getllll(&elem->l_hatom)->l_head)))
                             notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)to_select);
             }
-            move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
+            move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false, true);
             unlock_general_mutex((t_notation_obj *)x);
             
         // (un)sel(ect) all markers
@@ -1949,7 +1949,7 @@ void roll_select(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                         if ((to_select = note_get_from_path_as_llllelem_range((t_notation_obj *)x, hatom_getllll(&elem->l_hatom)->l_head, 0, 0, 0)))
                             notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)to_select);
             }
-            move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
+            move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false, true);
             unlock_general_mutex((t_notation_obj *)x);
 
         // (un)sel(ect) voice
@@ -1965,7 +1965,7 @@ void roll_select(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                     notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)voice_get_nth_safe((t_notation_obj *)x, voicenum));
                 }
             }
-            move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
+            move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false, true);
             unlock_general_mutex((t_notation_obj *)x);
 
         // warn: maybe they meant goto!
@@ -1988,7 +1988,7 @@ void roll_select(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                     slur_region_preselect_chords((t_notation_obj *)x, (t_slur *)it);
                 }
             }
-            move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
+            move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false, true);
             llll_free(items);
             llll_free(namesll);
             unlock_markers_mutex((t_notation_obj *)x);
@@ -1998,7 +1998,7 @@ void roll_select(t_roll *x, t_symbol *s, long argc, t_atom *argv)
         } else if (head_type == H_SYM || selectllll->l_size == 1) {
             lock_markers_mutex((t_notation_obj *)x);
             preselect_notation_items_by_name((t_notation_obj *)x, selectllll);
-            move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
+            move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false, true);
             unlock_markers_mutex((t_notation_obj *)x);
 
         // (un)sel(ect) by rectangle
@@ -2056,7 +2056,7 @@ void roll_select(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                     }
             }
             preselect_markers_in_region((t_notation_obj *)x, ms1, ms2);
-            move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
+            move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false, true);
             unlock_general_mutex((t_notation_obj *)x);
         }
         handle_change_selection((t_notation_obj *)x);
@@ -3223,7 +3223,7 @@ void roll_sel_change_voice(t_roll *x, t_symbol *s, long argc, t_atom *argv){
     if (lexpr)
         lexpr_free(lexpr);
 
-    move_preselecteditems_to_selection((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT, false, false);
+    move_preselecteditems_to_selection((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT, false, false, true);
 
     handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_PITCH_FOR_SELECTION);
 }
@@ -9505,7 +9505,7 @@ t_chord *addchord_from_llll(t_roll *x, t_llll* chord, t_rollvoice* voice, char a
             if (newchord) {
                 set_rollchord_values_from_llll((t_notation_obj *) x, newchord, chord, 0., true, also_recompute_total_length, true);
 #ifdef BACH_NOTATIONITEM_FLAG_HAS_SELECTION // because flags that could be added could mean selecting the object
-                move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_FORCE_SELECT, false, false);
+                move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_FORCE_SELECT, false, false, false);
 #endif
                 chord_compute_note_approximations((t_notation_obj *)x, newchord, false);
                 chord_set_recompute_parameters_flag((t_notation_obj *)x, newchord);
@@ -9552,7 +9552,7 @@ void roll_glue_notes(t_roll *x, t_note *receiver, double giver_onset, double giv
             
             if (also_select && !notation_item_is_selected((t_notation_obj *)x, (t_notation_item *) foundnt) && !notation_item_is_selected((t_notation_obj *)x, (t_notation_item *) foundnt->parent)) {
                 notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *) foundnt);
-                move_preselecteditems_to_selection((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT, false, false);
+                move_preselecteditems_to_selection((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT, false, false, false);
             }
 
          }
@@ -10128,10 +10128,10 @@ void set_roll_from_llll(t_roll *x, t_llll* inputlist, char also_lock_general_mut
     
 #ifdef BACH_NOTATIONITEM_FLAG_HAS_SELECTION
     // this is useful either if  "must_select_appended_chords" is active, or if there's any selection flag in the object
-    move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_FORCE_SELECT, false, false);
+    move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_FORCE_SELECT, false, false, false);
 #else
     if (must_select_appended_chords) {
-        move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_FORCE_SELECT, false, false);
+        move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_FORCE_SELECT, false, false, false);
     }
 #endif
 
@@ -11343,7 +11343,7 @@ char ripple_delete_selection(t_roll *x, char only_editable_items)
     char res = delete_selection(x, true);
     preselect_elements_in_region_for_mouse_selection(x, right_ms, x->r_ob.length_ms + 1000, -320000, 36000, 0, x->r_ob.num_voices, true);
     preselect_markers_in_region((t_notation_obj *)x, right_ms, x->r_ob.length_ms + 1000);
-    move_preselecteditems_to_selection((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT, false, false);
+    move_preselecteditems_to_selection((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT, false, false, false);
     change_selection_onset(x, &delta);
     clear_selection((t_notation_obj *)x);
     return res;
@@ -13867,7 +13867,6 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
             x->r_ob.j_selected_region_voice2 = yposition_to_voicenumber((t_notation_obj *)x, pt.y, -1, k_VOICEENSEMBLE_INTERFACE_FIRST);
         }
         
-        
         lock_general_mutex((t_notation_obj *)x);
         clear_preselection((t_notation_obj *)x);
         preselect_elements_in_region_for_mouse_selection(x, x->r_ob.j_selected_region_ms1, x->r_ob.j_selected_region_ms2, x->r_ob.j_selected_region_mc1, x->r_ob.j_selected_region_mc2, x->r_ob.j_selected_region_voice1, x->r_ob.j_selected_region_voice2, true);
@@ -13885,6 +13884,9 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
             force_inscreen_ms_to_boundary_and_set_mouse_position(x, pt.x > screen_end_x ? x->r_ob.j_selected_region_ms2 : x->r_ob.j_selected_region_ms1, patcherview, pt, true);
         }
         
+        if (x->r_ob.undo_selection)
+            op = k_UNDO_OP_CHANGE_SELECTION;
+
         redraw = 1;
         changed = 0;
     } else if (x->r_ob.j_mousedown_obj_type == k_ZOOMING_REGION) {
@@ -14099,7 +14101,7 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                 }
                     
                 clear_selection((t_notation_obj *) x);
-                move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, false, false);
+                move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, false, false, false);
                 unlock_general_mutex((t_notation_obj *)x);
                 unlock_markers_mutex((t_notation_obj *)x);;
             }
@@ -14365,8 +14367,8 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                         temp = temp->next_selected;
                     }
                     clear_selection((t_notation_obj *) x);
-                    move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, false, false);
-                    unlock_general_mutex((t_notation_obj *)x);    
+                    move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, false, false, true);
+                    unlock_general_mutex((t_notation_obj *)x);
                     
                     redraw = 1;
                 }
@@ -14777,8 +14779,8 @@ char change_cents_delta_for_selection(t_roll *x, double delta, char mode, char a
 //    }
 
     clear_notes_flag_SHIFT(x);
-    move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, false, false);
-    unlock_general_mutex((t_notation_obj *)x);    
+    move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, false, false, true);
+    unlock_general_mutex((t_notation_obj *)x);
     
     verbose_print(x);
     return changed;
@@ -15721,7 +15723,7 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                     if (whichgroup == ((t_notation_item *)clicked_ptr)->group) {
                         clear_selection((t_notation_obj *) x);
                         notation_item_add_to_preselection((t_notation_obj *) x, (t_notation_item *)clicked_ptr);
-                        move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, false, false);
+                        move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, false, false, true);
                     }
                 }
             }
@@ -15734,7 +15736,7 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
             if (!(modifiers & eShiftKey))
                 clear_selection((t_notation_obj *) x);
             notation_item_add_to_preselection((t_notation_obj *) x, (t_notation_item *)clicked_ptr);
-            move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, true, false);
+            move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, true, false, true);
             x->r_ob.j_clicked_obj_has_been_selected = true;
         }
         
@@ -15751,7 +15753,7 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                 notation_item_add_to_preselection((t_notation_obj *) x, (t_notation_item *)clicked_ptr);
                 // move the preselection to the overall selection x->r_ob.selection_type
 //                move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, !(modifiers & eControlKey), false);
-                move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, true, false);
+                move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, true, false, true);
                 x->r_ob.j_clicked_obj_has_been_selected = true;
             }
         }
@@ -15826,11 +15828,12 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
         }
     }
     
-    if (need_send_changed_bang)
+    if (need_send_changed_bang) {
         handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_SEND_BANG, k_UNDO_OP_UNKNOWN);
-    else    
-        handle_change_selection((t_notation_obj *)x);
-
+    } else {
+    //    handle_change_selection((t_notation_obj *)x);
+    }
+    
     if (must_evaluate_selection) {
         evaluate_selection(x, 0, true);
         return;
@@ -16440,7 +16443,7 @@ void roll_mouseup(t_roll *x, t_object *patcherview, t_pt pt, long modifiers) {
     slot_handle_mouseup((t_notation_obj *)x, patcherview, pt, modifiers);
     unlock_general_mutex((t_notation_obj *)x);    
     
-    there_are_dangling_undo_ticks = undo_ticks_are_dangling((t_notation_obj *) x, false);
+    there_are_dangling_undo_ticks = undo_ticks_are_dangling((t_notation_obj *) x, false, true);
     
     x->r_ob.j_mouse_is_down = false;
     x->r_ob.j_isdragging = false;
@@ -16621,8 +16624,8 @@ void roll_mouseup(t_roll *x, t_object *patcherview, t_pt pt, long modifiers) {
 
     // move the preselection to the overall selection
     lock_general_mutex((t_notation_obj *)x);    
-    move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, !(modifiers & eControlKey), false);
-    unlock_general_mutex((t_notation_obj *)x);    
+    move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, !(modifiers & eControlKey), false, true);
+    unlock_general_mutex((t_notation_obj *)x);
     
     handle_change_selection((t_notation_obj *)x);
 
@@ -16721,7 +16724,7 @@ void roll_mousedoubleclick(t_roll *x, t_object *patcherview, t_pt pt, long modif
         if (is_in_clef_shape((t_notation_obj *)x, pt.x, pt.y, (t_voice *)voice)) {
             clear_preselection((t_notation_obj *)x);
             preselect_elements_in_region_for_mouse_selection(x, 0, x->r_ob.length_ms, -500000, 500000, voice->v_ob.number, voice->v_ob.number, true);
-            move_preselecteditems_to_selection((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT, false, false);
+            move_preselecteditems_to_selection((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT, false, false, true);
             if (notation_item_is_selected((t_notation_obj *)x, (t_notation_item *)voice))
                 notation_item_delete_from_selection((t_notation_obj *)x, (t_notation_item *)voice);
         }
@@ -16758,7 +16761,7 @@ void roll_mousedoubleclick(t_roll *x, t_object *patcherview, t_pt pt, long modif
                     return;
                 } else if (is_in_marker_region_stripe_shape((t_notation_obj *)x, marker, pt.x, pt.y)) {
                     marker_region_preselect_all_items((t_notation_obj *)x, marker);
-                    move_preselecteditems_to_selection((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT, false, false);
+                    move_preselecteditems_to_selection((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT, false, false, true);
                 }
             }
         }
@@ -17039,7 +17042,7 @@ void roll_paste_clipboard(t_roll *x, char keep_original_onsets, double force_ons
     llll_free(markers_to_paste);
     
 /*    lock_general_mutex((t_notation_obj *)x);
-    move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, false, false);
+    move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, false, false, true);
     unlock_general_mutex((t_notation_obj *)x);
   */
     

@@ -1573,7 +1573,7 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
                                 }
                             }
                 }
-                move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
+                move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false, true);
                 unlock_general_mutex((t_notation_obj *)x);
                 
             // (un)sel(ect) note
@@ -1603,7 +1603,7 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
                                 }
                             }
                 }
-                move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
+                move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false, true);
                 unlock_general_mutex((t_notation_obj *)x);
 
                 
@@ -1621,7 +1621,7 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
                             if ((to_select = measure_get_from_path_as_llllelem_range((t_notation_obj *)x, hatom_getllll(&elem->l_hatom)->l_head)))
                                 notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)to_select);
                 }
-                move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
+                move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false, true);
                 unlock_general_mutex((t_notation_obj *)x);
                 
             // (un)sel(ect) voice
@@ -1637,7 +1637,7 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
                         notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)voice_get_nth_safe((t_notation_obj *)x, voicenum));
                     }
                 }
-                move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
+                move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false, true);
                 unlock_general_mutex((t_notation_obj *)x);
 
             // (un)sel(ect) marker by index
@@ -1654,7 +1654,7 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
                             if ((to_select = get_marker_from_path_as_llllelem_range((t_notation_obj *)x, hatom_getllll(&elem->l_hatom)->l_head)))
                                 notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)to_select);
                 }
-                move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
+                move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false, true);
                 unlock_general_mutex((t_notation_obj *)x);
                 
                 
@@ -1713,7 +1713,7 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
                         slur_region_preselect_chords((t_notation_obj *)x, (t_slur *)it);
                     }
                 }
-                move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
+                move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false, true);
                 llll_free(items);
                 llll_free(namesll);
                 unlock_markers_mutex((t_notation_obj *)x);
@@ -1724,7 +1724,7 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
                 
                 lock_general_mutex((t_notation_obj *)x);
                 preselect_notation_items_by_name((t_notation_obj *)x, selectllll);
-                move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
+                move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false, true);
                 unlock_general_mutex((t_notation_obj *)x);
                 
             // (un)sel(ect) by rectangle
@@ -1793,7 +1793,7 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
                 ms1 = unscaled_xposition_to_ms((t_notation_obj *)x, ux1, 1);
                 ms2 = unscaled_xposition_to_ms((t_notation_obj *)x, ux2, 1);
                 preselect_markers_in_region((t_notation_obj *)x, ms1, ms2); 
-                move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
+                move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false, true);
                 unlock_general_mutex((t_notation_obj *)x);
             }
         }
@@ -3625,7 +3625,7 @@ char legato(t_score *x, long mode)
                             set_scorechord_values_from_llll((t_notation_obj *) x, chord, localcopy, false, false);
                             llll_free(localcopy);
 #ifdef BACH_NOTATIONITEM_FLAG_HAS_SELECTION
-    move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_FORCE_SELECT, false, false);
+    move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_FORCE_SELECT, false, false, false);
 #endif
                             for (nt = chord->firstnote; nt; nt = nt->next)
                                 note_compute_approximation((t_notation_obj *) x, nt); 
@@ -11371,7 +11371,7 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                 }
             }
             clear_selection((t_notation_obj *) x);
-            move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, false, false);
+            move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, false, false, false);
             unlock_general_mutex((t_notation_obj *)x);
             unlock_markers_mutex((t_notation_obj *)x);;
         }
@@ -11591,6 +11591,9 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
             force_inscreen_ux_to_boundary_and_set_mouse_position(x, pt.x > screen_end_x ? x->r_ob.j_selected_region_ux2 : x->r_ob.j_selected_region_ux1, patcherview, pt, true);
         }
 
+        if (x->r_ob.undo_selection)
+            op = k_UNDO_OP_CHANGE_SELECTION;
+        
         redraw = 1;
         changed = 0;
         
@@ -11866,7 +11869,7 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                     temp = temp->next_selected;
                 }
                 clear_selection((t_notation_obj *) x);
-                move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, false, false);
+                move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, false, false, true);
                 unlock_general_mutex((t_notation_obj *)x);
 
                 verbose_print(x);
@@ -12401,7 +12404,7 @@ char change_pitch_for_selection(t_score *x, double delta, char mode, char allow_
 
     clear_measures_and_chords_flag(x, k_FLAG_SHIFT);
 
-    move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, false, false);
+    move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, false, false, true);
 
     unlock_general_mutex((t_notation_obj *)x);    
 
@@ -12647,7 +12650,7 @@ char quick_merge_selection(t_score *x)
     
     clear_measures_and_chords_flag(x, k_FLAG_MERGE);
 
-    move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, false, false);
+    move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, false, false, true);
 
     perform_analysis_and_change(x, NULL, NULL, NULL, x->r_ob.tree_handling == k_RHYTHMIC_TREE_HANDLING_IGNORE ? k_BEAMING_CALCULATION_DONT_AUTOCOMPLETE : k_BEAMING_CALCULATION_DONT_DELETE_LEVELS + k_BEAMING_CALCULATION_DONT_AUTOCOMPLETE);
     unlock_general_mutex((t_notation_obj *)x);
@@ -14391,7 +14394,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                         clear_selection((t_notation_obj *) x);
                     notation_item_add_to_preselection((t_notation_obj *) x, (t_notation_item *)clicked_ptr);
                     // move the preselection to the overall selection
-                    move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, !(modifiers & eControlKey), x->r_ob.edit_tied_notes_together);
+                    move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, !(modifiers & eControlKey), x->r_ob.edit_tied_notes_together, true);
                     if (clicked_obj == k_MEASURE && !(modifiers & eControlKey)) {
                         select_all_measure_in_selected_measures_range(x); // selection of a "square range" of measures
                     } 
@@ -15188,7 +15191,7 @@ t_llll* get_score_values_as_llll_for_pwgl(t_score *x){
 
 void score_mouseup(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 {
-    char there_are_dangling_undo_ticks = undo_ticks_are_dangling((t_notation_obj *)x, false);
+    char there_are_dangling_undo_ticks = undo_ticks_are_dangling((t_notation_obj *)x, false, true);
     x->r_ob.j_mouse_is_down = false;
     x->r_ob.j_isdragging = false;
     
@@ -15421,8 +15424,8 @@ void score_mouseup(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 
     // move the preselection to the overall selection
     lock_general_mutex((t_notation_obj *)x);    
-    move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, !(modifiers & eControlKey), x->r_ob.edit_tied_notes_together);
-    unlock_general_mutex((t_notation_obj *)x);    
+    move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, !(modifiers & eControlKey), x->r_ob.edit_tied_notes_together, true);
+    unlock_general_mutex((t_notation_obj *)x);
 
     handle_change_selection((t_notation_obj *)x);
     
@@ -15570,7 +15573,7 @@ void score_mousedoubleclick(t_score *x, t_object *patcherview, t_pt pt, long mod
         if (is_in_clef_shape((t_notation_obj *)x, pt.x, pt.y, (t_voice *)voice)) {
             clear_preselection((t_notation_obj *)x);
             preselect_elements_in_region_for_mouse_selection(x, 0, x->r_ob.length_ms, -500000, 500000, voice->v_ob.number, voice->v_ob.number, true);
-            move_preselecteditems_to_selection((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT, false, false);
+            move_preselecteditems_to_selection((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT, false, false, true);
             if (notation_item_is_selected((t_notation_obj *)x, (t_notation_item *)voice))
                 notation_item_delete_from_selection((t_notation_obj *)x, (t_notation_item *)voice);
         }
@@ -15583,7 +15586,7 @@ void score_mousedoubleclick(t_score *x, t_object *patcherview, t_pt pt, long mod
     } else if (x->r_ob.j_last_mousedown_obj_type == k_MEASURE) {
         // preselect_measure_in_all_voices(x, (t_measure *) x->r_ob.j_last_mousedown_ptr, true);
         preselect_tuttipoint_in_all_voices(x, (t_measure *) x->r_ob.j_last_mousedown_ptr, true);
-        move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, false, false);
+        move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, false, false, true);
     } else {
         // voice names?
         t_scorevoice *voice;
@@ -15613,7 +15616,7 @@ void score_mousedoubleclick(t_score *x, t_object *patcherview, t_pt pt, long mod
                     return;
                 } else if (is_in_marker_region_stripe_shape((t_notation_obj *)x, marker, pt.x, pt.y)) {
                     marker_region_preselect_all_items((t_notation_obj *)x, marker);
-                    move_preselecteditems_to_selection((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT, false, false);
+                    move_preselecteditems_to_selection((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT, false, false, true);
                 }
             }
         }
@@ -17386,7 +17389,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                         clear_selection((t_notation_obj *) x);
                     }
                     notation_item_add_to_preselection((t_notation_obj *) x, (t_notation_item *)meas_to_add);
-                    move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_FORCE_SELECT, false, false);
+                    move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_FORCE_SELECT, false, false, true);
                     set_mousedown((t_notation_obj *) x, meas_to_add, k_MEASURE);
                     notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
                     unlock_general_mutex((t_notation_obj *)x);    

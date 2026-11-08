@@ -9,6 +9,7 @@ VERSION NOTES:
 - bach.roll and bach.score:
    á now support slurs
    á now feature a new system of notification of interface actions that provides details on the elements being modified. See the new "notifywith" message.
+   á now selection is saved by default (and also undoable if you activate the @undoselection attribute)
    á Markers have a duration, i.e. they can actually be used as regions to identify portion of the scores
    á "snappitchtogrid" message has been renamed "approxet", but the old name is kept for backward compatibility
    á barlines, time signatures and measure numbers have their own independent colors (new attributes)

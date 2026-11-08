@@ -3061,7 +3061,12 @@ void notation_class_add_edit_attributes(t_class *c, char obj_type){
     CLASS_ATTR_CHAR(c,"undobang",0, t_notation_obj, send_undo_redo_bang);
     CLASS_ATTR_STYLE_LABEL(c,"undobang",0,"onoff","Send bang Upon Undo");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"undobang", 0, "1");
-    // @description Toggles the ability of send the bang through the rightmost outlet when an undo/redo action is performed.
+    // @description Toggles the ability to send the bang (or information) through the rightmost outlet when an undo/redo action is performed.
+
+    CLASS_ATTR_CHAR(c,"undoselection",0, t_notation_obj, undo_selection);
+    CLASS_ATTR_STYLE_LABEL(c,"undoselection",0,"onoff","Selection Can Be Undone");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"undoselection", 0, "0");
+    // @description Toggles the ability to add undo steps whenever selection changes.
 
     CLASS_ATTR_NOTATIONOBJ_ATOMPTR(c, "preventedit", 0, prevent_editing_atom, CONST_MAX_BACH_ELEMENT_TYPES + 10, notationobj_setattr_preventedit);
     CLASS_ATTR_STYLE_LABEL(c,"preventedit",0,"text","Prevent Editing For");
@@ -4768,7 +4773,7 @@ long handle_note_popup(t_notation_obj *r_ob, t_note *note, long modifiers, e_ele
         if (!(modifiers & eShiftKey))
             clear_selection(r_ob);
         notation_item_add_to_preselection(r_ob, (t_notation_item *)note);
-        move_preselecteditems_to_selection(r_ob, k_SELECTION_MODE_INVOLUTIVE, false, false);
+        move_preselecteditems_to_selection(r_ob, k_SELECTION_MODE_INVOLUTIVE, false, false, true);
     }
 
     if (r_ob->right_click_directly_pops_out_slot > 0 && r_ob->right_click_directly_pops_out_slot <= CONST_MAX_SLOTS){
@@ -5031,7 +5036,7 @@ long handle_barline_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
         if (r_ob->selection_type != k_MEASURE_END_BARLINE || !(modifiers & eShiftKey))
             clear_selection(r_ob);
         notation_item_add_to_preselection(r_ob, (t_notation_item *)measure->end_barline);
-        move_preselecteditems_to_selection(r_ob, k_SELECTION_MODE_INVOLUTIVE, false, false);
+        move_preselecteditems_to_selection(r_ob, k_SELECTION_MODE_INVOLUTIVE, false, false, false);
     }
 
     jmouse_getposition_global(&screen_x, &screen_y);
@@ -5119,7 +5124,7 @@ long handle_measure_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
         if (r_ob->selection_type != k_MEASURE || !(modifiers & eShiftKey))
             clear_selection(r_ob);
         notation_item_add_to_preselection(r_ob, (t_notation_item *)measure);
-        move_preselecteditems_to_selection(r_ob, k_SELECTION_MODE_INVOLUTIVE, false, false);
+        move_preselecteditems_to_selection(r_ob, k_SELECTION_MODE_INVOLUTIVE, false, false, true);
     }
 
     jmouse_getposition_global(&screen_x, &screen_y);
@@ -5231,7 +5236,7 @@ long handle_voice_popup(t_notation_obj *r_ob, t_voice *voice, long modifiers, in
         if (r_ob->selection_type != k_VOICE || !(modifiers & eShiftKey))
             clear_selection(r_ob);
         notation_item_add_to_preselection(r_ob, (t_notation_item *)voice);
-        move_preselecteditems_to_selection(r_ob, k_SELECTION_MODE_INVOLUTIVE, false, false);
+        move_preselecteditems_to_selection(r_ob, k_SELECTION_MODE_INVOLUTIVE, false, false, true);
     }
 
     jmouse_getposition_global(&screen_x, &screen_y);
@@ -5322,7 +5327,7 @@ long handle_background_popup(t_notation_obj *r_ob, long modifiers, e_element_typ
         preselect_notes_in_region(r_ob, chosenelem == 1021 ? 0 : ms, chosenelem == 1021 ? ms : r_ob->length_ms_till_last_note + 100, -100000, 100000, 0, r_ob->num_voices, r_ob->show_durations, r_ob->show_durations);
         if (r_ob->show_markers)
             preselect_markers_in_region(r_ob, chosenelem == 1021 ? 0 : ms, chosenelem == 1021 ? ms : r_ob->length_ms_till_last_note + 100);
-        move_preselecteditems_to_selection(r_ob, k_SELECTION_MODE_FORCE_SELECT, false, false);
+        move_preselecteditems_to_selection(r_ob, k_SELECTION_MODE_FORCE_SELECT, false, false, false);
         notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
     } else {
         return chosenelem;

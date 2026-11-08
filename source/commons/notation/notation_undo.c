@@ -162,7 +162,7 @@ char* get_string_for_tick(t_hatom *h, long maxdecimals)
                       type == k_WHOLE_NOTATION_OBJECT ? "w" : (type == k_HEADER_DATA ? "h" : (type == k_MEASURE ? "m" : (type == k_CHORD ? "c" : (type == k_VOICE ? "v" : (type == k_NOTE ? "n" : (type == k_MARKER ? "k" : "?")))))),
                       ID,
                       modif == k_UNDO_MODIFICATION_TYPE_INSERT ? "+" : (modif == k_UNDO_MODIFICATION_TYPE_REMOVE ? "-" : (modif == k_UNDO_MODIFICATION_TYPE_CHANGE ? "~" : (modif == k_UNDO_MODIFICATION_TYPE_CHANGE_CHECK_ORDER ? "*" : "?"))),
-                      param == _llllobj_sym_flag ? "f" : (param == _llllobj_sym_name ? "n" : (param == _llllobj_sym_onset ? "o" : (param == _llllobj_sym_state ? "s" : "?"))));
+                      param == _llllobj_sym_selection ? "x" : (_llllobj_sym_flag ? "f" : (param == _llllobj_sym_name ? "n" : (param == _llllobj_sym_onset ? "o" : (param == _llllobj_sym_state ? "s" : "?")))));
         return out;
     } else if (hatom_gettype(h) == H_LONG) {
         char *out = (char *)bach_newptr(256 * sizeof(char));
@@ -1109,6 +1109,9 @@ void undo_op_to_string(long undo_op, char *buf)
         case k_UNDO_OP_TAILS_TO_GRACES:
             sprintf(buf, "Convert tails to grace chords");
             break;
+        case k_UNDO_OP_CHANGE_SELECTION:
+            sprintf(buf, "Change selection");
+            break;
         default:
             sprintf(buf, "Generic Operation");
             break;
@@ -1529,7 +1532,12 @@ t_undo_redo_information *undo_redo_information_from_llll(t_notation_obj *r_ob, t
     if (ll->l_size >= 4) {
         e_element_types el_type = element_type_from_symbol(hatom_getsym(&ll->l_head->l_next->l_hatom));
         e_undo_modification_types modif_type = undo_modification_type_from_symbol(r_ob, hatom_getsym(&ll->l_head->l_hatom), el_type);
+        t_symbol *param = hatom_getsym(&ll->l_head->l_next->l_next->l_next->l_hatom);
 
+        if (modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE_CHECK_ORDER && param == _llllobj_sym_selection) {
+            modif_type = k_UNDO_MODIFICATION_TYPE_CHANGE;
+        }
+        
         if (hatom_gettype(&ll->l_head->l_next->l_next->l_hatom) == H_LLLL) {
             t_llll *paths = hatom_getllll(&ll->l_head->l_next->l_next->l_hatom);
             if (paths->l_depth == 1) {
@@ -1541,7 +1549,6 @@ t_undo_redo_information *undo_redo_information_from_llll(t_notation_obj *r_ob, t
             }
         }
         
-        t_symbol *param = hatom_getsym(&ll->l_head->l_next->l_next->l_next->l_hatom);
         
         // getting ID
         t_notation_item *item = notation_item_from_path(r_ob, el_type, &path_start);
@@ -1602,7 +1609,7 @@ t_undo_redo_information *undo_redo_information_reverse(t_notation_obj *r_ob, t_u
     }
 
     
-    if (param == _llllobj_sym_flag) {
+    if (param == _llllobj_sym_flag || param == _llllobj_sym_selection) { // the two are the same, we keep them distinct to know better
         newcontent = get_multiple_flags_for_undo(r_ob, item);
         reverse_information = undo_redo_information_create(ID, type, k_UNDO_MODIFICATION_TYPE_CHANGE, param, path_after, path_before, k_HEADER_NONE, newcontent);
         
@@ -1689,7 +1696,7 @@ long undo_redo_information_apply(t_notation_obj *r_ob, t_undo_redo_information *
         return 1;
     }
     
-    if (modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE && param == _llllobj_sym_flag) {
+    if (modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE && (param == _llllobj_sym_flag || param == _llllobj_sym_selection)) {
         set_multiple_flags_from_llll_for_undo(r_ob, content, item);
         r_ob->are_there_solos = are_there_solos(r_ob);
         
@@ -1763,7 +1770,7 @@ long undo_redo_information_apply(t_notation_obj *r_ob, t_undo_redo_information *
                         (*flags) |= k_UNDO_PERFORM_FLAG_CHECK_ORDER_FOR_CHORDS;
                 }
 #ifdef BACH_NOTATIONITEM_FLAG_HAS_SELECTION // because flags that could be added could mean selecting the object
-                move_preselecteditems_to_selection(r_ob, k_SELECTION_MODE_FORCE_SELECT, false, false);
+                move_preselecteditems_to_selection(r_ob, k_SELECTION_MODE_FORCE_SELECT, false, false, false);
 #endif
                 notationobj_make_temporary_slurs_permanent(r_ob);
             } else if (modif_type == k_UNDO_MODIFICATION_TYPE_REMOVE) { // surely roll
@@ -2243,8 +2250,8 @@ t_undo_redo_information *undo_tick_create_for_notation_item(t_notation_obj *r_ob
     
     
     if (item->type != k_MEASURE && item->type != k_CHORD && item->type != k_MARKER &&
-        !(item->type == k_NOTE && (r_ob->obj_type == k_NOTATION_OBJECT_SLOT || (modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE && param == _llllobj_sym_name))) &&
-        !(item->type == k_VOICE && modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE  && (param == _llllobj_sym_flag || param == _llllobj_sym_name))){
+        !(item->type == k_NOTE && (r_ob->obj_type == k_NOTATION_OBJECT_SLOT || (modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE && param == _llllobj_sym_name || modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE && param == _llllobj_sym_selection))) &&
+        !(item->type == k_VOICE && modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE  && (param == _llllobj_sym_flag || param == _llllobj_sym_name || param == _llllobj_sym_selection))){
 #ifdef BACH_UNDO_DEBUG
         object_post((t_object *) r_ob, "Warning! WEIRD UNDO ELEMENT!!!");
 #endif
@@ -2256,7 +2263,7 @@ t_undo_redo_information *undo_tick_create_for_notation_item(t_notation_obj *r_ob
     if (trylock_general_mutex(r_ob))
         must_unlock = false; // already locked
     
-    if (param == _llllobj_sym_flag)
+    if (param == _llllobj_sym_flag || param == _llllobj_sym_selection)
         content = get_multiple_flags_for_undo(r_ob, item);
     else if (param == _llllobj_sym_name)
         content = get_names_as_llll(item, false);
@@ -2350,7 +2357,7 @@ void undo_tick_create_for_selected_notation_item(t_notation_obj *r_ob, t_notatio
         undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, param, automatically_add_undo_ticks_for_slurs_from);
         undo_item->flags = (e_bach_internal_notation_flags) (undo_item->flags | k_FLAG_MODIF_NAME_UNDO);
         
-    } else if (modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE && param == _llllobj_sym_flag && !(undo_item->flags & k_FLAG_MODIF_FLAG_UNDO)){
+    } else if (modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE && (param == _llllobj_sym_flag || param == _llllobj_sym_selection) && !(undo_item->flags & k_FLAG_MODIF_FLAG_UNDO)){
         undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, param, automatically_add_undo_ticks_for_slurs_from);
         undo_item->flags = (e_bach_internal_notation_flags) (undo_item->flags | k_FLAG_MODIF_FLAG_UNDO);
         
@@ -2358,7 +2365,7 @@ void undo_tick_create_for_selected_notation_item(t_notation_obj *r_ob, t_notatio
         undo_tick_create_for_notation_item(r_ob, undo_item, modif_type, param, automatically_add_undo_ticks_for_slurs_from);
         undo_item->flags = (e_bach_internal_notation_flags) (undo_item->flags | k_FLAG_MODIF_CHECK_ORDER_UNDO);
         
-    } else if (!(modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE && param == _llllobj_sym_flag) && modif_type != k_UNDO_MODIFICATION_TYPE_CHANGE_CHECK_ORDER &&
+    } else if (!(modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE && (param == _llllobj_sym_flag || param == _llllobj_sym_selection)) && modif_type != k_UNDO_MODIFICATION_TYPE_CHANGE_CHECK_ORDER &&
                (modif_type == k_UNDO_MODIFICATION_TYPE_INSERT || modif_type == k_UNDO_MODIFICATION_TYPE_REMOVE || !(undo_item->flags & k_FLAG_MODIF_UNDO_WITH_OR_WO_CHECK_ORDER))){
         undo_tick_create_for_notation_item(r_ob, undo_item, modif_type, param, automatically_add_undo_ticks_for_slurs_from);
         undo_item->flags = (e_bach_internal_notation_flags) (undo_item->flags | k_FLAG_MODIF_UNDO);
@@ -2398,7 +2405,7 @@ void undo_ticks_create_for_multiple_notation_items(t_notation_obj *r_ob, long nu
             return;
         }
         
-        if (modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE && param == _llllobj_sym_flag)
+        if (modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE && (param == _llllobj_sym_flag || param == _llllobj_sym_selection))
             content = get_multiple_flags_for_undo(r_ob, item[i]);
         else if (modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE || modif_type == k_UNDO_MODIFICATION_TYPE_INSERT)
             content = notation_item_get_values_as_llll_for_undo(r_ob, item[i]);
@@ -2435,13 +2442,34 @@ void undo_ticks_remove_modif_undo_flag_to_last(t_notation_obj *r_ob){
     r_ob->header_undo_flags = 0;
 }
 
-char undo_ticks_are_dangling(t_notation_obj *r_ob, char also_return_true_if_undo_is_empty){
+char undo_ticks_are_dangling(t_notation_obj *r_ob, char also_return_true_if_undo_is_empty, char only_non_selection_ticks)
+{
     char res = false;
     
     lock_undo_mutex(r_ob);
-    if ((r_ob->undo_llll && r_ob->undo_llll->l_head && hatom_gettype(&r_ob->undo_llll->l_head->l_hatom) != H_LONG) ||
+    if (r_ob->undo_llll && r_ob->undo_llll->l_head) {
+        for (t_llllelem *undoel = r_ob->undo_llll->l_head; undoel; undoel = undoel->l_next) {
+            if (hatom_gettype(&r_ob->undo_llll->l_head->l_hatom) != H_LONG) {
+                t_undo_redo_information *thisinfo = (t_undo_redo_information *)hatom_getobj(&r_ob->undo_llll->l_head->l_hatom);
+                if (only_non_selection_ticks && thisinfo->modification_type == k_UNDO_MODIFICATION_TYPE_CHANGE &&
+                    thisinfo->param == _llllobj_sym_selection) {
+                    // nothing to do
+                } else {
+                    res = true;
+                    break;
+                }
+            }
+        }
+    } else {
+        if (also_return_true_if_undo_is_empty) {
+            res = true;
+        }
+    }
+    
+/*    if ((r_ob->undo_llll && r_ob->undo_llll->l_head && hatom_gettype(&r_ob->undo_llll->l_head->l_hatom) != H_LONG) ||
         (also_return_true_if_undo_is_empty && (!r_ob->undo_llll->l_head || !r_ob->undo_llll)))    // we also set true if there are NO undos!
-        res = true;
+        res = true; */
+    
     unlock_undo_mutex(r_ob);
     
     return res;
@@ -2616,7 +2644,7 @@ long notationobj_generic_transaction(t_notation_obj *r_ob, t_symbol *msg, long a
         }
     }
     
-    if (add_undo_step && undo_ticks_are_dangling(r_ob, false))
+    if (add_undo_step && undo_ticks_are_dangling(r_ob, false, false))
         undo_redo_step_marker_create(r_ob, k_UNDO, 0, k_UNDO_OP_GENERIC_TRANSACTION, true);
     
     llll_free(ll);

@@ -722,6 +722,10 @@ t_bach *bach_new(t_symbol *s, long ac, t_atom *av)
     
     bach_setup(x);
     
+    // weirdly we seem to need these two lines when compiling in dev in some bizarre cases...
+    x->b_defaultbellversion = 0;
+    x->b_nonative = 0;
+
     x->b_buildnumber_sym = get_buildnumber_sym();
     
     x->b_defaultbellversion = BACH_BELL_VERSION;

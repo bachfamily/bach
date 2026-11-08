@@ -3175,7 +3175,7 @@ void set_measure_from_llll(t_score *x, t_measure *measure, t_llll *measelemllll,
     
 #ifdef BACH_NOTATIONITEM_FLAG_HAS_SELECTION
     // this is useful if's any selection flag in the object
-    move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_FORCE_SELECT, false, false);
+    move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_FORCE_SELECT, false, false, false);
 #endif
     
 }
@@ -3513,7 +3513,7 @@ void set_score_from_llll(t_score *x, t_llll* inputlist, char also_lock_general_m
 
 #ifdef BACH_NOTATIONITEM_FLAG_HAS_SELECTION
     // this is useful if's any selection flag in the object
-    move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_FORCE_SELECT, false, false);
+    move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_FORCE_SELECT, false, false, false);
 #endif
 
     if (markers) // we need to set them later, since they might be attached to measures

@@ -887,7 +887,7 @@ void set_markers_from_llll(t_notation_obj *r_ob, t_llll* markers, char add_mode,
         unlock_markers_mutex(r_ob);
         if (select) {
             unlock_general_mutex(r_ob);
-            move_preselecteditems_to_selection(r_ob, k_SELECTION_MODE_FORCE_SELECT, false, false);
+            move_preselecteditems_to_selection(r_ob, k_SELECTION_MODE_FORCE_SELECT, false, false, false);
         }
     }
 }

@@ -457,7 +457,7 @@ e_goto_error goto_set_selection_from_llll(t_notation_obj *r_ob, t_goto_params *p
         notation_item_add_to_preselection(r_ob, it);
     }
     
-    move_preselecteditems_to_selection(r_ob, k_SELECTION_MODE_FORCE_SELECT, false, false);
+    move_preselecteditems_to_selection(r_ob, k_SELECTION_MODE_FORCE_SELECT, false, false, true);
     
     return k_GOTO_ERROR_NONE;
 }
@@ -1029,7 +1029,7 @@ e_goto_error set_selection_to_notation_item_with_index(t_notation_obj *r_ob, t_g
         if (newit) {
             res = k_GOTO_ERROR_NONE;
             notation_item_add_to_preselection(r_ob, newit);
-            move_preselecteditems_to_selection(r_ob, k_SELECTION_MODE_FORCE_SELECT, false, false);
+            move_preselecteditems_to_selection(r_ob, k_SELECTION_MODE_FORCE_SELECT, false, false, true);
         }
         notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
         unlock_general_mutex(r_ob);
