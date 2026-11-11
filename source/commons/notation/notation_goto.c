@@ -444,7 +444,7 @@ e_goto_error goto_set_selection_from_llll(t_notation_obj *r_ob, t_goto_params *p
         }
         
         for (t_llllelem *elem = selitems_to_unsel->l_head; elem; elem = elem->l_next)
-            notation_item_delete_from_selection(r_ob, (t_notation_item *)hatom_getobj(&elem->l_hatom));
+            notation_item_delete_from_selection(r_ob, (t_notation_item *)hatom_getobj(&elem->l_hatom), true);
         
         llll_free(selitems_to_unsel);
     }

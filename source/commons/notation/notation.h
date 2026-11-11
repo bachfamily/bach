@@ -101,7 +101,7 @@
         //#define BACH_QUANTIZE_DEBUG                    ///< Debug the quantize task
         //#define BACH_SPACING_DEBUG                    ///< Debug the spacing task (and display alignment points)
         //#define BACH_PAINT_IDS                        ///< Paint the IDs for all elements having one
-        //#define BACH_UNDO_DEBUG                        ///< Debug the undo task
+        #define BACH_UNDO_DEBUG                        ///< Debug the undo task
         //#define BACH_ARTICULATION_POSITION_DEBUG      ///< Debug for articulation position
         //#define BACH_CHECK_NOTATION_ITEMS               ///< Debug for notation items
 
@@ -11803,7 +11803,7 @@ void notation_item_delete_from_preselection(t_notation_obj *r_ob, t_notation_ite
                         move_preselecteditems_to_selection(r_ob, k_SELECTION_MODE_INVOLUTIVE, true);
                         @endcode
  */ 
-t_notation_item* notation_item_add_to_selection(t_notation_obj *r_ob, t_notation_item *item);
+t_notation_item* notation_item_add_to_selection(t_notation_obj *r_ob, t_notation_item *item, char add_undo_step_if_necessary);
 
 
 /**    Delete a notation item from the selection linked list.
@@ -11811,7 +11811,7 @@ t_notation_item* notation_item_add_to_selection(t_notation_obj *r_ob, t_notation
     @param    r_ob        The notation object
     @param    item_ptr    The pointer to the notation element to deleate from selection.
  */ 
-void notation_item_delete_from_selection(t_notation_obj *r_ob, t_notation_item *item);
+void notation_item_delete_from_selection(t_notation_obj *r_ob, t_notation_item *item, char add_undo_step_if_necessary);
 
 
 /**    Convert a symbol into the corresponding e_selection_modes
@@ -11884,7 +11884,7 @@ char chord_or_any_of_its_notes_are_selected(t_notation_obj *r_ob, t_chord *ch);
     @param    r_ob        The notation object
     @param    type        The type of the elements to be removed
  */
-void delete_item_type_from_selection(t_notation_obj *r_ob, long type);
+void delete_item_type_from_selection(t_notation_obj *r_ob, long type, char add_undo_step_if_necessary);
 
 
 // TBD

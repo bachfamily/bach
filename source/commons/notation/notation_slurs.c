@@ -441,7 +441,7 @@ char slur_delete_selected(t_notation_obj *r_ob)
             t_notation_item *temp = curr_it->next_selected;
             changed = 1;
             undo_tick_create_for_notation_item(r_ob, (t_notation_item *)slur->start_chord, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-            notation_item_delete_from_selection(r_ob, (t_notation_item *)slur); // to be 100% sure, we delete all stuff
+            notation_item_delete_from_selection(r_ob, (t_notation_item *)slur, false); // to be 100% sure, we delete all stuff
             slur_delete(r_ob, slur);
             curr_it = temp;
         } else {

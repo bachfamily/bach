@@ -1077,7 +1077,7 @@ char delete_marker_by_llllelem(t_notation_obj *r_ob, t_llllelem *marker){
 void marker_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_marker *marker){
     
     if (notation_item_is_selected(r_ob, (t_notation_item *)marker))
-        notation_item_delete_from_selection(r_ob, (t_notation_item *)marker);
+        notation_item_delete_from_selection(r_ob, (t_notation_item *)marker, false);
     
     if (notation_item_is_preselected(r_ob, (t_notation_item *)marker))
         notation_item_delete_from_preselection(r_ob, (t_notation_item *)marker);

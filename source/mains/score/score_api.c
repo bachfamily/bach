@@ -4642,7 +4642,7 @@ t_chord *split_chord(t_score *x, t_chord *chord, long how_many, long also_split_
         char is_chord_selected = notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)chord);
         
         if (is_chord_selected)
-            notation_item_delete_from_selection((t_notation_obj *) x, (t_notation_item *)chord);
+            notation_item_delete_from_selection((t_notation_obj *) x, (t_notation_item *)chord, false);
         
         meas = chord->parent;
         split = (t_chord **) bach_newptr(how_many * sizeof(t_chord *));
@@ -4676,7 +4676,7 @@ t_chord *split_chord(t_score *x, t_chord *chord, long how_many, long also_split_
         for (i = how_many - 1; i >= 0; i--) {
             chord_insert_in_measure((t_notation_obj *) x, meas, split[i], chord, 0);
             if (is_chord_selected)
-                notation_item_add_to_selection((t_notation_obj *) x, (t_notation_item *)split[i]);
+                notation_item_add_to_selection((t_notation_obj *) x, (t_notation_item *)split[i], false);
         }
         
         if (x->r_ob.notation_cursor.chord == chord)
@@ -11713,7 +11713,7 @@ void score_delete_voice(t_score *x, t_scorevoice *voice)
     }
 
     if (notation_item_is_selected((t_notation_obj *)x, (t_notation_item *)voice))
-        notation_item_delete_from_selection((t_notation_obj *)x, (t_notation_item *)voice);
+        notation_item_delete_from_selection((t_notation_obj *)x, (t_notation_item *)voice, false);
     
     shift_voicewise_arrays((t_notation_obj *)x, voice->v_ob.number + 1, voice->v_ob.number, x->r_ob.num_voices - voice->v_ob.number - 1);
 

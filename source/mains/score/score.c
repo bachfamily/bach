@@ -1032,7 +1032,7 @@ char score_sel_delete_item(t_score *x, t_notation_item *curr_it, char *need_chec
     char changed = 0;
     if (curr_it->type == k_NOTE) {
         t_note *nt = (t_note *) curr_it;
-        notation_item_delete_from_selection((t_notation_obj *) x, curr_it);
+        notation_item_delete_from_selection((t_notation_obj *) x, curr_it, true);
         if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)nt)){
             undo_tick_create_for_selected_notation_item((t_notation_obj *)x, (t_notation_item *)nt, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
             note_transfer_slots_to_siebling((t_notation_obj *)x, nt, slots_to_transfer_to_next_note_in_chord_1based, transfer_slots_even_if_empty, transfer_slots_even_to_rests);
@@ -1041,7 +1041,7 @@ char score_sel_delete_item(t_score *x, t_notation_item *curr_it, char *need_chec
         }
     } else if (curr_it->type == k_CHORD) {
         t_chord *ch = (t_chord *) curr_it;
-        notation_item_delete_from_selection((t_notation_obj *) x, curr_it);
+        notation_item_delete_from_selection((t_notation_obj *) x, curr_it, true);
         if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)ch)){
             undo_tick_create_for_selected_notation_item((t_notation_obj *)x, (t_notation_item *)ch, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
             turn_chord_into_rest(x, ch);
@@ -1049,7 +1049,7 @@ char score_sel_delete_item(t_score *x, t_notation_item *curr_it, char *need_chec
         }
     } else if (curr_it->type == k_MEASURE) {
         t_measure *meas = (t_measure *) curr_it;
-        notation_item_delete_from_selection((t_notation_obj *) x, curr_it);
+        notation_item_delete_from_selection((t_notation_obj *) x, curr_it, true);
         if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)meas)){
             char need_update_solos = false;
             if (has_measure_attached_markers(x, meas))
@@ -1066,7 +1066,7 @@ char score_sel_delete_item(t_score *x, t_notation_item *curr_it, char *need_chec
         }
     } else if (curr_it->type == k_PITCH_BREAKPOINT) {
         t_bpt *bpt = (t_bpt *) curr_it;
-        notation_item_delete_from_selection((t_notation_obj *) x, curr_it);
+        notation_item_delete_from_selection((t_notation_obj *) x, curr_it, true);
         if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)bpt->owner)){
             undo_tick_create_for_selected_notation_item((t_notation_obj *)x, (t_notation_item *)bpt, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
             delete_breakpoint((t_notation_obj *) x, bpt);
@@ -1074,7 +1074,7 @@ char score_sel_delete_item(t_score *x, t_notation_item *curr_it, char *need_chec
         }
     } else if (curr_it->type == k_VOICE) {
         t_voice *voice = (t_voice *) curr_it;
-        notation_item_delete_from_selection((t_notation_obj *) x, curr_it);
+        notation_item_delete_from_selection((t_notation_obj *) x, curr_it, true);
         create_whole_score_undo_tick_nolock(x);
         score_delete_voice(x, (t_scorevoice *)voice);
         update_solos((t_notation_obj *)x);
@@ -1082,7 +1082,7 @@ char score_sel_delete_item(t_score *x, t_notation_item *curr_it, char *need_chec
         changed = 1;
     } else if (curr_it->type == k_SLUR) {
         t_slur *slur = (t_slur *) curr_it;
-        notation_item_delete_from_selection((t_notation_obj *) x, curr_it);
+        notation_item_delete_from_selection((t_notation_obj *) x, curr_it, true);
         if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)slur)){
             undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)slur->start_chord, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
             slur_delete((t_notation_obj *)x, slur);
@@ -1338,7 +1338,7 @@ void score_do_selectmeasures(t_score *x, e_selection_modes mode, t_llll *selectl
         t_llll *voicenums = llll_get(); // 1-based numbers of measures to select
         
         lock_general_mutex((t_notation_obj *)x);
-        delete_item_type_from_selection((t_notation_obj *) x, -k_MEASURE);
+        delete_item_type_from_selection((t_notation_obj *) x, -k_MEASURE, true);
         
         if ((selectllll->l_size >= 2) && (hatom_gettype(&selectllll->l_head->l_next->l_hatom) == H_LONG))
             llll_appendlong(voicenums, hatom_getlong(&selectllll->l_tail->l_hatom), 0, WHITENULL_llll);
@@ -1391,10 +1391,10 @@ void score_do_selectmeasures(t_score *x, e_selection_modes mode, t_llll *selectl
                     while (temp && (temp->prev != meas2)) {
                         if (notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)temp)) {
                             if (mode == k_SELECTION_MODE_INVOLUTIVE || mode == k_SELECTION_MODE_FORCE_UNSELECT)
-                                notation_item_delete_from_selection((t_notation_obj *) x, (t_notation_item *)temp);
+                                notation_item_delete_from_selection((t_notation_obj *) x, (t_notation_item *)temp, true);
                         } else {
                             if (mode == k_SELECTION_MODE_FORCE_SELECT || mode == k_SELECTION_MODE_INVOLUTIVE)
-                                notation_item_add_to_selection((t_notation_obj *) x, (t_notation_item *)temp);
+                                notation_item_add_to_selection((t_notation_obj *) x, (t_notation_item *)temp, true);
                         }
                         temp = temp->next;
                     }
@@ -1473,7 +1473,7 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
         
 // This was here to fake the behavior upon clicks. But it is only confusing!
 //        lock_general_mutex((t_notation_obj *)x);
-//        delete_item_type_from_selection((t_notation_obj *) x, k_MEASURE);
+//        delete_item_type_from_selection((t_notation_obj *) x, k_MEASURE, true);
 //        unlock_general_mutex((t_notation_obj *)x);
 
         if (selectllll && selectllll->l_head) {
@@ -12224,7 +12224,7 @@ char change_pitch_for_selection(t_score *x, double delta, char mode, char allow_
                 newch->parent->need_recompute_beamings = true;
                 oldch->parent->need_recompute_beamings = true;
                 if (oldch->num_notes == 0)
-                    notation_item_delete_from_selection((t_notation_obj *)x, (t_notation_item *)oldch);
+                    notation_item_delete_from_selection((t_notation_obj *)x, (t_notation_item *)oldch, false);
             } else {
                 note_compute_approximation((t_notation_obj *) x, note);
                 if (change_pitch_must_actually_snap_to_grid((t_notation_obj *)x, mode, snap_pitch_to_grid)) 
@@ -12289,7 +12289,7 @@ char change_pitch_for_selection(t_score *x, double delta, char mode, char allow_
                             newch->parent->need_recompute_beamings = true;
                             oldch->parent->need_recompute_beamings = true;
                             if (oldch->num_notes == 0)
-                                notation_item_delete_from_selection((t_notation_obj *)x, (t_notation_item *)oldch);
+                                notation_item_delete_from_selection((t_notation_obj *)x, (t_notation_item *)oldch, false);
                         }
                     }
                     curr_nt = curr_nt->next;
@@ -12361,7 +12361,7 @@ char change_pitch_for_selection(t_score *x, double delta, char mode, char allow_
                             oldch->parent->need_recompute_beamings = true;
                             newch->parent->need_recompute_beamings = true;
                             if (oldch->num_notes == 0)
-                                notation_item_delete_from_selection((t_notation_obj *)x, (t_notation_item *)oldch);
+                                notation_item_delete_from_selection((t_notation_obj *)x, (t_notation_item *)oldch, false);
                         }
                     }
                     curr_nt = curr_nt->next;
@@ -12545,7 +12545,7 @@ char gather_all_selected_chords_with_merge_flag(t_score *x, t_chord *chord, char
         llll_funall(from->parent->rhythmic_tree, remove_force_tuplet_levels_fn, NULL, 1, -1, FUNALL_SKIP_ATOMS);
 
         while (tmp && (tmp != to)) {
-            notation_item_delete_from_selection((t_notation_obj *) x, (t_notation_item *)tmp);
+            notation_item_delete_from_selection((t_notation_obj *) x, (t_notation_item *)tmp, false);
             if (next_sel_pointer && (t_notation_item *)tmp == *next_sel_pointer)
                 *next_sel_pointer = (*next_sel_pointer)->next_selected;
             merge_chords_and_sum_durations(x, from, tmp);
@@ -12553,7 +12553,7 @@ char gather_all_selected_chords_with_merge_flag(t_score *x, t_chord *chord, char
         }
         if (next_sel_pointer && (t_notation_item *)to == *next_sel_pointer)
             *next_sel_pointer = (*next_sel_pointer)->next_selected;
-        notation_item_delete_from_selection((t_notation_obj *) x, (t_notation_item *)to);
+        notation_item_delete_from_selection((t_notation_obj *) x, (t_notation_item *)to, false);
         
         verbose_post_rhythmic_tree((t_notation_obj *) x, from->parent, gensym("mergeC"), 1);
         merge_chords_and_sum_durations(x, from, to);
@@ -12628,14 +12628,14 @@ char quick_merge_selection(t_score *x)
                     if (from != to) {
                         t_chord *tmp = from->next;
                         while (tmp && (tmp != to)) {
-                            notation_item_delete_from_selection((t_notation_obj *) x, (t_notation_item *)tmp);
+                            notation_item_delete_from_selection((t_notation_obj *) x, (t_notation_item *)tmp, false);
                             if ((t_notation_item *)tmp == next)
                                 next = next->next_selected;
                             merge_chords_and_sum_durations(x, from, tmp);
                             tmp = from->next;
                         }
                         
-                        notation_item_delete_from_selection((t_notation_obj *) x, (t_notation_item *)to);
+                        notation_item_delete_from_selection((t_notation_obj *) x, (t_notation_item *)to, false);
                         merge_chords_and_sum_durations(x, from, to);
                         from->r_it.flags = (e_bach_internal_notation_flags) (from->r_it.flags & ~k_FLAG_MERGE);
                         changed = 1;
@@ -13345,7 +13345,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
             clicked_ptr = voice;
             clicked_obj = k_VOICE;
             if (is_editable((t_notation_obj *)x, k_SELECTION, k_SINGLE_SELECTION) || is_editable((t_notation_obj *)x, k_SELECTION, k_MULTIPLE_SELECTION))
-                delete_item_type_from_selection((t_notation_obj *) x, -k_VOICE); // we only keep voices in selection
+                delete_item_type_from_selection((t_notation_obj *) x, -k_VOICE, true); // we only keep voices in selection
         }
     }
     
@@ -13562,7 +13562,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                                     note_insert((t_notation_obj *)x, curr_ch, newnote, 0);
                                     x->r_ob.item_changed_at_mousedown = 1;
                                     curr_ch->r_sym_duration = rat_abs(curr_ch->r_sym_duration);
-                                    notation_item_add_to_selection((t_notation_obj *) x, (t_notation_item *)curr_ch);
+                                    notation_item_add_to_selection((t_notation_obj *) x, (t_notation_item *)curr_ch, true);
                                     note_compute_approximation((t_notation_obj *) x, newnote);
                                     if (x->r_ob.snap_pitch_to_grid_when_editing) 
                                         note_snap_midicents_to_displayed_pitch((t_notation_obj *) x, newnote);
@@ -13979,7 +13979,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                     
                     if (!barline_clicked && (is_editable((t_notation_obj *)x, k_SELECTION, k_SINGLE_SELECTION) || is_editable((t_notation_obj *)x, k_SELECTION, k_MULTIPLE_SELECTION))) {
                         // we clear the non-measure selection!
-                        delete_item_type_from_selection((t_notation_obj *) x, -k_MEASURE); // we only keep measures in selection
+                        delete_item_type_from_selection((t_notation_obj *) x, -k_MEASURE, true); // we only keep measures in selection
                         x->r_ob.selection_type = k_MEASURE;
                     }
                     
@@ -14342,7 +14342,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
             if (is_editable((t_notation_obj *)x, k_SELECTION, selection_action)) {
                 curr_nt = ((t_note *)clicked_ptr)->parent->firstnote;
                 while (curr_nt) { // how many notes are inside the selection?
-                    notation_item_delete_from_selection((t_notation_obj *) x, (t_notation_item *)curr_nt);
+                    notation_item_delete_from_selection((t_notation_obj *) x, (t_notation_item *)curr_nt, true);
                     curr_nt = curr_nt->next;
                 }
             }
@@ -14540,7 +14540,7 @@ void select_all_measure_in_selected_measures_range(t_score *x) {
             if (start_meas && end_meas) {
                 t_measure *meas;
                 for (meas = start_meas; meas; meas = meas->next) {
-                    notation_item_add_to_selection((t_notation_obj *) x, (t_notation_item *)meas);
+                    notation_item_add_to_selection((t_notation_obj *) x, (t_notation_item *)meas, true);
                     if (meas == end_meas)
                         break;
                 }
@@ -14586,7 +14586,7 @@ void select_all_measure_in_selected_measures_range(t_score *x, long end_voice, l
         clear_preselection((t_notation_obj *) x);
         for (voice = scorevoice_get_nth(x, voice_min); voice && voice->v_ob.number <= voice_max; voice = voice->next) {
             for (meas = measure_get_nth(voice, measID_min); meas && meas->measure_number <= measID_max; meas = meas->next) {
-                notation_item_add_to_selection((t_notation_obj *) x, (t_notation_item *)meas);
+                notation_item_add_to_selection((t_notation_obj *) x, (t_notation_item *)meas, true);
             }
         }
     }
@@ -15223,21 +15223,21 @@ void score_mouseup(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
             if (x->r_ob.check_selection_restraint_for_item->type == k_CHORD) {
                 if (are_all_selecteditems_tied_to_chord((t_notation_obj *) x, (t_chord *)x->r_ob.check_selection_restraint_for_item)) {
                     clear_selection((t_notation_obj *) x);
-                    notation_item_add_to_selection((t_notation_obj *) x, x->r_ob.check_selection_restraint_for_item);
+                    notation_item_add_to_selection((t_notation_obj *) x, x->r_ob.check_selection_restraint_for_item, true);
                 } else if (((t_chord *)x->r_ob.check_selection_restraint_for_item)->num_notes == 1 && are_all_selecteditems_tied_to_note((t_notation_obj *) x, ((t_chord *)x->r_ob.check_selection_restraint_for_item)->firstnote)) {
                         clear_selection((t_notation_obj *) x);
-                        notation_item_add_to_selection((t_notation_obj *) x, x->r_ob.check_selection_restraint_for_item);
+                        notation_item_add_to_selection((t_notation_obj *) x, x->r_ob.check_selection_restraint_for_item, true);
                 }
             } else if (x->r_ob.check_selection_restraint_for_item->type == k_NOTE) {
                 if (are_all_selecteditems_tied_to_note((t_notation_obj *) x, (t_note *)x->r_ob.check_selection_restraint_for_item)) {
                     clear_selection((t_notation_obj *) x);
-                    notation_item_add_to_selection((t_notation_obj *) x, x->r_ob.check_selection_restraint_for_item);
+                    notation_item_add_to_selection((t_notation_obj *) x, x->r_ob.check_selection_restraint_for_item, true);
                 } else if (are_all_selecteditems_tied_to_chord((t_notation_obj *) x, ((t_note *)x->r_ob.check_selection_restraint_for_item)->parent)) {
                     clear_selection((t_notation_obj *) x);
-                    notation_item_add_to_selection((t_notation_obj *) x, (t_notation_item *)((t_note *)x->r_ob.check_selection_restraint_for_item)->parent);
+                    notation_item_add_to_selection((t_notation_obj *) x, (t_notation_item *)((t_note *)x->r_ob.check_selection_restraint_for_item)->parent, true);
                 } else if (x->r_ob.firstselecteditem == (t_notation_item *)((t_note *)x->r_ob.check_selection_restraint_for_item)->parent && x->r_ob.firstselecteditem == x->r_ob.lastselecteditem) {
                     clear_selection((t_notation_obj *) x);
-                    notation_item_add_to_selection((t_notation_obj *) x, x->r_ob.check_selection_restraint_for_item);
+                    notation_item_add_to_selection((t_notation_obj *) x, x->r_ob.check_selection_restraint_for_item, true);
                 }
             }
         }
@@ -15246,21 +15246,21 @@ void score_mouseup(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
             lock_general_mutex((t_notation_obj *)x);    
             if ((x->r_ob.j_mousedown_ptr) && ((x->r_ob.j_mousedown_obj_type == k_NOTE) || (x->r_ob.j_mousedown_obj_type == k_CHORD))) {
                 if (notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)x->r_ob.j_mousedown_ptr)) {
-                    notation_item_delete_from_selection((t_notation_obj *)x, (t_notation_item *)x->r_ob.j_mousedown_ptr);
+                    notation_item_delete_from_selection((t_notation_obj *)x, (t_notation_item *)x->r_ob.j_mousedown_ptr, true);
                 } else if (x->r_ob.j_mousedown_obj_type == k_NOTE && notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)((t_note *)x->r_ob.j_mousedown_ptr)->parent)) {
                     // particular case of a chord selected and we click on a note, just to deselect the note. but to accomplish this we have to:
                     // 1) deselect the chord; 2) select all the notes but this one
                     t_chord *this_chord = ((t_note *)x->r_ob.j_mousedown_ptr)->parent;
                     t_note *this_note;
-                    notation_item_delete_from_selection((t_notation_obj *)x, (t_notation_item *)this_chord); // delete the chord from the selection
+                    notation_item_delete_from_selection((t_notation_obj *)x, (t_notation_item *)this_chord, true); // delete the chord from the selection
                     for (this_note = this_chord->firstnote; this_note; this_note = this_note->next)
                         if (this_note != x->r_ob.j_mousedown_ptr)
-                            notation_item_add_to_selection((t_notation_obj *) x, (t_notation_item *)this_note);
+                            notation_item_add_to_selection((t_notation_obj *) x, (t_notation_item *)this_note, true);
                 }
             } else if ((x->r_ob.j_mousedown_ptr) && 
                        (x->r_ob.j_mousedown_obj_type == k_DURATION_TAIL || x->r_ob.j_mousedown_obj_type == k_PITCH_BREAKPOINT || x->r_ob.j_mousedown_obj_type == k_MEASURE )) {
                 if (notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)x->r_ob.j_mousedown_ptr)) {
-                    notation_item_delete_from_selection((t_notation_obj *)x, (t_notation_item *)x->r_ob.j_mousedown_ptr);
+                    notation_item_delete_from_selection((t_notation_obj *)x, (t_notation_item *)x->r_ob.j_mousedown_ptr, true);
                 }
             }
             unlock_general_mutex((t_notation_obj *)x);    
@@ -15575,7 +15575,7 @@ void score_mousedoubleclick(t_score *x, t_object *patcherview, t_pt pt, long mod
             preselect_elements_in_region_for_mouse_selection(x, 0, x->r_ob.length_ms, -500000, 500000, voice->v_ob.number, voice->v_ob.number, true);
             move_preselecteditems_to_selection((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT, false, false, true);
             if (notation_item_is_selected((t_notation_obj *)x, (t_notation_item *)voice))
-                notation_item_delete_from_selection((t_notation_obj *)x, (t_notation_item *)voice);
+                notation_item_delete_from_selection((t_notation_obj *)x, (t_notation_item *)voice, true);
         }
     }
 
@@ -17942,7 +17942,7 @@ void select_all(t_score *x){
         while (meas) {
             chord = meas->firstchord;
             while (chord) {
-                notation_item_add_to_selection((t_notation_obj *) x, (t_notation_item *)chord);
+                notation_item_add_to_selection((t_notation_obj *) x, (t_notation_item *)chord, true);
                 chord = chord->next;
             }
             meas = meas->next;
@@ -18318,7 +18318,7 @@ char duplicate_selected_measures(t_score *x)
             for (tmp = newmeas->firsttempo; tmp; tmp = tmp->next) 
                 tmp->changepoint.measure_num = newmeas->measure_number;
 */            
-            notation_item_add_to_selection((t_notation_obj *) x, (t_notation_item *)newmeas);
+            notation_item_add_to_selection((t_notation_obj *) x, (t_notation_item *)newmeas, true);
             changed = 1;
         }
         temp = temp->next_selected;

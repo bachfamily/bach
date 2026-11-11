@@ -17672,7 +17672,7 @@ void get_rhythm_drawable_one_step(t_notation_obj *r_ob, t_llll *box, char only_c
                         llll_appendobj(chords_to_tie, new_ch->prev, 0, WHITENULL_llll);
                         
                         if (notation_item_is_selected(r_ob, (t_notation_item *)this_chord))
-                            notation_item_add_to_selection(r_ob, (t_notation_item *)new_ch);
+                            notation_item_add_to_selection(r_ob, (t_notation_item *)new_ch, false);
                     }
                     for (elem = chords_to_tie->l_head; elem; elem = elem->l_next)
                         tie_chord((t_chord *)hatom_getobj(&elem->l_hatom));
@@ -18135,7 +18135,7 @@ void split_first_level_according_to_boxes(t_notation_obj *r_ob, t_measure *measu
                 new_ch->rhythmic_tree_elem = llll_insertobj_after(new_ch, elem, 0, WHITENULL_llll);
 
                 if (notation_item_is_selected(r_ob, (t_notation_item *)thisch))
-                    notation_item_add_to_selection(r_ob, (t_notation_item *)new_ch);
+                    notation_item_add_to_selection(r_ob, (t_notation_item *)new_ch, false);
 
                 if (can_wrap) {
                     newllll = llll_wrap_element_range(leftelem, elem);
@@ -18210,7 +18210,7 @@ void split_first_level_according_to_boxes(t_notation_obj *r_ob, t_measure *measu
                             new_ch->rhythmic_tree_elem = llll_insertobj_after(new_ch, splitelem, 0, WHITENULL_llll);
                             
                             if (notation_item_is_selected(r_ob, (t_notation_item *)splitchord))
-                                notation_item_add_to_selection(r_ob, (t_notation_item *)new_ch);
+                                notation_item_add_to_selection(r_ob, (t_notation_item *)new_ch, false);
                         }
                         
                         // creating brackets ..))((..   "abyss"
@@ -19672,7 +19672,7 @@ long find_tuplets_for_level_fn(void *data, t_hatom *a, const t_llll *address)
                                 rhythm_elem_rat = new_element_dur;
                                 
                                 if (notation_item_is_selected(r_ob, (t_notation_item *)old_ch))
-                                    notation_item_add_to_selection(r_ob, (t_notation_item *)new_ch);
+                                    notation_item_add_to_selection(r_ob, (t_notation_item *)new_ch, false);
 
                                 box_onset = rat_rat_diff(rat_rat_sum(box_onset, rhythm_elem_rat_abs), rat_abs(diff));
                             } else {
@@ -22981,7 +22981,7 @@ char tempo_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_tempo *
         close_bach_inspector(r_ob, &r_ob->m_inspector);
 
     if (notation_item_is_selected(r_ob, (t_notation_item *)tempo))
-        notation_item_delete_from_selection(r_ob, (t_notation_item *)tempo);
+        notation_item_delete_from_selection(r_ob, (t_notation_item *)tempo, false);
 
     if (notation_item_is_preselected(r_ob, (t_notation_item *)tempo))
         notation_item_delete_from_preselection(r_ob, (t_notation_item *)tempo);
@@ -23045,7 +23045,7 @@ char measure_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_measu
         close_bach_inspector(r_ob, &r_ob->m_inspector);
 
     if (notation_item_is_selected(r_ob, (t_notation_item *)meas))
-        notation_item_delete_from_selection(r_ob, (t_notation_item *)meas);
+        notation_item_delete_from_selection(r_ob, (t_notation_item *)meas, false);
 
     if (notation_item_is_preselected(r_ob, (t_notation_item *)meas))
         notation_item_delete_from_preselection(r_ob, (t_notation_item *)meas);
@@ -23078,7 +23078,7 @@ char measure_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_measu
 void note_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_note *note, char also_remove_previous_ties)
 {
     if (notation_item_is_selected(r_ob, (t_notation_item *)note))
-        notation_item_delete_from_selection(r_ob, (t_notation_item *)note);
+        notation_item_delete_from_selection(r_ob, (t_notation_item *)note, false);
 
     if (notation_item_is_preselected(r_ob, (t_notation_item *)note))
         notation_item_delete_from_preselection(r_ob, (t_notation_item *)note);
@@ -23167,7 +23167,7 @@ t_voice *chord_get_voice(t_notation_obj *r_ob, t_chord *ch){
 void dynamics_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_dynamics *dyn)
 {
     if (notation_item_is_selected(r_ob, (t_notation_item *)dyn))
-        notation_item_delete_from_selection(r_ob, (t_notation_item *)dyn);
+        notation_item_delete_from_selection(r_ob, (t_notation_item *)dyn, false);
     
     if (notation_item_is_preselected(r_ob, (t_notation_item *)dyn))
         notation_item_delete_from_preselection(r_ob, (t_notation_item *)dyn);
@@ -23184,7 +23184,7 @@ void dynamics_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_dyna
 void articulation_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_articulation *art)
 {
     if (notation_item_is_selected(r_ob, (t_notation_item *)art))
-        notation_item_delete_from_selection(r_ob, (t_notation_item *)art);
+        notation_item_delete_from_selection(r_ob, (t_notation_item *)art, false);
     
     if (notation_item_is_preselected(r_ob, (t_notation_item *)art))
         notation_item_delete_from_preselection(r_ob, (t_notation_item *)art);
@@ -23201,7 +23201,7 @@ void articulation_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_
 void breakpoint_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_bpt *bpt)
 {
     if (notation_item_is_selected(r_ob, (t_notation_item *)bpt))
-        notation_item_delete_from_selection(r_ob, (t_notation_item *)bpt);
+        notation_item_delete_from_selection(r_ob, (t_notation_item *)bpt, false);
 
     if (notation_item_is_preselected(r_ob, (t_notation_item *)bpt))
         notation_item_delete_from_preselection(r_ob, (t_notation_item *)bpt);
@@ -23231,7 +23231,7 @@ char chord_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_chord *
     
 //    notationobj_check_force(r_ob, false); // crashes
     if (notation_item_is_selected(r_ob, (t_notation_item *)chord))
-        notation_item_delete_from_selection(r_ob, (t_notation_item *)chord);
+        notation_item_delete_from_selection(r_ob, (t_notation_item *)chord, false);
 
     if (notation_item_is_preselected(r_ob, (t_notation_item *)chord))
         notation_item_delete_from_preselection(r_ob, (t_notation_item *)chord);
@@ -25614,7 +25614,7 @@ char delete_chord_lyrics(t_notation_obj *r_ob, t_chord *chord)
     t_note *note;
     
     if (notation_item_is_selected(r_ob, (t_notation_item *)chord->lyrics))
-        notation_item_delete_from_selection(r_ob, (t_notation_item *)chord->lyrics);
+        notation_item_delete_from_selection(r_ob, (t_notation_item *)chord->lyrics, false);
 
     for (note = chord->firstnote; note; note = note->next)
         note_clear_slot(r_ob, note, r_ob->link_lyrics_to_slot - 1);
@@ -25702,7 +25702,7 @@ char chord_delete_dynamics(t_notation_obj *r_ob, t_chord *chord, char add_undo_t
     char undo_tick_added = false;
     
     if (dyn && notation_item_is_selected(r_ob, (t_notation_item *)dyn))
-        notation_item_delete_from_selection(r_ob, (t_notation_item *)dyn);
+        notation_item_delete_from_selection(r_ob, (t_notation_item *)dyn, false);
 
     
     if (chord->firstnote) {
@@ -28050,7 +28050,7 @@ void clear_voice_selection(t_notation_obj *r_ob, long voice_num){
                 to_delete  = true;
         }
         if (to_delete)
-            notation_item_delete_from_selection(r_ob, temp);
+            notation_item_delete_from_selection(r_ob, temp, true);
         temp = temp2;
     }
     r_ob->selection_type = get_selected_items_common_type(r_ob);
@@ -28211,10 +28211,14 @@ void notation_item_delete_from_preselection(t_notation_obj *r_ob, t_notation_ite
     }
 }
 
-t_notation_item* notation_item_add_to_selection(t_notation_obj *r_ob, t_notation_item *item){
+t_notation_item* notation_item_add_to_selection(t_notation_obj *r_ob, t_notation_item *item, char add_undo_step_if_necessary){
 // add an item to the "selection"-linkedlist
     if (item && !item->selected) {
     
+        if (add_undo_step_if_necessary && r_ob->undo_selection) {
+            undo_tick_create_for_notation_item(r_ob, item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_selection);
+        }
+
         // adding the element to the selection linked list
         r_ob->num_selecteditems++; // increase the # of sel items
         if (r_ob->firstselecteditem) { // put the item at the end of the list
@@ -28346,7 +28350,7 @@ void move_preselecteditems_to_selection(t_notation_obj *r_ob, e_selection_modes 
             
         } else if (el_is_selected && mode != k_SELECTION_MODE_FORCE_SELECT) {
                 // item was selected: will be deselected!
-                notation_item_delete_from_selection(r_ob, this_notation_item_preselected2);
+                notation_item_delete_from_selection(r_ob, this_notation_item_preselected2, false);
         } else if (!el_is_selected) { // ELEMENT WAS NOT SELECTED
             
             if (mode == k_SELECTION_MODE_INTERSECT_WITH_SELECTION) {
@@ -28355,10 +28359,10 @@ void move_preselecteditems_to_selection(t_notation_obj *r_ob, e_selection_modes 
                 if (mode != k_SELECTION_MODE_FORCE_SELECT) {
                     t_chord *ch = ((t_note *)this_notation_item_preselected2)->parent;
                     t_note *nt;
-                    notation_item_delete_from_selection(r_ob, (t_notation_item *)((t_note *)this_notation_item_preselected2)->parent);
+                    notation_item_delete_from_selection(r_ob, (t_notation_item *)((t_note *)this_notation_item_preselected2)->parent, false);
                     for (nt = ch->firstnote; nt; nt = nt->next)
                         if (nt != (t_note *)this_notation_item_preselected2)
-                            notation_item_add_to_selection(r_ob, (t_notation_item *)nt);
+                            notation_item_add_to_selection(r_ob, (t_notation_item *)nt, false);
                 }
             } else if (this_notation_item_preselected2->type == k_PITCH_BREAKPOINT && notation_item_is_globally_selected(r_ob, (t_notation_item *)((t_bpt *)this_notation_item_preselected2)->owner)) {
                 // nothing to do: note is already selected
@@ -28366,13 +28370,13 @@ void move_preselecteditems_to_selection(t_notation_obj *r_ob, e_selection_modes 
                 // nothing to do: note is already selected
             } else if (mode != k_SELECTION_MODE_FORCE_UNSELECT){
                 // item was NOT selected: we add it at the end of the list
-                notation_item_add_to_selection(r_ob, this_notation_item_preselected2);
+                notation_item_add_to_selection(r_ob, this_notation_item_preselected2, false);
                 // check if breakpoints or tail were selected
                 if (this_notation_item_preselected2->type == k_NOTE) {
                     t_bpt *bpt;
                     for (bpt = ((t_note *)this_notation_item_preselected2)->firstbreakpoint; bpt; bpt = bpt->next){
                         if (notation_item_is_selected(r_ob, (t_notation_item *)bpt))
-                            notation_item_delete_from_selection(r_ob, (t_notation_item *)bpt);
+                            notation_item_delete_from_selection(r_ob, (t_notation_item *)bpt, false);
                     }
                 }
                 
@@ -28389,8 +28393,8 @@ void move_preselecteditems_to_selection(t_notation_obj *r_ob, e_selection_modes 
                     
                     if (count_notes_in_region == ch->num_notes) { // whole chord has been selected!
                         for (curr_nt = ch->firstnote; curr_nt; curr_nt = curr_nt->next ) // cycle on the notes: we count how many notes are inside the selection
-                            notation_item_delete_from_selection(r_ob, (t_notation_item *)curr_nt);
-                        notation_item_add_to_selection(r_ob, (t_notation_item *)ch);
+                            notation_item_delete_from_selection(r_ob, (t_notation_item *)curr_nt, false);
+                        notation_item_add_to_selection(r_ob, (t_notation_item *)ch, false);
                     } else {
                         
                         // check if any of the note breakpoints are selected, in which case, we deselect them since the whole note was selected
@@ -28398,7 +28402,7 @@ void move_preselecteditems_to_selection(t_notation_obj *r_ob, e_selection_modes 
                             t_bpt *bpt;
                             for (bpt = ((t_note *)this_notation_item_preselected2)->firstbreakpoint; bpt; bpt = bpt->next)
                                 if (notation_item_is_selected(r_ob, (t_notation_item *)bpt))
-                                    notation_item_delete_from_selection(r_ob, (t_notation_item *)bpt);
+                                    notation_item_delete_from_selection(r_ob, (t_notation_item *)bpt, false);
                         }
                     }
                 }
@@ -28426,7 +28430,7 @@ void move_preselecteditems_to_selection(t_notation_obj *r_ob, e_selection_modes 
                     }
                 }
                 if (!all_notes_to_be_kept) {
-                    notation_item_delete_from_selection(r_ob, temp);
+                    notation_item_delete_from_selection(r_ob, temp, false);
                     for (nt = ch->firstnote; nt; nt = nt->next)
                         if (nt->r_it.flags & k_FLAG_TO_BE_KEPT)
                             llll_appendobj(toadd, nt);
@@ -28436,12 +28440,12 @@ void move_preselecteditems_to_selection(t_notation_obj *r_ob, e_selection_modes 
                     nt->r_it.flags &= ~k_FLAG_TO_BE_KEPT;
                 temp->flags &= ~k_FLAG_TO_BE_MODIFIED;
             } else {
-                notation_item_delete_from_selection(r_ob, temp);
+                notation_item_delete_from_selection(r_ob, temp, false);
             }
             temp = nexttemp;
         }
         for (t_llllelem *el = toadd->l_head; el; el = el->l_next)
-            notation_item_add_to_selection(r_ob, (t_notation_item *)hatom_getobj(&el->l_hatom));
+            notation_item_add_to_selection(r_ob, (t_notation_item *)hatom_getobj(&el->l_hatom), false);
         llll_free(toadd);
     }
 
@@ -28469,17 +28473,17 @@ void move_preselecteditems_to_selection(t_notation_obj *r_ob, e_selection_modes 
                                 t_note *nt;
                                 for (nt = ((t_chord *)el)->firstnote; nt; nt = nt->next)
                                     if (notation_item_is_selected(r_ob, (t_notation_item *)nt))
-                                        notation_item_delete_from_selection(r_ob, (t_notation_item *)nt);
-                                notation_item_add_to_selection(r_ob, el);
+                                        notation_item_delete_from_selection(r_ob, (t_notation_item *)nt, false);
+                                notation_item_add_to_selection(r_ob, el, false);
                             }
                         } else {
                             if (notation_item_is_selected(r_ob, el)) {
-                                notation_item_delete_from_selection(r_ob, el);
+                                notation_item_delete_from_selection(r_ob, el, false);
                             } else {
                                 t_note *nt;
                                 for (nt = ((t_chord *)el)->firstnote; nt; nt = nt->next)
                                     if (notation_item_is_selected(r_ob, (t_notation_item *)nt))
-                                        notation_item_delete_from_selection(r_ob, (t_notation_item *)nt);
+                                        notation_item_delete_from_selection(r_ob, (t_notation_item *)nt, false);
                             }
                         }
                     }
@@ -28508,7 +28512,7 @@ void move_preselecteditems_to_selection(t_notation_obj *r_ob, e_selection_modes 
                         char is_selected = notation_item_is_selected(r_ob, (t_notation_item *)temp_note) || notation_item_is_selected(r_ob, (t_notation_item *)temp_note->parent);
                         if (!is_selected) {
                             llll_appendobj(chords_to_be_checked, temp_note->parent);
-                            notation_item_add_to_selection(r_ob, (t_notation_item *)temp_note);
+                            notation_item_add_to_selection(r_ob, (t_notation_item *)temp_note, false);
                         }
                         
                         if (temp_note == last_tied) break;
@@ -28527,7 +28531,7 @@ void move_preselecteditems_to_selection(t_notation_obj *r_ob, e_selection_modes 
                             char is_selected = notation_item_is_selected(r_ob, (t_notation_item *)temp_note) || notation_item_is_selected(r_ob, (t_notation_item *)temp_note->parent);
                             if (!is_selected) {
                                 llll_appendobj(chords_to_be_checked, temp_note->parent);
-                                notation_item_add_to_selection(r_ob, (t_notation_item *)temp_note);
+                                notation_item_add_to_selection(r_ob, (t_notation_item *)temp_note, false);
                             }
                             
                             if (temp_note == last_tied) break;
@@ -28548,8 +28552,8 @@ void move_preselecteditems_to_selection(t_notation_obj *r_ob, e_selection_modes 
             } else if (chord->firstnote && are_all_notes_in_chord_selected(r_ob, chord)) {
                 t_note *note;
                 for (note = chord->firstnote; note; note = note->next)
-                    notation_item_delete_from_selection(r_ob, (t_notation_item *)note);
-                notation_item_add_to_selection(r_ob, (t_notation_item *)chord);
+                    notation_item_delete_from_selection(r_ob, (t_notation_item *)note, false);
+                notation_item_add_to_selection(r_ob, (t_notation_item *)chord, false);
             }
         }
         
@@ -28704,7 +28708,7 @@ void sort_selection(t_notation_obj *r_ob, char inverse_order)
     
     // re-setting all selected items, one by one
     for (t_llllelem *el = ll->l_head; el; el = el->l_next) {
-        notation_item_add_to_selection(r_ob, (t_notation_item *)hatom_getobj(&el->l_hatom));
+        notation_item_add_to_selection(r_ob, (t_notation_item *)hatom_getobj(&el->l_hatom), false);
     }
     
     llll_free(ll);
@@ -28891,7 +28895,7 @@ char delete_articulations_in_selection(t_notation_obj *r_ob)
                 t_articulation *art = ((t_articulation *)curr_it);
                 t_notation_item *owner = art->owner;
                 t_chord *ch = (owner->type == k_NOTE) ? ((t_note *) owner)->parent : ((t_chord *) owner);
-                notation_item_delete_from_selection(r_ob, curr_it);
+                notation_item_delete_from_selection(r_ob, curr_it, false);
                 
 #ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
                 // OLD WAY
@@ -29122,7 +29126,7 @@ char notation_item_set_flags_from_llllelem(t_notation_obj *r_ob, t_llllelem *ele
             notation_item_add_to_preselection(r_ob, item);
         } else {
             if (item->selected) {
-                notation_item_delete_from_selection(r_ob, item);
+                notation_item_delete_from_selection(r_ob, item, false);
             }
         }
 #endif
@@ -29167,19 +29171,24 @@ char reset_selection_tail_gliss(t_notation_obj *r_ob){
 }
 
 // type > 0: delete only those elements, type < 0: keep only those elements
-void delete_item_type_from_selection(t_notation_obj *r_ob, long type) {
+void delete_item_type_from_selection(t_notation_obj *r_ob, long type, char add_undo_step_if_necessary) {
     t_notation_item *item = r_ob->firstselecteditem;
     while (item) {
         t_notation_item *next = item->next_selected;
         if ((type > 0 && item->type == type) || (type < 0 && item->type != -type)) 
-            notation_item_delete_from_selection(r_ob, item);
+            notation_item_delete_from_selection(r_ob, item, add_undo_step_if_necessary);
         item = next;
     }
 }
 
-void notation_item_delete_from_selection(t_notation_obj *r_ob, t_notation_item *item){
+void notation_item_delete_from_selection(t_notation_obj *r_ob, t_notation_item *item, char add_undo_step_if_necessary)
+{
     // delete an item from the "selection"-linkedlist
     if (item && item->selected) {
+        if (add_undo_step_if_necessary && r_ob->undo_selection) {
+            undo_tick_create_for_notation_item(r_ob, item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_selection);
+        }
+            
         if (r_ob->selectioncursor == item)
             r_ob->selectioncursor = item->next_selected;
         
@@ -41789,7 +41798,10 @@ void handle_change_if_there_are_dangling_undo_ticks(t_notation_obj *r_ob, int ch
 
 void handle_change_selection(t_notation_obj *r_ob) {
     if (r_ob->undo_selection) {
-        handle_change_if_there_are_dangling_undo_ticks(r_ob, (r_ob->playing && r_ob->only_play_selection) ? k_CHANGED_CHECK_CORRECT_SCHEDULING + k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG : k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_SELECTION);
+        if (undo_ticks_are_dangling(r_ob, false, false))
+            handle_change(r_ob, (r_ob->playing && r_ob->only_play_selection) ? k_CHANGED_CHECK_CORRECT_SCHEDULING + k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG : k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_SELECTION);
+        else
+            handle_change(r_ob, (r_ob->playing && r_ob->only_play_selection) ? k_CHANGED_CHECK_CORRECT_SCHEDULING + k_CHANGED_REDRAW_STATIC_LAYER : k_CHANGED_REDRAW_STATIC_LAYER, k_UNDO_OP_UNKNOWN);
     } else {
         handle_change(r_ob, (r_ob->playing && r_ob->only_play_selection) ? k_CHANGED_CHECK_CORRECT_SCHEDULING + k_CHANGED_REDRAW_STATIC_LAYER : k_CHANGED_REDRAW_STATIC_LAYER, k_UNDO_OP_UNKNOWN);
     }
@@ -46823,7 +46835,7 @@ void select_only_first_item_if_tieseq_is_selected(t_notation_obj *r_ob)
         t_notation_item *first = are_all_selected_items_tied(r_ob);
         if (first) {
             clear_selection(r_ob);
-            notation_item_add_to_selection(r_ob, first);
+            notation_item_add_to_selection(r_ob, first, true);
         }
     }
 }
