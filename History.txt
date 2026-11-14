@@ -91,7 +91,9 @@ VERSION NOTES:
     á fixed bug causing wrong input for non 4/4 meters
     á fixed bug causing wrong behavior with nested rhythms
 
-- bach.quantize: removed puzzling innocuous errors for SmartMix mode
+- bach.quantize:
+    á removed puzzling innocuous errors for SmartMix mode
+    á fixed bug causing accumulation of errors with marker quantization
 
 - bach.roll, bach.score:
     á Now clefs and keys behave properly w.r.t. undo, even if changed via messages

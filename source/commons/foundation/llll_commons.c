@@ -7309,11 +7309,11 @@ void llll_reshape_new(t_llll *ll, const t_llll *modelll, const llll_clone_fn fn)
  */
 void llll_reshape_old(t_llll *ll, t_llll *modelll, llll_clone_fn fn)
 {
-    return llll_reshape_new(ll, modelll, fn);
+//    return llll_reshape_new(ll, modelll, fn);
     
     // DG, 27 november 2025 – OLD CODE: used to work but superseded by llll_reshape_new which handled a case with empty lists better.
     // Keeping the code for a while, in case there are issues with the new one.
-    /*
+    
     t_llllelem *elem, *modelelem, *nextelem = NULL, *newelem = NULL, *prevelem = NULL, *nilelem = NULL;
     t_llll_stack *modelstack;
     t_llll *newll, *parent = NULL;
@@ -7436,7 +7436,7 @@ void llll_reshape_old(t_llll *ll, t_llll *modelll, llll_clone_fn fn)
     
     llll_stack_destroy(modelstack);
     pedantic_llll_check(ll);
-    */
+    
 }
 
 /*

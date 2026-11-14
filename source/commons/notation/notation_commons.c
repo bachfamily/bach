@@ -31892,6 +31892,7 @@ t_llll* measure_get_values_as_llll(t_notation_obj *r_ob, t_measure *measure, e_d
     }
     
     if (tree) {
+//        llll_reshape_new(body_llll, measure->rhythmic_tree, clone_rhythm_level_properties_fn);
         llll_reshape_old(body_llll, measure->rhythmic_tree, clone_rhythm_level_properties_fn);
         
         // adding the "g" symbol in front of any grace level
@@ -35655,11 +35656,12 @@ t_llll *ms_to_rat_durations(t_llll *measure_symdurations, t_llll *tempi, t_llll 
             if (!next_tempo) { 
             
                 //easy case
-                t_rational approx = approx_double_with_rat_fixed_den(fabs(thisdur_double)*rat2double(curr_tempo->tempo_value)/(60*4000), CONST_approx_double_with_rat_fixed_den_FOR_SYMDURATIONS, fsign(tot_err), &this_err);
+                t_rational approx = approx_double_with_rat_fixed_den(fabs(thisdur_double)*rat2double(curr_tempo->tempo_value)/(60*4000), CONST_approx_double_with_rat_fixed_den_FOR_SYMDURATIONS, -fsign(tot_err), &this_err);
                 t_rational this_contribution_rat = rat_long_prod(approx, sign);
                 llll_appendrat(rat_durations, this_contribution_rat, 0, WHITENULL_llll);
                 duration_sum += fabs(thisdur_double);
                 tot_err += this_err;
+                dev_post("••• terr: %.6f", tot_err);
                 
             } else { 
 
@@ -35676,7 +35678,7 @@ t_llll *ms_to_rat_durations(t_llll *measure_symdurations, t_llll *tempi, t_llll 
 
                     if (curr_tempo->interpolation_type == 0) { // easy case, no interpolation
                     
-                        t_rational approx = approx_double_with_rat_fixed_den(fabs(thisdur_double)*rat2double(curr_tempo->tempo_value)/(60*4000), CONST_approx_double_with_rat_fixed_den_FOR_SYMDURATIONS, fsign(tot_err), &this_err);
+                        t_rational approx = approx_double_with_rat_fixed_den(fabs(thisdur_double)*rat2double(curr_tempo->tempo_value)/(60*4000), CONST_approx_double_with_rat_fixed_den_FOR_SYMDURATIONS, -fsign(tot_err), &this_err);
                         t_rational total_rat_duration = rat_long_prod(approx, sign);
                         llll_appendrat(rat_durations, total_rat_duration, 0, WHITENULL_llll);
                         duration_sum += fabs(thisdur_double);
@@ -35688,7 +35690,7 @@ t_llll *ms_to_rat_durations(t_llll *measure_symdurations, t_llll *tempi, t_llll 
                                                                       next_tempo_onset * 1000, rat2double(next_tempo->tempo_value), delta_sym_tempi);
                         double sym_diff2 = get_sym_diff_from_onset_ms(to_achieve, curr_tempo_onset * 1000, rat2double(curr_tempo->tempo_value), 
                                                                       next_tempo_onset * 1000, rat2double(next_tempo->tempo_value), delta_sym_tempi);
-                        t_rational this_contribution_rat = approx_double_with_rat_fixed_den(sym_diff2 - sym_diff1, CONST_approx_double_with_rat_fixed_den_FOR_SYMDURATIONS, fsign(tot_err), &this_err);
+                        t_rational this_contribution_rat = approx_double_with_rat_fixed_den(sym_diff2 - sym_diff1, CONST_approx_double_with_rat_fixed_den_FOR_SYMDURATIONS, -fsign(tot_err), &this_err);
                         llll_appendrat(rat_durations, rat_long_prod(this_contribution_rat, sign), 0, WHITENULL_llll);
                         duration_sum += fabs(thisdur_double);
                         tot_err += this_err;
@@ -35707,7 +35709,7 @@ t_llll *ms_to_rat_durations(t_llll *measure_symdurations, t_llll *tempi, t_llll 
                     // - first part -
                     t_rational total_rat_duration = long2rat(0);
                     if (curr_tempo->interpolation_type == 0) { // no interpolation
-                        t_rational approx = approx_double_with_rat_fixed_den((next_tempo_onset * 1000 - duration_sum)*rat2double(curr_tempo->tempo_value)/(60*4000), CONST_approx_double_with_rat_fixed_den_FOR_SYMDURATIONS, fsign(tot_err), &this_err);
+                        t_rational approx = approx_double_with_rat_fixed_den((next_tempo_onset * 1000 - duration_sum)*rat2double(curr_tempo->tempo_value)/(60*4000), CONST_approx_double_with_rat_fixed_den_FOR_SYMDURATIONS, -fsign(tot_err), &this_err);
                         total_rat_duration = rat_rat_sum(total_rat_duration, approx);
                         tot_err += this_err;
                     } else { // interpolation
@@ -35716,7 +35718,7 @@ t_llll *ms_to_rat_durations(t_llll *measure_symdurations, t_llll *tempi, t_llll 
                         double tau1 = get_intermediate_tempo_double(sym_diff1/rat2double(delta_sym_tempi), curr_tempo, next_tempo);
                         double tau2 = rat2double(next_tempo->tempo_value);
                         double this_contribution = (next_tempo_onset * 1000 - duration_sum) / (120000 * (1/tau1 + 1/tau2));
-                        t_rational approx = approx_double_with_rat_fixed_den(this_contribution, CONST_approx_double_with_rat_fixed_den_FOR_SYMDURATIONS, fsign(tot_err), &this_err);
+                        t_rational approx = approx_double_with_rat_fixed_den(this_contribution, CONST_approx_double_with_rat_fixed_den_FOR_SYMDURATIONS, -fsign(tot_err), &this_err);
                         total_rat_duration = rat_rat_sum(total_rat_duration, approx);
                         tot_err += this_err;
                     }
@@ -35727,7 +35729,7 @@ t_llll *ms_to_rat_durations(t_llll *measure_symdurations, t_llll *tempi, t_llll 
                     next_tempo = curr_tempo_llllelem ? (t_tempo *)hatom_getobj(&curr_tempo_llllelem->l_hatom) : NULL;
                     
                     if (!next_tempo) {
-                        t_rational approx = approx_double_with_rat_fixed_den((to_achieve - curr_tempo_onset * 1000)*rat2double(curr_tempo->tempo_value)/(60*4000), CONST_approx_double_with_rat_fixed_den_FOR_SYMDURATIONS, fsign(tot_err), &this_err);
+                        t_rational approx = approx_double_with_rat_fixed_den((to_achieve - curr_tempo_onset * 1000)*rat2double(curr_tempo->tempo_value)/(60*4000), CONST_approx_double_with_rat_fixed_den_FOR_SYMDURATIONS, -fsign(tot_err), &this_err);
                         total_rat_duration = rat_rat_sum(total_rat_duration, approx);
                         tot_err += this_err;
                     } else {
@@ -35740,14 +35742,14 @@ t_llll *ms_to_rat_durations(t_llll *measure_symdurations, t_llll *tempi, t_llll 
                         // - middle part -
                         while (next_tempo && next_tempo_onset * 1000. <= to_achieve) {
                             if (curr_tempo->interpolation_type == 0) { // no interpolation
-                                t_rational approx = approx_double_with_rat_fixed_den((next_tempo_onset - curr_tempo_onset) * 1000 * rat2double(curr_tempo->tempo_value)/(60*4000), CONST_approx_double_with_rat_fixed_den_FOR_SYMDURATIONS, fsign(tot_err), &this_err);
+                                t_rational approx = approx_double_with_rat_fixed_den((next_tempo_onset - curr_tempo_onset) * 1000 * rat2double(curr_tempo->tempo_value)/(60*4000), CONST_approx_double_with_rat_fixed_den_FOR_SYMDURATIONS, -fsign(tot_err), &this_err);
                                 total_rat_duration = rat_rat_sum(total_rat_duration, approx);
                                 tot_err += this_err;
                             } else {
                                 double tau1 = rat2double(curr_tempo->tempo_value);
                                 double tau2 = rat2double(next_tempo->tempo_value);
                                 double this_contribution = (next_tempo_onset - curr_tempo_onset) / (120 * (1/tau1 + 1/tau2));
-                                t_rational approx = approx_double_with_rat_fixed_den(this_contribution, CONST_approx_double_with_rat_fixed_den_FOR_SYMDURATIONS, fsign(tot_err), &this_err);
+                                t_rational approx = approx_double_with_rat_fixed_den(this_contribution, CONST_approx_double_with_rat_fixed_den_FOR_SYMDURATIONS, -fsign(tot_err), &this_err);
                                 total_rat_duration = rat_rat_sum(total_rat_duration, approx);
                                 tot_err += this_err;
                             }
@@ -35767,13 +35769,13 @@ t_llll *ms_to_rat_durations(t_llll *measure_symdurations, t_llll *tempi, t_llll 
                         
                         // last part
                         if (!next_tempo) {
-                            t_rational approx = approx_double_with_rat_fixed_den((to_achieve - curr_tempo_onset * 1000)*rat2double(curr_tempo->tempo_value)/(60*4000), CONST_approx_double_with_rat_fixed_den_FOR_SYMDURATIONS, fsign(tot_err), &this_err);
+                            t_rational approx = approx_double_with_rat_fixed_den((to_achieve - curr_tempo_onset * 1000)*rat2double(curr_tempo->tempo_value)/(60*4000), CONST_approx_double_with_rat_fixed_den_FOR_SYMDURATIONS, -fsign(tot_err), &this_err);
                             total_rat_duration = rat_rat_sum(total_rat_duration, approx);
                             tot_err += this_err;
                         } else {
                             if (next_tempo_onset * 1000 > to_achieve){
                                 if (curr_tempo->interpolation_type == 0) { // no interpolation
-                                    t_rational approx = approx_double_with_rat_fixed_den((to_achieve - curr_tempo_onset * 1000)*rat2double(curr_tempo->tempo_value)/(60*4000), CONST_approx_double_with_rat_fixed_den_FOR_SYMDURATIONS, fsign(tot_err), &this_err);
+                                    t_rational approx = approx_double_with_rat_fixed_den((to_achieve - curr_tempo_onset * 1000)*rat2double(curr_tempo->tempo_value)/(60*4000), CONST_approx_double_with_rat_fixed_den_FOR_SYMDURATIONS, -fsign(tot_err), &this_err);
                                     total_rat_duration = rat_rat_sum(total_rat_duration, approx);
                                     tot_err += this_err;
                                 } else {
@@ -35782,7 +35784,7 @@ t_llll *ms_to_rat_durations(t_llll *measure_symdurations, t_llll *tempi, t_llll 
                                     double tau1 = rat2double(curr_tempo->tempo_value);
                                     double tau2 = get_intermediate_tempo_double(sym_diff2/rat2double(delta_sym_tempi), curr_tempo, next_tempo);
                                     double this_contribution = (to_achieve - curr_tempo_onset * 1000) / (120000 * (1/tau1 + 1/tau2));
-                                    t_rational approx = approx_double_with_rat_fixed_den(this_contribution, CONST_approx_double_with_rat_fixed_den_FOR_SYMDURATIONS, fsign(tot_err), &this_err);
+                                    t_rational approx = approx_double_with_rat_fixed_den(this_contribution, CONST_approx_double_with_rat_fixed_den_FOR_SYMDURATIONS, -fsign(tot_err), &this_err);
                                     total_rat_duration = rat_rat_sum(total_rat_duration, approx);
                                     tot_err += this_err;
                                 }
@@ -44003,39 +44005,42 @@ long preprocess_extras_fn(void *data, t_hatom *a, const t_llll *address){
         t_llll *right_slice = llll_slice(ll, 1);
         char this_extra_is_articulations = (ll && ll->l_head && hatom_gettype(&ll->l_head->l_hatom) == H_SYM && 
                                     hatom_getsym(&ll->l_head->l_hatom) == _llllobj_sym_articulations) ? true : false;
-        if (ll && ll->l_head) {
-            if (this_extra_is_articulations)
-                llll_funall(right_slice, (fun_fn) prepend_extras_sym_fn, &ll->l_head->l_hatom, 1, -2, FUNALL_PROCESS_SUBLISTS_ONLY_AT_MAXDEPTH);
-            else {
-//            was:
-//                llll_funall(right_slice, (fun_fn) prepend_extras_sym_fn, &ll->l_head->l_hatom, 1, 4, FUNALL_PROCESS_SUBLISTS_ONLY_AT_MAXDEPTH);
-//              but now that we have slots for chords we need to be more careful and do the same thing manually
-                for (t_llllelem *e1 = right_slice->l_head; e1; e1 = e1->l_next) {
-                    if (hatom_gettype(&e1->l_hatom) == H_LLLL) {
-                        t_llll *l1 = hatom_getllll(&e1->l_hatom);
-                        if (l1) {
-                            for (t_llllelem *e2 = l1->l_head; e2; e2 = e2->l_next) {
-                                t_llll *l2 = hatom_getllll(&e2->l_hatom);
-                                for (t_llllelem *e3 = l2->l_head; e3; e3 = e3->l_next) {
-                                    t_llll *l3 = hatom_getllll(&e3->l_hatom);
-                                    
-                                    if (l3) {
-                                        if (hatom_gettype(&l3->l_head->l_hatom) == H_LLLL &&
-                                            hatom_getllll(&l3->l_head->l_hatom) &&
-                                            hatom_getllll(&l3->l_head->l_hatom)->l_head) {
-                                            if (hatom_gettype(&hatom_getllll(&l3->l_head->l_hatom)->l_head->l_hatom) != H_LLLL) {
-                                                // that's where we need to act for chords
-//                                                dev_post("stopped at chord.");
-                                                llll_prependhatom_clone(l3, &ll->l_head->l_hatom);
-                                            } else {
-                                                // going to notes
-                                                for (t_llllelem *e4 = l3->l_head; e4; e4 = e4->l_next) {
-                                                    t_llll *l4 = hatom_getllll(&e4->l_hatom);
-//                                                    dev_post("going to notes.");
-                                                    if (hatom_gettype(&l4->l_head->l_hatom) == H_LLLL &&
-                                                        hatom_getllll(&l4->l_head->l_hatom) &&
-                                                        hatom_getllll(&l4->l_head->l_hatom)->l_head) {
-                                                        llll_prependhatom_clone(l4, &ll->l_head->l_hatom);
+        
+        if (right_slice) {
+            if (ll && ll->l_head) {
+                if (this_extra_is_articulations)
+                    llll_funall(right_slice, (fun_fn) prepend_extras_sym_fn, &ll->l_head->l_hatom, 1, -2, FUNALL_PROCESS_SUBLISTS_ONLY_AT_MAXDEPTH);
+                else {
+                    //            was:
+                    //                llll_funall(right_slice, (fun_fn) prepend_extras_sym_fn, &ll->l_head->l_hatom, 1, 4, FUNALL_PROCESS_SUBLISTS_ONLY_AT_MAXDEPTH);
+                    //              but now that we have slots for chords we need to be more careful and do the same thing manually
+                    for (t_llllelem *e1 = right_slice->l_head; e1; e1 = e1->l_next) {
+                        if (hatom_gettype(&e1->l_hatom) == H_LLLL) {
+                            t_llll *l1 = hatom_getllll(&e1->l_hatom);
+                            if (l1) {
+                                for (t_llllelem *e2 = l1->l_head; e2; e2 = e2->l_next) {
+                                    t_llll *l2 = hatom_getllll(&e2->l_hatom);
+                                    for (t_llllelem *e3 = l2->l_head; e3; e3 = e3->l_next) {
+                                        t_llll *l3 = hatom_getllll(&e3->l_hatom);
+                                        
+                                        if (l3) {
+                                            if (hatom_gettype(&l3->l_head->l_hatom) == H_LLLL &&
+                                                hatom_getllll(&l3->l_head->l_hatom) &&
+                                                hatom_getllll(&l3->l_head->l_hatom)->l_head) {
+                                                if (hatom_gettype(&hatom_getllll(&l3->l_head->l_hatom)->l_head->l_hatom) != H_LLLL) {
+                                                    // that's where we need to act for chords
+                                                    //                                                dev_post("stopped at chord.");
+                                                    llll_prependhatom_clone(l3, &ll->l_head->l_hatom);
+                                                } else {
+                                                    // going to notes
+                                                    for (t_llllelem *e4 = l3->l_head; e4; e4 = e4->l_next) {
+                                                        t_llll *l4 = hatom_getllll(&e4->l_hatom);
+                                                        //                                                    dev_post("going to notes.");
+                                                        if (hatom_gettype(&l4->l_head->l_hatom) == H_LLLL &&
+                                                            hatom_getllll(&l4->l_head->l_hatom) &&
+                                                            hatom_getllll(&l4->l_head->l_hatom)->l_head) {
+                                                            llll_prependhatom_clone(l4, &ll->l_head->l_hatom);
+                                                        }
                                                     }
                                                 }
                                             }
@@ -44047,10 +44052,10 @@ long preprocess_extras_fn(void *data, t_hatom *a, const t_llll *address){
                     }
                 }
             }
+            llll_free(ll);
+            if (right_slice)
+                hatom_change_to_llll_and_free(a, right_slice);
         }
-        llll_free(ll);
-        if (right_slice)
-            hatom_change_to_llll_and_free(a, right_slice);
     }
     return 0;
 }
