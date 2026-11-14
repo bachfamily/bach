@@ -37,6 +37,14 @@ char *field2string(void *field, char type, long size, long max_decimals){
 			res = (char *)bach_newptr(20 * sizeof(char));
 			snprintf_zero(res, 20, "%ld", *((long *)field));
 			break;
+        case k_BACH_ATTR_BIT:
+            res = (char *)bach_newptr(20 * sizeof(char));
+            if ((*((long *)field) & (size)) != 0) {
+                snprintf_zero(res, 20, "1");
+            } else {
+                snprintf_zero(res, 20, "0");
+            }
+            break;
 		case k_BACH_ATTR_RAT:
 			res = (char *)bach_newptr(40 * sizeof(char));
 			snprintf_zero(res, 40, "%ld/%ld", ((t_rational *)field)->r_num, ((t_rational *)field)->r_den);
@@ -88,10 +96,10 @@ char *field2string(void *field, char type, long size, long max_decimals){
 			res = (char *)bach_newptr(80 * sizeof(char));
 			snprintf_zero(res, 80, "%p", *(void **)field);
 			break;
-		case k_BACH_ATTR_BIT:
-			res = (char *)bach_newptr(20 * sizeof(char));
-			snprintf_zero(res, 20, "%ld", *((long *)field) & size ? 1 : 0);
-			break;
+//		case k_BACH_ATTR_BIT:
+//			res = (char *)bach_newptr(20 * sizeof(char));
+//			snprintf_zero(res, 20, "%ld", *((long *)field) & size ? 1 : 0);
+//			break;
 		default:
 			res = (char *)bach_newptr(20 * sizeof(char));
 			snprintf_zero(res, 20, "???");
@@ -121,6 +129,8 @@ char is_attribute_nonzero(void *obj, t_bach_attribute *attr, char type){
 			return *((char *)field) ? 1 : 0;
 		case k_BACH_ATTR_LONG:
 			return *((long *)field) ? 1 : 0;
+        case k_BACH_ATTR_BIT:
+            return (*((long *)field) & (attr->attr_size)) != 0 ? 1 : 0;
 		case k_BACH_ATTR_RAT:
 			return ((t_rational *)field)->r_num ? 1 : 0;
 		case k_BACH_ATTR_COLOR:
@@ -433,9 +443,9 @@ void notationobj_declare_bach_attributes(t_notation_obj *r_ob)
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_velocity, "Velocity", k_NOTE, t_note, velocity, k_BACH_ATTR_LONG, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
 	if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
 		DECLARE_BACH_ATTR(man, -1, _llllobj_sym_tie, "Tied To Next", k_NOTE, t_note, tie_to, k_BACH_ATTR_OBJ, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
-	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_lock, "Lock", k_NOTE, t_note, locked, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
-	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_mute, "Mute", k_NOTE, t_note, muted, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
-	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_solo, "Solo", k_NOTE, t_note, solo, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
+	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_lock, "Lock", k_NOTE, t_notation_item, flags, k_BACH_ATTR_BIT, k_FLAG_LOCKED, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
+	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_mute, "Mute", k_NOTE, t_notation_item, flags, k_BACH_ATTR_BIT, k_FLAG_MUTED, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
+	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_solo, "Solo", k_NOTE, t_notation_item, flags, k_BACH_ATTR_BIT, k_FLAG_SOLO, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
 	bach_attribute_add_functions(bach_attribute_get(man, k_NOTE, _llllobj_sym_lock), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
 	bach_attribute_add_functions(bach_attribute_get(man, k_NOTE, _llllobj_sym_mute), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
 	bach_attribute_add_functions(bach_attribute_get(man, k_NOTE, _llllobj_sym_solo), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
@@ -444,9 +454,9 @@ void notationobj_declare_bach_attributes(t_notation_obj *r_ob)
 	// CHORD ATTRIBUTES
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_name, "Name", k_CHORD, t_notation_item, names, k_BACH_ATTR_LLLL, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
 	bach_attribute_add_functions(bach_attribute_get(man, k_CHORD, _llllobj_sym_name), NULL, (bach_setter_fn)bach_set_name_fn, NULL, NULL, NULL);
-	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_lock, "Lock", k_CHORD, t_chord, locked, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
-	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_mute, "Mute", k_CHORD, t_chord, muted, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
-	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_solo, "Solo", k_CHORD, t_chord, solo, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
+	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_lock, "Lock", k_CHORD, t_notation_item, flags, k_BACH_ATTR_BIT, k_FLAG_LOCKED, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
+	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_mute, "Mute", k_CHORD, t_notation_item, flags, k_BACH_ATTR_BIT, k_FLAG_MUTED, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
+	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_solo, "Solo", k_CHORD, t_notation_item, flags, k_BACH_ATTR_BIT, k_FLAG_SOLO, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
 	bach_attribute_add_functions(bach_attribute_get(man, k_CHORD, _llllobj_sym_lock), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
 	bach_attribute_add_functions(bach_attribute_get(man, k_CHORD, _llllobj_sym_mute), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
 	bach_attribute_add_functions(bach_attribute_get(man, k_CHORD, _llllobj_sym_solo), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
@@ -469,9 +479,9 @@ void notationobj_declare_bach_attributes(t_notation_obj *r_ob)
 //    notationstyles[3] = gensym("Linear Frequency");
     bach_attribute_add_enumindex(bach_attribute_get(man, k_VOICE, _llllobj_sym_notationstyle), 3, notationstyles);
 
-	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_lock, "Lock", k_VOICE, t_voice, locked, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
-	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_mute, "Mute", k_VOICE, t_voice, muted, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
-	DECLARE_BACH_ATTR(man,-1,  _llllobj_sym_solo, "Solo", k_VOICE, t_voice, solo, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
+	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_lock, "Lock", k_VOICE, t_notation_item, flags, k_BACH_ATTR_BIT, k_FLAG_LOCKED, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
+	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_mute, "Mute", k_VOICE, t_notation_item, flags, k_BACH_ATTR_BIT, k_FLAG_MUTED, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
+	DECLARE_BACH_ATTR(man,-1,  _llllobj_sym_solo, "Solo", k_VOICE, t_notation_item, flags, k_BACH_ATTR_BIT, k_FLAG_SOLO, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
 	bach_attribute_add_functions(bach_attribute_get(man, k_VOICE, _llllobj_sym_lock), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
 	bach_attribute_add_functions(bach_attribute_get(man, k_VOICE, _llllobj_sym_mute), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
 	bach_attribute_add_functions(bach_attribute_get(man, k_VOICE, _llllobj_sym_solo), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
@@ -484,6 +494,9 @@ void notationobj_declare_bach_attributes(t_notation_obj *r_ob)
 	bach_attribute_add_functions(bach_attribute_get(man, k_MARKER, _llllobj_sym_name), NULL, (bach_setter_fn)bach_set_name_fn, NULL, NULL, NULL);
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_onset, "Onset (ms)", k_MARKER, t_marker, position_ms, k_BACH_ATTR_DOUBLE, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
     DECLARE_BACH_ATTR(man, -1, _llllobj_sym_duration, "Duration (ms)", k_MARKER, t_marker, duration_ms, k_BACH_ATTR_DOUBLE, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
+    DECLARE_BACH_ATTR(man, -1, _llllobj_sym_lock, "Lock", k_MARKER, t_notation_item, flags, k_BACH_ATTR_BIT, k_FLAG_LOCKED, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
+    DECLARE_BACH_ATTR(man, -1, _llllobj_sym_mute, "Mute", k_MARKER, t_notation_item, flags, k_BACH_ATTR_BIT, k_FLAG_MUTED, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
+    DECLARE_BACH_ATTR(man,-1,  _llllobj_sym_solo, "Solo", k_MARKER, t_notation_item, flags, k_BACH_ATTR_BIT, k_FLAG_SOLO, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
 
 	// PITCH BREAKPOINTS
 //	DECLARE_BACH_ATTR(r_ob, -1, _llllobj_sym_name, "Name", k_PITCH_BREAKPOINT, t_notation_item, name, k_BACH_ATTR_LLLL, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
@@ -1582,6 +1595,13 @@ void bach_default_set_bach_attr(t_notation_obj *r_ob, void *obj, t_bach_attribut
             } else
 				*((char *)field) = (ac ? atom_getlong(av) : 0);
 			break;
+        case k_BACH_ATTR_BIT:
+            if (ac && atom_getlong(av)) {
+                *((long *)field) |= (attr->attr_size);
+            } else {
+                *((long *)field) &= ~(attr->attr_size);
+            }
+            break;
 		case k_BACH_ATTR_LONG:
 			*((long *)field) = (ac ? atom_getlong(av) : 0);
 			break;

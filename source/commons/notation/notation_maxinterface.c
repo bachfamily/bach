@@ -2130,7 +2130,7 @@ void notation_class_add_color_attributes(t_class *c, char obj_type)
 
             CLASS_ATTR_RGBA(c,"measmarkercolor", 0, t_notation_obj, j_marker_attached_to_tp_rgba);
             CLASS_ATTR_STYLE_LABEL(c, "measmarkercolor",0,"rgba","Measure-Attached Marker Color");
-            CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"measmarkercolor",0,"0.17 0.25 0.88 0.9");
+            CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"measmarkercolor",0,"0.169 0.561 0.878 0.9");
             // @exclude bach.slot, bach.roll
             // @description Sets the color of markers attached to measure position in RGBA format.
         }

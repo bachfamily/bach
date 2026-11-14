@@ -1794,7 +1794,13 @@ long undo_redo_information_apply(t_notation_obj *r_ob, t_undo_redo_information *
                 (*flags) |= k_UNDO_PERFORM_FLAG_CHECK_ORDER_FOR_MARKERS;
                 if (!obj_is_score)
                     (*flags) |= k_UNDO_PERFORM_FLAG_RECOMPUTE_TOTAL_LENGTH;
-                
+
+#ifdef BACH_NOTATIONITEM_FLAG_HAS_SELECTION // because flags that could be added could mean selecting the object
+#ifdef BACH_MARKERS_HAVE_FLAGS
+                move_preselecteditems_to_selection(r_ob, k_SELECTION_MODE_FORCE_SELECT, false, false, false);
+#endif
+#endif
+
             } else if (modif_type == k_UNDO_MODIFICATION_TYPE_REMOVE) {
                 if (!obj_is_score)
                     (*flags) |= k_UNDO_PERFORM_FLAG_RECOMPUTE_TOTAL_LENGTH;

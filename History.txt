@@ -26,6 +26,7 @@ VERSION NOTES:
         (Also a global @showaccollature attribute has been added.)
     á Showvelocity had an option called "Note Size" which was actually "Notehead Size". This typo has been corrected.
         and a true "Note Size" option (combining both notehead size and duration line width) has been added.
+    á Markers now have FLAGS.
     
 - bach.score:
     á fixed bug causing wrong playback for grace notes!
@@ -65,6 +66,9 @@ VERSION NOTES:
     á Both objects now include in the element flag the information on selection, as bit corresponding to 16 in the flag bitfield
         (---> this could break compatibility of patches that used the flag but weren't too careful in its bit handling...)
     
+- bach.score: measure-attached marker default color has changed from dark blue to light blue
+                (to better differentiate from muting color now that markers can be muted)
+                
 - bach.roll: the subroll message doesn't output partial notes of duration 0 any longer
 
 - bach.stream: 
@@ -98,6 +102,7 @@ VERSION NOTES:
 - bach.roll, bach.score:
     á Now clefs and keys behave properly w.r.t. undo, even if changed via messages
     á Fixed bug causing non-refresh for keepselectioniflostfocus
+    á Now structure is lighter: low-level refactoring on flags to free up 3 bytes per note/chord/measure, etc.
     á Now setdl works in lambda mode properly
     á New @annotationalignment attribute setting the text alignment for annotations
     á Added "opaque" spec for custom noteheads, thus allowing a better implementation of tablatures

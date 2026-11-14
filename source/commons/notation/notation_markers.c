@@ -596,12 +596,22 @@ t_llll *marker_get_as_llll(t_notation_obj *r_ob, t_marker *marker, char namefirs
         }
         
         llll_appendsym(outlist, marker_role_to_sym(marker->role), 0, WHITENULL_llll);
-        if (marker->role != k_MARKER_ROLE_NONE && marker->content)
+        if (marker->role != k_MARKER_ROLE_NONE && marker->content) {
             llll_appendllll_clone(outlist, marker->content, 0, WHITENULL_llll, NULL);
-        
-#ifdef BACH_NOTES_HAVE_ID
-        if (mode == k_CONSIDER_FOR_UNDO)
+        } else {
+#ifdef BACH_MARKERS_HAVE_FLAGS
+            llll_appendllll(outlist, llll_get());
+#endif
+        }
+
+#ifdef BACH_MARKERS_HAVE_FLAGS
+        llll_append_notationitem_flag(r_ob, outlist, (t_notation_item *)marker);
+#endif
+
+#ifdef BACH_MARKERS_HAVE_ID
+        if (mode == k_CONSIDER_FOR_UNDO) {
             llll_appendllll(outlist, get_ID_as_llll((t_notation_item *)marker));
+        }
 #endif
     } else {
         outlist = get_markers_as_llll(r_ob, 0, 0, 0, namefirst, k_CONSIDER_FOR_DUMPING, 0, 0);
@@ -683,9 +693,18 @@ t_llll *get_markers_as_llll(t_notation_obj *r_ob, char mode, double start_ms, do
                 llll_append_notation_item_name(thisel, (t_notation_item *)marker);
             
             llll_appendsym(thisel, marker_role_to_sym(marker->role), 0, WHITENULL_llll);
-            if (marker->role != k_MARKER_ROLE_NONE && marker->content)
+            if (marker->role != k_MARKER_ROLE_NONE && marker->content) {
                 llll_appendllll_clone(thisel, marker->content, 0, WHITENULL_llll, NULL);
-            
+            } else {
+#ifdef BACH_MARKERS_HAVE_FLAGS
+                llll_appendllll(thisel, llll_get());
+#endif
+            }
+
+#ifdef BACH_MARKERS_HAVE_FLAGS
+            llll_append_notationitem_flag(r_ob, thisel, (t_notation_item *)marker);
+#endif
+
             if (for_what == k_CONSIDER_FOR_UNDO)
                 llll_appendllll(thisel, get_ID_as_llll((t_notation_item *)marker), 0, WHITENULL_llll);
             
@@ -800,9 +819,14 @@ void set_marker_from_llll(t_notation_obj *r_ob, t_marker *marker, t_llll *this_l
     marker->role = mkrole;
     marker->content = content;
     
-    if (has_explicit_name)
+    if (has_explicit_name) {
         notation_item_set_names_from_llll(r_ob, (t_notation_item *)marker, mknames);
+    }
     
+    if (this_llll && this_llll->l_head && this_llll->l_head->l_next && this_llll->l_head->l_next->l_next && this_llll->l_head->l_next->l_next->l_next && this_llll->l_head->l_next->l_next->l_next->l_next) {
+        notation_item_set_flags_from_llllelem(r_ob, this_llll->l_head->l_next->l_next->l_next->l_next, (t_notation_item *)marker, false);
+    }
+
     if (forced_marker_ID && forced_marker_ID != marker->r_it.ID){
         shashtable_chuck_thing(r_ob->IDtable, marker->r_it.ID);
         shashtable_insert_with_key(r_ob->IDtable, marker, forced_marker_ID, 1);
@@ -844,6 +868,13 @@ t_marker *add_marker_from_llll(t_notation_obj *r_ob, t_llll *this_llll)
         mknames = find_unused_marker_names(r_ob, NULL, NULL);
     
     res = add_marker(r_ob, mknames, ms, tp, attach_to, mkrole, content, dur, symdur, forced_marker_ID);
+    
+#ifdef BACH_MARKERS_HAVE_FLAGS
+    if (this_llll->l_head && this_llll->l_head->l_next && this_llll->l_head->l_next->l_next && this_llll->l_head->l_next->l_next->l_next && this_llll->l_head->l_next->l_next->l_next->l_next) {
+        notation_item_set_flags_from_llllelem(r_ob, this_llll->l_head->l_next->l_next->l_next->l_next, (t_notation_item *)res, false);
+    }
+#endif
+    
     llll_free(mknames);
     return res;
 }

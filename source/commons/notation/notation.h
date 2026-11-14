@@ -71,6 +71,7 @@
 
     #define BACH_CHORDS_HAVE_SLOTS
 //    #define BACH_MARKERS_HAVE_SLOTS   ///< Not yet ready for this!
+    #define BACH_MARKERS_HAVE_FLAGS
 
     // THESE THREE SHOULD NOT BE DEFINED; they increase the size of the t_note without actually gaining that much in CPU speed.
     //#define BACH_SLOTS_HAVE_LASTITEM              ///< Last item is saved inside slot structure
@@ -894,7 +895,7 @@ typedef struct _bach_attribute
     long        owner_type;                ///< Owner type (one of the #e_element_types)
     long        field_position;            ///< Offset of the attribute field inside the owner structure;
     long        attr_type;                ///< Type of the variable of #field, one of the #e_bach_attr_types
-    long        attr_size;                ///< For array-typed attributes, size of the array
+    long        attr_size;                ///< For array-typed attributes, size of the array; for BIT attributes, this is the bit number
     long        field_position_for_var_attr_size;        ///< Offset, inside the owner structure, of a long field keeping track of the length of the attribute if it is of variable size;
 
     long                flags;          ///< Attribute flags. Unused in bach, used in dada
@@ -1083,45 +1084,40 @@ typedef enum _modes {
 } e_modes;
 
 
-/** Flags for notation elements that need to be saved in the gathered syntax dump
-    @ingroup    notation
- */
-typedef enum _bach_element_flags {
-    k_FLAG_ELEMENT_LOCKED = 1,                ///< The element is locked
-    k_FLAG_ELEMENT_MUTED = 2,                ///< The element is muted
-    k_FLAG_ELEMENT_SOLO = 4,                ///< The element is solo
-    k_FLAG_ELEMENT_BEAMING_TREE_LOCKED = 8,    ///< The element (measure) has a locked rhythmic tree
-    k_FLAG_ELEMENT_SELECTED = 16,           ///< The element is selected
-} e_notation_item_flags;
-
-
 /** Internal flags, typically assigned to the #t_notation_item <flag> field.
     @ingroup    notation
  */
 typedef enum _bach_internal_notation_flags {
-    k_FLAG_PLAYED = 1 << 0,                            ///< (OBSOLETE) Element is being played (now see e.g. the t_chord#played field of the structures)
-    k_FLAG_BEAM = 1 << 1,                            ///< (OBSOLETE) Element's beams have been computed
-    k_FLAG_COUNT = 1 << 2,                            ///< Element has been counted
-    k_FLAG_MODIFIED = 1 << 3,                        ///< Element has been modified
-    k_FLAG_DEFINES_LOCAL_SPACING_WIDTH = 1 << 4,    ///< Element has to define a local spacing multiplier
-    k_FLAG_DEFINES_FIXED_WIDTH = 1 << 5,            ///< Element has to define a fixed width
-    k_FLAG_REMOVES_FIXED_WIDTH = 1 << 6,            ///< Element has to remove a fixed width
-    k_FLAG_SHIFT = 1 << 7,                            ///< Element has been shifted
-    k_FLAG_SPLIT = 1 << 8,                            ///< Element has been split
-    k_FLAG_MERGE = 1 << 9,                            ///< Element has been merged
-    k_FLAG_DONETUPLETS = 1 << 10,                    ///< We're done calculating tuplets on element
-    k_FLAG_VALIDATEACCIDENTALS = 1 << 11,            ///< Element's accidentals have been validated
-    k_FLAG_DUPLICATE = 1 << 12,                        ///< Element has been duplicated
-    k_FLAG_COLLAPSE = 1 << 13,                        ///< Element has been collapsed
-    k_FLAG_MODIF_UNDO = 1 << 14,                    ///< We have stored element's undo information in the currently free ticks at the beginning of the undo llll; if the undo operation is performed, no chord order checking will be required.
-    k_FLAG_MODIF_FLAG_UNDO = 1 << 15,                ///< We have stored element's flag undo information in the currently free ticks at the beginning of the undo llll
-    k_FLAG_MODIF_CHECK_ORDER_UNDO = 1 << 16,        ///< We have stored element's undo information in the currently free ticks at the beginning of the undo llll, and also this will require to check the chords order when the undo operation will be performed
-    k_FLAG_MODIF_NAME_UNDO = 1 << 17,                ///< We have stored element's name undo information in the currently free ticks at the beginning of the undo llll
-    k_FLAG_TO_BE_MODIFIED = 1 << 18,                ///< Element needs to be modified
-    k_FLAG_TO_BE_DELETED = 1 << 19,                    ///< Element needs to be deleted
-    k_FLAG_OVERFLOW_TO_NEXT = 1 << 20,                ///< Content exceeding duration must overflow to next measure
-    k_FLAG_TO_BE_SNAPPED = 1 << 21,                 ///< Element needs to be snapped later on
-    k_FLAG_TO_BE_KEPT = 1 << 22,                    ///< Element needs to be kept
+    // These first five are "public flags", exposed in the flag of the gathered syntax
+    k_FLAG_LOCKED = 1 << 0,                ///< The element is locked
+    k_FLAG_MUTED = 1 << 1,                ///< The element is muted
+    k_FLAG_SOLO = 1 << 2,                ///< The element is solo
+    k_FLAG_RHYTHMICTREELOCKED = 1 << 3,    ///< The element (measure) has a locked rhythmic tree
+    k_FLAG_SELECTED = 1 << 4,           ///< The element is selected
+    // All the others are internal flaggs
+    k_FLAG_PLAYED = 1 << 5,                            ///< (OBSOLETE) Element is being played (now see e.g. the t_chord#played field of the structures)
+    k_FLAG_BEAM = 1 << 6,                            ///< (OBSOLETE) Element's beams have been computed
+    k_FLAG_COUNT = 1 << 7,                            ///< Element has been counted
+    k_FLAG_MODIFIED = 1 << 8,                        ///< Element has been modified
+    k_FLAG_DEFINES_LOCAL_SPACING_WIDTH = 1 << 9,    ///< Element has to define a local spacing multiplier
+    k_FLAG_DEFINES_FIXED_WIDTH = 1 << 10,            ///< Element has to define a fixed width
+    k_FLAG_REMOVES_FIXED_WIDTH = 1 << 11,            ///< Element has to remove a fixed width
+    k_FLAG_SHIFT = 1 << 12,                            ///< Element has been shifted
+    k_FLAG_SPLIT = 1 << 13,                            ///< Element has been split
+    k_FLAG_MERGE = 1 << 14,                            ///< Element has been merged
+    k_FLAG_DONETUPLETS = 1 << 15,                    ///< We're done calculating tuplets on element
+    k_FLAG_VALIDATEACCIDENTALS = 1 << 16,            ///< Element's accidentals have been validated
+    k_FLAG_DUPLICATE = 1 << 17,                        ///< Element has been duplicated
+    k_FLAG_COLLAPSE = 1 << 18,                        ///< Element has been collapsed
+    k_FLAG_MODIF_UNDO = 1 << 19,                    ///< We have stored element's undo information in the currently free ticks at the beginning of the undo llll; if the undo operation is performed, no chord order checking will be required.
+    k_FLAG_MODIF_FLAG_UNDO = 1 << 20,                ///< We have stored element's flag undo information in the currently free ticks at the beginning of the undo llll
+    k_FLAG_MODIF_CHECK_ORDER_UNDO = 1 << 21,        ///< We have stored element's undo information in the currently free ticks at the beginning of the undo llll, and also this will require to check the chords order when the undo operation will be performed
+    k_FLAG_MODIF_NAME_UNDO = 1 << 22,                ///< We have stored element's name undo information in the currently free ticks at the beginning of the undo llll
+    k_FLAG_TO_BE_MODIFIED = 1 << 23,                ///< Element needs to be modified
+    k_FLAG_TO_BE_DELETED = 1 << 24,                    ///< Element needs to be deleted
+    k_FLAG_OVERFLOW_TO_NEXT = 1 << 25,                ///< Content exceeding duration must overflow to next measure
+    k_FLAG_TO_BE_SNAPPED = 1 << 26,                 ///< Element needs to be snapped later on
+    k_FLAG_TO_BE_KEPT = 1 << 27,                    ///< Element needs to be kept
 } e_bach_internal_notation_flags;
 
 #define k_FLAG_MODIF_UNDO_WITH_OR_WO_CHECK_ORDER (k_FLAG_MODIF_UNDO | k_FLAG_MODIF_CHECK_ORDER_UNDO)    ///< We have stored element's undo information in the currently free ticks at the beginning of the undo llll (with or without the need to check chords' order) @ingroup notation
@@ -2142,7 +2138,7 @@ typedef enum _bach_attr_types
     k_BACH_ATTR_ATOM,
     k_BACH_ATTR_ATOM_ARRAY,
     k_BACH_ATTR_ATOM_ARRAY_VARSIZE,
-    k_BACH_ATTR_BIT,                ///< Bit in a long bitfield, unused in bach
+    k_BACH_ATTR_BIT,               
 } e_bach_attr_types;
 
 
@@ -2606,10 +2602,10 @@ typedef struct _note
     t_slot        slot[CONST_MAX_SLOTS];    ///< The array containing the slot content for the note (for each slot)
 
     // lock/mute/play/solo
-    char        locked;                    ///< Flag telling if the note is locked
-    char        muted;                    ///< Flag telling if the note is muted
+//    char        locked;                    ///< Flag telling if the note is locked
+//    char        muted;                    ///< Flag telling if the note is muted
     char        played;                    ///< Flag telling if the note is being played
-    char        solo;                    ///< Flag telling if the note is soloed
+//    char        solo;                    ///< Flag telling if the note is soloed
 
 #ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
     // articulations, ***only for backward compatibility***
@@ -2850,10 +2846,10 @@ typedef struct _chord
                                                 ///< which sets the chord lyrics from the slot content (if any) andall the chord parameters such as direction, left_uextension, right_uextension... 
     char        need_recalculate_onset;            ///< Internal flag, privat use, telling if we need to recalculate the onset of the chord. Only used by score, where the
     
-    char        locked;                            ///< Flag telling if the chord is locked
-    char        muted;                            ///< Flag telling if the chord is muted
+//    char        locked;                            ///< Flag telling if the chord is locked
+//    char        muted;                            ///< Flag telling if the chord is muted
     char        played;                            ///< Flag telling if AT LEAST one note of the chord is being played
-    char        solo;                            ///< Flag telling if the chord is soloed
+//    char        solo;                            ///< Flag telling if the chord is soloed
 
     char        just_added_from_separate_parameters;        ///< Private flag, used in [bach.roll], telling if the chord has just been added from a separate parameters input
     
@@ -3283,9 +3279,9 @@ typedef struct _measure
     char            need_check_autocompletion;            ///< Flag telling if we have to check the autocompletion of the measure
     long            beaming_calculation_flags;            ///< One of the #e_beaming_calculation_flags, determining if some steps of the beaming calculation process must be skipped for the measure
 
-    char            locked;            ///< Flag telling if the measure is locked
-    char            muted;            ///< Flag telling if the measure is muted
-    char            solo;            ///< Flag telling if the measure is soloed
+//    char            locked;            ///< Flag telling if the measure is locked
+//    char            muted;            ///< Flag telling if the measure is muted
+//    char            solo;            ///< Flag telling if the measure is soloed
 
     char            measure_filling;    ///< Flag telling if the measure is completed, or has more or less notes than needed.
                                         ///< 0 = measure is right completed
@@ -3297,7 +3293,7 @@ typedef struct _measure
     // rhythmic tree support
     t_llll            *rhythmic_tree;        ///< Contains the chords as #H_OBJ in a nested beaming structure. E.g. ((chord1 chord2) ((chord3 chord4) chord5)...)
                                         ///< Most lllls also contain as <l_thing> field a #t_rhythm_level_properties structure specifying the type of rhythmic level
-    char            lock_rhythmic_tree;    ///< This is 1 if the beaming tree is locked, 0 otherwise. In case this is 1, no retranscription is performed, unless new data from messages is inserted
+//    char            lock_rhythmic_tree;    ///< This is 1 if the beaming tree is locked, 0 otherwise. In case this is 1, no retranscription is performed, unless new data from messages is inserted
                                         ///< This flag is saved, so that locked measure remain locked when the object is saved
 
     // double linked list
@@ -3374,9 +3370,9 @@ typedef struct _voice
                                                     ///< This is dummy, since it is never used, and is only needed as a "placeholder" to link the stafflines attribute: 
                                                     ///< its setter/getter will deal with the real stafflines fields (the previous ones).
     
-    char        locked;                ///< Flag telling if the voice is locked
-    char        muted;                ///< Flag telling if the voice is muted
-    char        solo;                ///< Flag telling if the voice is soloed
+//    char        locked;                ///< Flag telling if the voice is locked
+//    char        muted;                ///< Flag telling if the voice is muted
+//    char        solo;                ///< Flag telling if the voice is soloed
     char        hidden;                ///< Flag telling if the voice is hidden
     char        determines_spacing;    ///< Flag (only for [bach.score]) telling if the voice is taken into account when calculating spacing. Yet UNSUPPORTED!
 
@@ -15805,6 +15801,11 @@ char solo_notation_item(t_notation_obj *r_ob, t_notation_item *item);
     @return            1 if something has changed, 0 otherwise
 */
 char unsolo_notation_item(t_notation_obj *r_ob, t_notation_item *item);
+
+bool notationitem_is_flag_set(t_notation_obj *r_ob, t_notation_item *item, long flag);
+char notationitem_flag_set(t_notation_obj *r_ob, t_notation_item *item, long flag);
+char notationitem_flag_unset(t_notation_obj *r_ob, t_notation_item *item, long flag);
+char notationitem_flag_set_or_unset(t_notation_obj *r_ob, t_notation_item *item, long flag, bool condition);
 
 
 /**    Set all selected elements as solo 

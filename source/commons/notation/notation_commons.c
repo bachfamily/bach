@@ -11505,9 +11505,6 @@ t_measure *build_measure(t_notation_obj *r_ob, t_llll *time_signature){
     outmeas->need_check_ties = false;
     outmeas->need_check_autocompletion = false;
     set_need_perform_analysis_and_change_flag(r_ob);
-    outmeas->locked = false;
-    outmeas->muted = false;
-    outmeas->solo = false;
     outmeas->beaming_calculation_flags = k_BEAMING_CALCULATION_DO;
 
     outmeas->custom_boxing = false;
@@ -11525,7 +11522,6 @@ t_measure *build_measure(t_notation_obj *r_ob, t_llll *time_signature){
     outmeas->rhythmic_tree = llll_get();
 //    outmeas->ties_tree = NULL;
     outmeas->info_for_pwgl = llll_get();
-    outmeas->lock_rhythmic_tree = false;
     outmeas->measure_filling = -1;
     
     // default time signature
@@ -11672,10 +11668,7 @@ t_note *build_note_from_ac_av(t_notation_obj *r_ob, long argc, double *argv){
     note->tie_to = NULL;
     note->tie_from = NULL;
     note->tie_direction = 0;
-    note->locked = false;
-    note->muted = false;
     note->played = false;
-    note->solo = false;
 
     note->notehead_ID = k_NOTEHEAD_DEFAULT;
     note->notehead_uwidth = 0;
@@ -11757,9 +11750,6 @@ t_chord *build_chord_from_notes(t_notation_obj *r_ob, t_note *firstnote, t_note 
     this_ch->num_notes = count;
     
     this_ch->played = false;
-    this_ch->muted = false;
-    this_ch->locked = false;
-    this_ch->solo = false;
     this_ch->is_grace_chord = false;
     this_ch->dont_split_for_ts_boxes = false;
 
@@ -12008,9 +11998,6 @@ t_note* clone_note(t_notation_obj *r_ob, t_note *note, e_clone_for_types clone_f
     cloned_nt->pitch_displayed = note->pitch_displayed;
 
     cloned_nt->duration = note->duration;
-    cloned_nt->locked = note->locked;
-    cloned_nt->solo = note->solo;
-    cloned_nt->muted = note->muted;
     cloned_nt->played = note->played;
     cloned_nt->velocity = note->velocity;
     
@@ -12265,9 +12252,6 @@ t_chord* clone_chord(t_notation_obj *r_ob, t_chord *chord, e_clone_for_types clo
     newchord->voiceparent = chord->voiceparent;
     newchord->float_steps = chord->float_steps;
     newchord->played = chord->played;
-    newchord->locked = chord->locked;
-    newchord->muted = chord->muted;
-    newchord->solo = chord->solo;
     newchord->r_sym_duration = chord->r_sym_duration;
     newchord->r_sym_onset = chord->r_sym_onset;
     newchord->duration_ms = chord->duration_ms;
@@ -12392,9 +12376,6 @@ t_chord* clone_selected_notes_into_chord(t_notation_obj *r_ob, t_chord *chord, e
     newchord->num_dots = chord->num_dots;
     newchord->figure = chord->figure;
     newchord->played = false;
-    newchord->locked = false;
-    newchord->solo = false;
-    newchord->muted = false;
     newchord->is_grace_chord = chord->is_grace_chord;
     newchord->dont_split_for_ts_boxes = chord->dont_split_for_ts_boxes;
 
@@ -12472,9 +12453,6 @@ t_measure* clone_measure(t_notation_obj *r_ob, t_measure *measure, e_clone_for_t
     newmeasure->end_barline->barline_type = measure->end_barline->barline_type;
     newmeasure->timesignature_uwidth = measure->timesignature_uwidth;
     newmeasure->timesignature_spacing_uwidth = measure->timesignature_spacing_uwidth;
-    newmeasure->locked = measure->locked;
-    newmeasure->muted = measure->muted;
-    newmeasure->solo = measure->solo;
     newmeasure->beaming_calculation_flags = k_BEAMING_CALCULATION_DO;
     
     newmeasure->local_spacing_width_multiplier = measure->local_spacing_width_multiplier;
@@ -12487,7 +12465,6 @@ t_measure* clone_measure(t_notation_obj *r_ob, t_measure *measure, e_clone_for_t
 
     newmeasure->info_for_pwgl = llll_get();
     newmeasure->measure_filling = measure->measure_filling;
-    newmeasure->lock_rhythmic_tree = measure->lock_rhythmic_tree;
     newmeasure->need_recompute_beamings = true;
     newmeasure->need_recompute_beams_positions = false;
     newmeasure->need_check_ties = true;
@@ -13678,23 +13655,37 @@ char notation_item_is_globally_locked(t_notation_obj *r_ob, t_notation_item *ite
     
     switch (item->type) {
         case k_VOICE:
-            return ((t_voice *)item)->locked;
+            return notationitem_is_flag_set(r_ob, item, k_FLAG_LOCKED);
             break;
         case k_MEASURE:
-            return (((t_measure *)item)->locked || ((t_measure *)item)->voiceparent->v_ob.locked);
+            return (notationitem_is_flag_set(r_ob, item, k_FLAG_LOCKED) ||
+                    notationitem_is_flag_set(r_ob, &((t_measure *)item)->voiceparent->v_ob.r_it, k_FLAG_LOCKED));
             break;
         case k_CHORD:
             if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
-                return (((t_chord *)item)->locked || ((t_chord *)item)->voiceparent->v_ob.locked);
+                return (notationitem_is_flag_set(r_ob, item, k_FLAG_LOCKED) ||
+                        notationitem_is_flag_set(r_ob, &((t_chord *)item)->voiceparent->v_ob.r_it, k_FLAG_LOCKED));
             else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
-                return (((t_chord *)item)->locked || ((t_chord *)item)->parent->locked || ((t_chord *)item)->parent->voiceparent->v_ob.locked);
+                return (notationitem_is_flag_set(r_ob, item, k_FLAG_LOCKED) ||
+                        notationitem_is_flag_set(r_ob, &((t_chord *)item)->parent->r_it, k_FLAG_LOCKED) ||
+                        notationitem_is_flag_set(r_ob, &((t_chord *)item)->parent->voiceparent->v_ob.r_it, k_FLAG_LOCKED));
             break;
         case k_NOTE:
             if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
-                return (((t_note *)item)->locked || ((t_note *)item)->parent->locked || ((t_note *)item)->parent->voiceparent->v_ob.locked);
+                return (notationitem_is_flag_set(r_ob, item, k_FLAG_LOCKED) ||
+                        notationitem_is_flag_set(r_ob, &((t_note *)item)->parent->r_it, k_FLAG_LOCKED) ||
+                        notationitem_is_flag_set(r_ob, &((t_note *)item)->parent->voiceparent->v_ob.r_it, k_FLAG_LOCKED));
             else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
-                return (((t_note *)item)->locked || ((t_note *)item)->parent->locked || ((t_note *)item)->parent->parent->locked || ((t_note *)item)->parent->parent->voiceparent->v_ob.locked);
+                return (notationitem_is_flag_set(r_ob, item, k_FLAG_LOCKED) ||
+                        notationitem_is_flag_set(r_ob, &((t_note *)item)->parent->r_it, k_FLAG_LOCKED) ||
+                        notationitem_is_flag_set(r_ob, &((t_note *)item)->parent->parent->r_it, k_FLAG_LOCKED) ||
+                        notationitem_is_flag_set(r_ob, &((t_note *)item)->parent->parent->voiceparent->v_ob.r_it, k_FLAG_LOCKED));
             break;
+#ifdef BACH_MARKERS_HAVE_FLAGS
+        case k_MARKER:
+            return notationitem_is_flag_set(r_ob, item, k_FLAG_LOCKED);
+            break;
+#endif
         default:
             break;
     }
@@ -13708,23 +13699,37 @@ char notation_item_is_globally_muted(t_notation_obj *r_ob, t_notation_item *item
     
     switch (item->type) {
         case k_VOICE:
-            return ((t_voice *)item)->muted;
+            return notationitem_is_flag_set(r_ob, item, k_FLAG_MUTED);
             break;
         case k_MEASURE:
-            return (((t_measure *)item)->muted || ((t_measure *)item)->voiceparent->v_ob.muted);
+            return (notationitem_is_flag_set(r_ob, item, k_FLAG_MUTED) ||
+                    notationitem_is_flag_set(r_ob, &((t_measure *)item)->voiceparent->v_ob.r_it, k_FLAG_MUTED));
             break;
         case k_CHORD:
             if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
-                return (((t_chord *)item)->muted || ((t_chord *)item)->voiceparent->v_ob.muted);
+                return (notationitem_is_flag_set(r_ob, item, k_FLAG_MUTED) ||
+                        notationitem_is_flag_set(r_ob, &((t_chord *)item)->voiceparent->v_ob.r_it, k_FLAG_MUTED));
             else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
-                return (((t_chord *)item)->muted || ((t_chord *)item)->parent->muted || ((t_chord *)item)->parent->voiceparent->v_ob.muted);
+                return (notationitem_is_flag_set(r_ob, item, k_FLAG_MUTED) ||
+                        notationitem_is_flag_set(r_ob, &((t_chord *)item)->parent->r_it, k_FLAG_MUTED) ||
+                        notationitem_is_flag_set(r_ob, &((t_chord *)item)->parent->voiceparent->v_ob.r_it, k_FLAG_MUTED));
             break;
         case k_NOTE:
             if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
-                return (((t_note *)item)->muted || ((t_note *)item)->parent->muted || ((t_note *)item)->parent->voiceparent->v_ob.muted);
+                return (notationitem_is_flag_set(r_ob, item, k_FLAG_MUTED) ||
+                        notationitem_is_flag_set(r_ob, &((t_note *)item)->parent->r_it, k_FLAG_MUTED) ||
+                        notationitem_is_flag_set(r_ob, &((t_note *)item)->parent->voiceparent->v_ob.r_it, k_FLAG_MUTED));
             else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
-                return (((t_note *)item)->muted || ((t_note *)item)->parent->muted || ((t_note *)item)->parent->parent->muted || ((t_note *)item)->parent->parent->voiceparent->v_ob.muted);
+                return (notationitem_is_flag_set(r_ob, item, k_FLAG_MUTED) ||
+                        notationitem_is_flag_set(r_ob, &((t_note *)item)->parent->r_it, k_FLAG_MUTED) ||
+                        notationitem_is_flag_set(r_ob, &((t_note *)item)->parent->parent->r_it, k_FLAG_MUTED) ||
+                        notationitem_is_flag_set(r_ob, &((t_note *)item)->parent->parent->voiceparent->v_ob.r_it, k_FLAG_MUTED));
             break;
+#ifdef BACH_MARKERS_HAVE_FLAGS
+        case k_MARKER:
+            return notationitem_is_flag_set(r_ob, item, k_FLAG_MUTED);
+            break;
+#endif
         default:
             break;
     }
@@ -13743,32 +13748,32 @@ char is_solo_with_progeny(t_notation_obj *r_ob, t_notation_item *item)
         {
             if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
                 t_rollvoice *voice = (t_rollvoice *)item;
-                if (voice->v_ob.solo)
+                if (notationitem_is_flag_set(r_ob, &voice->v_ob.r_it, k_FLAG_SOLO))
                     return 1;
                 t_chord *chord;
                 t_note *note;
                 for (chord = voice->firstchord; chord; chord = chord->next) {
-                    if (chord->solo)
+                    if (notationitem_is_flag_set(r_ob, (t_notation_item *)chord, k_FLAG_SOLO))
                         return 1;
                     for (note = chord->firstnote; note; note = note->next)
-                        if (note->solo)
+                        if (notationitem_is_flag_set(r_ob, (t_notation_item *)note, k_FLAG_SOLO))
                             return 1;
                 }
             } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
                 t_scorevoice *voice = (t_scorevoice *)item;
-                if (voice->v_ob.solo)
+                if (notationitem_is_flag_set(r_ob, &voice->v_ob.r_it, k_FLAG_SOLO))
                     return 1;
                 t_measure *meas;
                 t_chord *chord;
                 t_note *note;
                 for (meas = voice->firstmeasure; meas; meas = meas->next) {
-                    if (meas->solo)
+                    if (notationitem_is_flag_set(r_ob, (t_notation_item *)meas, k_FLAG_SOLO))
                         return 1;
                     for (chord = meas->firstchord; chord; chord = chord->next) {
-                        if (chord->solo)
+                        if (notationitem_is_flag_set(r_ob, (t_notation_item *)chord, k_FLAG_SOLO))
                             return 1;
                         for (note = chord->firstnote; note; note = note->next)
-                            if (note->solo)
+                            if (notationitem_is_flag_set(r_ob, (t_notation_item *)note, k_FLAG_SOLO))
                                 return 1;
                     }
                 }
@@ -13777,35 +13782,36 @@ char is_solo_with_progeny(t_notation_obj *r_ob, t_notation_item *item)
             break;
         case k_MEASURE:
         {
-            if (((t_measure *)item)->solo)
+            if (notationitem_is_flag_set(r_ob, item, k_FLAG_SOLO))
                 return 1;
             
             t_chord *chord;
             t_note *note;
             for (chord = ((t_measure *)item)->firstchord; chord; chord = chord->next) {
-                if (chord->solo)
+                if (notationitem_is_flag_set(r_ob, (t_notation_item *)chord, k_FLAG_SOLO))
                     return 1;
                 for (note = chord->firstnote; note; note = note->next)
-                    if (note->solo)
+                    if (notationitem_is_flag_set(r_ob, (t_notation_item *)note, k_FLAG_SOLO))
                         return 1;
             }
         }
             break;
         case k_CHORD:
         {
-            if (((t_chord *)item)->solo)
+            if (notationitem_is_flag_set(r_ob, item, k_FLAG_SOLO))
                 return 1;
             
             t_note *note;
             for (note = ((t_chord *)item)->firstnote; note; note = note->next)
-                if (note->solo)
+                if (notationitem_is_flag_set(r_ob, (t_notation_item *)note, k_FLAG_SOLO))
                     return 1;
         }
             break;
         case k_NOTE:
-            return ((t_note *)item)->solo;
+            return notationitem_is_flag_set(r_ob, item, k_FLAG_SOLO);
             break;
         default:
+            return notationitem_is_flag_set(r_ob, item, k_FLAG_SOLO);
             break;
     }
     
@@ -13819,23 +13825,37 @@ char notation_item_is_globally_solo(t_notation_obj *r_ob, t_notation_item *item)
     
     switch (item->type) {
         case k_VOICE:
-            return ((t_voice *)item)->solo;
+            return notationitem_is_flag_set(r_ob, item, k_FLAG_SOLO);
             break;
         case k_MEASURE:
-            return (((t_measure *)item)->solo || ((t_measure *)item)->voiceparent->v_ob.solo);
+            return (notationitem_is_flag_set(r_ob, item, k_FLAG_SOLO) ||
+                    notationitem_is_flag_set(r_ob, &((t_measure *)item)->voiceparent->v_ob.r_it, k_FLAG_SOLO));
             break;
         case k_CHORD:
             if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
-                return (((t_chord *)item)->solo || ((t_chord *)item)->voiceparent->v_ob.solo);
+                return (notationitem_is_flag_set(r_ob, item, k_FLAG_SOLO) ||
+                        notationitem_is_flag_set(r_ob, &((t_chord *)item)->voiceparent->v_ob.r_it, k_FLAG_SOLO));
             else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
-                return (((t_chord *)item)->solo || ((t_chord *)item)->parent->solo || ((t_chord *)item)->parent->voiceparent->v_ob.solo);
+                return (notationitem_is_flag_set(r_ob, item, k_FLAG_SOLO) ||
+                        notationitem_is_flag_set(r_ob, &((t_chord *)item)->parent->r_it, k_FLAG_SOLO) ||
+                        notationitem_is_flag_set(r_ob, &((t_chord *)item)->parent->voiceparent->v_ob.r_it, k_FLAG_SOLO));
             break;
         case k_NOTE:
             if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
-                return (((t_note *)item)->solo || ((t_note *)item)->parent->solo || ((t_note *)item)->parent->voiceparent->v_ob.solo);
+                return (notationitem_is_flag_set(r_ob, item, k_FLAG_SOLO) ||
+                        notationitem_is_flag_set(r_ob, &((t_note *)item)->parent->r_it, k_FLAG_SOLO) ||
+                        notationitem_is_flag_set(r_ob, &((t_note *)item)->parent->voiceparent->v_ob.r_it, k_FLAG_SOLO));
             else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
-                return (((t_note *)item)->solo || ((t_note *)item)->parent->solo || ((t_note *)item)->parent->parent->solo || ((t_note *)item)->parent->parent->voiceparent->v_ob.solo);
+                return (notationitem_is_flag_set(r_ob, item, k_FLAG_SOLO) ||
+                        notationitem_is_flag_set(r_ob, &((t_note *)item)->parent->r_it, k_FLAG_SOLO) ||
+                        notationitem_is_flag_set(r_ob, &((t_note *)item)->parent->parent->r_it, k_FLAG_SOLO) ||
+                        notationitem_is_flag_set(r_ob, &((t_note *)item)->parent->parent->voiceparent->v_ob.r_it, k_FLAG_SOLO));
             break;
+#ifdef BACH_MARKERS_HAVE_FLAGS
+        case k_MARKER:
+            return (item->flags & k_FLAG_SOLO) != 0;
+            break;
+#endif
         default:
             break;
     }
@@ -13868,9 +13888,11 @@ char notation_item_is_globally_selected(t_notation_obj *r_ob, t_notation_item *i
                 return (((t_note *)item)->r_it.selected || ((t_note *)item)->parent->r_it.selected || ((t_note *)item)->parent->voiceparent->v_ob.r_it.selected);
             else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
                 return (((t_note *)item)->r_it.selected || ((t_note *)item)->parent->r_it.selected || ((t_note *)item)->parent->parent->r_it.selected || ((t_note *)item)->parent->parent->voiceparent->v_ob.r_it.selected);
+#ifdef BACH_MARKERS_HAVE_FLAGS
         case k_MARKER:
             return item->selected;
             break;
+#endif
         default:
             break;
     }
@@ -13907,7 +13929,7 @@ char should_element_be_played(t_notation_obj *r_ob, t_notation_item *item){
                 t_chord *chord = (t_chord *) item;
                 t_note *note;
                 for (note = chord->firstnote; note; note = note->next) {
-                    if (note->solo){
+                    if (notationitem_is_flag_set(r_ob, (t_notation_item *)note, k_FLAG_SOLO)){
                         elem_or_subelems_solo = true;
                         break;
                     }
@@ -13935,7 +13957,7 @@ char should_element_be_played(t_notation_obj *r_ob, t_notation_item *item){
                 t_chord *chord = (t_chord *) item;
                 t_note *note;
                 for (note = chord->firstnote; note; note = note->next) {
-                    if (note->solo){
+                    if (notationitem_is_flag_set(r_ob, (t_notation_item *)note, k_FLAG_SOLO)){
                         elem_or_subelems_solo = true;
                         break;
                     }
@@ -13959,6 +13981,8 @@ char lock_notation_item(t_notation_obj *r_ob, t_notation_item *item)
         return lock_measure(r_ob, (t_measure *)item);
     else if (item->type == k_VOICE)
         return lock_voice(r_ob, (t_voice *)item);
+    else
+        return notationitem_flag_set(r_ob, item, k_FLAG_LOCKED);
     return 0;
 }
 
@@ -13972,6 +13996,8 @@ char unlock_notation_item(t_notation_obj *r_ob, t_notation_item *item)
         return unlock_measure(r_ob, (t_measure *)item);
     else if (item->type == k_VOICE)
         return unlock_voice(r_ob, (t_voice *)item);
+    else
+        return notationitem_flag_unset(r_ob, item, k_FLAG_LOCKED);
     return 0;
 }
 
@@ -13986,6 +14012,8 @@ char mute_notation_item(t_notation_obj *r_ob, t_notation_item *item)
         return mute_measure(r_ob, (t_measure *)item);
     else if (item->type == k_VOICE)
         return mute_voice(r_ob, (t_voice *)item);
+    else
+        return notationitem_flag_set(r_ob, item, k_FLAG_MUTED);
     return 0;
 }
 
@@ -13999,6 +14027,8 @@ char unmute_notation_item(t_notation_obj *r_ob, t_notation_item *item)
         return unmute_measure(r_ob, (t_measure *)item);
     else if (item->type == k_VOICE)
         return unmute_voice(r_ob, (t_voice *)item);
+    else
+        return notationitem_flag_unset(r_ob, item, k_FLAG_MUTED);
     return 0;
 }
 
@@ -14011,6 +14041,8 @@ char solo_notation_item(t_notation_obj *r_ob, t_notation_item *item){
         return solo_measure(r_ob, (t_measure *)item);
     else if (item->type == k_VOICE)
         return solo_voice(r_ob, (t_voice *)item);
+    else
+        return notationitem_flag_set(r_ob, item, k_FLAG_SOLO);
     return 0;
 }
 
@@ -14023,6 +14055,8 @@ char unsolo_notation_item(t_notation_obj *r_ob, t_notation_item *item){
         return unsolo_measure(r_ob, (t_measure *)item);
     else if (item->type == k_VOICE)
         return unsolo_voice(r_ob, (t_voice *)item);
+    else
+        return notationitem_flag_unset(r_ob, item, k_FLAG_SOLO);
     return 0;
 }
 
@@ -14036,47 +14070,59 @@ char check_lock_mute_solo_compatibilities_for_chord_and_notes(t_notation_obj *r_
     if (ch->firstnote) {
         char all_notes_muted = true;
         for (note = ch->firstnote; note; note = note->next)
-            if (!note->muted) all_notes_muted = false;
+            if (!notationitem_is_flag_set(r_ob, (t_notation_item *)note, k_FLAG_MUTED)) all_notes_muted = false;
         
         char all_notes_locked = true;
         for (note = ch->firstnote; note; note = note->next)
-            if (!note->locked) all_notes_locked = false;
+            if (!notationitem_is_flag_set(r_ob, (t_notation_item *)note, k_FLAG_LOCKED)) all_notes_locked = false;
         
         char all_notes_solo = true;
         for (note = ch->firstnote; note; note = note->next)
-            if (!note->solo) all_notes_solo = false;
+            if (!notationitem_is_flag_set(r_ob, (t_notation_item *)note, k_FLAG_SOLO)) all_notes_solo = false;
         
-        if (ch->muted != all_notes_muted) {
+        if (notationitem_is_flag_set(r_ob, (t_notation_item *)ch, k_FLAG_MUTED) != all_notes_muted) {
             undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
             res = 1;
-            ch->muted = all_notes_muted;
+            if (all_notes_muted) {
+                notationitem_flag_set(r_ob, (t_notation_item *)ch, k_FLAG_MUTED);
+            } else {
+                notationitem_flag_unset(r_ob, (t_notation_item *)ch, k_FLAG_MUTED);
+            }
         }
-        if (ch->locked != all_notes_locked) {
+        if (notationitem_is_flag_set(r_ob, (t_notation_item *)ch, k_FLAG_LOCKED) != all_notes_locked) {
             undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
             res = 1;
-            ch->locked = all_notes_locked;
+            if (all_notes_locked) {
+                notationitem_flag_set(r_ob, (t_notation_item *)ch, k_FLAG_LOCKED);
+            } else {
+                notationitem_flag_unset(r_ob, (t_notation_item *)ch, k_FLAG_LOCKED);
+            }
         }
-        if (ch->solo != all_notes_solo) {
+        if (notationitem_is_flag_set(r_ob, (t_notation_item *)ch, k_FLAG_SOLO) != all_notes_solo) {
             undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
             res = 1;
-            ch->solo = all_notes_solo;
+            if (all_notes_solo) {
+                notationitem_flag_set(r_ob, (t_notation_item *)ch, k_FLAG_SOLO);
+            } else {
+                notationitem_flag_unset(r_ob, (t_notation_item *)ch, k_FLAG_SOLO);
+            }
         }
     } else {
         // it's a rest: can't be solo/locked/muted!
-        if (ch->muted) {
+        if (notationitem_is_flag_set(r_ob, (t_notation_item *)ch, k_FLAG_MUTED)) {
             undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
             res = 1;
-            ch->muted = false;
+            notationitem_flag_unset(r_ob, (t_notation_item *)ch, k_FLAG_MUTED);
         }
-        if (ch->locked) {
+        if (notationitem_is_flag_set(r_ob, (t_notation_item *)ch, k_FLAG_LOCKED)) {
             undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
             res = 1;
-            ch->locked = false;
+            notationitem_flag_unset(r_ob, (t_notation_item *)ch, k_FLAG_LOCKED);
         }
-        if (ch->solo) {
+        if (notationitem_is_flag_set(r_ob, (t_notation_item *)ch, k_FLAG_SOLO)) {
             undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
             res = 1;
-            ch->solo = false;
+            notationitem_flag_unset(r_ob, (t_notation_item *)ch, k_FLAG_SOLO);
         }
     }
     return res;
@@ -14091,25 +14137,25 @@ char lock_note(t_notation_obj *r_ob, t_note *note){
     t_note *temp; 
     char all_notes_locked = true;
     
-    if (!note->locked) {
+    if (!notationitem_is_flag_set(r_ob, (t_notation_item *)note, k_FLAG_LOCKED)) {
         res = 1;
         undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)note->parent, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
     }
 
-    note->locked = true;
+    notationitem_flag_set(r_ob, (t_notation_item *)note, k_FLAG_LOCKED);
     
     for (temp = ch->firstnote; temp; temp = temp->next)
-        if (!temp->locked) {
+        if (!notationitem_is_flag_set(r_ob, (t_notation_item *)temp, k_FLAG_LOCKED)) {
             all_notes_locked = false;
             break;
         }
         
     if (all_notes_locked) {
-        if (!ch->locked) {
+        if (!notationitem_is_flag_set(r_ob, (t_notation_item *)ch, k_FLAG_LOCKED)) {
             res = 1;
             undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
         }
-        ch->locked = true;
+        notationitem_flag_set(r_ob, (t_notation_item *)ch, k_FLAG_LOCKED);
     }
     return res;
 }
@@ -14117,29 +14163,63 @@ char lock_note(t_notation_obj *r_ob, t_note *note){
 char unlock_note(t_notation_obj *r_ob, t_note *note){
     char res = 0;
 
-    if (note->locked || note->parent->locked) {
+    if (notationitem_is_flag_set(r_ob, (t_notation_item *)note, k_FLAG_LOCKED) ||
+        notationitem_is_flag_set(r_ob, (t_notation_item *)note->parent, k_FLAG_LOCKED)) {
         res = 1;
         undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)note->parent, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
     }
     
-    note->locked = false;
-    note->parent->locked = false;
+    notationitem_flag_unset(r_ob, (t_notation_item *)note, k_FLAG_LOCKED);
+    notationitem_flag_unset(r_ob, (t_notation_item *)note->parent, k_FLAG_LOCKED);
     
     if (note->parent->is_score_chord) {
-        if (note->parent->parent->locked) {
+        if (notationitem_is_flag_set(r_ob, (t_notation_item *)note->parent->parent, k_FLAG_LOCKED)) {
             res = 1;
             undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)note->parent->parent, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
         }
-        note->parent->parent->locked = false;
+        notationitem_flag_unset(r_ob, (t_notation_item *)note->parent->parent, k_FLAG_LOCKED);
     }
     return res;
 }
 
 char lock_unlock_note(t_notation_obj *r_ob, t_note *note){
-    if (note->locked)
+    if (notationitem_is_flag_set(r_ob, (t_notation_item *)note, k_FLAG_LOCKED))
         unlock_note(r_ob, note);
     else
         lock_note(r_ob, note);
+    return 1;
+}
+
+char lock_marker(t_notation_obj *r_ob, t_marker *marker){
+    char res = 0;
+    
+    if (!notationitem_is_flag_set(r_ob, (t_notation_item *)marker, k_FLAG_LOCKED)){
+        res = 1;
+        undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)marker, k_MARKER, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
+    }
+    notationitem_flag_set(r_ob, (t_notation_item *)marker, k_FLAG_LOCKED);
+    
+    return res;
+}
+
+char unlock_marker(t_notation_obj *r_ob, t_marker *marker){
+    char res = 0;
+    
+    if (notationitem_is_flag_set(r_ob, (t_notation_item *)marker, k_FLAG_LOCKED)){
+        res = 1;
+        undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)marker, k_MARKER, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
+    }
+    
+    notationitem_flag_unset(r_ob, (t_notation_item *)marker, k_FLAG_LOCKED);
+    
+    return res;
+}
+
+char lock_unlock_marker(t_notation_obj *r_ob, t_marker *marker){
+    if (notationitem_is_flag_set(r_ob, (t_notation_item *)marker, k_FLAG_LOCKED))
+        unlock_marker(r_ob, marker);
+    else
+        lock_marker(r_ob, marker);
     return 1;
 }
 
@@ -14147,17 +14227,17 @@ char lock_chord(t_notation_obj *r_ob, t_chord *chord){
     t_note *note;
     char res = 0;
     
-    if (!chord->locked){
+    if (!notationitem_is_flag_set(r_ob, (t_notation_item *)chord, k_FLAG_LOCKED)){
         res = 1;
         undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)chord, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
     }
-    chord->locked = true;
+    notationitem_flag_set(r_ob, (t_notation_item *)chord, k_FLAG_LOCKED);
     for (note = chord->firstnote; note; note = note->next) {
-        if (!note->locked) {
+        if (!notationitem_is_flag_set(r_ob, (t_notation_item *)note, k_FLAG_LOCKED)) {
             undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)chord, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
             res = 1;
         }
-        note->locked = true;
+        notationitem_flag_set(r_ob, (t_notation_item *)note, k_FLAG_LOCKED);
     }
     return res;
 }
@@ -14166,32 +14246,32 @@ char unlock_chord(t_notation_obj *r_ob, t_chord *chord){
     t_note *note;
     char res = 0;
     
-    if (chord->locked){
+    if (notationitem_is_flag_set(r_ob, (t_notation_item *)chord, k_FLAG_LOCKED)){
         undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)chord, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
         res = 1;
     }
-    chord->locked = false;
+    notationitem_flag_unset(r_ob, (t_notation_item *)chord, k_FLAG_LOCKED);
     
     for (note = chord->firstnote; note; note = note->next){
-        if (note->locked) {
+        if (notationitem_is_flag_set(r_ob, (t_notation_item *)note, k_FLAG_LOCKED)) {
             undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)chord, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
             res = 1;
         }
-        note->locked = false;
+        notationitem_flag_unset(r_ob, (t_notation_item *)note, k_FLAG_LOCKED);
     }
     
     if (chord->is_score_chord) {
-        if (chord->parent->locked) {
+        if (notationitem_is_flag_set(r_ob, (t_notation_item *)chord->parent, k_FLAG_LOCKED)) {
             res = 1;
             undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)chord->parent, k_VOICE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
         }
-        chord->parent->locked = false;
+        notationitem_flag_unset(r_ob, (t_notation_item *)chord->parent, k_FLAG_LOCKED);
     }
     return res;
 }
 
 char lock_unlock_chord(t_notation_obj *r_ob, t_chord *chord){
-    if (chord->locked)
+    if (notationitem_is_flag_set(r_ob, (t_notation_item *)chord, k_FLAG_LOCKED))
         unlock_chord(r_ob, chord);
     else
         lock_chord(r_ob, chord);
@@ -14201,10 +14281,12 @@ char lock_unlock_chord(t_notation_obj *r_ob, t_chord *chord){
 char is_all_selection_locked(t_notation_obj *r_ob){
     t_notation_item *curr_it;
     for (curr_it  = r_ob->firstselecteditem; curr_it; curr_it = curr_it->next_selected){
-        if ((curr_it->type == k_NOTE && !((t_note *)curr_it)->locked) ||
-            (curr_it->type == k_CHORD && !((t_chord *)curr_it)->locked) ||
-            (curr_it->type == k_MEASURE && !((t_measure *)curr_it)->locked) ||
-            (curr_it->type == k_VOICE && !((t_voice *)curr_it)->locked))
+        bool it_locked = notationitem_is_flag_set(r_ob, curr_it, k_FLAG_LOCKED);
+        if ((curr_it->type == k_NOTE && !it_locked) ||
+            (curr_it->type == k_CHORD && !it_locked) ||
+            (curr_it->type == k_MEASURE && !it_locked) ||
+            (curr_it->type == k_VOICE && !it_locked) ||
+            (curr_it->type == k_MARKER && !it_locked))
             return false;
     }
     return true;
@@ -14214,7 +14296,7 @@ char is_all_selection_locked(t_notation_obj *r_ob){
 char is_all_selection_rhythmic_tree_locked(t_notation_obj *r_ob){
     t_notation_item *curr_it;
     for (curr_it  = r_ob->firstselecteditem; curr_it; curr_it = curr_it->next_selected){
-        if (curr_it->type == k_MEASURE && !((t_measure *)curr_it)->lock_rhythmic_tree)
+        if (curr_it->type == k_MEASURE && !notationitem_is_flag_set(r_ob, curr_it, k_FLAG_RHYTHMICTREELOCKED))
             return false;
     }
     return true;
@@ -14223,7 +14305,7 @@ char is_all_selection_rhythmic_tree_locked(t_notation_obj *r_ob){
 char is_all_selection_rhythmic_tree_unlocked(t_notation_obj *r_ob){
     t_notation_item *curr_it;
     for (curr_it  = r_ob->firstselecteditem; curr_it; curr_it = curr_it->next_selected){
-        if (curr_it->type == k_MEASURE && ((t_measure *)curr_it)->lock_rhythmic_tree)
+        if (curr_it->type == k_MEASURE && notationitem_is_flag_set(r_ob, curr_it, k_FLAG_RHYTHMICTREELOCKED))
             return false;
     }
     return true;
@@ -14232,10 +14314,12 @@ char is_all_selection_rhythmic_tree_unlocked(t_notation_obj *r_ob){
 char is_all_selection_unlocked(t_notation_obj *r_ob){
     t_notation_item *curr_it;
     for (curr_it  = r_ob->firstselecteditem; curr_it; curr_it = curr_it->next_selected){
-        if ((curr_it->type == k_NOTE && ((t_note *)curr_it)->locked) ||
-            (curr_it->type == k_CHORD && ((t_chord *)curr_it)->locked) ||
-            (curr_it->type == k_MEASURE && ((t_measure *)curr_it)->locked) ||
-            (curr_it->type == k_VOICE && ((t_voice *)curr_it)->locked))
+        bool it_locked = notationitem_is_flag_set(r_ob, curr_it, k_FLAG_LOCKED);
+        if ((curr_it->type == k_NOTE && it_locked) ||
+            (curr_it->type == k_CHORD && it_locked) ||
+            (curr_it->type == k_MEASURE && it_locked) ||
+            (curr_it->type == k_VOICE && it_locked) ||
+            (curr_it->type == k_MARKER && it_locked))
             return false;
     }
     return true;
@@ -14246,10 +14330,10 @@ char is_all_selection_unlocked(t_notation_obj *r_ob){
 char lock_measure(t_notation_obj *r_ob, t_measure *meas){
     t_chord *tmp;
     char res = 0;
-    if (meas && !meas->locked){
+    if (meas && !notationitem_is_flag_set(r_ob, (t_notation_item *)meas, k_FLAG_LOCKED)){
         res = 1;
         undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)meas, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
-        meas->locked = true;
+        notationitem_flag_set(r_ob, (t_notation_item *)meas, k_FLAG_LOCKED);
     }
     tmp = meas ? meas->firstchord : NULL;
     while (tmp) {
@@ -14261,11 +14345,11 @@ char lock_measure(t_notation_obj *r_ob, t_measure *meas){
 
 char lock_voice(t_notation_obj *r_ob, t_voice *voice){
     char res = 0;
-    if (!voice->locked) {
+    if (!notationitem_is_flag_set(r_ob, (t_notation_item *)voice, k_FLAG_LOCKED)) {
         res = 1;
         undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)voice, k_VOICE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
     }
-    voice->locked = true;
+    notationitem_flag_set(r_ob, (t_notation_item *)voice, k_FLAG_LOCKED);
     return res;
 }
 
@@ -14312,6 +14396,10 @@ char lock_selection(t_notation_obj *r_ob, char whole_voiceensembles)
                 }
             } else
                 res |= lock_voice(r_ob, (t_voice *)curr_it);
+        } else if (curr_it->type == k_MARKER) {
+#ifdef BACH_MARKERS_HAVE_FLAGS
+            res |= lock_marker(r_ob, (t_marker *)curr_it);
+#endif
         }
         curr_it = curr_it->next_selected;
     }
@@ -14323,10 +14411,10 @@ char unlock_measure(t_notation_obj *r_ob, t_measure *meas)
 {
     t_chord *tmp;
     char res = 0;
-    if (meas && meas->locked) { 
+    if (meas && notationitem_is_flag_set(r_ob, (t_notation_item *)meas, k_FLAG_LOCKED)) {
         res = 1;
         undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)meas, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
-        meas->locked = false;
+        notationitem_flag_unset(r_ob, (t_notation_item *)meas, k_FLAG_LOCKED);
     }
     tmp = meas ? meas->firstchord : NULL;
     while (tmp) {
@@ -14340,11 +14428,11 @@ char unlock_measure(t_notation_obj *r_ob, t_measure *meas)
 char unlock_voice(t_notation_obj *r_ob, t_voice *voice)
 {
     char res = 0;
-    if (voice->locked) {
+    if (notationitem_is_flag_set(r_ob, (t_notation_item *)voice, k_FLAG_LOCKED)) {
         res = 1;
         undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)voice, k_VOICE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
     }
-    voice->locked = false;
+    notationitem_flag_unset(r_ob, (t_notation_item *)voice, k_FLAG_LOCKED);
     return res;
 }
 
@@ -14392,6 +14480,10 @@ char unlock_selection(t_notation_obj *r_ob, char whole_voiceensembles)
             } else {
                 res |= unlock_voice(r_ob, (t_voice *)curr_it);
             }
+        } else if (curr_it->type == k_MARKER) {
+#ifdef BACH_MARKERS_HAVE_FLAGS
+            res |= unlock_marker(r_ob, (t_marker *)curr_it);
+#endif
         }
         curr_it = curr_it->next_selected;
     }
@@ -14403,9 +14495,9 @@ void lock_unlock_measure(t_notation_obj *r_ob, t_measure *meas)
 {
     undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)meas, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
     if (meas) {
-        if (meas->locked) {
+        if (notationitem_is_flag_set(r_ob, (t_notation_item *)meas, k_FLAG_LOCKED)) {
             t_chord *tmp;
-            meas->locked = false;
+            notationitem_flag_unset(r_ob, (t_notation_item *)meas, k_FLAG_LOCKED);
             tmp = meas->firstchord;
             while (tmp) {
                 unlock_chord(r_ob, tmp);
@@ -14413,7 +14505,7 @@ void lock_unlock_measure(t_notation_obj *r_ob, t_measure *meas)
             }
         } else {
             t_chord *tmp;
-            meas->locked = true;
+            notationitem_flag_set(r_ob, (t_notation_item *)meas, k_FLAG_LOCKED);
             tmp = meas ? meas->firstchord : NULL;
             while (tmp) {
                 lock_unlock_chord(r_ob, tmp);
@@ -14465,14 +14557,22 @@ char lock_unlock_selection(t_notation_obj *r_ob, char whole_voiceensembles)
                 for (temp = first; temp && temp->number < r_ob->num_voices; temp = voice_get_next(r_ob, temp)) {
                     res = 1;
                     undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)temp, k_VOICE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
-                    temp->locked = (temp->locked ? 0 : 1);
+                    if (notationitem_is_flag_set(r_ob, (t_notation_item *)temp, k_FLAG_LOCKED)) {
+                        notationitem_flag_unset(r_ob, (t_notation_item *)temp, k_FLAG_LOCKED);
+                    } else {
+                        notationitem_flag_set(r_ob, (t_notation_item *)temp, k_FLAG_LOCKED);
+                    }
                     if (temp == last)
                         break;
                 }
             } else {
                 res = 1;
                 undo_tick_create_for_selected_notation_item(r_ob, curr_it, k_VOICE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
-                ((t_voice *)curr_it)->locked = (((t_voice *)curr_it)->locked ? 0 : 1);
+                if (notationitem_is_flag_set(r_ob, curr_it, k_FLAG_LOCKED)) {
+                    notationitem_flag_unset(r_ob, curr_it, k_FLAG_LOCKED);
+                } else {
+                    notationitem_flag_set(r_ob, curr_it, k_FLAG_LOCKED);
+                }
             }
         } else if (curr_it->type == k_MEASURE_END_BARLINE) {
             t_measure *meas = ((t_measure_end_barline *)curr_it)->owner;
@@ -14481,6 +14581,10 @@ char lock_unlock_selection(t_notation_obj *r_ob, char whole_voiceensembles)
                 fix_unfix_measure_width(r_ob, meas);
                 meas->tuttipoint_reference->flag |= k_FLAG_MODIFIED;
             }
+        } else if (curr_it->type == k_MARKER) {
+#ifdef BACH_MARKERS_HAVE_FLAGS
+            res |= lock_unlock_marker(r_ob, (t_marker *)curr_it);
+#endif
         }
         curr_it = curr_it->next_selected;
     }
@@ -14496,9 +14600,9 @@ char lock_rhythmic_trees_in_selection(t_notation_obj *r_ob){
     while (curr_it) { // cycle on the selected items
         if (curr_it->type == k_MEASURE || curr_it->type == k_MEASURE_END_BARLINE) {
             t_measure *meas = curr_it->type == k_MEASURE_END_BARLINE ? ((t_measure_end_barline *)curr_it)->owner : (t_measure *)curr_it;
-            if (!meas->lock_rhythmic_tree) {
+            if (!notationitem_is_flag_set(r_ob, (t_notation_item *)meas, k_FLAG_RHYTHMICTREELOCKED)) {
                 undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)meas, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-                meas->lock_rhythmic_tree = 1;
+                notationitem_flag_set(r_ob, (t_notation_item *)meas, k_FLAG_RHYTHMICTREELOCKED);
                 recompute_all_for_measure(r_ob, meas, true);
                 res = 1;
             }
@@ -14516,9 +14620,9 @@ char unlock_rhythmic_trees_in_selection(t_notation_obj *r_ob){
     while (curr_it) { // cycle on the selected items
         if (curr_it->type == k_MEASURE || curr_it->type == k_MEASURE_END_BARLINE) {
             t_measure *meas = curr_it->type == k_MEASURE_END_BARLINE ? ((t_measure_end_barline *)curr_it)->owner : (t_measure *)curr_it;
-            if (meas->lock_rhythmic_tree) {
+            if (notationitem_is_flag_set(r_ob, (t_notation_item *)meas, k_FLAG_RHYTHMICTREELOCKED)) {
                 undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)meas, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-                meas->lock_rhythmic_tree = 0;
+                notationitem_flag_unset(r_ob, (t_notation_item *)meas, k_FLAG_RHYTHMICTREELOCKED);
                 recompute_all_for_measure(r_ob, meas, true);
                 res = 1;
             }
@@ -14538,7 +14642,11 @@ char lock_unlock_rhythmic_trees_in_selection(t_notation_obj *r_ob){
         if (curr_it->type == k_MEASURE || curr_it->type == k_MEASURE_END_BARLINE) {
             t_measure *meas = curr_it->type == k_MEASURE_END_BARLINE ? ((t_measure_end_barline *)curr_it)->owner : (t_measure *)curr_it;
             undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)meas, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-            meas->lock_rhythmic_tree = (meas->lock_rhythmic_tree ? 0 : 1);
+            if (notationitem_is_flag_set(r_ob, (t_notation_item *)meas, k_FLAG_RHYTHMICTREELOCKED)){
+                notationitem_flag_unset(r_ob, (t_notation_item *)meas, k_FLAG_RHYTHMICTREELOCKED);
+            } else {
+                notationitem_flag_set(r_ob, (t_notation_item *)meas, k_FLAG_RHYTHMICTREELOCKED);
+            }
             recompute_all_for_measure(r_ob, meas, true);
             res = 1;
         }
@@ -14573,24 +14681,24 @@ char mute_note(t_notation_obj *r_ob, t_note *note){
     t_note *temp; 
     char all_notes_muted = true;
     
-    if (!note->muted){
+    if (!notationitem_is_flag_set(r_ob, (t_notation_item *)note, k_FLAG_MUTED)){
         res = 1;
         undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)note->parent, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
     }
-    note->muted = true;
+    notationitem_flag_set(r_ob, (t_notation_item *)note, k_FLAG_MUTED);
 
     // checking if all notes in the note's chord are muted
     for (temp = ch->firstnote; temp; temp = temp->next)
-        if (!temp->muted) {
+        if (!notationitem_is_flag_set(r_ob, (t_notation_item *)temp, k_FLAG_MUTED)) {
             all_notes_muted = false;
             break;
         }
     if (all_notes_muted) {
-        if (!ch->muted){
+        if (!notationitem_is_flag_set(r_ob, (t_notation_item *)ch, k_FLAG_MUTED)){
             res = 1;
             undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
         }
-        ch->muted = true;
+        notationitem_flag_set(r_ob, (t_notation_item *)ch, k_FLAG_MUTED);
     }
     return res;
 }
@@ -14598,29 +14706,92 @@ char mute_note(t_notation_obj *r_ob, t_note *note){
 char unmute_note(t_notation_obj *r_ob, t_note *note){
     char res = 0;
     
-    if (note->muted || note->parent->muted) {
+    if (notationitem_is_flag_set(r_ob, (t_notation_item *)note, k_FLAG_MUTED) ||
+        notationitem_is_flag_set(r_ob, (t_notation_item *)note->parent, k_FLAG_MUTED)) {
         res = 1;
         undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)note->parent, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
     }
 
-    note->muted = false;
-    note->parent->muted = false;
+    notationitem_flag_unset(r_ob, (t_notation_item *)note, k_FLAG_MUTED);
+    notationitem_flag_unset(r_ob, (t_notation_item *)note->parent, k_FLAG_MUTED);
     
     if (note->parent->is_score_chord) {
-        if (note->parent->parent->muted) {
+        if (notationitem_is_flag_set(r_ob, (t_notation_item *)note->parent->parent, k_FLAG_MUTED)) {
             res = 1;
             undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)note->parent->parent, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
         }
-        note->parent->parent->muted = false;
+        notationitem_flag_unset(r_ob, (t_notation_item *)note->parent->parent, k_FLAG_MUTED);
     }
     return res;
 }
 
 char mute_unmute_note(t_notation_obj *r_ob, t_note *note){
-    if (note->muted)
+    if (notationitem_is_flag_set(r_ob, (t_notation_item *)note, k_FLAG_MUTED))
         unmute_note(r_ob, note);
     else
         mute_note(r_ob, note);
+    return 1;
+}
+
+char mute_marker(t_notation_obj *r_ob, t_marker *marker){
+    char res = 0;
+    
+    if ((marker->r_it.flags & k_FLAG_MUTED) == 0){
+        res = 1;
+        undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)marker, k_MARKER, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
+    }
+    marker->r_it.flags |= k_FLAG_MUTED;
+    
+    return res;
+}
+
+
+bool notationitem_is_flag_set(t_notation_obj *r_ob, t_notation_item *item, long flag) {
+    return (item->flags & flag) != 0;
+}
+
+char notationitem_flag_set(t_notation_obj *r_ob, t_notation_item *item, long flag) {
+    if ((item->flags & flag) == 0) {
+        item->flags |= flag;
+        return 1;
+    }
+    return 0;
+}
+
+char notationitem_flag_unset(t_notation_obj *r_ob, t_notation_item *item, long flag) {
+    if ((item->flags & flag) != 0) {
+        item->flags &= ~flag;
+        return 1;
+    }
+    return 0;
+}
+
+char notationitem_flag_set_or_unset(t_notation_obj *r_ob, t_notation_item *item, long flag, bool condition) {
+    if (condition) {
+        return notationitem_flag_set(r_ob, item, flag);
+    } else {
+        return notationitem_flag_unset(r_ob, item, flag);
+    }
+}
+
+
+char unmute_marker(t_notation_obj *r_ob, t_marker *marker){
+    char res = 0;
+    
+    if ((marker->r_it.flags & k_FLAG_MUTED) != 0){
+        res = 1;
+        undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)marker, k_MARKER, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
+    }
+    marker->r_it.flags &= ~k_FLAG_MUTED;
+    
+    return res;
+}
+
+char mute_unmute_marker(t_notation_obj *r_ob, t_marker *marker){
+    if (marker->r_it.flags & k_FLAG_MUTED)
+        unmute_marker(r_ob, marker);
+    else
+        mute_marker(r_ob, marker);
     return 1;
 }
 
@@ -14628,24 +14799,25 @@ char mute_chord(t_notation_obj *r_ob, t_chord *chord){
     t_note *note;
     char res = 0;
     
-    if (!chord->muted){
+    if (!notationitem_is_flag_set(r_ob, (t_notation_item *)chord, k_FLAG_MUTED)){
         res = 1;
         undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)chord, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
     }
     
     if (chord->is_score_chord && chord->r_sym_duration.r_num < 0) {
         undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)chord, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
-        chord->muted = false;
+        notationitem_flag_unset(r_ob, (t_notation_item *)chord, k_FLAG_MUTED);
         return res;
     }
     
-    chord->muted = true;
+    notationitem_flag_set(r_ob, (t_notation_item *)chord, k_FLAG_MUTED);
+
     for (note = chord->firstnote; note; note = note->next) {
-        if (!note->muted){
+        if (!notationitem_is_flag_set(r_ob, (t_notation_item *)note, k_FLAG_MUTED)){
             res = 1;
             undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)chord, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
         }
-        note->muted = true;
+        notationitem_flag_set(r_ob, (t_notation_item *)note, k_FLAG_MUTED);
     }
     return res;
 }
@@ -14654,31 +14826,32 @@ char unmute_chord(t_notation_obj *r_ob, t_chord *chord){
     t_note *note;
     char res = 0;
     
-    if (chord->muted){
+    if (notationitem_is_flag_set(r_ob, (t_notation_item *)chord, k_FLAG_MUTED)){
         res = 1;
         undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)chord, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
     }
-    chord->muted = false;
+    
+    notationitem_flag_unset(r_ob, (t_notation_item *)chord, k_FLAG_MUTED);
     
     for (note = chord->firstnote; note; note = note->next) {
-        if (note->muted) {
+        if (notationitem_is_flag_set(r_ob, (t_notation_item *)note, k_FLAG_MUTED)) {
             res = 1;
             undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)chord, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
         }
-        note->muted = false;
+        notationitem_flag_unset(r_ob, (t_notation_item *)note, k_FLAG_MUTED);
     }
     if (chord->is_score_chord) {
-        if (chord->parent->muted) {
+        if (notationitem_is_flag_set(r_ob, (t_notation_item *)chord->parent, k_FLAG_MUTED)) {
             res = 1;
             undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)chord->parent, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
         }
-        chord->parent->muted = false;
+        notationitem_flag_unset(r_ob, (t_notation_item *)chord->parent, k_FLAG_MUTED);
     }
     return res;
 }
 
 char mute_unmute_chord(t_notation_obj *r_ob, t_chord *chord){
-    if (chord->muted)
+    if (notationitem_is_flag_set(r_ob, (t_notation_item *)chord, k_FLAG_MUTED))
         unmute_chord(r_ob, chord);
     else
         mute_chord(r_ob, chord);
@@ -14688,10 +14861,12 @@ char mute_unmute_chord(t_notation_obj *r_ob, t_chord *chord){
 char is_all_selection_muted(t_notation_obj *r_ob){
     t_notation_item *curr_it;
     for (curr_it  = r_ob->firstselecteditem; curr_it; curr_it = curr_it->next_selected){
-        if ((curr_it->type == k_NOTE && !((t_note *)curr_it)->muted) ||
-            (curr_it->type == k_CHORD && !((t_chord *)curr_it)->muted) ||
-            (curr_it->type == k_MEASURE && !((t_measure *)curr_it)->muted) ||
-            (curr_it->type == k_VOICE && !((t_voice *)curr_it)->muted))
+        bool it_muted = notationitem_is_flag_set(r_ob, curr_it, k_FLAG_MUTED);
+        if ((curr_it->type == k_NOTE && !it_muted) ||
+            (curr_it->type == k_CHORD && !it_muted) ||
+            (curr_it->type == k_MEASURE && !it_muted) ||
+            (curr_it->type == k_VOICE && !it_muted) ||
+            (curr_it->type == k_MARKER && !it_muted))
             return false;
     }
     return true;
@@ -14700,10 +14875,12 @@ char is_all_selection_muted(t_notation_obj *r_ob){
 char is_all_selection_unmuted(t_notation_obj *r_ob){
     t_notation_item *curr_it;
     for (curr_it  = r_ob->firstselecteditem; curr_it; curr_it = curr_it->next_selected){
-        if ((curr_it->type == k_NOTE && ((t_note *)curr_it)->muted) ||
-            (curr_it->type == k_CHORD && ((t_chord *)curr_it)->muted) ||
-            (curr_it->type == k_MEASURE && ((t_measure *)curr_it)->muted) ||
-            (curr_it->type == k_VOICE && ((t_voice *)curr_it)->muted))
+        bool it_muted = notationitem_is_flag_set(r_ob, curr_it, k_FLAG_MUTED);
+        if ((curr_it->type == k_NOTE && it_muted) ||
+            (curr_it->type == k_CHORD && it_muted) ||
+            (curr_it->type == k_MEASURE && it_muted) ||
+            (curr_it->type == k_VOICE && it_muted) ||
+            (curr_it->type == k_MARKER && it_muted))
             return false;
     }
     return true;
@@ -14713,9 +14890,9 @@ char is_all_selection_unmuted(t_notation_obj *r_ob){
 char mute_measure(t_notation_obj *r_ob, t_measure *meas){
     t_chord *tmp;
     char res = 0;
-    if (meas && !meas->muted){
+    if (meas && !notationitem_is_flag_set(r_ob, (t_notation_item *)meas, k_FLAG_MUTED)){
         res = 1;
-        meas->muted = true;
+        notationitem_flag_set(r_ob, (t_notation_item *)meas, k_FLAG_MUTED);
         undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)meas, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
     }
     tmp = meas ? meas->firstchord : NULL;
@@ -14728,11 +14905,11 @@ char mute_measure(t_notation_obj *r_ob, t_measure *meas){
 
 char mute_voice(t_notation_obj *r_ob, t_voice *voice){
     char res = 0;
-    if (!voice->muted){
+    if (!notationitem_is_flag_set(r_ob, (t_notation_item *)voice, k_FLAG_MUTED)){
         res = 1;
         undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)voice, k_VOICE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
     }
-    voice->muted = true;
+    notationitem_flag_set(r_ob, (t_notation_item *)voice, k_FLAG_MUTED);
     return res;
 }
 
@@ -14780,6 +14957,10 @@ char mute_selection(t_notation_obj *r_ob, char whole_voiceensembles)
             } else {
                 res |= mute_voice(r_ob, (t_voice *)curr_it);
             }
+        } else if (curr_it->type == k_MARKER) {
+#ifdef BACH_MARKERS_HAVE_FLAGS
+            res |= mute_marker(r_ob, (t_marker *)curr_it);
+#endif
         }
         curr_it = curr_it->next_selected;
     }
@@ -14790,10 +14971,10 @@ char mute_selection(t_notation_obj *r_ob, char whole_voiceensembles)
 char unmute_measure(t_notation_obj *r_ob, t_measure *meas){
     t_chord *tmp;
     char res = 0;
-    if (meas && meas->muted) {
+    if (meas && notationitem_is_flag_set(r_ob, (t_notation_item *)meas, k_FLAG_MUTED)) {
         res = 1;
         undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)meas, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
-        meas->muted = false;
+        notationitem_flag_unset(r_ob, (t_notation_item *)meas, k_FLAG_MUTED);
     }
     tmp = meas ? meas->firstchord : NULL;
     while (tmp) {
@@ -14806,11 +14987,11 @@ char unmute_measure(t_notation_obj *r_ob, t_measure *meas){
 
 char unmute_voice(t_notation_obj *r_ob, t_voice *voice){
     char res = 0;
-    if (voice->muted){
+    if (notationitem_is_flag_set(r_ob, (t_notation_item *)voice, k_FLAG_MUTED)){
         res = 1;
         undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)voice, k_VOICE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
     }
-    voice->muted = false;
+    notationitem_flag_unset(r_ob, (t_notation_item *)voice, k_FLAG_MUTED);
     return res;
 }
 
@@ -14859,6 +15040,10 @@ char unmute_selection(t_notation_obj *r_ob, char whole_voiceensembles)
             } else {
                 res |= unmute_voice(r_ob, (t_voice *)curr_it);
             }
+        } else if (curr_it->type == k_MARKER) {
+#ifdef BACH_MARKERS_HAVE_FLAGS
+            res |= unmute_marker(r_ob, (t_marker *)curr_it);
+#endif
         }
         curr_it = curr_it->next_selected;
     }
@@ -14870,9 +15055,9 @@ void mute_unmute_measure(t_notation_obj *r_ob, t_measure *meas)
 {
     undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)meas, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
     if (meas) {
-        if (meas->muted) {
+        if (notationitem_is_flag_set(r_ob, (t_notation_item *)meas, k_FLAG_MUTED)) {
             t_chord *tmp;
-            meas->muted = false;
+            notationitem_flag_unset(r_ob, (t_notation_item *)meas, k_FLAG_MUTED);
             tmp = meas->firstchord;
             while (tmp) {
                 unmute_chord(r_ob, tmp);
@@ -14880,7 +15065,7 @@ void mute_unmute_measure(t_notation_obj *r_ob, t_measure *meas)
             }
         } else {
             t_chord *tmp;
-            meas->muted = true;
+            notationitem_flag_set(r_ob, (t_notation_item *)meas, k_FLAG_MUTED);
             tmp = meas->firstchord;
             while (tmp) {
                 mute_unmute_chord(r_ob, tmp);
@@ -14932,16 +15117,30 @@ char mute_unmute_selection(t_notation_obj *r_ob, char whole_voiceensembles)
                 for (temp = first; temp && temp->number < r_ob->num_voices; temp = voice_get_next(r_ob, temp)) {
                     res = 1;
                     undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)temp, k_VOICE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
-                    temp->muted = (temp->muted ? 0 : 1);
+                    if (notationitem_is_flag_set(r_ob, (t_notation_item *)temp, k_FLAG_MUTED)) {
+                        notationitem_flag_unset(r_ob, (t_notation_item *)temp, k_FLAG_MUTED);
+                    } else {
+                        notationitem_flag_set(r_ob, (t_notation_item *)temp, k_FLAG_MUTED);
+                    }
                     if (temp == last)
                         break;
                 }
             } else {
                 res = 1;
                 undo_tick_create_for_selected_notation_item(r_ob, curr_it, k_VOICE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
-                ((t_voice *)curr_it)->muted = (((t_voice *)curr_it)->muted ? 0 : 1);
+                if (notationitem_is_flag_set(r_ob, curr_it, k_FLAG_MUTED)) {
+                    notationitem_flag_unset(r_ob, curr_it, k_FLAG_MUTED);
+                } else {
+                    notationitem_flag_set(r_ob, curr_it, k_FLAG_MUTED);
+                }
             }
+        } else if (curr_it->type == k_MARKER) {
+#ifdef BACH_MARKERS_HAVE_FLAGS
+            res = 1;
+            mute_unmute_marker(r_ob, (t_marker *)curr_it);
+#endif
         }
+
         curr_it = curr_it->next_selected;
     }
     return res;
@@ -14950,29 +15149,29 @@ char mute_unmute_selection(t_notation_obj *r_ob, char whole_voiceensembles)
 char no_muted(t_notation_obj *r_ob){
     t_voice *voice;
     for (voice = (t_voice *) r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = (t_voice *) voice_get_next(r_ob, voice)){
-        voice->muted = false;
+        notationitem_flag_unset(r_ob, (t_notation_item *)voice, k_FLAG_MUTED);
         undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)voice, k_VOICE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
         if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL){
             t_chord *chord;
             for (chord = ((t_rollvoice *)voice)->firstchord; chord; chord = chord->next){
                 t_note *nt;
                 undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)chord, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
-                chord->muted = false;
+                notationitem_flag_unset(r_ob, (t_notation_item *)chord, k_FLAG_MUTED);
                 for (nt = chord->firstnote; nt; nt = nt->next)
-                    nt->muted = false;
+                    notationitem_flag_unset(r_ob, (t_notation_item *)nt, k_FLAG_MUTED);
             }
         } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
             t_measure *meas;
             for (meas = ((t_scorevoice *)voice)->firstmeasure; meas; meas = meas->next){
                 t_chord *chord;
                 undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)meas, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
-                meas->muted = false;
+                notationitem_flag_unset(r_ob, (t_notation_item *)meas, k_FLAG_MUTED);
                 for (chord = meas->firstchord; chord; chord = chord->next){
                     t_note *nt;
                     undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)chord, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
-                    chord->muted = false;
+                    notationitem_flag_unset(r_ob, (t_notation_item *)chord, k_FLAG_MUTED);
                     for (nt = chord->firstnote; nt; nt = nt->next)
-                        nt->muted = false;
+                        notationitem_flag_unset(r_ob, (t_notation_item *)nt, k_FLAG_MUTED);
                 }
             }
         }
@@ -14988,24 +15187,24 @@ char solo_note(t_notation_obj *r_ob, t_note *note){
     t_note *temp; 
     char all_notes_solo = true;
     
-    if (!note->solo){
+    if (!notationitem_is_flag_set(r_ob, (t_notation_item *)note, k_FLAG_SOLO)){
         res = 1;
         undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)note->parent, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
     }
-    note->solo = true;
+    notationitem_flag_set(r_ob, (t_notation_item *)note, k_FLAG_SOLO);
     
     // checking if all notes in the note's chord are solo
     for (temp = ch->firstnote; temp; temp = temp->next)
-        if (!temp->solo) {
+        if (!notationitem_is_flag_set(r_ob, (t_notation_item *)temp, k_FLAG_MUTED)) {
             all_notes_solo = false;
             break;
         }
     if (all_notes_solo) {
-        if (!ch->solo){
+        if (!notationitem_is_flag_set(r_ob, (t_notation_item *)ch, k_FLAG_MUTED)){
             res = 1;
             undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
         }
-        ch->solo = true;
+        notationitem_flag_set(r_ob, (t_notation_item *)ch, k_FLAG_SOLO);
     }
     r_ob->are_there_solos = are_there_solos(r_ob);
     
@@ -15015,27 +15214,28 @@ char solo_note(t_notation_obj *r_ob, t_note *note){
 char unsolo_note(t_notation_obj *r_ob, t_note *note){
     char res = 0;
     
-    if (note->solo || note->parent->solo) {
+    if (notationitem_is_flag_set(r_ob, (t_notation_item *)note, k_FLAG_SOLO) ||
+        notationitem_is_flag_set(r_ob, (t_notation_item *)note->parent, k_FLAG_SOLO)) {
         res = 1;
         undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)note->parent, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
     }
 
-    note->solo = false;
-    note->parent->solo = false;
+    notationitem_flag_unset(r_ob, (t_notation_item *)note, k_FLAG_SOLO);
+    notationitem_flag_unset(r_ob, (t_notation_item *)note->parent, k_FLAG_SOLO);
     
     if (note->parent->is_score_chord) {
-        if (note->parent->parent->solo) {
+        if (notationitem_is_flag_set(r_ob, (t_notation_item *)note->parent->parent, k_FLAG_SOLO)) {
             res = 1;
             undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)note->parent->parent, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
         }
-        note->parent->parent->solo = false;
+        notationitem_flag_unset(r_ob, (t_notation_item *)note->parent->parent, k_FLAG_SOLO);
     }
     r_ob->are_there_solos = are_there_solos(r_ob);
     return res;
 }
 
 char solo_unsolo_note(t_notation_obj *r_ob, t_note *note){
-    if (note->solo)
+    if (notationitem_is_flag_set(r_ob, (t_notation_item *)note, k_FLAG_SOLO))
         unsolo_note(r_ob, note);
     else
         solo_note(r_ob, note);
@@ -15043,28 +15243,66 @@ char solo_unsolo_note(t_notation_obj *r_ob, t_note *note){
     return 1;
 }
 
+char solo_marker(t_notation_obj *r_ob, t_marker *marker){
+    char res = 0;
+    
+    if (!notationitem_is_flag_set(r_ob, (t_notation_item *)marker, k_FLAG_SOLO)) {
+        res = 1;
+        undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)marker, k_MARKER, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
+    }
+    notationitem_flag_set(r_ob, (t_notation_item *)marker, k_FLAG_SOLO);
+
+    r_ob->are_there_solos = are_there_solos(r_ob);
+    
+    return res;
+}
+
+char unsolo_marker(t_notation_obj *r_ob, t_marker *marker){
+    char res = 0;
+    
+    if (notationitem_is_flag_set(r_ob, (t_notation_item *)marker, k_FLAG_SOLO)) {
+        res = 1;
+        undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)marker, k_MARKER, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
+    }
+    notationitem_flag_unset(r_ob, (t_notation_item *)marker, k_FLAG_SOLO);
+
+    r_ob->are_there_solos = are_there_solos(r_ob);
+    
+    return res;
+}
+
+
+char solo_unsolo_marker(t_notation_obj *r_ob, t_marker *marker){
+    if (notationitem_is_flag_set(r_ob, (t_notation_item *)marker, k_FLAG_SOLO))
+        unsolo_marker(r_ob, marker);
+    else
+        solo_marker(r_ob, marker);
+    return 1;
+}
+
 char solo_chord(t_notation_obj *r_ob, t_chord *chord){
     t_note *note;
     char res = 0;
-        
-    if (!chord->solo){
+      
+    if (!notationitem_is_flag_set(r_ob, (t_notation_item *)chord, k_FLAG_SOLO)){
         res = 1;
         undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)chord, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
     }
 
     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && chord->r_sym_duration.r_num < 0) {
         undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)chord, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
-        chord->solo = false;
+        notationitem_flag_unset(r_ob, (t_notation_item *)chord, k_FLAG_SOLO);
+        r_ob->are_there_solos = are_there_solos(r_ob);
         return res;
     }
 
-    chord->solo = true;
+    notationitem_flag_set(r_ob, (t_notation_item *)chord, k_FLAG_SOLO);
     for (note = chord->firstnote; note; note = note->next){
-        if (!note->solo){
+        if (!notationitem_is_flag_set(r_ob, (t_notation_item *)note, k_FLAG_SOLO)){
             res = 1;
             undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)chord, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
         }
-        note->solo = true;
+        notationitem_flag_set(r_ob, (t_notation_item *)note, k_FLAG_SOLO);
     }
     r_ob->are_there_solos = are_there_solos(r_ob);
     return res;
@@ -15074,47 +15312,48 @@ char unsolo_chord(t_notation_obj *r_ob, t_chord *chord){
     t_note *note;
     char res = 0;
 
-    if (chord->solo){
+    if (notationitem_is_flag_set(r_ob, (t_notation_item *)chord, k_FLAG_SOLO)){
         res = 1;
         undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)chord, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
     }
-    chord->solo = false;
+    notationitem_flag_unset(r_ob, (t_notation_item *)chord, k_FLAG_SOLO);
     
     for (note = chord->firstnote; note; note = note->next) {
-        if (note->solo){
+        if (notationitem_is_flag_set(r_ob, (t_notation_item *)note, k_FLAG_SOLO)){
             res = 1;
             undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)chord, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
         }
-        note->solo = false;
+        notationitem_flag_unset(r_ob, (t_notation_item *)note, k_FLAG_SOLO);
     }
     
     if (chord->is_score_chord) {
-        if (chord->parent->solo){
+        if (notationitem_is_flag_set(r_ob, (t_notation_item *)chord->parent, k_FLAG_SOLO)){
             res = 1;
             undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)chord->parent, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
         }
-        chord->parent->solo = false;
+        notationitem_flag_unset(r_ob, (t_notation_item *)chord->parent, k_FLAG_SOLO);
     }
     r_ob->are_there_solos = are_there_solos(r_ob);
     return res;
 }
 
 char solo_unsolo_chord(t_notation_obj *r_ob, t_chord *chord){
-    if (chord->solo)
+    if (notationitem_is_flag_set(r_ob, (t_notation_item *)chord, k_FLAG_SOLO))
         unsolo_chord(r_ob, chord);
     else
         solo_chord(r_ob, chord);
-    r_ob->are_there_solos = are_there_solos(r_ob);
     return 1;
 }
 
 char is_all_selection_solo(t_notation_obj *r_ob){
     t_notation_item *curr_it;
     for (curr_it  = r_ob->firstselecteditem; curr_it; curr_it = curr_it->next_selected){
-        if ((curr_it->type == k_NOTE && !((t_note *)curr_it)->solo) ||
-            (curr_it->type == k_CHORD && !((t_chord *)curr_it)->solo) ||
-            (curr_it->type == k_MEASURE && !((t_measure *)curr_it)->solo) ||
-            (curr_it->type == k_VOICE && !((t_voice *)curr_it)->solo))
+        bool it_solo = notationitem_is_flag_set(r_ob, curr_it, k_FLAG_SOLO);
+        if ((curr_it->type == k_NOTE && !it_solo) ||
+            (curr_it->type == k_CHORD && !it_solo) ||
+            (curr_it->type == k_MEASURE && !it_solo) ||
+            (curr_it->type == k_VOICE && !it_solo) ||
+            (curr_it->type == k_MARKER && !it_solo))
             return false;
     }
     return true;
@@ -15123,10 +15362,12 @@ char is_all_selection_solo(t_notation_obj *r_ob){
 char is_all_selection_unsolo(t_notation_obj *r_ob){
     t_notation_item *curr_it;
     for (curr_it  = r_ob->firstselecteditem; curr_it; curr_it = curr_it->next_selected){
-        if ((curr_it->type == k_NOTE && ((t_note *)curr_it)->solo) ||
-            (curr_it->type == k_CHORD && ((t_chord *)curr_it)->solo) ||
-            (curr_it->type == k_MEASURE && ((t_measure *)curr_it)->solo) ||
-            (curr_it->type == k_VOICE && ((t_voice *)curr_it)->solo))
+        bool it_solo = notationitem_is_flag_set(r_ob, curr_it, k_FLAG_SOLO);
+        if ((curr_it->type == k_NOTE && it_solo) ||
+            (curr_it->type == k_CHORD && it_solo) ||
+            (curr_it->type == k_MEASURE && it_solo) ||
+            (curr_it->type == k_VOICE && it_solo) ||
+            (curr_it->type == k_MARKER && it_solo))
             return false;
     }
     return true;
@@ -15136,9 +15377,9 @@ char is_all_selection_unsolo(t_notation_obj *r_ob){
 char solo_measure(t_notation_obj *r_ob, t_measure *meas){
     t_chord *tmp;
     char res = 0;
-    if (meas && !meas->solo) {
+    if (meas && !notationitem_is_flag_set(r_ob, (t_notation_item *)meas, k_FLAG_SOLO)) {
         undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)meas, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
-        meas->solo = true;
+        notationitem_flag_set(r_ob, (t_notation_item *)meas, k_FLAG_SOLO);
     }
     tmp = meas ? meas->firstchord : NULL;
     while (tmp) {
@@ -15151,11 +15392,11 @@ char solo_measure(t_notation_obj *r_ob, t_measure *meas){
 
 char solo_voice(t_notation_obj *r_ob, t_voice *voice){
     char res = 0;
-    if (!voice->solo){
+    if (!notationitem_is_flag_set(r_ob, (t_notation_item *)voice, k_FLAG_SOLO)){
         res = 1;
         undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)voice, k_VOICE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
     }
-    voice->solo = true;
+    notationitem_flag_set(r_ob, (t_notation_item *)voice, k_FLAG_SOLO);
     return res;
 }
 
@@ -15213,8 +15454,8 @@ char solo_selection(t_notation_obj *r_ob, char whole_voiceensembles)
 char unsolo_measure(t_notation_obj *r_ob, t_measure *meas){
     t_chord *tmp;
     char res = 0;
-    if (meas && meas->solo){
-        meas->solo = false;
+    if (meas && notationitem_is_flag_set(r_ob, (t_notation_item *)meas, k_FLAG_SOLO)){
+        notationitem_flag_unset(r_ob, (t_notation_item *)meas, k_FLAG_SOLO);
         undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)meas, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
     }
     tmp = meas ? meas->firstchord : NULL;
@@ -15228,11 +15469,11 @@ char unsolo_measure(t_notation_obj *r_ob, t_measure *meas){
 
 char unsolo_voice(t_notation_obj *r_ob, t_voice *voice){
     char res = 0;
-    if (voice->solo) {
+    if (notationitem_is_flag_set(r_ob, (t_notation_item *)voice, k_FLAG_SOLO)) {
         res = 1;
         undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)voice, k_VOICE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
     }
-    voice->solo = false;
+    notationitem_flag_unset(r_ob, (t_notation_item *)voice, k_FLAG_SOLO);
     return res;
 }
 
@@ -15292,9 +15533,9 @@ void solo_unsolo_measure(t_notation_obj *r_ob, t_measure *meas)
 {
     undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)meas, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
     if (meas) {
-        if (meas->solo) {
+        if (notationitem_is_flag_set(r_ob, (t_notation_item *)meas, k_FLAG_SOLO)) {
             t_chord *tmp;
-            meas->solo = false;
+            notationitem_flag_unset(r_ob, (t_notation_item *)meas, k_FLAG_SOLO);
             tmp = meas->firstchord;
             while (tmp) {
                 unsolo_chord(r_ob, tmp);
@@ -15302,7 +15543,7 @@ void solo_unsolo_measure(t_notation_obj *r_ob, t_measure *meas)
             }
         } else {
             t_chord *tmp;
-            meas->solo = true;
+            notationitem_flag_set(r_ob, (t_notation_item *)meas, k_FLAG_SOLO);
             tmp = meas->firstchord;
             while (tmp) {
                 solo_unsolo_chord(r_ob, tmp);
@@ -15354,15 +15595,28 @@ char solo_unsolo_selection(t_notation_obj *r_ob, char whole_voiceensembles)
                 for (temp = first; temp && temp->number < r_ob->num_voices; temp = voice_get_next(r_ob, temp)) {
                     res = 1;
                     undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)temp, k_VOICE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
-                    temp->solo = (temp->solo ? 0 : 1);
+                    if (notationitem_is_flag_set(r_ob, (t_notation_item *)temp, k_FLAG_SOLO)) {
+                        notationitem_flag_unset(r_ob, (t_notation_item *)temp, k_FLAG_SOLO);
+                    } else {
+                        notationitem_flag_set(r_ob, (t_notation_item *)temp, k_FLAG_SOLO);
+                    }
                     if (temp == last)
                         break;
                 }
             } else {
                 res = 1;
                 undo_tick_create_for_selected_notation_item(r_ob, curr_it, k_VOICE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
-                ((t_voice *)curr_it)->solo = (((t_voice *)curr_it)->solo ? 0 : 1);
+                if (notationitem_is_flag_set(r_ob, curr_it, k_FLAG_SOLO)) {
+                    notationitem_flag_unset(r_ob, curr_it, k_FLAG_SOLO);
+                } else {
+                    notationitem_flag_set(r_ob, curr_it, k_FLAG_SOLO);
+                }
             }
+        } else if (curr_it->type == k_MARKER) {
+#ifdef BACH_MARKERS_HAVE_FLAGS
+            res = 1;
+            solo_unsolo_marker(r_ob, (t_marker *)curr_it);
+#endif
         }
         curr_it = curr_it->next_selected;
     }
@@ -15375,28 +15629,28 @@ char no_solo(t_notation_obj *r_ob){
     t_voice *voice;
     for (voice = (t_voice *) r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = (t_voice *) voice_get_next(r_ob, voice)){
         undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)voice, k_VOICE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
-        voice->solo = false;
+        notationitem_flag_unset(r_ob, (t_notation_item *)voice, k_FLAG_SOLO);
         if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL){
             t_chord *chord;
             for (chord = ((t_rollvoice *)voice)->firstchord; chord; chord = chord->next){
                 t_note *nt;
                 undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)chord, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
-                chord->solo = false;
+                notationitem_flag_unset(r_ob, (t_notation_item *)chord, k_FLAG_SOLO);
                 for (nt = chord->firstnote; nt; nt = nt->next)
-                    nt->solo = false;
+                    notationitem_flag_unset(r_ob, (t_notation_item *)nt, k_FLAG_SOLO);
             }
         } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
             t_measure *meas;
             for (meas = ((t_scorevoice *)voice)->firstmeasure; meas; meas = meas->next){
                 t_chord *chord;
                 undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)meas, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
-                meas->solo = false;
+                notationitem_flag_unset(r_ob, (t_notation_item *)meas, k_FLAG_SOLO);
                 for (chord = meas->firstchord; chord; chord = chord->next){
                     t_note *nt;
                     undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)chord, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
-                    chord->solo = false;
+                    notationitem_flag_unset(r_ob, (t_notation_item *)chord, k_FLAG_SOLO);
                     for (nt = chord->firstnote; nt; nt = nt->next)
-                        nt->solo = false;
+                        notationitem_flag_unset(r_ob, (t_notation_item *)nt, k_FLAG_SOLO);
                 }
             }
         }
@@ -15415,8 +15669,8 @@ void check_mute_solo_flags_for_rests(t_notation_obj *r_ob){
                 t_chord *chord;
                 for (chord = meas->firstchord; chord; chord = chord->next){
                     if (chord->r_sym_duration.r_num < 0){
-                        chord->solo = false;
-                        chord->muted = false;
+                        notationitem_flag_unset(r_ob, (t_notation_item *)chord, k_FLAG_SOLO);
+                        notationitem_flag_unset(r_ob, (t_notation_item *)chord, k_FLAG_MUTED);
                     }
                 }
             }
@@ -15448,30 +15702,30 @@ char are_there_repeats(t_notation_obj *r_ob, bool zero_out_counts)
 char are_there_solos(t_notation_obj *r_ob){
     t_voice *voice;
     for (voice = (t_voice *) r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = (t_voice *) voice_get_next(r_ob, voice)){
-        if (voice->solo) 
+        if (notationitem_is_flag_set(r_ob, (t_notation_item *)voice, k_FLAG_SOLO))
             return true;
         if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL){
             t_chord *chord;
             for (chord = ((t_rollvoice *)voice)->firstchord; chord; chord = chord->next){
                 t_note *nt;
-                if (chord->solo) 
+                if (notationitem_is_flag_set(r_ob, (t_notation_item *)chord, k_FLAG_SOLO))
                     return true;
                 for (nt = chord->firstnote; nt; nt = nt->next)
-                    if (nt->solo) 
+                    if (notationitem_is_flag_set(r_ob, (t_notation_item *)nt, k_FLAG_SOLO))
                         return true;
             }
         } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
             t_measure *meas;
             for (meas = ((t_scorevoice *)voice)->firstmeasure; meas; meas = meas->next){
                 t_chord *chord;
-                if (meas->solo) 
+                if (notationitem_is_flag_set(r_ob, (t_notation_item *)meas, k_FLAG_SOLO))
                     return true;
                 for (chord = meas->firstchord; chord; chord = chord->next){
                     t_note *nt;
-                    if (chord->solo) 
+                    if (notationitem_is_flag_set(r_ob, (t_notation_item *)chord, k_FLAG_SOLO))
                         return true;
                     for (nt = chord->firstnote; nt; nt = nt->next)
-                        if (nt->solo) 
+                        if (notationitem_is_flag_set(r_ob, (t_notation_item *)nt, k_FLAG_SOLO))
                             return true;
                 }
             }
@@ -15984,16 +16238,16 @@ t_symbol *notationitemflag2symbol(long flag)
 {
     char buf[32];
     long cur = 0;
-    if (flag & k_FLAG_ELEMENT_LOCKED)
+    if (flag & k_FLAG_LOCKED)
         buf[cur++] = 'l';
-    if (flag & k_FLAG_ELEMENT_MUTED)
+    if (flag & k_FLAG_MUTED)
         buf[cur++] = 'm';
-    if (flag & k_FLAG_ELEMENT_SOLO)
+    if (flag & k_FLAG_SOLO)
         buf[cur++] = 's';
-    if (flag & k_FLAG_ELEMENT_BEAMING_TREE_LOCKED)
+    if (flag & k_FLAG_RHYTHMICTREELOCKED)
         buf[cur++] = 'b';
 #ifdef BACH_NOTATIONITEM_FLAG_HAS_SELECTION
-    if (flag & k_FLAG_ELEMENT_SELECTED)
+    if (flag & k_FLAG_SELECTED)
         buf[cur++] = 'x';
 #endif
     
@@ -16013,24 +16267,24 @@ long symbol2notationitemflag(t_symbol *sym)
     while (cur && *cur) {
         switch (*cur) {
             case 'l':
-                res += k_FLAG_ELEMENT_LOCKED;
+                res += k_FLAG_LOCKED;
                 break;
                 
             case 'm':
-                res += k_FLAG_ELEMENT_MUTED;
+                res += k_FLAG_MUTED;
                 break;
                 
             case 's':
-                res += k_FLAG_ELEMENT_SOLO;
+                res += k_FLAG_SOLO;
                 break;
                 
             case 'b':
-                res += k_FLAG_ELEMENT_BEAMING_TREE_LOCKED;
+                res += k_FLAG_RHYTHMICTREELOCKED;
                 break;
 
 #ifdef BACH_NOTATIONITEM_FLAG_HAS_SELECTION
             case 'x':
-                res += k_FLAG_ELEMENT_SELECTED;
+                res += k_FLAG_SELECTED;
                 break;
 #endif
                 
@@ -17745,9 +17999,10 @@ t_chord *get_tuplet_end_chord(t_chord *generic_chord_inside_the_tuplet){
 }
 
 char is_level_locked(t_measure *measure, t_llll *level){
-    char res = (measure->lock_rhythmic_tree && (!level->l_thing.w_obj || 
-                            (!(((t_rhythm_level_properties *)level->l_thing.w_obj)->level_type & k_RHYTHM_LEVEL_IGNORE) && 
-                             !(((t_rhythm_level_properties *)level->l_thing.w_obj)->level_type & k_RHYTHM_LEVEL_KEEP))));
+    char res = (notationitem_is_flag_set(NULL, (t_notation_item *)measure, k_FLAG_RHYTHMICTREELOCKED) &&
+                (!level->l_thing.w_obj ||
+                 (!(((t_rhythm_level_properties *)level->l_thing.w_obj)->level_type & k_RHYTHM_LEVEL_IGNORE) &&
+                  !(((t_rhythm_level_properties *)level->l_thing.w_obj)->level_type & k_RHYTHM_LEVEL_KEEP))));
     return res;
 }
 
@@ -20620,7 +20875,8 @@ void process_rhythmic_tree(t_notation_obj *r_ob, t_measure *measure, long beamin
 
     llll_check(measure->rhythmic_tree);
     
-    if (!measure->lock_rhythmic_tree && (!r_ob->allow_beaming || r_ob->tree_handling == k_RHYTHMIC_TREE_HANDLING_IGNORE)
+    if (!notationitem_is_flag_set(r_ob, (t_notation_item *)measure, k_FLAG_RHYTHMICTREELOCKED) &&
+        (!r_ob->allow_beaming || r_ob->tree_handling == k_RHYTHMIC_TREE_HANDLING_IGNORE)
         && !(beaming_calculation_flags & k_BEAMING_CALCULATION_DONT_CHANGE_LEVELS)) { // ignoring any beam? Starting from scratch!
         flat_preserving_leveltypes(measure->rhythmic_tree, 0, 0, k_RHYTHM_LEVEL_GRACE, LLLL_FREETHING_MEM, r_ob);
         all_flattened = true;
@@ -20672,7 +20928,7 @@ void process_rhythmic_tree(t_notation_obj *r_ob, t_measure *measure, long beamin
         llll_check(measure->rhythmic_tree);
 
         if (((t_rhythm_level_properties *) measure->rhythmic_tree->l_thing.w_obj)->level_type == k_RHYTHM_LEVEL_IGNORE ||
-            (!measure->lock_rhythmic_tree && (r_ob->make_tree_compatible_with_ts || r_ob->tree_handling == k_RHYTHMIC_TREE_HANDLING_IGNORE)))
+            (!notationitem_is_flag_set(r_ob, (t_notation_item *)measure, k_FLAG_RHYTHMICTREELOCKED) && (r_ob->make_tree_compatible_with_ts || r_ob->tree_handling == k_RHYTHMIC_TREE_HANDLING_IGNORE)))
             split_first_level_according_to_boxes(r_ob, measure, boxes, false, (beaming_calculation_flags & k_BEAMING_CALCULATION_DONT_CHANGE_CHORDS) > 0);
         else if (there_is_a_ignore_level_at_first_level(measure->rhythmic_tree))
             split_first_level_according_to_boxes(r_ob, measure, boxes, true, (beaming_calculation_flags & k_BEAMING_CALCULATION_DONT_CHANGE_CHORDS) > 0);
@@ -27283,7 +27539,7 @@ long remove_leaf_reference_from_chord(void *data, t_hatom *a, const t_llll *addr
 }
 
 void free_rhythmic_tree(t_notation_obj *r_ob, t_measure *measure){
-    measure->lock_rhythmic_tree = false; // we unlock the beaming tree, in any case
+    notationitem_flag_unset(r_ob, (t_notation_item *)measure, k_FLAG_RHYTHMICTREELOCKED);
     if (!measure->rhythmic_tree)
         return;
     llll_funall(measure->rhythmic_tree, remove_leaf_reference_from_chord, NULL, 1, -1, 0);
@@ -28146,6 +28402,16 @@ void notation_item_clone(t_notation_obj *r_ob, t_notation_item *new_it, t_notati
         fam->need_update_contour = true;
     }
     
+    // cloning SOME of the flags
+    if ((old_it->flags & k_FLAG_SOLO) != 0)
+        new_it->flags |= k_FLAG_SOLO;
+    if ((old_it->flags & k_FLAG_LOCKED) != 0)
+        new_it->flags |= k_FLAG_LOCKED;
+    if ((old_it->flags & k_FLAG_MUTED) != 0)
+        new_it->flags |= k_FLAG_MUTED;
+    if ((old_it->flags & k_FLAG_RHYTHMICTREELOCKED) != 0)
+        new_it->flags |= k_FLAG_RHYTHMICTREELOCKED;
+
 //    verbose_post_label_families(r_ob);
 }
 
@@ -29094,31 +29360,22 @@ char notation_item_set_flags_from_llllelem(t_notation_obj *r_ob, t_llllelem *ele
 {
     if (elem && (hatom_gettype(&elem->l_hatom) == H_LONG || hatom_gettype(&elem->l_hatom) == H_SYM)) {
         long flags = hatom_gettype(&elem->l_hatom) == H_LONG ? hatom_getlong(&elem->l_hatom) : symbol2notationitemflag(hatom_getsym(&elem->l_hatom));
-        char locked = (flags & k_FLAG_ELEMENT_LOCKED) ? 1 : 0;
-        char muted = (flags & k_FLAG_ELEMENT_MUTED) ? 1 : 0;
-        char solo = (flags & k_FLAG_ELEMENT_SOLO) ? 1 : 0;
-        char tree_locked = (flags & k_FLAG_ELEMENT_BEAMING_TREE_LOCKED) ? 1 : 0;
+        char locked = (flags & k_FLAG_LOCKED) ? 1 : 0;
+        char muted = (flags & k_FLAG_MUTED) ? 1 : 0;
+        char solo = (flags & k_FLAG_SOLO) ? 1 : 0;
+        char tree_locked = (flags & k_FLAG_RHYTHMICTREELOCKED) ? 1 : 0;
 #ifdef BACH_NOTATIONITEM_FLAG_HAS_SELECTION
-        char selected = (flags & k_FLAG_ELEMENT_SELECTED) ? 1 : 0;
+        char selected = (flags & k_FLAG_SELECTED) ? 1 : 0;
 #endif
+
+        notationitem_flag_set_or_unset(r_ob, item, k_FLAG_LOCKED, locked);
+        notationitem_flag_set_or_unset(r_ob, item, k_FLAG_MUTED, muted);
+        notationitem_flag_set_or_unset(r_ob, item, k_FLAG_SOLO, solo);
+
         if (item->type == k_MEASURE) {
-            ((t_measure *) item)->locked = locked;
-            ((t_measure *) item)->muted = muted;
-            ((t_measure *) item)->solo = solo;
-            ((t_measure *) item)->lock_rhythmic_tree = tree_locked;
-        } else if (item->type == k_CHORD) {
-            ((t_chord *) item)->locked = locked;
-            ((t_chord *) item)->muted = muted;
-            ((t_chord *) item)->solo = solo;
-        } else if (item->type == k_NOTE) {
-            ((t_note *) item)->locked = locked;
-            ((t_note *) item)->muted = muted;
-            ((t_note *) item)->solo = solo;
-        } else if (item->type == k_VOICE) {
-            ((t_voice *) item)->locked = locked;
-            ((t_voice *) item)->muted = muted;
-            ((t_voice *) item)->solo = solo;
+            notationitem_flag_set_or_unset(r_ob, item, k_FLAG_RHYTHMICTREELOCKED, tree_locked);
         }
+        
         if (destroy_flag_llllelem)
             llll_destroyelem(elem);
 #ifdef BACH_NOTATIONITEM_FLAG_HAS_SELECTION
@@ -29132,24 +29389,11 @@ char notation_item_set_flags_from_llllelem(t_notation_obj *r_ob, t_llllelem *ele
 #endif
         return 1;
     } else {
-        if (item->type == k_MEASURE){
-            ((t_measure *) item)->locked = false;
-            ((t_measure *) item)->muted = false;
-            ((t_measure *) item)->solo = false;
-            ((t_measure *) item)->lock_rhythmic_tree = false;
-        } else if (item->type == k_CHORD){
-            ((t_chord *) item)->locked = false;
-            ((t_chord *) item)->muted = false;
-            ((t_chord *) item)->solo = false;
-        } else if (item->type == k_NOTE){
-            ((t_note *) item)->locked = false;
-            ((t_note *) item)->muted = false;
-            ((t_note *) item)->solo = false;
-        } else if (item->type == k_VOICE){
-            ((t_voice *) item)->locked = false;
-            ((t_voice *) item)->muted = false;
-            ((t_voice *) item)->solo = false;
-        }
+        notationitem_flag_unset(r_ob, item, k_FLAG_LOCKED);
+        notationitem_flag_unset(r_ob, item, k_FLAG_MUTED);
+        notationitem_flag_unset(r_ob, item, k_FLAG_SOLO);
+        notationitem_flag_unset(r_ob, item, k_FLAG_RHYTHMICTREELOCKED);
+
         return 0;
     }
 }
@@ -31638,14 +31882,14 @@ void select_single_notation_item_and_force_inscreen(t_notation_obj *r_ob, t_nota
 }
 
 long get_element_global_flag(t_notation_obj *r_ob, t_notation_item *item){
-    long val = k_FLAG_ELEMENT_LOCKED * notation_item_is_globally_locked(r_ob, item) + k_FLAG_ELEMENT_MUTED * notation_item_is_globally_muted(r_ob, item) + k_FLAG_ELEMENT_SOLO * notation_item_is_globally_solo(r_ob, item);
+    long val = k_FLAG_LOCKED * notation_item_is_globally_locked(r_ob, item) + k_FLAG_MUTED * notation_item_is_globally_muted(r_ob, item) + k_FLAG_SOLO * notation_item_is_globally_solo(r_ob, item);
 
 #ifdef BACH_NOTATIONITEM_FLAG_HAS_SELECTION
-    val += k_FLAG_ELEMENT_SELECTED * notation_item_is_globally_selected(r_ob, item);
+    val += k_FLAG_SELECTED * notation_item_is_globally_selected(r_ob, item);
 #endif
     
     if (item->type == k_MEASURE)
-        val += k_FLAG_ELEMENT_BEAMING_TREE_LOCKED * ((t_measure *) item)->lock_rhythmic_tree;
+        val += k_FLAG_RHYTHMICTREELOCKED * notationitem_is_flag_set(r_ob, item, k_FLAG_RHYTHMICTREELOCKED);
     
     return val;
 }
@@ -31653,17 +31897,16 @@ long get_element_global_flag(t_notation_obj *r_ob, t_notation_item *item){
 long get_element_flag(t_notation_obj *r_ob, t_notation_item *item)
 {
     long val = 0;
-    if (item->type == k_CHORD)
-        val = k_FLAG_ELEMENT_LOCKED * ((t_chord *) item)->locked + k_FLAG_ELEMENT_MUTED * ((t_chord *) item)->muted + k_FLAG_ELEMENT_SOLO * ((t_chord *) item)->solo;
-    else if (item->type == k_NOTE)
-        val = k_FLAG_ELEMENT_LOCKED * ((t_note *) item)->locked + k_FLAG_ELEMENT_MUTED * ((t_note *) item)->muted + k_FLAG_ELEMENT_SOLO * ((t_note *) item)->solo;
-    else if (item->type == k_MEASURE)
-        val = k_FLAG_ELEMENT_LOCKED * ((t_measure *) item)->locked + k_FLAG_ELEMENT_MUTED * ((t_measure *) item)->muted + k_FLAG_ELEMENT_SOLO * ((t_measure *) item)->solo + k_FLAG_ELEMENT_BEAMING_TREE_LOCKED * ((t_measure *) item)->lock_rhythmic_tree;
-    else if (item->type == k_VOICE)
-        val = k_FLAG_ELEMENT_LOCKED * ((t_voice *) item)->locked + k_FLAG_ELEMENT_MUTED * ((t_voice *) item)->muted + k_FLAG_ELEMENT_SOLO * ((t_voice *) item)->solo;
+    long locked = notationitem_is_flag_set(r_ob, item, k_FLAG_LOCKED);
+    long muted = notationitem_is_flag_set(r_ob, item, k_FLAG_MUTED);
+    long solo = notationitem_is_flag_set(r_ob, item, k_FLAG_SOLO);
+    long beamingtreelocked = notationitem_is_flag_set(r_ob, item, k_FLAG_RHYTHMICTREELOCKED);
+
+    val = k_FLAG_LOCKED * locked + k_FLAG_MUTED * muted + k_FLAG_SOLO * solo + k_FLAG_RHYTHMICTREELOCKED * beamingtreelocked;
+
 #ifdef BACH_NOTATIONITEM_FLAG_HAS_SELECTION
     if (item->selected)
-        val += k_FLAG_ELEMENT_SELECTED;
+        val += k_FLAG_SELECTED;
 #endif
     return val;
 }
@@ -35494,9 +35737,6 @@ void initialize_voice_by_default(t_notation_obj *r_ob, t_voice *v_ob, long numbe
     for (i = 0; i < 7; i++)
         v_ob->acc_pattern[i] = long2rat(0);
     fill_default_full_repr(r_ob, v_ob->full_repr, 0, k_MODE_MAJOR, NULL);
-    v_ob->solo = false;
-    v_ob->muted = false;
-    v_ob->locked = false;
     
     v_ob->are_staff_lines_standard = true;
     v_ob->num_staff_lines = 5;
@@ -36779,14 +37019,16 @@ char move_selected_ms_attached_markers(t_notation_obj *r_ob, double marker_withm
     // has already hit the barrier, nothing should happen
     for (curr_it = r_ob->firstselecteditem; curr_it; curr_it = curr_it->next_selected) {
         if (curr_it->type == k_MARKER && ((t_marker *)curr_it)->attach_to == k_MARKER_ATTACH_TO_MS) {
-            double ux = marker_withmousedown_ux + ((t_marker *)curr_it)->ux_difference_with_mousedown_marker;
-            double ms = unscaled_xposition_to_ms(r_ob, ux, 1);
-            if (ms <= 0) {
-                if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-                    double new_ux = ms_to_unscaled_xposition(r_ob, 0, 1);
-                    marker_withmousedown_ux = new_ux - ((t_marker *)curr_it)->ux_difference_with_mousedown_marker;
-                } else {
-                    marker_withmousedown_ux += deltaxpixels_to_deltauxpixels(r_ob, deltaonset_to_deltaxpixels(r_ob, -ms));
+            if (!notation_item_is_globally_locked(r_ob, curr_it)) {
+                double ux = marker_withmousedown_ux + ((t_marker *)curr_it)->ux_difference_with_mousedown_marker;
+                double ms = unscaled_xposition_to_ms(r_ob, ux, 1);
+                if (ms <= 0) {
+                    if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
+                        double new_ux = ms_to_unscaled_xposition(r_ob, 0, 1);
+                        marker_withmousedown_ux = new_ux - ((t_marker *)curr_it)->ux_difference_with_mousedown_marker;
+                    } else {
+                        marker_withmousedown_ux += deltaxpixels_to_deltauxpixels(r_ob, deltaonset_to_deltaxpixels(r_ob, -ms));
+                    }
                 }
             }
         }
@@ -36795,15 +37037,17 @@ char move_selected_ms_attached_markers(t_notation_obj *r_ob, double marker_withm
     
     for (curr_it = r_ob->firstselecteditem; curr_it; curr_it = curr_it->next_selected) {
         if (curr_it->type == k_MARKER && ((t_marker *)curr_it)->attach_to == k_MARKER_ATTACH_TO_MS) {
-            double ux = marker_withmousedown_ux + ((t_marker *)curr_it)->ux_difference_with_mousedown_marker;
-            if (magnetic)
-                ux = unscaled_xposition_snap_to_nearest_chord(r_ob, ux, true, true);
-            changed = true;
-            double new_position_ms = MAX(0, unscaled_xposition_to_ms(r_ob, ux, 1));
-            if (delta_ms && ((t_marker *)curr_it)->ux_difference_with_mousedown_marker == 0)
-                *delta_ms = new_position_ms - ((t_marker *)curr_it)->position_ms;
-            undo_tick_create_for_notation_item(r_ob, curr_it, k_UNDO_MODIFICATION_TYPE_CHANGE_CHECK_ORDER, _llllobj_sym_state);
-            ((t_marker *)curr_it)->position_ms = new_position_ms;
+            if (!notation_item_is_globally_locked(r_ob, curr_it)) {
+                double ux = marker_withmousedown_ux + ((t_marker *)curr_it)->ux_difference_with_mousedown_marker;
+                if (magnetic)
+                    ux = unscaled_xposition_snap_to_nearest_chord(r_ob, ux, true, true);
+                changed = true;
+                double new_position_ms = MAX(0, unscaled_xposition_to_ms(r_ob, ux, 1));
+                if (delta_ms && ((t_marker *)curr_it)->ux_difference_with_mousedown_marker == 0)
+                    *delta_ms = new_position_ms - ((t_marker *)curr_it)->position_ms;
+                undo_tick_create_for_notation_item(r_ob, curr_it, k_UNDO_MODIFICATION_TYPE_CHANGE_CHECK_ORDER, _llllobj_sym_state);
+                ((t_marker *)curr_it)->position_ms = new_position_ms;
+            }
         }
     }
     
@@ -36824,19 +37068,23 @@ char move_selected_ms_attached_markers_delta(t_notation_obj *r_ob, double delta_
     // has already hit the barrier, nothing should happen
     for (curr_it = r_ob->firstselecteditem; curr_it; curr_it = curr_it->next_selected) {
         if (curr_it->type == k_MARKER && ((t_marker *)curr_it)->attach_to == k_MARKER_ATTACH_TO_MS) {
-            double this_onset = notation_item_get_onset_ms(r_ob, curr_it);
-            if (this_onset + delta_ms < 0) 
-                delta_ms = -this_onset; // < we modify the delta onset, should an element be nearer the barrier than the required delta onset
+            if (!notation_item_is_globally_locked(r_ob, curr_it)) {
+                double this_onset = notation_item_get_onset_ms(r_ob, curr_it);
+                if (this_onset + delta_ms < 0)
+                    delta_ms = -this_onset; // < we modify the delta onset, should an element be nearer the barrier than the required delta onset
+            }
         }
     }
     
     for (curr_it = r_ob->firstselecteditem; curr_it; curr_it = curr_it->next_selected) {
         if (curr_it->type == k_MARKER && ((t_marker *)curr_it)->attach_to == k_MARKER_ATTACH_TO_MS) { // it is a marker : let's move it
-            if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && ((t_marker *)curr_it)->position_ms + delta_ms > r_ob->length_ms)
-                delta_ms = r_ob->length_ms - ((t_marker *)curr_it)->position_ms;
-            undo_tick_create_for_notation_item(r_ob, curr_it, k_UNDO_MODIFICATION_TYPE_CHANGE_CHECK_ORDER, _llllobj_sym_state);
-            change_marker_ms(r_ob, (t_marker *) curr_it, delta_ms, true, false);
-            changed = 1;
+            if (!notation_item_is_globally_locked(r_ob, curr_it)) {
+                if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && ((t_marker *)curr_it)->position_ms + delta_ms > r_ob->length_ms)
+                    delta_ms = r_ob->length_ms - ((t_marker *)curr_it)->position_ms;
+                undo_tick_create_for_notation_item(r_ob, curr_it, k_UNDO_MODIFICATION_TYPE_CHANGE_CHECK_ORDER, _llllobj_sym_state);
+                change_marker_ms(r_ob, (t_marker *) curr_it, delta_ms, true, false);
+                changed = 1;
+            }
         }
     }
     

@@ -1182,11 +1182,11 @@ void score_sel_deletemeasurecontent(t_score *x, t_symbol *s, long argc, t_atom *
                 t_chord *ch = meas->firstchord;
                 undo_tick_create_for_selected_notation_item((t_notation_obj *) x, (t_notation_item *)meas, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                 while (ch){
-                    if (!ch->locked){
+                    if (!notationitem_is_flag_set((t_notation_obj *)x, (t_notation_item *)ch, k_FLAG_LOCKED)){
                         t_note *nt = ch->firstnote; t_note *nt2;
                         while (nt){
                             nt2 = nt->next;
-                            if (!nt->locked) {
+                            if (!notationitem_is_flag_set((t_notation_obj *)x, (t_notation_item *)nt, k_FLAG_LOCKED)) {
                                 note_delete((t_notation_obj *)x, nt, false);
                             }
                             nt = nt2;
@@ -2280,15 +2280,16 @@ void score_sel_change_onset(t_score *x, t_symbol *s, long argc, t_atom *argv){
             case k_MARKER:
             {
                 t_marker *marker = (t_marker *) curr_it;
-                
-                if (!(x->r_ob.header_undo_flags & k_HEADER_MARKERS)) {
-                    undo_tick_create_for_header((t_notation_obj *)x, k_HEADER_MARKERS);
-                    x->r_ob.header_undo_flags |= k_HEADER_MARKERS;
+                if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)curr_it)) {
+                    if (!(x->r_ob.header_undo_flags & k_HEADER_MARKERS)) {
+                        undo_tick_create_for_header((t_notation_obj *)x, k_HEADER_MARKERS);
+                        x->r_ob.header_undo_flags |= k_HEADER_MARKERS;
+                    }
+                    
+                    change_marker_onset_from_lexpr_or_llllelem((t_notation_obj *) x, marker, lexpr, new_onset ? new_onset->l_head : NULL);
+                    sync_marker_absolute_ms_onset(x, marker);
+                    changed = 1;
                 }
-                
-                change_marker_onset_from_lexpr_or_llllelem((t_notation_obj *) x, marker, lexpr, new_onset ? new_onset->l_head : NULL);
-                sync_marker_absolute_ms_onset(x, marker);
-                changed = 1;
             }
                 break;
                 
@@ -3073,6 +3074,21 @@ void score_addmarker(t_score *x, t_symbol *s, long argc, t_atom *argv)
         lock_markers_mutex((t_notation_obj *)x);;
         newmarker = add_marker((t_notation_obj *) x, names, pos_ms, tp, attach_to, markerrole, content, dur_ms, sym_dur, 0);
         sync_marker_absolute_ms_onset(x, newmarker);
+        
+#ifdef BACH_MARKERS_HAVE_FLAGS
+        char flag_set = false;
+        if (params->l_size >= 5 && params->l_head->l_next->l_next->l_next->l_next) {
+            flag_set = true;
+            notation_item_set_flags_from_llllelem((t_notation_obj *) x, params->l_head->l_next->l_next->l_next->l_next, (t_notation_item *)newmarker, false);
+        }
+
+#ifdef BACH_NOTATIONITEM_FLAG_HAS_SELECTION // because flags that could be added could mean selecting the object
+        if (flag_set) {
+            move_preselecteditems_to_selection((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT, false, false, false);
+        }
+#endif
+#endif
+        
         undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)newmarker, k_UNDO_MODIFICATION_TYPE_REMOVE, _llllobj_sym_state);
         unlock_markers_mutex((t_notation_obj *)x);;
 
@@ -11214,39 +11230,41 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
         
     } else if (x->r_ob.j_mousedown_obj_type == k_MARKER_REGION_TAIL) { // the ending point of a marker region is being dragged
         t_marker *mk = (t_marker *)x->r_ob.j_mousedown_ptr;
-        if (mk && mk->attach_to == k_MARKER_ATTACH_TO_MEASURE) {
-            bool magnetic = !(modifiers & eShiftKey); // && !(modifiers & eCommandKey));
-            t_timepoint start_tp = marker_region_get_start_timepoint((t_notation_obj *) x, mk);
-            t_timepoint end_tp = marker_region_get_end_timepoint((t_notation_obj *) x, mk);
-            double ms = xposition_to_ms((t_notation_obj *) x, pt.x, 1);
-            
-            t_timepoint new_end_tp = ms_to_timepoint_autochoose_voice((t_notation_obj *)x, ms, magnetic ? k_MS_TO_TP_RETURN_NEAREST : k_MS_TO_TP_RETURN_INTERPOLATION, &end_tp.voice_num);
-
-//            dev_post("ms: %.2f, Timepoint - voice: %ld, meas: %ld, pim: %ld/%ld", ms, new_tp.voice_num, new_tp.measure_num, new_tp.pt_in_measure.r_num, new_tp.pt_in_measure.r_den);
-            
-            op = k_UNDO_OP_CHANGE_REGION_DURATION;
-            undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)mk, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-            if (timepoint_compare(start_tp, new_end_tp) > 0) {
-                // turn off region
-                mk->r_sym_duration = long2rat(0);
-                redraw = 1;
-                changed = 1;
-            } else {
-                t_measure *new_meas = measure_get_nth(scorevoice_get_nth(x, end_tp.voice_num), new_end_tp.measure_num);
-                if (new_meas) {
-                    mk->r_sym_duration = get_sym_durations_between_timepoints(new_meas->voiceparent, start_tp, new_end_tp);
+        if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)mk)) {
+            if (mk && mk->attach_to == k_MARKER_ATTACH_TO_MEASURE) {
+                bool magnetic = !(modifiers & eShiftKey); // && !(modifiers & eCommandKey));
+                t_timepoint start_tp = marker_region_get_start_timepoint((t_notation_obj *) x, mk);
+                t_timepoint end_tp = marker_region_get_end_timepoint((t_notation_obj *) x, mk);
+                double ms = xposition_to_ms((t_notation_obj *) x, pt.x, 1);
+                
+                t_timepoint new_end_tp = ms_to_timepoint_autochoose_voice((t_notation_obj *)x, ms, magnetic ? k_MS_TO_TP_RETURN_NEAREST : k_MS_TO_TP_RETURN_INTERPOLATION, &end_tp.voice_num);
+                
+                //            dev_post("ms: %.2f, Timepoint - voice: %ld, meas: %ld, pim: %ld/%ld", ms, new_tp.voice_num, new_tp.measure_num, new_tp.pt_in_measure.r_num, new_tp.pt_in_measure.r_den);
+                
+                op = k_UNDO_OP_CHANGE_REGION_DURATION;
+                undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)mk, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+                if (timepoint_compare(start_tp, new_end_tp) > 0) {
+                    // turn off region
+                    mk->r_sym_duration = long2rat(0);
                     redraw = 1;
                     changed = 1;
+                } else {
+                    t_measure *new_meas = measure_get_nth(scorevoice_get_nth(x, end_tp.voice_num), new_end_tp.measure_num);
+                    if (new_meas) {
+                        mk->r_sym_duration = get_sym_durations_between_timepoints(new_meas->voiceparent, start_tp, new_end_tp);
+                        redraw = 1;
+                        changed = 1;
+                    }
                 }
+                
+            } else if (mk && mk->attach_to == k_MARKER_ATTACH_TO_MS) {
+                double this_ms = xposition_to_ms((t_notation_obj *) x, pt.x, 1);
+                
+                undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)mk, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+                mk->duration_ms = MAX(0, this_ms - mk->position_ms);
+                redraw = 1;
+                changed = 1;
             }
-            
-        } else if (mk && mk->attach_to == k_MARKER_ATTACH_TO_MS) {
-            double this_ms = xposition_to_ms((t_notation_obj *) x, pt.x, 1);
-            
-            undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)mk, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-            mk->duration_ms = MAX(0, this_ms - mk->position_ms);
-            redraw = 1;
-            changed = 1;
         }
         
     } else if (x->r_ob.j_mousedown_obj_type == k_VSCROLLBAR) { // the vertical scrollbar is being dragged!
@@ -12496,7 +12514,7 @@ char split_selection(t_score *x, long how_many, char merge_alltied_chords_first,
         if ((curr_it->type == k_CHORD) && (((t_chord *)curr_it)->r_it.flags & k_FLAG_SPLIT)) {
             oldch = ((t_chord *)curr_it);
             oldch->r_it.flags = (e_bach_internal_notation_flags) (oldch->r_it.flags & ~k_FLAG_SPLIT);
-            split_chord(x, oldch, how_many, oldch->parent->lock_rhythmic_tree || x->r_ob.tree_handling == k_RHYTHMIC_TREE_HANDLING_TAKE_FOR_GRANTED, proportions);
+            split_chord(x, oldch, how_many, notationitem_is_flag_set((t_notation_obj *)x, (t_notation_item *)oldch->parent, k_FLAG_RHYTHMICTREELOCKED) || x->r_ob.tree_handling == k_RHYTHMIC_TREE_HANDLING_TAKE_FOR_GRANTED, proportions);
             changed = 1;
         } else if (curr_it->type == k_MEASURE) {
             t_measure *meas = ((t_measure *)curr_it);
@@ -12506,7 +12524,7 @@ char split_selection(t_score *x, long how_many, char merge_alltied_chords_first,
                 tmp_ch = oldch->next;
                 if (oldch->r_it.flags & k_FLAG_SPLIT) {
                     oldch->r_it.flags = (e_bach_internal_notation_flags) (oldch->r_it.flags & ~k_FLAG_SPLIT);
-                    split_chord(x, oldch, how_many, oldch->parent->lock_rhythmic_tree || x->r_ob.tree_handling == k_RHYTHMIC_TREE_HANDLING_TAKE_FOR_GRANTED, proportions);
+                    split_chord(x, oldch, how_many, notationitem_is_flag_set((t_notation_obj *)x, (t_notation_item *)oldch->parent, k_FLAG_RHYTHMICTREELOCKED) || x->r_ob.tree_handling == k_RHYTHMIC_TREE_HANDLING_TAKE_FOR_GRANTED, proportions);
                     changed = 1;
                 }
                 oldch = tmp_ch;
@@ -12813,7 +12831,7 @@ char destroy_selected_tree_nodes(t_score *x, char also_lock_general_mutex, char 
                 llll_splatter(nodes[i], LLLL_FREETHING_MEM);
             
             if (also_lock_measure_rhythmic_tree)
-                meas->lock_rhythmic_tree = true; // we lock the tree for the measure!
+                notationitem_flag_set((t_notation_obj *)x, (t_notation_item *)meas, k_FLAG_RHYTHMICTREELOCKED); // we lock the tree for the measure!
             recompute_all_for_measure((t_notation_obj *) x, meas, true);
             set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
             changed = 1;
@@ -12854,7 +12872,7 @@ char splatter_selected_tree_nodes(t_score *x, char also_lock_general_mutex, char
                 recompute_all_for_measure((t_notation_obj *) x, meas, true);
                 set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
                 if (lock_measure_rhythmic_trees)
-                    meas->lock_rhythmic_tree = true; // we lock the tree for the measure!
+                    notationitem_flag_set((t_notation_obj *)x, (t_notation_item *)meas, k_FLAG_RHYTHMICTREELOCKED); // we lock the tree for the measure!
                 changed = 1;
             } else if (hatom_gettype(&(nodes[i]->l_hatom)) == H_OBJ) {
                 if (nodes[i]->l_parent->l_owner){
@@ -12862,7 +12880,7 @@ char splatter_selected_tree_nodes(t_score *x, char also_lock_general_mutex, char
                     recompute_all_for_measure((t_notation_obj *) x, meas, true);
                     set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
                     if (lock_measure_rhythmic_trees)
-                        meas->lock_rhythmic_tree = true; // we lock the tree for the measure!
+                        notationitem_flag_set((t_notation_obj *)x, (t_notation_item *)meas, k_FLAG_RHYTHMICTREELOCKED); // we lock the tree for the measure!
                     changed = 1;
                 }
             }
@@ -12908,7 +12926,7 @@ char fix_levels_of_selected_tree_nodes_as_original(t_score *x){
             
             if (this_changed) {
                 recompute_all_for_measure((t_notation_obj *) x, meas, true);
-                meas->lock_rhythmic_tree = true; // we lock the tree for the measure!
+                notationitem_flag_set((t_notation_obj *)x, (t_notation_item *)meas, k_FLAG_RHYTHMICTREELOCKED); // we lock the tree for the measure!
             }
             changed |= this_changed;
         }
@@ -14149,7 +14167,8 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                 clicked_ptr = marker;
                 clicked_obj = k_MARKER_REGION_TAIL;
                 if (modifiers == eCommandKey) {
-                    if (is_editable((t_notation_obj *)x, k_MARKER, k_MODIFICATION_DURATION)) {
+                    if (is_editable((t_notation_obj *)x, k_MARKER, k_MODIFICATION_DURATION) &&
+                        !notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)marker)) {
                         undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)marker, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                         marker->r_sym_duration = long2rat(0);
                         x->r_ob.item_changed_at_mousedown = 1;
@@ -14161,7 +14180,8 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                        (is_in_markername_shape((t_notation_obj *)x, marker, this_x, this_y) &&
                         (!marker->next || !is_in_markername_shape((t_notation_obj *)x, marker->next, this_x, this_y)))){
                 if (modifiers == eCommandKey) {
-                    if (is_editable((t_notation_obj *)x, k_MARKER, k_DELETION)) {
+                    if (is_editable((t_notation_obj *)x, k_MARKER, k_DELETION) &&
+                        !notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)marker)) {
                         undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)marker, k_UNDO_MODIFICATION_TYPE_INSERT, _llllobj_sym_state);
                         delete_marker((t_notation_obj *) x, marker);
                         x->r_ob.item_changed_at_mousedown = 1;
@@ -14175,7 +14195,8 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                     handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_MARKER);
                     return;
                 } else if (modifiers == eControlKey) {
-                    if (is_editable((t_notation_obj *)x, k_MARKER, k_MODIFICATION_GENERIC)) {
+                    if (is_editable((t_notation_obj *)x, k_MARKER, k_MODIFICATION_GENERIC) &&
+                        !notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)marker)) {
                         long voicenum = yposition_to_voicenumber((t_notation_obj *)x, this_y, -1, k_VOICEENSEMBLE_INTERFACE_ACTIVE);
                         if (voicenum < 0)
                             voicenum = yposition_to_voicenumber((t_notation_obj *)x, this_y, -1, k_VOICEENSEMBLE_INTERFACE_ANY);
@@ -17017,7 +17038,8 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                         if (x->r_ob.notation_cursor.chord) {
                             lock_general_mutex((t_notation_obj *)x);
                             undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)x->r_ob.notation_cursor.measure, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-                            split_chord(x, x->r_ob.notation_cursor.chord, keycode - 48, x->r_ob.notation_cursor.chord->parent->lock_rhythmic_tree || x->r_ob.tree_handling == k_RHYTHMIC_TREE_HANDLING_TAKE_FOR_GRANTED, NULL);
+                            split_chord(x, x->r_ob.notation_cursor.chord, keycode - 48,
+                                        notationitem_is_flag_set((t_notation_obj *)x, (t_notation_item *)x->r_ob.notation_cursor.chord->parent, k_FLAG_RHYTHMICTREELOCKED) || x->r_ob.tree_handling == k_RHYTHMIC_TREE_HANDLING_TAKE_FOR_GRANTED, NULL);
                             perform_analysis_and_change(x, NULL, NULL, NULL, x->r_ob.tree_handling == k_RHYTHMIC_TREE_HANDLING_IGNORE ? k_BEAMING_CALCULATION_DO : k_BEAMING_CALCULATION_DONT_CHANGE_LEVELS);
                             x->r_ob.need_recompute_chords_double_onset = true;
                             set_need_perform_analysis_and_change_flag((t_notation_obj *)x);

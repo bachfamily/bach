@@ -697,7 +697,7 @@ void set_all_non_treelocked_measure_to_ignore_except_for_tuplets(t_score *x){
     t_measure *meas;
     for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next)
         for (meas = voice->firstmeasure; meas; meas = meas->next)
-            if (!meas->lock_rhythmic_tree && meas->rhythmic_tree) {
+            if (!notationitem_is_flag_set((t_notation_obj *)x, (t_notation_item *)meas, k_FLAG_RHYTHMICTREELOCKED) && meas->rhythmic_tree) {
                 set_tuplet_levels_as_keep_levels(meas->rhythmic_tree);
                 set_level_type_flag_for_level(meas->rhythmic_tree, k_RHYTHM_LEVEL_IGNORE);
             }
@@ -3511,14 +3511,14 @@ void set_score_from_llll(t_score *x, t_llll* inputlist, char also_lock_general_m
 
     notationobj_make_temporary_slurs_permanent((t_notation_obj *)x);
 
+    if (markers) // we need to set them later, since they might be attached to measures
+        set_markers_from_llll((t_notation_obj *)x, markers, false, false, false);
+    
 #ifdef BACH_NOTATIONITEM_FLAG_HAS_SELECTION
     // this is useful if's any selection flag in the object
     move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_FORCE_SELECT, false, false, false);
 #endif
 
-    if (markers) // we need to set them later, since they might be attached to measures
-        set_markers_from_llll((t_notation_obj *)x, markers, false, false, false);
-    
     recompute_all(x);
 
     verbose_post_rhythmic_tree((t_notation_obj *) x, x->firstvoice->firstmeasure, NULL, 0);
@@ -4101,9 +4101,6 @@ t_chord* addchord_in_measure_from_notes(t_score *x, t_measure *measure, t_chord 
     this_ch->num_notes = num_notes;
     this_ch->firstnote = firstnote;
     this_ch->lastnote = lastnote;
-    this_ch->locked = false;
-    this_ch->solo = false;
-    this_ch->muted = false;
     this_ch->played = false;
     this_ch->rhythmic_tree_elem = NULL;
     this_ch->overall_tuplet_ratio = long2rat(1);
@@ -4183,10 +4180,7 @@ t_chord* addchord_in_measure_from_values(t_score *x, t_measure *measure, t_chord
             set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
             this_ch->r_sym_duration = r_sym_duration;
             this_ch->onset = 0; // will be set later by calculate_all_chords_remaining_onsets
-            this_ch->locked = false;
-            this_ch->muted = false;
             this_ch->played = false;
-            this_ch->solo = false;
             this_ch->num_notes = num_notes;
             this_ch->rhythmic_tree_elem = NULL;
             this_ch->overall_tuplet_ratio = long2rat(1);
@@ -5155,7 +5149,7 @@ char turn_selection_into_rests(t_score *x, char delete_notes, char delete_lyrics
                     t_llll *temp = NULL;
                     while (nt){
                         nt2 = nt->next;
-                        if (!nt->locked) {
+                        if (!notationitem_is_flag_set((t_notation_obj *)x, (t_notation_item *)nt, k_FLAG_LOCKED)) {
                             if (transfer_slots_even_to_rests) {
                                 if (!nt2) {
                                     if (slots_to_transfer_to_next_note_in_chord_1based && slots_to_transfer_to_next_note_in_chord_1based->l_head)
@@ -5182,11 +5176,11 @@ char turn_selection_into_rests(t_score *x, char delete_notes, char delete_lyrics
                 t_chord *ch = meas->firstchord;
                 undo_tick_create_for_selected_notation_item((t_notation_obj *) x, (t_notation_item *)meas, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                 while (ch){
-                    if (!ch->locked){
+                    if (!notationitem_is_flag_set((t_notation_obj *)x, (t_notation_item *)ch, k_FLAG_LOCKED)){
                         t_note *nt = ch->firstnote; t_note *nt2;
                         while (nt){
                             nt2 = nt->next;
-                            if (!nt->locked) {
+                            if (!notationitem_is_flag_set((t_notation_obj *)x, (t_notation_item *)nt, k_FLAG_LOCKED)) {
                                 note_delete((t_notation_obj *)x, nt, false);
                                 changed = 1;
                             }
@@ -8027,7 +8021,7 @@ void perform_analysis_and_change(t_score *x, t_jfont *jf_lyrics_nozoom, t_jfont 
                 for (this_meas = tmp_pt->measure[i]; (tmp_pt->next && this_meas != tmp_pt->next->measure[i]) || (!tmp_pt->next && this_meas); this_meas = this_meas->next) {
                     if (is_measure_empty((t_notation_obj *)x, this_meas) && x->r_ob.notation_cursor.measure != this_meas &&
                         rat_rat_cmp(measure_get_content_sym_duration(this_meas), measure_get_sym_duration(this_meas)) == 0 &&
-                        !this_meas->lock_rhythmic_tree &&
+                        !notationitem_is_flag_set((t_notation_obj *)x, (t_notation_item *)this_meas, k_FLAG_RHYTHMICTREELOCKED) &&
                         x->r_ob.tree_handling != k_RHYTHMIC_TREE_HANDLING_TAKE_FOR_GRANTED) {
                         verbose_post_rhythmic_tree((t_notation_obj *) x, x->firstvoice->firstmeasure, NULL, 0);
                         turn_measure_into_single_rest(x, this_meas);
@@ -8931,8 +8925,12 @@ void paint_repeat_dots(t_score *x, t_jgraphics *g, t_voice *voice, t_jrgba barli
 void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphics *g, t_rect rect, double end_x_to_repaint_no_inset, double last_staff_bottom, t_jfont *jf, t_jfont *jf_acc, t_jfont *jf_text_fractions, t_jfont *jf_acc_bogus, t_jfont *jf_ts, t_jfont *jf_ts_big, t_jfont *jf_tempi, t_jfont *jf_text, t_jfont *jf_text_small, t_jfont *jf_text_smallbold, t_jfont *jf_text_markers, t_jfont *jf_tempi_italic, t_jfont *jf_tempi_figure, t_jfont *jf_measure_num, t_jfont *jf_tuplets, t_jfont *jf_lyrics, t_jfont *jf_lyrics_nozoom, t_jfont *jf_ann, t_jfont *jf_small_dynamics, t_jfont *jf_small_dynamics_roman, t_jfont *jf_dynamics, t_jfont *jf_dynamics_roman, t_llll *repaint_these_measure_nums)
 {
 	t_jfont *jf_grace = NULL;
-	t_jrgba mainstaffcolor = get_mainstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, voice->v_ob.locked, voice->v_ob.muted, voice->v_ob.solo);
-	t_jrgba auxstaffcolor = get_auxstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, voice->v_ob.locked, voice->v_ob.muted, voice->v_ob.solo);
+    bool locked = notationitem_is_flag_set((t_notation_obj *)x, (t_notation_item *)voice, k_FLAG_LOCKED);
+    bool muted = notationitem_is_flag_set((t_notation_obj *)x, (t_notation_item *)voice, k_FLAG_MUTED);
+    bool solo = notationitem_is_flag_set((t_notation_obj *)x, (t_notation_item *)voice, k_FLAG_SOLO);
+
+	t_jrgba mainstaffcolor = get_mainstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, locked, muted, solo);
+	t_jrgba auxstaffcolor = get_auxstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, locked, muted, solo);
     t_jrgba beamcolor = beam_get_color((t_notation_obj *)x, (t_voice *)voice);
     t_jrgba tupletcolor = tuplet_get_color((t_notation_obj *)x, (t_voice *)voice);
 
@@ -10370,7 +10368,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
         }
         
         // tree locks?
-        if (x->r_ob.show_rhythmic_tree_locks && curr_meas->lock_rhythmic_tree && (!measure_across || voice == x->firstvoice)){
+        if (x->r_ob.show_rhythmic_tree_locks && notationitem_is_flag_set((t_notation_obj *)x, (t_notation_item *)curr_meas, k_FLAG_RHYTHMICTREELOCKED) && (!measure_across || voice == x->firstvoice)){
             double side = 10 * x->r_ob.zoom_y;
             double top = measure_numbers_top_y + CONST_BARLINE_TREE_LOCK_UY_SHIFT * x->r_ob.zoom_y;
             if (measure_across)
@@ -10679,10 +10677,13 @@ void paint_static_stuff1(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
                     char is_marker_selected = notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)marker);
                     char is_marker_preselected = notation_item_is_preselected((t_notation_obj *) x, (t_notation_item *)marker);
                     
-                    t_jrgba *markerlinecolor = (is_marker_selected ^ is_marker_preselected) ? &x->r_ob.j_selection_rgba : &marker_color;
+//                    t_jrgba *markerlinecolor = (is_marker_selected ^ is_marker_preselected) ? &x->r_ob.j_selection_rgba : &marker_color;
                     t_jrgba white = get_grey(1.);
-                    t_jrgba markertextcolor = (!is_region) ? *markerlinecolor : jgraphics_jrgba_interpolate(markerlinecolor, &white, CONST_MARKER_REGION_TEXT_WHITENING);
-                     
+
+                    change_color_depending_on_playlockmute((t_notation_obj *)x, &marker_color, (is_marker_selected ^ is_marker_preselected) != 0, false, (marker->r_it.flags & k_FLAG_LOCKED) != 0, (marker->r_it.flags & k_FLAG_MUTED) != 0, (marker->r_it.flags & k_FLAG_SOLO) != 0, false);
+
+                    t_jrgba markertextcolor = (!is_region) ? marker_color : jgraphics_jrgba_interpolate(&marker_color, &white, CONST_MARKER_REGION_TEXT_WHITENING);
+
                     this_marker_x = unscaled_xposition_to_xposition((t_notation_obj *)x, marker_ux);
                     
                     marker->name_painted_direction = (!is_region && !(marker->prev && marker_is_region_till_next(marker->prev)) && (marker_ux + marker->name_uwidth > x->r_ob.screen_ux_end) ? -1 : 1);
@@ -10690,7 +10691,7 @@ void paint_static_stuff1(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
                     double this_marker_end_x = unscaled_xposition_to_xposition((t_notation_obj *)x, marker_end_ux);
                     char marker_is_being_edited = (x->r_ob.is_editing_type == k_MARKERNAME && x->r_ob.is_editing_marker == marker);
 
-                    paint_marker((t_notation_obj *) x, g, markerlinecolor, &markertextcolor, jf_text_markers, marker, this_marker_x, this_marker_end_x, marker_y1, marker_y2, is_region, x->r_ob.markers_line_width, !marker_is_being_edited, &prev_marker_width, &prev_marker_x, &prev_marker_width, prev_region_marker, &prev_region_marker_x, &prev_region_marker_width);
+                    paint_marker((t_notation_obj *) x, g, &marker_color, &markertextcolor, jf_text_markers, marker, this_marker_x, this_marker_end_x, marker_y1, marker_y2, is_region, x->r_ob.markers_line_width, !marker_is_being_edited, &prev_marker_width, &prev_marker_x, &prev_marker_width, prev_region_marker, &prev_region_marker_x, &prev_region_marker_width);
                     if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE){
                         double voice_staff_top_y = voice_get_staff_top_y((t_notation_obj *)x, (t_voice *)scorevoice_get_nth(x, tp.voice_num), k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
                         paint_circle(g, change_alpha(marker_color, 1), marker_color, this_marker_x, voice_staff_top_y, 2 * x->r_ob.zoom_y, 1);
@@ -10779,11 +10780,14 @@ void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
         for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next){
             double k; 
             long clef = get_voice_clef((t_notation_obj *)x, (t_voice *)voice);
-            t_jrgba mainstaffcolor = get_mainstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, voice->v_ob.locked, voice->v_ob.muted, voice->v_ob.solo);
-            t_jrgba keysigcolor = get_keysig_color((t_notation_obj *) x, voice->v_ob.r_it.selected, voice->v_ob.locked, voice->v_ob.muted, voice->v_ob.solo);
-			t_jrgba auxstaffcolor = get_auxstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, voice->v_ob.locked, voice->v_ob.muted, voice->v_ob.solo);
-			t_jrgba clefcolor = clef_get_color((t_notation_obj *) x, voice->v_ob.r_it.selected, voice->v_ob.locked, voice->v_ob.muted, voice->v_ob.solo);
-            t_jrgba auxclefcolor = get_auxclef_color((t_notation_obj *) x, voice->v_ob.r_it.selected, voice->v_ob.locked, voice->v_ob.muted, voice->v_ob.solo);
+            bool locked = notationitem_is_flag_set((t_notation_obj *)x, (t_notation_item *)voice, k_FLAG_LOCKED);
+            bool muted = notationitem_is_flag_set((t_notation_obj *)x, (t_notation_item *)voice, k_FLAG_MUTED);
+            bool solo = notationitem_is_flag_set((t_notation_obj *)x, (t_notation_item *)voice, k_FLAG_SOLO);
+            t_jrgba mainstaffcolor = get_mainstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, locked, muted, solo);
+            t_jrgba keysigcolor = get_keysig_color((t_notation_obj *) x, voice->v_ob.r_it.selected, locked, muted, solo);
+			t_jrgba auxstaffcolor = get_auxstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, locked, muted, solo);
+			t_jrgba clefcolor = clef_get_color((t_notation_obj *) x, voice->v_ob.r_it.selected, locked, muted, solo);
+            t_jrgba auxclefcolor = get_auxclef_color((t_notation_obj *) x, voice->v_ob.r_it.selected, locked, muted, solo);
             double staff_top_y = voice_get_staff_top_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
             double staff_bottom_y = voice_get_staff_bottom_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
 
@@ -11284,13 +11288,13 @@ void score_declare_bach_attributes(t_score *x){
     bach_attribute_add_functions(bach_attribute_get(man, k_MEASURE, _llllobj_sym_name), NULL, (bach_setter_fn)bach_set_name_fn, NULL, NULL, NULL);
     DECLARE_BACH_ATTR(man, -1,  _llllobj_sym_timesig, (char *)"Time Signature", k_MEASURE, t_measure, timesignature_dummy, k_BACH_ATTR_LLLL, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
     bach_attribute_add_functions(bach_attribute_get(man, k_MEASURE, _llllobj_sym_timesig), NULL, NULL, NULL,(bach_attr_process_fn)recompute_all_and_redraw_fn, NULL);
-    DECLARE_BACH_ATTR(man, -1, _llllobj_sym_lock, (char *)"Lock", k_MEASURE, t_measure, locked, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
-    DECLARE_BACH_ATTR(man, -1, _llllobj_sym_mute, (char *)"Mute", k_MEASURE, t_measure, muted, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
-    DECLARE_BACH_ATTR(man, -1,  _llllobj_sym_solo, (char *)"Solo", k_MEASURE, t_measure, solo, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
+    DECLARE_BACH_ATTR(man, -1, _llllobj_sym_lock, (char *)"Lock", k_MEASURE, t_notation_item, flags, k_BACH_ATTR_BIT, k_FLAG_LOCKED, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
+    DECLARE_BACH_ATTR(man, -1, _llllobj_sym_mute, (char *)"Mute", k_MEASURE, t_notation_item, flags, k_BACH_ATTR_BIT, k_FLAG_MUTED, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
+    DECLARE_BACH_ATTR(man, -1,  _llllobj_sym_solo, (char *)"Solo", k_MEASURE, t_notation_item, flags, k_BACH_ATTR_BIT, k_FLAG_SOLO, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
     bach_attribute_add_functions(bach_attribute_get(man, k_MEASURE, _llllobj_sym_lock), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
     bach_attribute_add_functions(bach_attribute_get(man, k_MEASURE, _llllobj_sym_mute), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
     bach_attribute_add_functions(bach_attribute_get(man, k_MEASURE, _llllobj_sym_solo), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
-    DECLARE_BACH_ATTR(man, -1,  _llllobj_sym_lockrhythmictree, (char *)"Lock Rhythmic Tree", k_MEASURE, t_measure, lock_rhythmic_tree, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
+    DECLARE_BACH_ATTR(man, -1,  _llllobj_sym_lockrhythmictree, (char *)"Lock Rhythmic Tree", k_MEASURE, t_notation_item, flags, k_BACH_ATTR_BIT, k_FLAG_RHYTHMICTREELOCKED, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
     x->r_ob.m_inspector.attr_manager->miniature[k_MEASURE] = (bach_inspector_miniature_fn)bach_measure_miniature_fn;
 
     t_symbol *barlinetype[13];
@@ -11582,26 +11586,28 @@ char move_selected_measure_attached_markers(t_score *x, double marker_withmoused
     while (curr_it) { // cycle on the selected items
         if (curr_it->type == k_MARKER) { // it is a marker : let's move it
             t_marker *marker = (t_marker *)curr_it;
-            if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE) {
-                t_timepoint tp = measure_attached_marker_to_timepoint((t_notation_obj *)x, marker);
-                double ux = marker_withmousedown_ux + marker->ux_difference_with_mousedown_marker;
-                t_timepoint new_tp;
-                t_measure *new_meas;
-                                
-                if (magnetic)
-                    new_tp = ms_to_timepoint_autochoose_voice((t_notation_obj *)x, unscaled_xposition_to_ms((t_notation_obj *)x, ux, 1), magnetic ? k_MS_TO_TP_RETURN_NEAREST : k_MS_TO_TP_RETURN_INTERPOLATION, &tp.voice_num);
-                else
-                    new_tp = ms_to_timepoint((t_notation_obj *)x, unscaled_xposition_to_ms((t_notation_obj *)x, ux, 1), tp.voice_num, magnetic ? k_MS_TO_TP_RETURN_NEAREST : k_MS_TO_TP_RETURN_INTERPOLATION);
-                
-//                dev_post("Timepoint - voice: %ld, meas: %ld, pim: %ld/%ld", new_tp.voice_num, new_tp.measure_num, new_tp.pt_in_measure.r_num, new_tp.pt_in_measure.r_den);
-                
-                new_meas = measure_get_nth(scorevoice_get_nth(x, tp.voice_num), new_tp.measure_num);
-                
-                undo_tick_create_for_notation_item((t_notation_obj *)x, curr_it, k_UNDO_MODIFICATION_TYPE_CHANGE_CHECK_ORDER, _llllobj_sym_state);
-                if (new_meas) {
-                    marker->measure_attach_ID = new_meas->r_it.ID;
-                    marker->r_sym_pim_attach = new_tp.pt_in_measure;
-                    changed = 1;
+            if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)marker)) {
+                if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE) {
+                    t_timepoint tp = measure_attached_marker_to_timepoint((t_notation_obj *)x, marker);
+                    double ux = marker_withmousedown_ux + marker->ux_difference_with_mousedown_marker;
+                    t_timepoint new_tp;
+                    t_measure *new_meas;
+                    
+                    if (magnetic)
+                        new_tp = ms_to_timepoint_autochoose_voice((t_notation_obj *)x, unscaled_xposition_to_ms((t_notation_obj *)x, ux, 1), magnetic ? k_MS_TO_TP_RETURN_NEAREST : k_MS_TO_TP_RETURN_INTERPOLATION, &tp.voice_num);
+                    else
+                        new_tp = ms_to_timepoint((t_notation_obj *)x, unscaled_xposition_to_ms((t_notation_obj *)x, ux, 1), tp.voice_num, magnetic ? k_MS_TO_TP_RETURN_NEAREST : k_MS_TO_TP_RETURN_INTERPOLATION);
+                    
+                    //                dev_post("Timepoint - voice: %ld, meas: %ld, pim: %ld/%ld", new_tp.voice_num, new_tp.measure_num, new_tp.pt_in_measure.r_num, new_tp.pt_in_measure.r_den);
+                    
+                    new_meas = measure_get_nth(scorevoice_get_nth(x, tp.voice_num), new_tp.measure_num);
+                    
+                    undo_tick_create_for_notation_item((t_notation_obj *)x, curr_it, k_UNDO_MODIFICATION_TYPE_CHANGE_CHECK_ORDER, _llllobj_sym_state);
+                    if (new_meas) {
+                        marker->measure_attach_ID = new_meas->r_it.ID;
+                        marker->r_sym_pim_attach = new_tp.pt_in_measure;
+                        changed = 1;
+                    }
                 }
             }
         }
@@ -11961,7 +11967,10 @@ void score_move_and_reinitialize_last_voice(t_score *x, t_scorevoice *after_this
         change_single_clef((t_notation_obj *)x, (t_voice *)voice_to_move, clef, false);
         change_single_notationstyle((t_notation_obj *)x, (t_voice *)voice_to_move, notation_style, false);
         voice_to_move->v_ob.midichannel = midichannel;
-        voice_to_move->v_ob.locked = voice_to_move->v_ob.solo = voice_to_move->v_ob.hidden = voice_to_move->v_ob.muted = 0;
+        notationitem_flag_unset((t_notation_obj *)x, &voice_to_move->v_ob.r_it, k_FLAG_LOCKED);
+        notationitem_flag_unset((t_notation_obj *)x, &voice_to_move->v_ob.r_it, k_FLAG_SOLO);
+        notationitem_flag_unset((t_notation_obj *)x, &voice_to_move->v_ob.r_it, k_FLAG_MUTED);
+        voice_to_move->v_ob.hidden = 0;
 
         if (x->r_ob.link_vzoom_to_height)
             auto_set_rectangle_size((t_notation_obj *) x);
