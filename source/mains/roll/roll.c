@@ -5804,6 +5804,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @marg 1 @name name_or_names @optional 0 @type llll
     // @marg 2 @name role @optional 1 @type symbol
     // @marg 3 @name content @optional 1 @type llll
+    // @marg 4 @name flag @optional 1 @type int
     // @example addmarker 2000 George @caption add a marker named 'George' at 2s
     // @example addmarker 2000 [Foo Fee Faa] @caption the same, with a complex llll name
     // @example addmarker cursor John @caption add a 'John' marker at the current playhead position
