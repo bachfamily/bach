@@ -7274,7 +7274,10 @@ void llll_reshape_new(t_llll *ll, const t_llll *modelll, const llll_clone_fn fn)
                 prevelem = NULL;
                 ++ll->l_size;
                 ll = nullll;
-                modelelem = modelelem->l_hatom.h_w.w_llll->l_head;
+                modelll = modelelem->l_hatom.h_w.w_llll;
+                modelelem = modelll->l_head;
+                if (modelll->l_thing.w_obj)
+                    ll->l_thing.w_obj = fn ? (fn)(modelll->l_thing.w_obj) : modelll->l_thing.w_obj;
             }
         }
 
