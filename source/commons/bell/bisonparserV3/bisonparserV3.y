@@ -1567,6 +1567,7 @@ t_mainFunction *codableobj_parse_buffer_v3(t_codableobj *x, long *codeac, t_atom
     yyscan_t myscanner;
     
     t_lexparams lexparams;
+    lexparams.owner = x;
     
     bisonparserV3_lex_init_extra(&lexparams, &myscanner);
     bisonparserV3_scan_string(myscanner, x->c_text);

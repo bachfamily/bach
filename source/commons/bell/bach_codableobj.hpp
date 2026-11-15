@@ -42,6 +42,7 @@ typedef struct _codableobj
     char *c_filename;
     short c_path;
     t_bool c_scratchpad;
+    t_bool c_immediate;
     
     t_mainFunction *c_main;
     t_atom_long c_embed;

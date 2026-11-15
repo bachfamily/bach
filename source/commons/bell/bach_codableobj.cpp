@@ -235,9 +235,13 @@ t_max_err codableobj_lambda_get(t_codableobj *x, t_object *attr, long *ac, t_ato
 void codableobj_lambda_set(t_codableobj *x, t_object *attr, long ac, t_atom *av)
 {
     if (ac && av) {
-        if (x->c_ready)
-            defer(x, (method) codableobj_expr_do, nullptr, ac, av);
-        else
+        if (x->c_ready) {
+            if (x->c_immediate) {
+                codableobj_expr_do(x, nullptr, ac, av);
+            } else {
+                defer(x, (method) codableobj_expr_do, nullptr, ac, av);
+            }
+        } else
             defer_low(x, (method) codableobj_expr_do, nullptr, ac, av);
     } else {
         x->c_main->decrease();
@@ -1015,6 +1019,12 @@ void codableclass_add_standard_methods_and_attrs(t_class *c)
 #else
     CLASS_ATTR_FILTER_CLIP(c, "bellversion", 0, 2);
 #endif
+    
+    CLASS_ATTR_LONG(c, "immediate", 0, t_codableobj, c_immediate);
+    CLASS_ATTR_LABEL(c, "immediate", 0, "Don't Defer Code Parsing");
+    CLASS_ATTR_ACCESSORS(c, "immediate", nullptr, codableobj_watch_set);
+    CLASS_ATTR_FILTER_CLIP(c, "immediate", 0, 1);
+    CLASS_ATTR_STYLE(c, "immediate", 0, "onoff");
 }
 
 

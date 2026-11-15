@@ -53,25 +53,10 @@ struct t_lexparams {
     fileidSet files;
     int state;
     int line;
+    t_codableobj* owner;
     
     t_lexparams();
     virtual ~t_lexparams();
-
-    int setState(int s);
-    
-    int getState();
-};
-
-
-struct t_lexparamsV3 {
-    struct t_bufstack *bufstack;
-    struct t_bufstack *this_bs;
-    fileidSet files;
-    int state;
-    int line;
-    
-    t_lexparamsV3();
-    virtual ~t_lexparamsV3();
 
     int setState(int s);
     

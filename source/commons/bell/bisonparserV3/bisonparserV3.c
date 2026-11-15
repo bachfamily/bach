@@ -2184,26 +2184,6 @@ goto find_rule; \
         int *state;
         int line;
     };
-    
-    t_lexparamsV3::t_lexparamsV3() {
-        bufstack = (t_bufstack*) bach_newptr(256 * sizeof(t_bufstack));
-        this_bs = bufstack;
-        this_bs->text = nullptr;
-        this_bs->name = nullptr;
-        state = 0;
-    }
-    
-    t_lexparamsV3::~t_lexparamsV3() {
-        bach_freeptr(bufstack);
-    }
-    
-    int t_lexparamsV3::setState(int s) {
-        return state = s;
-    }
-    
-    int t_lexparamsV3::getState() {
-        return state;
-    }
 
 #define INITIAL 0
 #define NOUNARY_NOARGS 1
@@ -5315,6 +5295,12 @@ void bisonparserV3_flush_and_delete_buffer(yyscan_t myscanner, YY_BUFFER_STATE b
 
 int bisonparserV3_newfile(yyscan_t myscanner, char *s)
 {
+    t_lexparams *lexparams = yyget_extra(myscanner);
+    t_codableobj *owner = lexparams->owner;
+    if (owner->c_immediate) {
+        object_error((t_object *) owner, "can't include in immediate mode");
+        return -1;
+    }
     t_fourcc filetype[] = {'TEXT', 'BELL'};
     t_fourcc outtype;
     char *filename = (char *) bach_newptr(MAX_PATH_CHARS + 1);
@@ -5322,7 +5308,7 @@ int bisonparserV3_newfile(yyscan_t myscanner, char *s)
     
     strncpy_zero(filename, s, MAX_PATH_CHARS);    // must copy symbol before calling locatefile_extended
     if (locatefile_extended(filename, &path, &outtype, filetype, 2)) { // non-zero: not found
-        object_error(nullptr, "include(%s): file not found", s);
+        object_error((t_object *) owner, "include(%s): file not found", s);
         return -1;
     }
     
@@ -5346,7 +5332,6 @@ int bisonparserV3_newfile(yyscan_t myscanner, char *s)
         text[size - 1] = ' ';
         text[size] = 0;
     }
-    t_lexparams *lexparams = yyget_extra(myscanner);
     lexparams->this_bs->line = yyget_lineno(myscanner);
     (lexparams->this_bs)++;
     //yyset_lineno(1, myscanner);
