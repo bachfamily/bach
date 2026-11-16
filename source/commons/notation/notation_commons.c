@@ -41937,11 +41937,11 @@ void handle_change_if_there_are_dangling_undo_ticks(t_notation_obj *r_ob, int ch
 void handle_change_selection(t_notation_obj *r_ob) {
     if (r_ob->undo_selection) {
         if (undo_ticks_are_dangling(r_ob, false, false))
-            handle_change(r_ob, (r_ob->playing && r_ob->playback_specs.selection)) ? k_CHANGED_CHECK_CORRECT_SCHEDULING + k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG : k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_SELECTION);
+            handle_change(r_ob, (r_ob->playing && r_ob->playback_specs.selection) ? k_CHANGED_CHECK_CORRECT_SCHEDULING + k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG : k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_SELECTION);
         else
-            handle_change(r_ob, (r_ob->playing && r_ob->playback_specs.selection)) ? k_CHANGED_CHECK_CORRECT_SCHEDULING + k_CHANGED_REDRAW_STATIC_LAYER : k_CHANGED_REDRAW_STATIC_LAYER, k_UNDO_OP_UNKNOWN);
+            handle_change(r_ob, (r_ob->playing && r_ob->playback_specs.selection) ? k_CHANGED_CHECK_CORRECT_SCHEDULING + k_CHANGED_REDRAW_STATIC_LAYER : k_CHANGED_REDRAW_STATIC_LAYER, k_UNDO_OP_UNKNOWN);
     } else {
-        handle_change(r_ob, (r_ob->playing && r_ob->playback_specs.selection)) ? k_CHANGED_CHECK_CORRECT_SCHEDULING + k_CHANGED_REDRAW_STATIC_LAYER : k_CHANGED_REDRAW_STATIC_LAYER, k_UNDO_OP_UNKNOWN);
+        handle_change(r_ob, (r_ob->playing && r_ob->playback_specs.selection) ? k_CHANGED_CHECK_CORRECT_SCHEDULING + k_CHANGED_REDRAW_STATIC_LAYER : k_CHANGED_REDRAW_STATIC_LAYER, k_UNDO_OP_UNKNOWN);
     }
 }
 
