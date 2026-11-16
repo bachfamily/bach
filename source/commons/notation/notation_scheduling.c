@@ -986,8 +986,8 @@ void notationobj_task(t_notation_obj *r_ob)
     }
     
     
-    if (specs->playing_scheduling_type == k_SCHEDULING_STANDARD)
-        notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+//    if (specs->playing_scheduling_type == k_SCHEDULING_STANDARD)
+//        notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
     
 //    check_scheduled_events(r_ob);
 }
