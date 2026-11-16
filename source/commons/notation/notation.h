@@ -72,6 +72,7 @@
     #define BACH_CHORDS_HAVE_SLOTS
 //    #define BACH_MARKERS_HAVE_SLOTS   ///< Not yet ready for this!
     #define BACH_MARKERS_HAVE_FLAGS
+//    #define BACH_PLAYHEAD_HAVE_AFFINETRANSF ///< Not worth the implementation: one can do this in Max customly by getting the playhead number
 
     // THESE THREE SHOULD NOT BE DEFINED; they increase the size of the t_note without actually gaining that much in CPU speed.
     //#define BACH_SLOTS_HAVE_LASTITEM              ///< Last item is saved inside slot structure
@@ -82,7 +83,7 @@
 //    #define BACH_PATTR_SUPPORT    ///< Pattr support? Really unadvisable. Should NOT be defined, too many weird things with PATTR.
 
 
-    #define BACH_NEW_LLLLSLOT_SYNTAX            ///< This one might or might not be advisable. Removes the outer ( ) in the llll and matrix slot syntax 
+    #define BACH_NEW_LLLLSLOT_SYNTAX            ///< By now, this is how bach works... (Previously: This one might or might not be advisable. Removes the outer ( ) in the llll and matrix slot syntax )
 
     #define BACH_SUPPORT_SLURS
     #define BACH_ALLOW_SLURS_ON_RESTS
@@ -169,6 +170,7 @@
 #define    CONST_MAX_NESTED_TUPLETS_FOR_SPEEDY 1                ///< Maximum nested tuplet insertion while speedy editing
 #define CONST_MAX_CENTS 100000                                ///< Loose upper bound for the midicents of a note, only when setting them via the bach inspector 
 #define CONST_MIN_SYM_DURATION_FOR_CHORD (genrat(1,8192))    ///< Minimum symbolic duration for a chord (this is due to the fact that going under this duration may cause problems with beaming tree algorithms, and so on...) 
+#define CONST_MAX_PLAYHEADS 8                                ///< Maximum number of playheads; must be less than 54 otherwise one needs to change the "played" interface attributes
 
 /** @}*/
 
@@ -878,6 +880,15 @@ typedef void (*bach_paint_ext_fn)(t_object *x, t_object *view, t_jgraphics *g, t
 
 //TBD
 typedef char (*notationobj_inscreenmeas_fn)(t_object *x, void *measure_from, void *measure_to, char also_send_domain);
+
+typedef char (*notationobj_force_inscreenpos_ux)(t_object *x, double position, double inscreen_ux, char also_send_domain, char also_move_mousedown_pt);
+
+typedef char (*notationobj_force_inscreen_ux_rolling)(t_object *x, double inscreen_ux, char clip_to_length, char send_domain_if_changed, char also_move_mousedown_pt);
+
+
+typedef char (*notationobj_force_inscreenpos_ms)(t_object *x, double position, double inscreen_ms, char also_send_domain, char also_check_scheduling, char also_move_mousedown_pt);
+
+typedef char (*notationobj_force_inscreen_ms_rolling)(t_object *x, double inscreen_ms, char clip_to_length, char send_domain_if_changed, char also_check_scheduling, char also_move_mousedown_pt);
 
 
 
@@ -2470,10 +2481,10 @@ typedef struct _scheduled_event
 {
     void            *clock;
     t_llll          *content;
-    double          time;
+    double          time_ms;
     char            is_notewise;
-    char            is_end;
-} t_scheduled_event;
+    bool            is_end;
+} t_prescheduled_event;
 
 
 
@@ -2553,6 +2564,9 @@ typedef struct _slur
 } t_slur;
 
 
+typedef t_uint64 t_playedby_info;
+
+
 /** The data structure representing a note. Notes, inside a chord, form a double linked list.
     @remark        VERY IMPORTANT - A general remark throughout all bach notationAPI:
                 Some pixel values are marked as "unscaled" and have an "u" in their name.
@@ -2601,11 +2615,7 @@ typedef struct _note
     // slots
     t_slot        slot[CONST_MAX_SLOTS];    ///< The array containing the slot content for the note (for each slot)
 
-    // lock/mute/play/solo
-//    char        locked;                    ///< Flag telling if the note is locked
-//    char        muted;                    ///< Flag telling if the note is muted
-    char        played;                    ///< Flag telling if the note is being played
-//    char        solo;                    ///< Flag telling if the note is soloed
+    t_playedby_info    played;                    ///< Flag telling if the note is being played and by which playheads (and which is the latest one)
 
 #ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
     // articulations, ***only for backward compatibility***
@@ -2846,10 +2856,7 @@ typedef struct _chord
                                                 ///< which sets the chord lyrics from the slot content (if any) andall the chord parameters such as direction, left_uextension, right_uextension... 
     char        need_recalculate_onset;            ///< Internal flag, privat use, telling if we need to recalculate the onset of the chord. Only used by score, where the
     
-//    char        locked;                            ///< Flag telling if the chord is locked
-//    char        muted;                            ///< Flag telling if the chord is muted
-    char        played;                            ///< Flag telling if AT LEAST one note of the chord is being played
-//    char        solo;                            ///< Flag telling if the chord is soloed
+    t_playedby_info    played;                    ///< Flag telling if AT LEAST one note of the chord is being played, and by which playhead (it contains a bitfield) and which is the latest
 
     char        just_added_from_separate_parameters;        ///< Private flag, used in [bach.roll], telling if the chord has just been added from a separate parameters input
     
@@ -3186,7 +3193,8 @@ typedef struct _measure_end_barline
     char          barline_type;    ///< Type of ending barline. Must be one of #e_barline_modifier. By default it is #k_BARLINE_AUTOMATIC.
     t_uint16      repeat_num;      ///< Number of repeat times (only applicable if barline types are of type ...._REPEAT_...)
 //    t_uint16      repeat_alternate_ending_length; ///< Length of alternate ending for repeating: unsupported for now
-    t_uint16      repeat_count;      ///< Current repetition count during playback (set at runtime)
+    t_uint8      repeat_count[CONST_MAX_PLAYHEADS];      ///< Current repetition count during playback (set at runtime)
+    //TODO: I don't like that repeat_count[CONST_MAX_PLAYHEADS] takes a lot of space, find a way to put the repeat count of measures inside the t_playback_specs structure
 } t_measure_end_barline;
 
 
@@ -3279,10 +3287,6 @@ typedef struct _measure
     char            need_check_autocompletion;            ///< Flag telling if we have to check the autocompletion of the measure
     long            beaming_calculation_flags;            ///< One of the #e_beaming_calculation_flags, determining if some steps of the beaming calculation process must be skipped for the measure
 
-//    char            locked;            ///< Flag telling if the measure is locked
-//    char            muted;            ///< Flag telling if the measure is muted
-//    char            solo;            ///< Flag telling if the measure is soloed
-
     char            measure_filling;    ///< Flag telling if the measure is completed, or has more or less notes than needed.
                                         ///< 0 = measure is right completed
                                         ///< 1 = measure has more notes than needed
@@ -3370,9 +3374,6 @@ typedef struct _voice
                                                     ///< This is dummy, since it is never used, and is only needed as a "placeholder" to link the stafflines attribute: 
                                                     ///< its setter/getter will deal with the real stafflines fields (the previous ones).
     
-//    char        locked;                ///< Flag telling if the voice is locked
-//    char        muted;                ///< Flag telling if the voice is muted
-//    char        solo;                ///< Flag telling if the voice is soloed
     char        hidden;                ///< Flag telling if the voice is hidden
     char        determines_spacing;    ///< Flag (only for [bach.score]) telling if the voice is taken into account when calculating spacing. Yet UNSUPPORTED!
 
@@ -4157,6 +4158,83 @@ typedef enum _playhead_domainchange_mode
 } e_playhead_domainchange_mode;
 
 
+/** Structure holding the properties of a playhead
+    @ingroup scheduling
+ */
+typedef struct _playhead
+{
+    long            index;
+    t_symbol        *name;
+    t_pitch         transpose;
+    t_pitch         invert;
+} t_playhead;
+
+
+union pitch_or_double {
+    t_pitch u_pitch;
+    double  u_double;
+};
+
+#ifdef BACH_PLAYHEAD_HAVE_AFFINETRANSF
+typedef struct _playhead_affine_transformation
+{
+    bool has_translation;
+    bool has_inversion;
+    bool translation_is_pitch;
+    bool inversion_is_pitch;
+    union pitch_or_double translation_amount;
+    union pitch_or_double inversion_mirror;
+} t_playhead_affine_transformation;
+#endif
+
+typedef struct _playback_specs
+{
+    char            playing_scheduling_type;    ///< Scheduling type for playing, one of the #e_scheduling_type
+    
+    bool            deferlow;
+    bool            preschedule;
+    bool            selection;
+    bool            offline;
+    bool            pause;
+    bool            stop;
+
+    bool            add_new_playback_voice;
+
+    bool            playhead_active[CONST_MAX_PLAYHEADS];
+    bool            playhead_paused[CONST_MAX_PLAYHEADS];
+    bool            playhead_newly_activated[CONST_MAX_PLAYHEADS];
+    
+    bool            restrict_playback_to_name[CONST_MAX_PLAYHEADS];
+    t_symbol        *playhead_name[CONST_MAX_PLAYHEADS];
+
+    double          global_start_play_time;
+
+    double          playhead_rate[CONST_MAX_PLAYHEADS];
+    
+    bool            start_ms_specified[CONST_MAX_PLAYHEADS];
+    double          start_ms[CONST_MAX_PLAYHEADS];
+
+    bool            stop_ms_specified[CONST_MAX_PLAYHEADS];
+    double          stop_ms[CONST_MAX_PLAYHEADS];
+    
+    double          offset_ms[CONST_MAX_PLAYHEADS];  // this is the key field used to schedule playheads together
+
+    double          last_scheduled_ms[CONST_MAX_PLAYHEADS];
+    
+#ifdef BACH_PLAYHEAD_HAVE_AFFINETRANSF
+    t_playhead_affine_transformation affine_transform[CONST_MAX_PLAYHEADS];
+#endif
+    
+    bool            dont_schedule_loop_start[CONST_MAX_PLAYHEADS];            ///< (PRIVATE, INTERNAL) Flag useful to avoid scheduling the loop start (for instance, because it had already been scheduled before)
+    bool            dont_schedule_loop_end[CONST_MAX_PLAYHEADS];                ///< (PRIVATE, INTERNAL) Flag useful to avoid scheduling the loop end (for instance, because it had already been scheduled before)
+    bool            playhead_cant_trespass_loop_end[CONST_MAX_PLAYHEADS];    ///< (PRIVATE, INTERNAL) If this flag is set, the playhead cannot trespass the end of the loop. This is extremely useful in this circumstance:
+                                                        ///< If the user is playing and at the same time moving the right boundary of the loop leftwards, the check_correct_scheduling() might want to skip
+                                                        ///< the scheduling of the loop end, because it has been overwhelmed (just like when you move a chord leftwards, and it MIGHT not be played if
+                                                        ///< it's "too late". Yet loop end is no chord, and we need to somehow force its scheduling: we do it via this flag: if this is set, check_correct_scheduling()
+                                                        ///< will check that the current timing is NO bigger than the loop end, otherwise it'll simply schedule immediately the loop end.
+                                                        ///< This flag is updated each time the play is started.
+} t_playback_specs;
+
 
 /** A common structure for UI notation objects. 
     [bach.score], [bach.roll] and [bach.slot] will extend this structure, but most of the stuff is already inside here.
@@ -4164,7 +4242,7 @@ typedef enum _playhead_domainchange_mode
     possible future improvements or developement of new objects.
  
     @ingroup    notation
- */ 
+ */
 typedef struct _notation_obj
 {
     t_llllobj_jbox        j_box;        ///< The #t_llllobj_jbox structure, corresponding to the fact that notation objects are UI llll objects
@@ -4268,7 +4346,6 @@ typedef struct _notation_obj
     char        creatingnewobj;                ///< (PRIVATE) Flag which is 1 before the attr_dictionary_process() and 0 afterwards
     char        firsttime;                    ///< (PRIVATE) Flag which is 1 before the first paint method has been called
     char        freeing;                    ///< (PRIVAGE) Flag which is 1 when the freeing of the notation object is started
-    char        only_play_selection;        ///< (PRIVATE) Flag which is 1 when the play() function is called via the playselection function
     char        playback_deferlow;          ///< (PRIVATE) Flag which is 1 when play offline function is asked to be defer-lowed at each output
     char        defining_numerator;            ///< (PRIVATE) Flag which is 1 if the user is defining the tuplet numerator in the bach.score linear editing system
     char        item_changed_at_mousedown;    ///< (PRIVATE) Flag which is 1 after mousedown when something has been changed directly on mousedown and NOT on mousedrag; it becomes 0 at mouseup
@@ -4618,7 +4695,7 @@ typedef struct _notation_obj
     char        play_partial_notes;                    ///< Flag telling if we want to play a note whose head is before the starting playhead position, but whose tail is after it.
                                                     ///< More simply: if this is 1, when a play command starts, first of all the notes who are "active" at the play cursor position are output,
                                                     ///< with the correctly reduced duration (as if they started at the play cursor)
-    char        show_playhead;                        ///< Flag telling if we want to show the play cursor or not
+    char        show_playhead;                        ///< Flag telling if we want to show the play cursor(s) or not
     double      playhead_width;                     ///< Width of the playhead in pixels
     char        playhead_dragging_mode;                ///< Dragging mode for the playhead: 0 = absolute (where one alt+clicks, there the playhead goes), 1 = relative (just clicking won't move the playhead, only pixel differences account)
     char        align_chords_with_what;                ///< (For bach.roll only) One of the #e_chord_align_mode specifying the
@@ -4634,14 +4711,7 @@ typedef struct _notation_obj
     char            use_loop_region;                    ///< Flag telling if we use the loop region during play or not
     double            loop_region_pixel_start;            ///< Starting x pixel position for the loop region
     double            loop_region_pixel_end;                ///< Ending x pixel position for the loop region 
-    char            dont_schedule_loop_start;            ///< (PRIVATE, INTERNAL) Flag useful to avoid scheduling the loop start (for instance, because it had already been scheduled before) 
-    char            dont_schedule_loop_end;                ///< (PRIVATE, INTERNAL) Flag useful to avoid scheduling the loop end (for instance, because it had already been scheduled before) 
-    char            playhead_cant_trespass_loop_end;    ///< (PRIVATE, INTERNAL) If this flag is set, the playhead cannot trespass the end of the loop. This is extremely useful in this circumstance:
-                                                        ///< If the user is playing and at the same time moving the right boundary of the loop leftwards, the check_correct_scheduling() might want to skip 
-                                                        ///< the scheduling of the loop end, because it has been overwhelmed (just like when you move a chord leftwards, and it MIGHT not be played if 
-                                                        ///< it's "too late". Yet loop end is no chord, and we need to somehow force its scheduling: we do it via this flag: if this is set, check_correct_scheduling()  
-                                                        ///< will check that the current timing is NO bigger than the loop end, otherwise it'll simply schedule immediately the loop end.
-                                                        ///< This flag is updated each time the play is started.
+
     
 //    t_timepoint            repeat_teleport_to;        ///< Teleport ending position for a repeat sign as timepoint (used internally)
 //    double                 repeat_teleport_to_ms;     ///< Teleport ending position for a repeat sign in milliseconds (used internally)
@@ -4770,7 +4840,10 @@ typedef struct _notation_obj
     t_jrgba        j_legend_rgba;                    ///< Color of the bottom-down legend
     t_jrgba        j_selectedlegend_rgba;            ///< Color of the top legend (when an element is selected)
     t_jrgba        j_scrollbar_rgba;                ///< Color of the scrollbar
-    t_jrgba        j_play_rgba;                    ///< Color related to play (playbar, played notes...)
+    t_jrgba        j_play_rgba;                    ///< Color related to main playhead and its playback entourage (playbar, played notes...)
+    t_jrgba        j_play2_rgba;                    ///< Color related to second playhead etc.
+    t_jrgba        j_play3_rgba;                    ///< Color related to third playhead etc.
+    t_jrgba        j_play4_rgba;                    ///< Color related to fourth playhead etc. (then they will cycle back)
     t_jrgba        j_locked_rgba;                    ///< Color related to locking (locked notes, measures, voices...)
     t_jrgba        j_muted_rgba;                    ///< Color related to muting (muted notes, measures, voices...)
     t_jrgba        j_solo_rgba;                    ///< Color related to soloing (solo notes, measures, voices...)
@@ -5027,32 +5100,34 @@ typedef struct _notation_obj
     double uwidth_after_ts;                 ///< Unscaled horizontal blank space after time signature (un unscaled pixels)
     
     // play
-    char        allow_play_from_interface;    ///< Flag telling if we allow playing from the interface
-    char        playing;                    ///< Flag telling if the object is currently playing
-    char        playing_scheduling_type;    ///< Scheduling type for playing, one of the #e_scheduling_type
+    char        allow_play_from_interface;              ///< Flag telling if we allow playing from the interface
+    char        playing;                                ///< Flag telling if the object is currently playing
+    t_playback_specs playback_specs;                    ///< Current playback specs
+    long        num_playheads;                          ///< Maximum index of the active playhead (outside t_playback_specs to possibly be easier used as attribute)
     t_llll      *to_preschedule;            ///< List containing t_scheduled_events to be scheduled, ONLY for the PRESCHEDULED mode.
     t_llllelem  *preschedule_cursor;        ///< Cursor while reading the prescheduled list
-    
-    double        play_head_start_ms;        ///< Position in milliseconds of the OFFLINE play cursor
-    double        play_head_start_ux;        ///< Unscaled x pixel of the OFFLINE play cursor (only used in [bach.score]) 
-    double        play_head_ms;            ///< Current position in milliseconds of the PLAYTIME play cursor
-    double        play_head_ux;            ///< Current unscaled x pixel of the PLAYTIME play cursor (only used in [bach.score]).
+    char        show_playhead_names;               ///< Do we want to show the playhead names (if any) to be displayed?
+
+    double        play_head_start_ms[CONST_MAX_PLAYHEADS];        ///< Position in milliseconds of the OFFLINE play cursor
+    double        play_head_start_ux[CONST_MAX_PLAYHEADS];        ///< Unscaled x pixel of the OFFLINE play cursor (only used in [bach.score])
+    double        play_head_ms[CONST_MAX_PLAYHEADS];            ///< Current position in milliseconds of the PLAYTIME play cursor
+    double        play_head_ux[CONST_MAX_PLAYHEADS];            ///< Current unscaled x pixel of the PLAYTIME play cursor (only used in [bach.score]).
                                         ///< REMARK: We have to distinguish between the fixed offline playcursor (which always indicates the beginning of the play region, i.e.
                                         ///< if one press the spacebar, the play starts from there) and the mobile playcursor at playtime: when we send a "play" command, the 
                                         ///< offline playcursor does not move AT ALL, but it is the playtime playcursor which takes its place and start moving. You have to 
                                         ///< think at the offline playcursor as the indication of the play start region (which graphically disappear while playing, substituted
                                         ///< by the mobile playtime playcursor)
-    double        play_head_fixed_end_ms; ///< Fixed end in milliseconds for the play to stop. Once reached this millisecond position, the stop function is called, and the play is over.
                                         ///< If this value is negative (e.g. -1), no end is given, and the play stops only when the score reading is over.
-    double        play_head_reset_start_ms_when_play_ends; ///< if positive, sets a position for the reset of the play_head after play ends
+    double        play_head_reset_start_ms_when_play_ends[CONST_MAX_PLAYHEADS]; ///< if positive, sets a position for the reset of the play_head after play ends
     ///<
     double        theoretical_play_step_ms;    ///< Approximative step (in milliseconds) for playhead redraw. 0 means that the score is redrawn at each
                                             ///< scheduled event. The "approximative" adjective is due to the fact that we need an integer number of ticks 
                                             ///< between two scheduled events, so this might slightly vary in each scheduled interval
 
-    char        catch_playhead;             ///< Handles how the playhead changes the domain during playback: one of the e_playhead_changedomain_modes
-    double      playhead_fixed_pos;         ///< relative position of the playehad within the bar
-    char        playhead_notify_during_playback;    ///< Notify cursor position during playback
+    char        catch_playhead_mode;             ///< Handles how the playhead changes the domain during playback: one of the e_playhead_changedomain_modes
+    long        catch_playhead_which;           ///< Which playhead to catch
+    double      catch_playhead_fixed_pos;         ///< relative position of the playehad within the bar
+    char        notify_cursor_continuously_during_playback;    ///< Notify cursor position during playback
 
     char        highlight_played_notes;        ///< Highlights the played notes with the playcolor. It's a bit more CPU-expensive, but more clear.
     char        play_markers;                ///< Send markers during play
@@ -5060,6 +5135,7 @@ typedef struct _notation_obj
     char        play_measures;              ///< Send measure start barlines during play
     char        play_slurs;                 ///< Send slur information during playback
     char        play_slurs_end;             ///< Also send information about slur end (as a negative number, e.g.: -3 means: a slur has ended which started 3 chords ago)
+    char        notify_playheads;           ///< Notify individual playheads
 
     void        *m_clock;                            ///< The clock for the play and task routine
     t_symbol    *setclock;                            ///< The setclock, to handle the change of clock speed
@@ -5069,21 +5145,20 @@ typedef struct _notation_obj
     long        max_num_chord_per_scheduler_event;    ///< Maximum number of synchronous chords being output within the same scheduler event. Somehow, it's a bach Play Poll Throttle.
                                                     ///< Synchoronous chords exceeding this number will be played 'as soon as possible' in the next scheduler tick (scheduled immediately)
 
-    t_chord        **chord_play_cursor;        ///< Multicursor (one element for each voice) containing the last played chords, or generally (when possible) the chords happening _before_ the already scheduled events. 
+    t_chord        **chord_play_cursor[CONST_MAX_PLAYHEADS];        ///< Multicursor (one element for each voice) containing the last played chords, or generally (when possible) the chords happening _before_ the already scheduled events.
                                             ///< It is an array with #CONST_MAX_VOICES elements allocated in notationobj_init() and freed by notationobj_free()
                                             ///< The idea is that, to play the next chord, we start to look ahead from the ones we have already played, and
                                             ///< we keep track of this 'looking ahead' with this multicursor.
-    t_tempo     **tempo_play_cursor;         ///< Cursor containing the last played tempo for each voice, or generally (when possible) the tempo happening _before_ the already scheduled events (exactly linke #chord_play_cursor)
-    t_measure    **measure_play_cursor;         ///< Cursor containing the last played measure for each voice, or generally (when possible) the tempo happening _before_ the already scheduled events (exactly linke #chord_play_cursor). Measures are "played" when they start, outputting measure number and measureinfo.
-    t_marker    *marker_play_cursor;        ///< Cursor containing the last played marker, or generally (when possible) the markers happening _before_ the already scheduled events (see #chord_play_cursor)
-    t_notation_item        *scheduled_item;    ///< Pointer to the notation item currently being scheduled
-    double                scheduled_ms;        ///< Onset (in milliseconds) of the chord currently being scheduled
-    double                start_play_time;    ///< Time (in milliseconds) obtained by setclock_getftime() at the very beginning of the play.
-                                            ///< We'll use this time to handle rescheduling if needed. Indeed the play system is robust to score changes: 
-                                            ///< if you add a note (having onset later than the current playtime playhead), bach will try to reschedule events,
-                                            ///< in order to play the note. This rescheduling is performed in the check_correct_scheduling() routine, where this 
-                                            ///< <start_play_time> is essential.
-    t_llll        *notes_being_played;        ///< llll containing all the notes (as #H_OBJ elements) currently being played. 
+    t_tempo     **tempo_play_cursor[CONST_MAX_PLAYHEADS];         ///< Cursor containing the last played tempo for each voice, or generally (when possible) the tempo happening _before_ the already scheduled events (exactly linke #chord_play_cursor)
+    t_measure    **measure_play_cursor[CONST_MAX_PLAYHEADS];         ///< Cursor containing the last played measure for each voice, or generally (when possible) the tempo happening _before_ the already scheduled events (exactly linke #chord_play_cursor). Measures are "played" when they start, outputting measure number and measureinfo.
+    t_marker    *marker_play_cursor[CONST_MAX_PLAYHEADS];        ///< Cursor containing the last played marker, or generally (when possible) the markers happening _before_ the already scheduled events (see #chord_play_cursor)
+    
+    t_notation_item        *scheduled_item[CONST_MAX_PLAYHEADS];    ///< Pointer to the notation item currently being scheduled
+    double                scheduled_ms[CONST_MAX_PLAYHEADS];        ///< Onset (in milliseconds) of the chord currently being scheduled
+    long                  scheduled_playhead[CONST_MAX_PLAYHEADS];  ///< Scheduled playhead(s) as a bitfield
+    long                  num_scheduled_items;
+    
+    t_llll        *notes_being_played[CONST_MAX_PLAYHEADS];        ///< llll containing all the notes (as #H_OBJ elements) currently being played. 
                                             ///< Important: for bach.score, this llll will only contain the starting note of a tied sequence of notes (if any, and if playtiedelementsseparately is set to 0).
     
     // contextual menu (obtained by right clicking)
@@ -5213,7 +5288,12 @@ typedef struct _notation_obj
     notationobj_undo_redo_fn       undo_redo_function;             ///< Function for undo/redo
     bach_paint_ext_fn               paint_ext_function;             ///< Pointer to the function painting the object (in extended bach mode)
     notationobj_inscreenmeas_fn    inscreenmeas_function;          ///< Pointer to the inscreenmeas function
-    
+
+    notationobj_force_inscreenpos_ux    force_inscreenpos_ux_function;          ///< Pointer to the force_inscreenpos_ux function
+    notationobj_force_inscreen_ux_rolling    force_inscreen_ux_rolling_function;          ///< Pointer to the force_inscreen_ux_rolling function
+    notationobj_force_inscreenpos_ms    force_inscreenpos_ms_function;          ///< Pointer to the force_inscreenpos_ms function
+    notationobj_force_inscreen_ms_rolling    force_inscreen_ms_rolling_function;          ///< Pointer to the force_inscreen_ms_rolling function
+
     //TBD
     addchordfromllll_fn             addchordfromllll;
     setmeasurefromllll_fn           setmeasurefromllll;
@@ -5756,8 +5836,8 @@ void note_set_displayed_user_enharmonicity(t_note *nt, t_pitch pitch);
 void note_set_to_best_jilimited_approximation_if_jivoice(t_notation_obj *r_ob, t_note *nt);
 char notationobj_set_selection_to_best_jilimited_approximation_if_jivoice(t_notation_obj *r_ob);
 
-void note_appendpitch_to_llll_for_gathered_syntax_or_playout(t_notation_obj *r_ob, t_llll *ll, t_note *note, e_data_considering_types mode);
-void note_appendpitch_to_llll_for_separate_syntax(t_notation_obj *r_ob, t_llll *ll, t_note *note, e_output_pitches pitch_output_mode = k_OUTPUT_PITCHES_DEFAULT);
+void note_appendpitchorcents_to_llll_for_gathered_syntax_or_playout(t_notation_obj *r_ob, t_llll *ll, t_note *note, e_data_considering_types mode, long playhead);
+void note_appendpitchorcents_to_llll_for_separate_syntax(t_notation_obj *r_ob, t_llll *ll, t_note *note, e_output_pitches pitch_output_mode = k_OUTPUT_PITCHES_DEFAULT);
 
 
 
@@ -6943,13 +7023,13 @@ const char *notationobj_get_dynamic_fontname(t_notation_obj *r_ob);
     @param r_ob            The notation object
     @param color        The color to be changed
     @param selected        Is element selected?
-    @param play            Is element played?
+    @param play            Is element played? This is a bitfield, where bit i is on if playhead i is playing it
     @param locked        Is element locked?
     @param muted        Is element muted?
     @param solo            Is element solo?
     @param linear_edited    Is element being speedy-edited? (for [bach.score] only)
  */
-void change_color_depending_on_playlockmute(t_notation_obj *r_ob, t_jrgba *color, char selected, char play, char locked, char muted, char solo, char linear_edited);
+void change_color_depending_on_playlockmute(t_notation_obj *r_ob, t_jrgba *color, char selected, t_playedby_info play, char locked, char muted, char solo, char linear_edited);
 
 
 /**    Obtain the color of a notehead
@@ -6957,7 +7037,7 @@ void change_color_depending_on_playlockmute(t_notation_obj *r_ob, t_jrgba *color
     @param r_ob                        The notation object
     @param note                        Pointer to the note
     @param is_note_selected            Is note selected?
-    @param is_note_played            Is note played?
+    @param is_note_played            Is note played? This is a bitfield where bit i is on if playhead i plays the note
     @param is_note_locked            Is note locked?
     @param is_note_muted            Is note muted?
     @param is_note_solo                Is note solo?
@@ -6966,7 +7046,7 @@ void change_color_depending_on_playlockmute(t_notation_obj *r_ob, t_jrgba *color
     @return                            Resulting color for the notehead
     @remark                            This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba note_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, char is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity);
+t_jrgba note_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, t_playedby_info is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity);
 
 
 /**    Obtain the color of a duration line
@@ -6974,7 +7054,7 @@ t_jrgba note_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected
     @param r_ob                        The notation object
     @param note                        Pointer to the note
     @param is_note_selected            Is note selected?
-    @param is_note_played            Is note played?
+    @param is_note_played            Is note played? This is a bitfield where bit i is on if playhead i plays the note
     @param is_note_locked            Is note locked?
     @param is_note_muted            Is note muted?
     @param is_note_solo                Is note solo?
@@ -6983,7 +7063,7 @@ t_jrgba note_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected
     @return                            Resulting color for the line
     @remark                            This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba durationline_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, char is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity);
+t_jrgba durationline_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, t_playedby_info is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity);
 
 
 /**    Obtain the color of a accidental
@@ -6991,7 +7071,7 @@ t_jrgba durationline_get_color(t_notation_obj *r_ob, t_note* note, char is_note_
     @param r_ob                        The notation object
     @param note                        Pointer to the note beraing the accidental
     @param is_note_selected            Is note selected?
-    @param is_note_played            Is note played?
+    @param is_note_played            Is note played? This is a bitfield where bit i is on if playhead i plays the note
     @param is_note_locked            Is note locked?
     @param is_note_muted            Is note muted?
     @param is_note_solo                Is note solo?
@@ -7000,7 +7080,7 @@ t_jrgba durationline_get_color(t_notation_obj *r_ob, t_note* note, char is_note_
     @return                            Resulting color for the accidental
     @remark                            This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba accidental_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, char is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity);
+t_jrgba accidental_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, t_playedby_info is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity);
 
 
 /**    Obtain the color of the note tail
@@ -7008,7 +7088,7 @@ t_jrgba accidental_get_color(t_notation_obj *r_ob, t_note* note, char is_note_se
     @param r_ob                        The notation object
     @param note                        Pointer to the note
     @param is_note_selected            Is note selected?
-    @param is_note_played            Is note played?
+    @param is_note_played            Is note played? This is a bitfield where bit i is on if playhead i plays the note
     @param is_note_locked            Is note locked?
     @param is_note_muted            Is note muted?
     @param is_note_solo                Is note solo?
@@ -7017,7 +7097,7 @@ t_jrgba accidental_get_color(t_notation_obj *r_ob, t_note* note, char is_note_se
     @return                            Resulting color for the note tail
     @remark                            This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba tail_get_color(t_notation_obj *r_ob, t_note* note, char is_tail_selected, char is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity);
+t_jrgba tail_get_color(t_notation_obj *r_ob, t_note* note, char is_tail_selected, t_playedby_info is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity);
 
 
 /**    Obtain the color of a chord stem
@@ -7025,7 +7105,7 @@ t_jrgba tail_get_color(t_notation_obj *r_ob, t_note* note, char is_tail_selected
     @param r_ob                        The notation object
     @param chord                    Pointer to the chord
     @param is_chord_selected        Is chord selected?
-    @param is_chord_played            Is chord played?
+    @param is_chord_played            Is chord played? This is a bitfield where bit i is on if playhead i plays the note
     @param is_chord_locked            Is chord locked?
     @param is_chord_muted            Is chord muted?
     @param is_chord_solo            Is chord solo?
@@ -7033,7 +7113,7 @@ t_jrgba tail_get_color(t_notation_obj *r_ob, t_note* note, char is_tail_selected
     @return                            Resulting color for the chord stem
     @remark                            This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba stem_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
+t_jrgba stem_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_playedby_info is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
 
 t_jrgba chord_get_stem_color(t_notation_obj *r_ob, t_chord* chord);
 
@@ -7043,7 +7123,7 @@ t_jrgba chord_get_stem_color(t_notation_obj *r_ob, t_chord* chord);
     @param r_ob                        The notation object
     @param chord                    Pointer to the chord
     @param is_chord_selected        Is chord selected?
-    @param is_chord_played            Is chord played?
+    @param is_chord_played            Is chord played? This is a bitfield where bit i is on if playhead i plays the note
     @param is_chord_locked            Is chord locked?
     @param is_chord_muted            Is chord muted?
     @param is_chord_solo            Is chord solo?
@@ -7051,7 +7131,7 @@ t_jrgba chord_get_stem_color(t_notation_obj *r_ob, t_chord* chord);
     @return                            Resulting color for the chord flag
     @remark                            This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba flag_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
+t_jrgba flag_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_playedby_info is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
 
 
 /**    Obtain the color of a rest
@@ -7059,7 +7139,7 @@ t_jrgba flag_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selec
     @param r_ob                        The notation object
     @param chord                    Pointer to the chord
     @param is_chord_selected        Is chord selected?
-    @param is_chord_played            Is chord played?
+    @param is_chord_played            Is chord played? This is a bitfield where bit i is on if playhead i plays the note
     @param is_chord_locked            Is chord locked?
     @param is_chord_muted            Is chord muted?
     @param is_chord_solo            Is chord solo?
@@ -7067,14 +7147,14 @@ t_jrgba flag_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selec
     @return                            Resulting color for the rest
     @remark                            This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba rest_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
+t_jrgba rest_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_playedby_info is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
 
 /**    Obtain the color of an articulation
     @ingroup                        notation_colors
     @param r_ob                        The notation object
     @param chord                    Pointer to the chord bearing the articulation
     @param is_chord_selected        Is chord selected?
-    @param is_chord_played            Is chord played?
+    @param is_chord_played            Is chord played? This is a bitfield where bit i is on if playhead i plays the note
     @param is_chord_locked            Is chord locked?
     @param is_chord_muted            Is chord muted?
     @param is_chord_solo            Is chord solo?
@@ -7082,7 +7162,7 @@ t_jrgba rest_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selec
     @return                            Resulting color for the articulation
     @remark                            This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba articulation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
+t_jrgba articulation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_playedby_info is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
 
 
 /**    Obtain the color of a textual annotation
@@ -7090,7 +7170,7 @@ t_jrgba articulation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_cho
     @param r_ob                        The notation object
     @param chord                    Pointer to the chord bearing the annotation
     @param is_chord_selected        Is chord selected?
-    @param is_chord_played            Is chord played?
+    @param is_chord_played            Is chord played? This is a bitfield where bit i is on if playhead i plays the note
     @param is_chord_locked            Is chord locked?
     @param is_chord_muted            Is chord muted?
     @param is_chord_solo            Is chord solo?
@@ -7098,7 +7178,7 @@ t_jrgba articulation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_cho
     @return                            Resulting color for the text annotation
     @remark                            This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba annotation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
+t_jrgba annotation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_playedby_info is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
 
 
 /**    Obtain the color of a dynamic marking
@@ -7106,7 +7186,7 @@ t_jrgba annotation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord
     @param r_ob                        The notation object
     @param chord                    Pointer to the chord bearing the dynamic
     @param is_chord_selected        Is chord selected?
-    @param is_chord_played            Is chord played?
+    @param is_chord_played            Is chord played? This is a bitfield where bit i is on if playhead i plays the note
     @param is_chord_locked            Is chord locked?
     @param is_chord_muted            Is chord muted?
     @param is_chord_solo            Is chord solo?
@@ -7114,7 +7194,7 @@ t_jrgba annotation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord
     @return                            Resulting color for the dynamic
     @remark                            This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba dynamics_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
+t_jrgba dynamics_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, t_playedby_info is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
 
 
 /**    Get the color of beams.
@@ -7441,12 +7521,6 @@ void initialize_popup_menus(t_notation_obj *r_ob);
 void notationobj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_dictionary *d);
 
 
-
-// PRE-SCHEDULING
-void notationobj_clear_prescheduled_events(t_notation_obj *r_ob);
-void notationobj_preschedule_end(t_notation_obj *x, t_symbol *s, long argc, t_atom *argv);
-void notationobj_preschedule_task(t_notation_obj *r_ob);
-void notationobj_append_prescheduled_event(t_notation_obj *r_ob, double time, t_llll *content, char is_notewise, char is_end);
 
 
 
@@ -9034,7 +9108,7 @@ t_llll* note_get_slots_values_as_llll(t_notation_obj *r_ob, t_note *note, char m
 
 
 // TBD
-t_llll* notation_item_get_slots_values_as_llll(t_notation_obj *r_ob, t_notation_item *nitem, char mode, char get_even_if_empty);
+t_llll* notation_item_get_slots_values_as_llll(t_notation_obj *r_ob, t_notation_item *nitem, char mode, char get_even_if_empty, long playhead);
 t_llll* notation_item_get_multiple_slots_values_as_llll(t_notation_obj *r_ob, t_notation_item *nitem, char mode, char get_even_if_empty, t_llll *which_slots_1based);
 t_llll *notation_item_get_slots_to_be_copied(t_notation_obj *r_ob, t_notation_item *from, t_llll *which_slots_1based, char even_if_empty);// this one is private
 void notation_item_copy_slots(t_notation_obj *r_ob, t_notation_item *from, t_notation_item *to, t_llll *which_slots_1based, char even_if_empty);
@@ -9065,10 +9139,10 @@ t_llll* notation_item_get_partial_slots_values_as_llll(t_notation_obj *r_ob, t_n
                                         Important: setting non-zero flags is only effective with slots supporting selection! 
     @return                An llll containing the specified slot information.
  */
-t_llll* note_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_note *note, char mode, long slotnum, char only_get_selected_items);
+t_llll* note_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_note *note, char mode, long slotnum, char only_get_selected_items, long playhead);
 
 // TBD
-t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_notation_item *nitem, char mode, long slotnum, char only_get_selected_items);
+t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_notation_item *nitem, char mode, long slotnum, char only_get_selected_items, long playhead);
 
 t_notation_item *dynamics_get_owner(t_notation_obj *r_ob, t_dynamics *dyn);
 
@@ -10520,8 +10594,9 @@ void paint_accollatura(t_notation_obj *r_ob, t_jgraphics* g, double stafftop_y, 
 
 // TBD
 e_accollatura_type accollatura_symbol_to_type(t_notation_obj *r_ob, t_symbol *acc);
-void paint_playhead(t_notation_obj *r_ob, t_jgraphics* g, t_rect rect);
+void paint_playheads(t_notation_obj *r_ob, t_jgraphics* g, t_rect rect, t_jfont *playhead_jf);
 char is_clef_multistaff(t_notation_obj *r_ob, long clef);
+t_jrgba notationobj_get_playheadcolor(t_notation_obj *r_ob, long playhead);
 
 
 /**    Paint the key signature of a voice
@@ -10658,7 +10733,7 @@ void paint_notehead(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t_jfon
  */ 
 void paint_duration_line(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t_jrgba notecolor, t_jrgba tailcolor, t_note *curr_nt, 
                             double end_pos, double system_shift, double system_jump, char note_unselected, char is_chord_selected, 
-                            char is_note_selected, char is_durationline_selected, char is_note_played, char is_note_locked,
+                            char is_note_selected, char is_durationline_selected, t_playedby_info is_note_played, char is_note_locked,
                             char is_note_muted, char is_note_solo, t_bpt **selected_breakpoint, double note_y_real);
     
 
@@ -12135,9 +12210,10 @@ void send_chord_as_llll(t_notation_obj *r_ob, t_chord *chord, long outlet, e_dat
     @param    references    An llll which will be filled with pointers to notation items associated to each obtained sub-llll (e.g. if playmode is notewise, each note of the chord) 
                         You will have to free this llll later on.
     @param    is_notewise    Pointer that will be filled with 1 if the data retrieving is for chord being played notewisely, will be filled with 0 otherwise.
+    @param  playhead        0-based Index of the playhead
     @return    An llll containing at the root level a list of lllls to be supposely later output one after the other.
  */
-t_llll *chord_get_as_llll_for_sending(t_notation_obj *r_ob, t_chord *chord, e_data_considering_types mode, long command_number, t_llll *forced_routers, t_llll **references, char *is_notewise);
+t_llll *chord_get_as_llll_for_sending(t_notation_obj *r_ob, t_chord *chord, e_data_considering_types mode, long command_number, t_llll *forced_routers, t_llll **references, char *is_notewise, long playhead);
 
 
 /**    Obtain tempo as llll to be sent through the playout.
@@ -12146,14 +12222,15 @@ t_llll *chord_get_as_llll_for_sending(t_notation_obj *r_ob, t_chord *chord, e_da
     @param    note        The tempo
     @param    mode        The reason why you need to send the information: this is one of the #e_data_considering_types and
  will affect the output syntax accordingly.
+    @param  playhead    The 0-based index of the playhead who triggered the sending (use -1 if irrelevant)
     @return    An llll containing the tempo llll to be sent out.
  */
-t_llll *get_tempo_as_llll_for_sending(t_notation_obj *r_ob, t_tempo *tempo, e_data_considering_types mode);
+t_llll *get_tempo_as_llll_for_sending(t_notation_obj *r_ob, t_tempo *tempo, e_data_considering_types mode, long playhead);
 
 
 // Private
-t_llll *get_single_tempo_values_as_llll(t_notation_obj *r_ob, t_tempo *tempo, e_data_considering_types mode);
-t_llll *measure_get_as_llll_for_sending(t_notation_obj *r_ob, t_measure *measure, e_data_considering_types mode);
+t_llll *get_single_tempo_values_as_llll(t_notation_obj *r_ob, t_tempo *tempo, e_data_considering_types mode, double rate = 1);
+t_llll *measure_get_as_llll_for_sending(t_notation_obj *r_ob, t_measure *measure, e_data_considering_types mode, long playhead);
 
 
 /**    Actually send some sublists one after each other through the playout (and also properly set the references for possible lambda loops).
@@ -12223,16 +12300,18 @@ void append_voice_or_full_path_to_playout_syntax(t_notation_obj *r_ob, t_llll *p
     @ingroup            notation_data_send
     @param    r_ob        The notation object
     @param    outlet        The outlet number
+    @param only_for_playing_playheads   If true, only outputs position of playing playheads
  */
-void send_playhead_position(t_notation_obj *r_ob, long outlet);
+void send_playhead_position(t_notation_obj *r_ob, long outlet, char only_for_playing_playheads);
 
+void send_single_playhead_position(t_notation_obj *r_ob, long outlet, long playhead);
 
 /**    Send the moved playhead position information through a given outlet. This will be in the form "movedcursor <ms>".
     @ingroup            notation_data_send
     @param    r_ob        The notation object
     @param    outlet        The outlet number
  */
-void send_moved_playhead_position(t_notation_obj *r_ob, long outlet);
+void send_moved_playhead_position(t_notation_obj *r_ob, long outlet, long playhead);
 
 
 /**    Send the loop region information through a given outlet. This will be in the form "loop <start_ms> <end_ms>" for bach.roll and
@@ -13038,19 +13117,21 @@ t_llll* note_get_graphic_values_no_router_as_llll(t_notation_obj *r_ob, t_note *
                                     unless the mode was a PARTIAL_NOTE or SAMPLE mode, in which case the note might be asked only from a given point in time.
     @param    new_start_midicents        Pointer which will be filled with the starting velocity of the note. This trivially coincides with the note midicents 
                                     unless the mode was a PARTIAL_NOTE or SAMPLE mode, in which case the note might be asked only from a given point in time.
+    @param playhead         The index of the playhead if relevant, leave 0 otherwise
     @return                The pitch breakpoints specification as an llll
 */
 t_llll* note_get_breakpoint_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_considering_types mode, 
-                                           double *new_start_midicents, double *new_start_velocity);
+                                           double *new_start_midicents, double *new_start_velocity, long playhead);
 
 
 /**    Same as note_get_breakpoint_values_as_llll() but without the "breakpoints" symbol at the beginning of the returned list 
     @ingroup            notation_data
     @param    r_ob        The notation object
     @param    note        The note
+    @param playhead         The index of the playhead if relevant, leave 0 otherwise
     @return        The graphic specification as an llll, without router symbol
 */
-t_llll* note_get_breakpoints_values_no_router_as_llll(t_notation_obj *r_ob, t_note *note);
+t_llll* note_get_breakpoints_values_no_router_as_llll(t_notation_obj *r_ob, t_note *note, long playhead);
 
 
 /**    Obtain all the "extra" information of a of a given note as an llll (such as breakpoints, graphics, slots, articulations).
@@ -13089,9 +13170,10 @@ void set_commands_from_llll(t_notation_obj *r_ob, t_llll* commands);
     @param    r_ob        The notation object
     @param    note        The note
     @param    mode        One of the possible #e_data_considering_types specifying the reason why the llll is asked, and thus returning slightly different specifications depending on the usage.
+     @param playhead     The playhead index, if relevant (use 0 as default or if not needed)
     @return                The gathered syntax of the note, as an llll
 */
-t_llll* get_rollnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_considering_types mode);
+t_llll* get_rollnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_considering_types mode, long playhead);
 
 
 /** Obtain all the information about a bach.roll note, in gathered syntax, but considering it as a part of a chord containing just this note.
@@ -13101,9 +13183,10 @@ t_llll* get_rollnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_c
     @param    r_ob        The notation object
     @param    note        The note
     @param    mode        One of the possible #e_data_considering_types specifying the reason why the llll is asked, and thus returning slightly different specifications depending on the usage.
+    @param playhead     The playhead index, if relevant (use 0 as default or if not needed)
     @return                The llll gathered syntax of a chord containing the #note as a single note
 */
-t_llll* get_single_rollnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_considering_types mode);
+t_llll* get_single_rollnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_considering_types mode, long playhead);
 
 
 /**    Obtain all the information about a bach.roll chord, in gathered syntax.
@@ -13112,9 +13195,10 @@ t_llll* get_single_rollnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e
     @param    chord        The chord
     @param    mode        One of the possible #e_data_considering_types specifying the reason why the llll is asked, and thus returning slightly different specifications depending on the usage.
     @param   selection_only  If non-zero, only get selected notes
+    @param playhead     THe playhead index, if relevant (use 0 as default or if not needed)
     @return                The gathered syntax of the chord, as an llll
 */
-t_llll* get_rollchord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_data_considering_types mode, bool selection_only);
+t_llll* get_rollchord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_data_considering_types mode, bool selection_only, long playhead);
 
 
 /**    Obtain all the information about a bach.score note, in gathered syntax.
@@ -13122,9 +13206,10 @@ t_llll* get_rollchord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_dat
     @param    r_ob        The notation object
     @param    note        The note
     @param    mode        One of the possible #e_data_considering_types specifying the reason why the llll is asked, and thus returning slightly different specifications depending on the usage.
+ @param playhead     THe playhead index, if relevant (use 0 as default or if not needed)
     @return                The gathered syntax of the chord, as an llll
 */
-t_llll* get_scorenote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_considering_types mode); // used by score
+t_llll* get_scorenote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_considering_types mode, long playhead); // used by score
 
 
 /** Obtain all the information about a bach.score note, in gathered syntax, but considering it as a part of a chord containing just this note.
@@ -13133,9 +13218,10 @@ t_llll* get_scorenote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_
     @param    r_ob        The notation object
     @param    note        The note
     @param    mode        One of the possible #e_data_considering_types specifying the reason why the llll is asked, and thus returning slightly different specifications depending on the usage.
+    @param playhead     The playhead index, if relevant (use 0 as default or if not needed)
     @return                The llll gathered syntax of a chord containing the #note as a single note
 */
-t_llll* get_single_scorenote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_considering_types mode);
+t_llll* get_single_scorenote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_considering_types mode, long playhead);
 
 
 // TBD
@@ -13148,9 +13234,10 @@ char should_play_tied_chords_separately(t_notation_obj *r_ob, t_chord *chord);
     @param    r_ob        The notation object
     @param    chord        The chord
     @param    mode        One of the possible #e_data_considering_types specifying the reason why the llll is asked, and thus returning slightly different specifications depending on the usage.
+     @param playhead     THe playhead index, if relevant (use 0 as default or if not needed)
     @return                The gathered syntax of the chord, as an llll
 */
-t_llll* get_scorechord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_data_considering_types mode, char put_grace_chord_sym_duration_to_zero); // used by score
+t_llll* get_scorechord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_data_considering_types mode, char put_grace_chord_sym_duration_to_zero, long playhead); // used by score
 
 
 /**    Obtain all the information about a (dummy) bach.slot note, in gathered syntax (indeed, bach.slot is a set of slots associated to a dummy note).
@@ -13200,9 +13287,10 @@ double get_breakpoints_interpolated_mc(t_notation_obj *r_ob, t_note *note, doubl
     @return                The gathered syntax of the requested part of the chord, as an llll
     @remark                The input interval(#start_ms, #end_ms) must overlap at least a little bit with the chord temporal position, 
                         otherwise a chord with no notes will be output.
+    @param playhead     The playhead index, if relevant (use 0 as default or if not needed)
     @see                get_rollchord_values_as_llll()
 */
-t_llll* get_rollpartialchord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_data_considering_types mode, double start_ms, double end_ms);
+t_llll* get_rollpartialchord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_data_considering_types mode, double start_ms, double end_ms, long playhead);
 
 
 /**    Obtain all the information about a specific part of a bach.roll note, in gathered syntax.
@@ -13216,9 +13304,10 @@ t_llll* get_rollpartialchord_values_as_llll(t_notation_obj *r_ob, t_chord *chord
     @return                The gathered syntax of the requested part of the note, as an llll
     @remark                The input interval(#start_ms, #end_ms) must overlap at least a little bit with the temporal position of the note's duration line, 
                         otherwise a note with no duration will be output.
+    @param playhead     The playhead index, if relevant (use 0 as default or if not needed)
     @see                get_rollnote_values_as_llll()
 */
-t_llll* get_rollpartialnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_considering_types mode, double ms_start, double ms_end);
+t_llll* get_rollpartialnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_considering_types mode, double ms_start, double ms_end, long playhead);
 
 
 
@@ -14752,17 +14841,9 @@ long chord_get_max_velocity(t_notation_obj *r_ob, t_chord *chord);
     @ingroup play
     @param    r_ob        The notation object
     @param    lock_general_mutex    If this is non-zero, the t_notation_obj::c_general_mutex mutex is locked and unlocked before checking and changing
+ @param reschedule_everything_for_this_playhead Possibly a bitfield of playback indices to force rescheduling for this specific playhead; use 0 to ignore
 */
-void check_correct_scheduling(t_notation_obj *r_ob, char also_lock_general_mutex);
-
-
-/** Update the t_notation_obj::playhead_cant_trespass_loop_end field, telling us if the playhead can or cannot be AFTER the end of the loop.
-    This is performed before starting playing: via this, we know for instance that if the playhead start is BEFORE the end of the (visible) loop, 
-    the loop end will never be trespassed; otherwise if it is AFTER the end of the loop, the play will continue linearly to the end of the roll or score. 
-    @ingroup play
-    @param    r_ob        The notation object
-*/
-void update_playhead_cant_trespass_loop_end(t_notation_obj *r_ob);
+void check_correct_scheduling(t_notation_obj *r_ob, char also_lock_general_mutex, t_playedby_info reschedule_everything_for_this_playhead = 0);
 
 
 /** Obtain the next notation item which is supposed to be played.
@@ -14770,9 +14851,11 @@ void update_playhead_cant_trespass_loop_end(t_notation_obj *r_ob);
     @param    r_ob        The notation object
     @param    current_ms    The last scheduled time or the "current" time (in milliseconds), in any case: a time limit BEFORE WHICH everything
                         is supposed to have been already properly scheduled, or ignored.
+        @param playhead  THe 0-based index of the playhead that would play the item
+       @param   item_onset  Pointer to a double that will be filled with the item_onset if the pointer isn't null
     @return                The next notation item which should be played
 */
-t_notation_item *get_next_item_to_play(t_notation_obj *r_ob, double current_ms);
+t_notation_item *get_next_item_to_play(t_notation_obj *r_ob, double current_ms, long playhead, double *item_onset);
 
 
 /** Check if some of the notes and chords which were played (i.e. had their t_chord::played and t_note::played fields set) have ended playing, and should be
@@ -15360,9 +15443,10 @@ char is_solo_with_progeny(t_notation_obj *r_ob, t_notation_item *item);
     @ingroup    play
     @param    r_ob            The notation object
     @param    item            The notation item
+       @param playhead  The playhead index if relevant, negative numbers otherwise
     @return                    1 if the element is to be played, 0 otherwise.
 */
-char should_element_be_played(t_notation_obj *r_ob, t_notation_item *item);
+char should_element_be_played(t_notation_obj *r_ob, t_notation_item *item, long playhead = -1);
 
 
 /**    Lock a chord.
@@ -19022,6 +19106,7 @@ void get_voicenames_as_text(t_notation_obj *r_ob, t_voice *voice, char *buf, lon
     @return    1 if the given name is contained inside the names, 0 otherwise.
  */
 char is_name_contained(t_hatom *contained, t_llll *container);
+char is_name_as_sym_contained(t_symbol *contained, t_llll *container);
 
 
 /** Tell if each name of a given array is contained inside an array of names.
@@ -19308,9 +19393,6 @@ void notationobj_paste_slot_selection_to_open_slot_window(t_notation_obj *r_ob, 
 void notationobj_copy_durationline(t_notation_obj *r_ob, t_clipboard *clipboard, t_note *note, char cut);
 void notationobj_paste_durationline(t_notation_obj *r_ob, t_clipboard *clipboard);
 
-void notationobj_parse_play_arguments(t_notation_obj *r_ob, long argc, t_atom *argv, char *selection, char *offline, char *preschedule, char *deferlow);
-
-
 void notationobj_pixel_to_element(t_notation_obj *r_ob, t_pt pix, void **clicked_elem_ptr, long *clicked_elem_type);
 void notationobj_toggle_realtime_mode(t_notation_obj *r_ob, char realtime);
 void notationobj_setnotationcolors(t_notation_obj *r_ob, t_llll *ll);
@@ -19405,6 +19487,63 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
 
 // mira multitouch
 void notationobj_mt(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+
+
+double notationobj_get_first_onset_ms_for_grace_notes(t_notation_obj *r_ob);
+
+// Common notationobj scheduling infrastructure
+long notationobj_get_playout(t_notation_obj *r_ob);
+void notationobj_task_chain_deferlow(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_task_gimme(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_task(t_notation_obj *r_ob);
+void notationobj_clock(t_notation_obj *r_ob, t_symbol *s);
+void notationobj_preschedule_end(t_notation_obj *r_ob);
+void notationobj_stop(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_do_stop(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_launch(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_do_launch(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_resume(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_do_resume(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_seek(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_do_seek(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_play(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_play_offline(t_notation_obj *r_ob);
+void notationobj_play_preschedule(t_notation_obj *r_ob);
+void notationobj_do_play(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_pause(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_set_everything_unplayed(t_notation_obj *r_ob);
+void notationobj_reset_playback_specs(t_notation_obj *r_ob);
+void notationobj_parse_playback_arguments(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+
+void notationobj_setcursor_from_double(t_notation_obj *r_ob, double pos, long playhead);
+void notationobj_setcursor_from_llll(t_notation_obj *r_ob, t_llll *args, long flags, long playhead);
+long hatom_to_playhead_index(t_notation_obj *r_ob, t_hatom *h);
+long atom_to_playhead_index(t_notation_obj *r_ob, t_atom *a);
+
+// utilities to manipulate the ->played bitfield of t_note and t_chord
+void mark_as_played(t_playedby_info *played, t_uint8 playhead);
+void mark_as_unplayed(t_playedby_info *played, t_uint8 playhead);
+bool playhead_is_cancrizans(t_notation_obj *r_ob, long playhead);
+
+t_uint64 get_playheads(t_playedby_info x);
+t_uint8 get_latest_playhead(t_playedby_info x);
+t_playedby_info make_playedby_info(t_uint64 playheads, t_uint8 latest_playhead);
+t_bool is_playhead_bit_set(t_playedby_info x, t_uint8 playhead);
+void set_playhead_bit(t_playedby_info *x, t_uint8 playhead);
+void clear_playhead_bit(t_playedby_info *x, t_uint8 playhead);
+void clear_playheads(t_playedby_info *x);
+void set_latest_playhead(t_playedby_info *x, t_uint8 latest_playhead);
+
+//void bit_set(t_uint64 *played, long whichbit);
+//void bit_unset(t_uint64 *played, long whichbit);
+//bool bit_is_set(t_uint64 played, long whichbit);
+
+
+// PRE-SCHEDULING
+void notationobj_clear_prescheduled_events(t_notation_obj *r_ob);
+void notationobj_preschedule_task(t_notation_obj *r_ob);
+void notationobj_append_prescheduled_event(t_notation_obj *r_ob, double time, t_llll *content, char is_notewise, char is_end);
+
 
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

@@ -147,40 +147,108 @@ char notationobj_set_selection_to_best_jilimited_approximation_if_jivoice(t_nota
     return changed;
 }
 
-void note_appendpitch_to_llll(t_notation_obj *r_ob, t_llll *ll, t_note *note, long pitchmode)
+#ifdef BACH_PLAYHEAD_HAVE_AFFINETRANSF
+// WARNING: assumes that everything is pitch!
+t_pitch affinetransform_pitch(t_pitch p, t_playhead_affine_transformation *affine_transform)
 {
+    t_pitch p_out = p;
+    if (affine_transform->has_inversion) {
+        p_out = affine_transform->inversion_mirror.u_pitch + (affine_transform->inversion_mirror.u_pitch - p_out);
+    }
+    if (affine_transform->has_translation) {
+        p_out = p_out + affine_transform->translation_amount.u_pitch;
+    }
+    return p_out;
+}
+
+
+double affinetransform_cents(double mc, t_playhead_affine_transformation *affine_transform)
+{
+    double mc_out = mc;
+    if (affine_transform->has_inversion) {
+        double mirror = affine_transform->inversion_is_pitch ? affine_transform->inversion_mirror.u_pitch.toMCdouble() : affine_transform->inversion_mirror.u_double;
+        mc_out = 2 * mirror - mc_out;
+    }
+    if (affine_transform->has_translation) {
+        double amount = affine_transform->translation_is_pitch ? affine_transform->translation_amount.u_pitch.toMCdouble() : affine_transform->translation_amount.u_double;
+        mc_out += amount;
+    }
+    return mc_out;
+}
+#endif
+
+#ifdef BACH_PLAYHEAD_HAVE_AFFINETRANSF
+void note_appendpitchorcents_to_llll(t_notation_obj *r_ob, t_llll *ll, t_note *note, long pitchmode, t_playhead_affine_transformation *affine_transform)
+#else
+void note_appendpitchorcents_to_llll(t_notation_obj *r_ob, t_llll *ll, t_note *note, long pitchmode)
+#endif
+{
+    bool append_pitch = true;
+    t_pitch p;
+    double mc;
     switch (pitchmode) {
         case k_OUTPUT_PITCHES_ALWAYS:
-            if (note_is_original_pitch_userdefined(note))
-                llll_appendpitch(ll, note->pitch_original);
-            else
-                llll_appendpitch(ll, note->pitch_displayed);
+            if (note_is_original_pitch_userdefined(note)) {
+                p = note->pitch_original;
+            } else {
+                p = note->pitch_displayed;
+            }
             break;
             
         case k_OUTPUT_PITCHES_WHEN_USER_DEFINED:
-            if (note_is_original_pitch_userdefined(note))
-                llll_appendpitch(ll, note->pitch_original);
-            else
-                llll_appenddouble(ll, note->midicents);
+            if (note_is_original_pitch_userdefined(note)) {
+                p = note->pitch_original;
+            } else {
+                mc = note->midicents;
+                append_pitch = false;
+            }
             break;
             
         case k_OUTPUT_PITCHES_NEVER:
         default:
-            llll_appenddouble(ll, note->midicents);
+            mc = note->midicents;
+            append_pitch = false;
             break;
+    }
+    
+#ifdef BACH_PLAYHEAD_HAVE_AFFINETRANSF
+    if (affine_transform) {
+        if (!append_pitch) {
+            mc = affinetransform_cents(mc, affine_transform);
+        } else if ((!affine_transform->has_inversion || affine_transform->inversion_is_pitch) && (!affine_transform->has_translation || affine_transform->translation_is_pitch)) {
+            p = affinetransform_pitch(p, affine_transform);
+        } else {
+            // cast down to double
+            append_pitch = false;
+            mc = affinetransform_cents(p.toMCdouble(), affine_transform);
+        }
+    }
+#endif
+    
+    if (append_pitch) {
+        llll_appendpitch(ll, p);
+    } else {
+        llll_appenddouble(ll, mc);
     }
 }
 
 
-void note_appendpitch_to_llll_for_separate_syntax(t_notation_obj *r_ob, t_llll *ll, t_note *note, e_output_pitches pitch_output_mode)
+void note_appendpitchorcents_to_llll_for_separate_syntax(t_notation_obj *r_ob, t_llll *ll, t_note *note, e_output_pitches pitch_output_mode)
 {
-    note_appendpitch_to_llll(r_ob, ll, note, pitch_output_mode == k_OUTPUT_PITCHES_DEFAULT ? r_ob->output_pitches_separate : pitch_output_mode);
+#ifdef BACH_PLAYHEAD_HAVE_AFFINETRANSF
+    note_appendpitchorcents_to_llll(r_ob, ll, note, pitch_output_mode == k_OUTPUT_PITCHES_DEFAULT ? r_ob->output_pitches_separate : pitch_output_mode, NULL);
+#else
+    note_appendpitchorcents_to_llll(r_ob, ll, note, pitch_output_mode == k_OUTPUT_PITCHES_DEFAULT ? r_ob->output_pitches_separate : pitch_output_mode);
+#endif
 }
 
 
-void note_appendpitch_to_llll_for_gathered_syntax_or_playout(t_notation_obj *r_ob, t_llll *ll, t_note *note, e_data_considering_types mode)
+void note_appendpitchorcents_to_llll_for_gathered_syntax_or_playout(t_notation_obj *r_ob, t_llll *ll, t_note *note, e_data_considering_types mode, long playhead)
 {
     char pitchmode;
+#ifdef BACH_PLAYHEAD_HAVE_AFFINETRANSF
+    t_playhead_affine_transformation *affine_transform = NULL;
+#endif
     
     switch (mode) {
         case k_CONSIDER_FOR_DUMPING_FIRST_OUTLET:
@@ -199,11 +267,18 @@ void note_appendpitch_to_llll_for_gathered_syntax_or_playout(t_notation_obj *r_o
             break;
             
         case k_CONSIDER_FOR_EVALUATION:
+            pitchmode = r_ob->output_pitches_playout;
+            break;
+            
         case k_CONSIDER_FOR_PLAYING:
         case k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE:
         case k_CONSIDER_FOR_PLAYING_AND_ALLOW_PARTIAL_LOOPED_NOTES:
         case k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE:
             pitchmode = r_ob->output_pitches_playout;
+#ifdef BACH_PLAYHEAD_HAVE_AFFINETRANSF
+            if (playhead >= 0 && playhead < CONST_MAX_PLAYHEADS)
+                affine_transform = &r_ob->playback_specs.affine_transform[playhead];
+#endif
             break;
             
         case k_CONSIDER_FOR_SCORE2ROLL:
@@ -219,7 +294,11 @@ void note_appendpitch_to_llll_for_gathered_syntax_or_playout(t_notation_obj *r_o
             break;
     }
     
-    note_appendpitch_to_llll(r_ob, ll, note, pitchmode);
+#ifdef BACH_PLAYHEAD_HAVE_AFFINETRANSF
+    note_appendpitchorcents_to_llll(r_ob, ll, note, pitchmode, affine_transform);
+#else
+    note_appendpitchorcents_to_llll(r_ob, ll, note, pitchmode);
+#endif
 }
 
 

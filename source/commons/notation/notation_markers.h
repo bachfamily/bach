@@ -134,12 +134,13 @@ t_llll *get_markers_as_llll(t_notation_obj *r_ob, char mode, double start_ms, do
                             If this is 0, the syntax is the usual (<position_ms> <name>).
  @param   prepend_marker_symbol  Also prepend a "marker" symbol to the output
  @param   mode       One of the #e_data_considering_types
+ @param playhead    The 0-based index of the playhead that triggered the sending, if any. If irrelevant, use -1
  @return                A list containing the information about a single marker or all markers.
  @remark                Differntly from get_markers_as_llll(), the information we get can have names first and can concern a single marker
                         (but cannot concern a temporal window).
  @see                get_markers_as_llll()
  */
-t_llll *marker_get_as_llll(t_notation_obj *r_ob, t_marker *marker, char namefirst, char prepend_marker_symbol, e_data_considering_types mode);
+t_llll *marker_get_as_llll(t_notation_obj *r_ob, t_marker *marker, char namefirst, char prepend_marker_symbol, e_data_considering_types mode, long playhead);
 
 
 /** Set all markers of a given notation objet from a list of markers in the usual syntax (<position_ms> <name>) (<position_ms> <name>) ...

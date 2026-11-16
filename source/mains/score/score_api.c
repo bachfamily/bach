@@ -87,19 +87,7 @@ void score_showcursor(t_score *x)
     notationobj_redraw((t_notation_obj *) x);
 }
 
-void scoreapi_setcursor_from_double(t_score *x, double pos)
-{
-    x->r_ob.play_head_start_ms = CLAMP(pos, 0, x->r_ob.length_ms_till_last_note);
-    x->r_ob.play_head_start_ux = ms_to_unscaled_xposition((t_notation_obj *)x, x->r_ob.play_head_start_ms, 1);
-    notationobj_redraw((t_notation_obj *) x);
-}
 
-void scoreapi_setcursor_from_llll(t_score *x, t_llll *args, long flags)
-{
-    t_timepoint tp;
-    parse_open_timepoint_syntax((t_notation_obj *)x, args, &x->r_ob.play_head_start_ux, &x->r_ob.play_head_start_ms, &tp, flags);
-    notationobj_redraw((t_notation_obj *) x);
-}
 
 
 //returns true if need a redraw
@@ -229,9 +217,12 @@ char scoreapi_inscreen(t_score *x, t_llll *inscreen)
     
     if (inscreen->l_head && hatom_gettype(&inscreen->l_head->l_hatom) == H_SYM && hatom_getsym(&inscreen->l_head->l_hatom) == _llllobj_sym_end)
         unscaled_x = get_last_barline_ux(x); // x->r_ob.length_ux;
-    else if (inscreen->l_head && hatom_gettype(&inscreen->l_head->l_hatom) == H_SYM && hatom_getsym(&inscreen->l_head->l_hatom) == _llllobj_sym_cursor)
-        unscaled_x = x->r_ob.playing ? x->r_ob.play_head_ux : x->r_ob.play_head_start_ux;
-    else
+    else if (inscreen->l_head && hatom_gettype(&inscreen->l_head->l_hatom) == H_SYM && hatom_getsym(&inscreen->l_head->l_hatom) == _llllobj_sym_cursor) {
+        long playhead = 0;
+        if (inscreen->l_head->l_next)
+            playhead = CLAMP(hatom_to_playhead_index((t_notation_obj *)x, &inscreen->l_head->l_next->l_hatom), 0, CONST_MAX_PLAYHEADS);
+        unscaled_x = x->r_ob.playing ? x->r_ob.play_head_ux[playhead] : x->r_ob.play_head_start_ux[playhead];
+    } else
         err = parse_open_timepoint_syntax((t_notation_obj *)x, inscreen, &unscaled_x, NULL, NULL);
     
     if (!err)
@@ -249,12 +240,17 @@ char scoreapi_inscreenpos(t_score *x, t_llll *inscreen)
     if (inscreen && inscreen->l_head) {
         screenpos = hatom_getdouble(&inscreen->l_head->l_hatom);
         llll_destroyelem(inscreen->l_head);
-        if (inscreen->l_head && hatom_gettype(&inscreen->l_head->l_hatom) == H_SYM && hatom_getsym(&inscreen->l_head->l_hatom) == _llllobj_sym_end)
+        if (inscreen->l_head && hatom_gettype(&inscreen->l_head->l_hatom) == H_SYM && hatom_getsym(&inscreen->l_head->l_hatom) == _llllobj_sym_end) {
             unscaled_x = get_last_barline_ux(x); // x->r_ob.length_ux;
-        else if (inscreen->l_head && hatom_gettype(&inscreen->l_head->l_hatom) == H_SYM && hatom_getsym(&inscreen->l_head->l_hatom) == _llllobj_sym_cursor)
-            unscaled_x = x->r_ob.playing ? x->r_ob.play_head_ux : x->r_ob.play_head_start_ux;
-        else
+        } else if (inscreen->l_head && hatom_gettype(&inscreen->l_head->l_hatom) == H_SYM && hatom_getsym(&inscreen->l_head->l_hatom) == _llllobj_sym_cursor) {
+            long playhead = 0;
+            if (inscreen->l_head->l_next)
+                playhead = CLAMP(hatom_to_playhead_index((t_notation_obj *)x, &inscreen->l_head->l_next->l_hatom), 0, CONST_MAX_PLAYHEADS);
+            
+            unscaled_x = x->r_ob.playing ? x->r_ob.play_head_ux[playhead] : x->r_ob.play_head_start_ux[playhead];
+        } else {
             err = parse_open_timepoint_syntax((t_notation_obj *)x, inscreen, &unscaled_x, NULL, NULL);
+        }
     } else
         err = true;
     
@@ -4101,7 +4097,7 @@ t_chord* addchord_in_measure_from_notes(t_score *x, t_measure *measure, t_chord 
     this_ch->num_notes = num_notes;
     this_ch->firstnote = firstnote;
     this_ch->lastnote = lastnote;
-    this_ch->played = false;
+    this_ch->played = 0;
     this_ch->rhythmic_tree_elem = NULL;
     this_ch->overall_tuplet_ratio = long2rat(1);
     this_ch->dont_split_for_ts_boxes = false;
@@ -4180,7 +4176,7 @@ t_chord* addchord_in_measure_from_values(t_score *x, t_measure *measure, t_chord
             set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
             this_ch->r_sym_duration = r_sym_duration;
             this_ch->onset = 0; // will be set later by calculate_all_chords_remaining_onsets
-            this_ch->played = false;
+            this_ch->played = 0;
             this_ch->num_notes = num_notes;
             this_ch->rhythmic_tree_elem = NULL;
             this_ch->overall_tuplet_ratio = long2rat(1);
@@ -5309,8 +5305,10 @@ void scoreapi_initscore_step02(t_score *x)
     x->r_ob.active_slot_num = -1; // active slot is the normal view (= no slot is visible!)
     x->r_ob.active_slot_num_1based = 0;
     x->r_ob.m_editor = NULL;
-    x->r_ob.play_head_ms = -1;
-    x->r_ob.play_head_ux = -1;
+    for (long ph = 0; ph < CONST_MAX_PLAYHEADS; ph++) {
+        x->r_ob.play_head_ms[ph] = -1;
+        x->r_ob.play_head_ux[ph] = -1;
+    }
     x->need_repaint = false;
     x->can_need_repaint = false;
     
@@ -8445,7 +8443,7 @@ t_llll *measure_get_cents_values_as_llll(t_score *x, t_measure *measure, char tr
         t_note *temp_note = temp_chord->firstnote;
         t_llll* in_llll = llll_get();
         while (temp_note) { // append chord lllls
-            note_appendpitch_to_llll_for_separate_syntax((t_notation_obj *)x, in_llll, temp_note, pitch_output_mode);
+            note_appendpitchorcents_to_llll_for_separate_syntax((t_notation_obj *)x, in_llll, temp_note, pitch_output_mode);
             temp_note = temp_note->next;
         }
         llll_appendllll(meas_llll, in_llll, 0, WHITENULL_llll);    
@@ -8739,7 +8737,7 @@ t_llll* get_all_extras_values_as_llll(t_score *x, char tree)
                     t_llll* slots_subllll = llll_get();
                     while (temp_note) { // append chord lllls
                         //                    llll_appendllll(graphic_subllll, note_get_graphic_values_no_router_as_llll((t_notation_obj *) x, temp_note), 0, WHITENULL_llll);
-                        llll_appendllll(breakpoints_subllll, note_get_breakpoints_values_no_router_as_llll((t_notation_obj *) x, temp_note));
+                        llll_appendllll(breakpoints_subllll, note_get_breakpoints_values_no_router_as_llll((t_notation_obj *) x, temp_note, 0));
                         llll_appendllll(slots_subllll, note_get_slots_values_no_header_as_llll((t_notation_obj *) x, temp_note, false));
                         temp_note = temp_note->next;
                     }
@@ -9147,20 +9145,26 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
             char is_chord_selected = (notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)curr_ch) ^ notation_item_is_preselected((t_notation_obj *) x, (t_notation_item *)curr_ch)); // 1 if chord is selected
             
             // handling play
-            char is_chord_played = false;
+            t_playedby_info is_chord_played = make_playedby_info(0, 0);
             
             if (is_grace_chord)
                 jf_grace = jfont_create_debug(x->r_ob.noteheads_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.notation_typo_preferences.base_pt * x->r_ob.zoom_y * grace_ratio);
             
             if (x->r_ob.playing && x->r_ob.play_mode == k_PLAYMODE_CHORDWISE && x->r_ob.highlight_played_notes) {
-                if (curr_ch->played) {
+                if (get_playheads(curr_ch->played) != 0) {
                     t_chord *lasttiedchord_forplay;
                     if (curr_ch->firstnote)
                         lasttiedchord_forplay = x->r_ob.play_tied_elements_separately ? curr_ch : last_all_tied_chord(curr_ch, false);
                     else
                         lasttiedchord_forplay = x->r_ob.play_rests_separately ? curr_ch : rest_get_last_in_seq(curr_ch, false);
-                    if (lasttiedchord_forplay && x->r_ob.play_head_ms < lasttiedchord_forplay->onset + lasttiedchord_forplay->duration_ms)
-                        is_chord_played = true;
+                    for (long ph = 0; ph < x->r_ob.num_playheads; ph++) {
+                        if (is_playhead_bit_set(curr_ch->played, ph)) {
+                            if (lasttiedchord_forplay && x->r_ob.play_head_ms[ph] < lasttiedchord_forplay->onset + lasttiedchord_forplay->duration_ms) {
+                                mark_as_played(&is_chord_played, ph);
+                                break;
+                            }
+                        }
+                    }
                 }
             }
             
@@ -9395,9 +9399,9 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                         char j;
                         double dot_x_offset, dot_y_offset;
                         t_bpt *selected_breakpoint = NULL;
-                        char is_note_played = false;
                         double note_end_pos = end_pos;
-                        
+                        t_playedby_info is_note_played = make_playedby_info(0, 0);
+
 //                        if (x->r_ob.show_durations && x->r_ob.dl_spans_ties > 2 && curr_nt->tie_from)
 //                            continue;
                         
@@ -9418,8 +9422,13 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
 							else {
 								if (should_element_be_played((t_notation_obj *) x, (t_notation_item *)curr_nt) && (curr_ch->played || curr_nt->played)) {
 									t_note *lasttiednote_forplay = x->r_ob.play_tied_elements_separately ? curr_nt : note_get_last_in_tieseq(curr_nt);
-									if (x->r_ob.play_head_ms < lasttiednote_forplay->parent->onset + lasttiednote_forplay->parent->duration_ms)
-										is_note_played = true;
+                                    for (long ph = 0; ph < x->r_ob.num_playheads; ph++) {
+                                        if (is_playhead_bit_set(curr_ch->played, ph) || is_playhead_bit_set(curr_nt->played, ph)) {
+                                            if (x->r_ob.play_head_ms[ph] < lasttiednote_forplay->parent->onset + lasttiednote_forplay->parent->duration_ms) {
+                                                mark_as_played(&is_note_played, ph);
+                                            }
+                                        }
+                                    }
 								}
 							}
 						}
@@ -9857,7 +9866,11 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                 char is_note_locked = notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)curr_nt);
                                 char is_note_muted = notation_item_is_globally_muted((t_notation_obj *)x, (t_notation_item *)curr_nt);
                                 char is_note_solo = notation_item_is_globally_solo((t_notation_obj *)x, (t_notation_item *)curr_nt);
-                                char is_note_played = x->r_ob.highlight_played_notes ? (should_element_be_played((t_notation_obj *) x, (t_notation_item *)curr_nt) && (curr_ch->played || curr_nt->played)) : false;
+                                t_playedby_info is_note_played = make_playedby_info(0, 0);
+                                if (should_element_be_played((t_notation_obj *) x, (t_notation_item *)curr_nt)) {
+                                    is_note_played = make_playedby_info(get_playheads(curr_ch->played) | get_playheads(curr_nt->played), get_latest_playhead(curr_nt->played));
+                                }
+//                                char is_note_played = x->r_ob.highlight_played_notes ? ( && (curr_ch->played || curr_nt->played)) : false;
                                 t_jrgba annotationcolor = annotation_get_color((t_notation_obj *) x, curr_ch, false, is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited);
                                 paint_annotation_from_slot((t_notation_obj *) x, g, &annotationcolor, (t_notation_item *)curr_nt, s, jf_ann, staff_top, last_annotation_text, &annotation_sequence_start_x_pos, &annotation_sequence_end_x_pos, &annotation_line_y_pos);
                             }
@@ -11033,7 +11046,7 @@ void score_paint_ext(t_score *x, t_object *view, t_jgraphics *g, t_rect rect)
     jgraphics_set_source_rgba(g, 0, 0, 0, 1);
     paint_static_stuff1(x, view, rect, jf, jf_acc, jf_text_fractions, jf_acc_bogus, jf_ts, jf_ts_big, jf_tempi, jf_text, jf_measure_num, g, repaint_measure_num);
     
-    paint_playhead((t_notation_obj *)x, g, rect);
+    paint_playheads((t_notation_obj *)x, g, rect, jf_text);
     
     // draw the legend
     if (x->r_ob.j_mouse_is_over && x->r_ob.legend == 2 && x->r_ob.j_mouse_x >= x->r_ob.j_inset_x && 
@@ -11994,17 +12007,6 @@ void score_move_and_reinitialize_last_voice(t_score *x, t_scorevoice *after_this
     }
 }
 
-double get_first_onset_ms_for_grace_notes(t_score *x)
-{
-    t_scorevoice *voice;
-    double res = 0;
-    for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next)
-        if (voice->firstmeasure && voice->firstmeasure->firstchord && voice->firstmeasure->firstchord->is_grace_chord)
-            if (voice->firstmeasure->firstchord->onset < res)
-                res = voice->firstmeasure->firstchord->onset - CONST_EPSILON2;
-    return res;
-}
-
 t_scorevoice *get_longest_scorevoice(t_score *x)
 {
     t_scorevoice *voice, *longest_voice = NULL;
@@ -12069,7 +12071,7 @@ t_llll *score_get_interp_at_timepoint(t_score *x, t_timepoint tp)
                     for (note = chord->firstnote; note; note = note->next) {
                         t_llll *note_ll;
                         x->r_ob.curr_sampling_ms = timepoint_to_ms((t_notation_obj *)x, tp, voice->v_ob.number);
-                        note_ll = get_scorenote_values_as_llll((t_notation_obj *)x, note, k_CONSIDER_FOR_SAMPLING);
+                        note_ll = get_scorenote_values_as_llll((t_notation_obj *)x, note, k_CONSIDER_FOR_SAMPLING, 0);
                         llll_appendllll(chord_ll, note_ll, 0, WHITENULL_llll);
                     }
                     

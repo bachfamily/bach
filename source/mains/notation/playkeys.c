@@ -120,7 +120,8 @@ enum playkeys_properties
     k_PLAYKEYS_ROUTER,
     k_PLAYKEYS_PLAYOFFSET, // due to partial playing
     k_PLAYKEYS_ROLE,
-    k_PLAYKEYS_CUSTOMSTARTENDSYMBOL
+    k_PLAYKEYS_CUSTOMSTARTENDSYMBOL,
+    k_PLAYKEYS_PLAYHEADINDEX
 };
 
 enum playkeys_incoming // incoming notation items
@@ -193,6 +194,7 @@ typedef struct _playkeys
     char                    n_warn_measurenumberneedsfullpath;
     char                    n_warn_chordindexneedsfullpath;
     char                    n_warn_noteindexneedsfullpath;
+    char                    n_warn_playheadindexrequestednotpresent;
 
     char                    n_must_iterate_on_output;
 
@@ -243,6 +245,7 @@ void reset_warnings(t_playkeys *x)
     x->n_warn_measurenumberneedsfullpath = true;
     x->n_warn_chordindexneedsfullpath = true;
     x->n_warn_noteindexneedsfullpath = true;
+    x->n_warn_playheadindexrequestednotpresent = true;
 }
 
 
@@ -388,6 +391,8 @@ long symbol_to_property(t_symbol *s)
         return k_PLAYKEYS_VELOCITY;
     if (s == _llllobj_sym_midichannel)
         return k_PLAYKEYS_MIDICHANNEL;
+    if (s == gensym("playheadindex"))
+        return k_PLAYKEYS_PLAYHEADINDEX;
     if (s == _llllobj_sym_tie)
         return k_PLAYKEYS_TIE;
     if (s == gensym("voicenumber"))
@@ -473,6 +478,7 @@ t_symbol *property_to_symbol(long property)
         case k_PLAYKEYS_SYMDURATION: return _llllobj_sym_symduration;
         case k_PLAYKEYS_VELOCITY: return _llllobj_sym_velocity;
         case k_PLAYKEYS_MIDICHANNEL: return _llllobj_sym_midichannel;
+        case k_PLAYKEYS_PLAYHEADINDEX: return gensym("playheadindex");
         case k_PLAYKEYS_TIE: return _llllobj_sym_tie;
         case k_PLAYKEYS_VOICENUMBER: return gensym("voicenumber");
         case k_PLAYKEYS_VOICENAME: return gensym("voicename");
@@ -2011,6 +2017,43 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                     }
                         break;
 
+                    case k_PLAYKEYS_PLAYHEADINDEX:
+                    {
+                        switch (incoming) {
+                            case k_PLAYKEYS_INCOMING_ROLLNOTE:
+                            case k_PLAYKEYS_INCOMING_ROLLCHORD:
+                            case k_PLAYKEYS_INCOMING_SCORENOTE:
+                            case k_PLAYKEYS_INCOMING_SCORECHORD:
+                            case k_PLAYKEYS_INCOMING_SCOREREST:
+                            case k_PLAYKEYS_INCOMING_ROLLNOTE_COMMAND:
+                            case k_PLAYKEYS_INCOMING_ROLLCHORD_COMMAND:
+                            case k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND:
+                            case k_PLAYKEYS_INCOMING_SCORECHORD_COMMAND:
+                            case k_PLAYKEYS_INCOMING_SCOREREST_COMMAND:
+                            case k_PLAYKEYS_INCOMING_SCOREMEASURE:
+                            case k_PLAYKEYS_INCOMING_PLAY:
+                            case k_PLAYKEYS_INCOMING_STOP:
+                            case k_PLAYKEYS_INCOMING_MARKER:
+                            case k_PLAYKEYS_INCOMING_TEMPO:
+                                found = llll_get();
+                                if ((target_el = llll_getindex(in_ll, -1, I_STANDARD))) {
+                                    if (hatom_gettype(&target_el->l_hatom) == H_LONG) {
+                                        llll_appendlong(found, hatom_getlong(&target_el->l_hatom));
+                                    } else {
+                                        if (x->n_warn_playheadindexrequestednotpresent) {
+                                            object_warn((t_object *)x, "Playhead index requested, but not present in the playout llll.");
+                                            object_warn((t_object *)x, "   You might want to turn \"notifyplayheadindex\" on for your notation object.");
+                                            x->n_warn_playheadindexrequestednotpresent = false;
+                                        }
+                                    }
+                                }
+                                break;
+
+                            default:
+                                break;
+                        }
+                    }
+                        break;
 
                     case k_PLAYKEYS_VOICENUMBER:
                     {

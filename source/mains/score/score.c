@@ -143,7 +143,7 @@ void score_dump(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_score2roll(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void select_all(t_score *x);
 
-void score_send_current_chord(t_score *x);
+void score_send_current_chord(t_score *x, long playhead);
 
 // interface functions
 void score_getdomain(t_score *x, t_symbol *s, long argc, t_atom *argv);
@@ -275,17 +275,6 @@ void score_preset(t_score *x);
 void score_begin_preset(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_restore_preset(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_end_preset(t_score *x);
-void score_playselection(t_score *x, t_symbol *s, long argc, t_atom *argv);
-void score_play(t_score *x, t_symbol *s, long argc, t_atom *argv);
-void score_do_play(t_score *x, t_symbol *s, long argc, t_atom *argv);
-void score_stop(t_score *x, t_symbol *s, long argc, t_atom *argv);
-void score_do_stop(t_score *x, t_symbol *s, long argc, t_atom *argv);
-void score_pause(t_score *x);
-void score_play_offline(t_score *x, t_symbol *s, long argc, t_atom *argv);
-void score_play_preschedule(t_score *x, t_symbol *s, long argc, t_atom *argv);
-void score_task(t_score *x);
-void score_task_gimme(t_score *x, t_symbol *s, long argc, t_atom *argv);
-void score_task_chain_deferlow(t_score *x, t_symbol *s, long argc, t_atom *argv);
 
 void score_name(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_nameappend(t_score *x, t_symbol *s, long argc, t_atom *argv);
@@ -825,7 +814,7 @@ void score_quantize(t_score *x, t_symbol *s, long argc, t_atom *argv)
 //                    llll_appenddouble(this_event_cents, note->midicents, 0, WHITENULL_llll);
                     llll_appendlong(this_event_velocities, note->velocity, 0, WHITENULL_llll);
                     llll_appendllll(this_event_graphic, note_get_graphic_values_no_router_as_llll((t_notation_obj *) x, note), 0, WHITENULL_llll);
-                    llll_appendllll(this_event_breakpoints, note_get_breakpoints_values_no_router_as_llll((t_notation_obj *) x, note), 0, WHITENULL_llll);
+                    llll_appendllll(this_event_breakpoints, note_get_breakpoints_values_no_router_as_llll((t_notation_obj *) x, note, 0), 0, WHITENULL_llll);
                     llll_appendllll(this_event_slots, note_get_slots_values_no_header_as_llll((t_notation_obj *) x, note, false), 0, WHITENULL_llll);
                     llll_appendlong(this_event_ties, note->tie_to ? (note->tie_to != WHITENULL ? note->tie_to->r_it.ID : 1) : 0, 0, WHITENULL_llll);
                     llll_appendlong(this_event_IDs, note->r_it.ID, 0, WHITENULL_llll);
@@ -899,7 +888,8 @@ void score_quantize(t_score *x, t_symbol *s, long argc, t_atom *argv)
 }
 
 
-void score_send_current_chord(t_score *x){
+void score_send_current_chord(t_score *x, long playhead)
+{
     t_scorevoice *voice;
     t_measure *meas;
     t_chord *chord;
@@ -909,8 +899,8 @@ void score_send_current_chord(t_score *x){
     t_llll *out_vels = llll_get();
     
     lock_general_mutex((t_notation_obj *)x);
-    double curr_pos_ux = x->r_ob.playing ? x->r_ob.play_head_ux : x->r_ob.play_head_start_ux;
-    double curr_pos_ms = x->r_ob.playing ? x->r_ob.play_head_ms : x->r_ob.play_head_start_ms;
+    double curr_pos_ux = x->r_ob.playing ? x->r_ob.play_head_ux[playhead] : x->r_ob.play_head_start_ux[playhead];
+    double curr_pos_ms = x->r_ob.playing ? x->r_ob.play_head_ms[playhead] : x->r_ob.play_head_start_ms[playhead];
     for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next){
         for (meas = voice->firstmeasure; meas; meas = meas->next) {
             if (meas->tuttipoint_reference->offset_ux + meas->start_barline_offset_ux > curr_pos_ux)
@@ -982,13 +972,16 @@ void score_send_current_chord(t_score *x){
 void score_setcursor(t_score *x, t_symbol *s, long argc, t_atom *argv){
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
     
+    t_atom_long playhead = 0;
+    llll_parseattrs((t_object *)x, args, LLLL_PA_DESTRUCTIVE, "i", gensym("playhead"), &playhead);
+    
     if (args && args->l_size == 1 && is_hatom_number(&args->l_head->l_hatom)) {
-        scoreapi_setcursor_from_double(x, atom_getfloat(argv));
+        notationobj_setcursor_from_double((t_notation_obj *)x, atom_getfloat(argv), playhead);
     } else if (args && args->l_size == 1 && hatom_gettype(&args->l_head->l_hatom) == H_SYM) {
         t_notation_item *it;
         lock_general_mutex((t_notation_obj *)x);
         if ((it = names_to_single_notation_item((t_notation_obj *) x, args)))
-            scoreapi_setcursor_from_double(x, notation_item_get_onset_ms((t_notation_obj *)x, it));
+            notationobj_setcursor_from_double((t_notation_obj *)x, notation_item_get_onset_ms((t_notation_obj *)x, it), playhead);
         unlock_general_mutex((t_notation_obj *)x);
     } else {
         // measure point in measure, voice
@@ -1004,16 +997,16 @@ void score_setcursor(t_score *x, t_symbol *s, long argc, t_atom *argv){
         if (zeropimisfirstchord > 0)
             flags |= k_PARSETIMEPOINT_FLAG_ZEROPIMISFIRSTCHORD;
 
-        scoreapi_setcursor_from_llll(x, args, flags);
+        notationobj_setcursor_from_llll((t_notation_obj *)x, args, flags, playhead);
     }
     if (x->r_ob.notify_also_upon_messages) {
-        send_moved_playhead_position((t_notation_obj *) x, 7);
+        send_moved_playhead_position((t_notation_obj *) x, 7, playhead);
     }
     llll_free(args);
 }
 
 void score_getcursor(t_score *x){
-    send_playhead_position((t_notation_obj *) x, 7);
+    send_playhead_position((t_notation_obj *) x, 7, false);
 }
 
 
@@ -3052,10 +3045,13 @@ void score_addmarker(t_score *x, t_symbol *s, long argc, t_atom *argv)
         char attach_to = k_MARKER_ATTACH_TO_MS;
         t_llll *content = NULL;
         t_marker *newmarker;
-
-        if (hatom_gettype(&params->l_head->l_hatom) == H_SYM && hatom_getsym(&params->l_head->l_hatom) == _llllobj_sym_cursor) 
-            pos_ms = (!x->r_ob.playing ? x->r_ob.play_head_start_ms : x->r_ob.play_head_ms);
-        else if (params->l_head) {
+        
+        if (hatom_gettype(&params->l_head->l_hatom) == H_SYM && hatom_getsym(&params->l_head->l_hatom) == _llllobj_sym_cursor) {
+            long playhead = 0;
+            if (params->l_head->l_next)
+                playhead = CLAMP(hatom_to_playhead_index((t_notation_obj *)x, &params->l_head->l_next->l_hatom), 0, CONST_MAX_PLAYHEADS);
+            pos_ms = (!x->r_ob.playing ? x->r_ob.play_head_start_ms[playhead] : x->r_ob.play_head_ms[playhead]);
+        } else if (params->l_head) {
             marker_llllelem_to_onset_and_region_properties((t_notation_obj *)x, params->l_head, &pos_ms, &dur_ms, &tp, &sym_dur, &attach_to);
         }
 
@@ -3142,7 +3138,7 @@ void score_getmarker(t_score *x, t_symbol *s, long argc, t_atom *argv){
         lock_markers_mutex((t_notation_obj *)x);
         marker = markername2marker((t_notation_obj *) x, args);
         if (marker)
-            marker_llll = marker_get_as_llll((t_notation_obj *) x, marker, namefirst, true, k_CONSIDER_FOR_DUMPING);
+            marker_llll = marker_get_as_llll((t_notation_obj *) x, marker, namefirst, true, k_CONSIDER_FOR_DUMPING, 0);
         unlock_markers_mutex((t_notation_obj *)x);
         if (marker_llll) {
             llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 7, marker_llll);
@@ -3434,7 +3430,7 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
                         }
                         
                         for (nt = ch_to_complete->firstnote; nt; nt = nt->next)
-                            llll_appendllll(out_ch, get_scorenote_values_as_llll((t_notation_obj *) x, nt, last_one ? k_CONSIDER_FOR_COLLAPSING_AS_NOTE_END : k_CONSIDER_FOR_COLLAPSING_AS_NOTE_MIDDLE), 0, WHITENULL_llll);    
+                            llll_appendllll(out_ch, get_scorenote_values_as_llll((t_notation_obj *) x, nt, last_one ? k_CONSIDER_FOR_COLLAPSING_AS_NOTE_END : k_CONSIDER_FOR_COLLAPSING_AS_NOTE_MIDDLE, 0), 0, WHITENULL_llll);
                         
                         if (last_one) {
                             temp1 = active_chords_elem->l_next;
@@ -3460,7 +3456,7 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
                         
                         for (nt = these_ch[i]->firstnote; nt; nt = nt->next){
                             these_ch[i]->r_it.flags = (e_bach_internal_notation_flags) (these_ch[i]->r_it.flags | k_FLAG_COLLAPSE);
-                            llll_appendllll(out_ch, get_scorenote_values_as_llll((t_notation_obj *) x, nt, ended ? k_CONSIDER_FOR_DUMPING : k_CONSIDER_FOR_COLLAPSING_AS_NOTE_BEGINNING), 0, WHITENULL_llll);    
+                            llll_appendllll(out_ch, get_scorenote_values_as_llll((t_notation_obj *) x, nt, ended ? k_CONSIDER_FOR_DUMPING : k_CONSIDER_FOR_COLLAPSING_AS_NOTE_BEGINNING, 0), 0, WHITENULL_llll);
                         }
                         
                         if (!ended) {
@@ -3470,7 +3466,7 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
                     }
                     
                     if (out_ch->l_size == 1 && chordref_slots) {
-                        llll_appendllll(out_ch, notation_item_get_slots_values_as_llll((t_notation_obj *)x, (t_notation_item *)chordref_slots, chordref_slots_mode, false));
+                        llll_appendllll(out_ch, notation_item_get_slots_values_as_llll((t_notation_obj *)x, (t_notation_item *)chordref_slots, chordref_slots_mode, false, 0));
                     }
                     
                     llll_appendlong(out_ch, 0, 0, WHITENULL_llll); // locked / muted
@@ -3555,7 +3551,7 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
                     }
 
                     for (nt = ch_to_complete->firstnote; nt; nt = nt->next){
-                        llll_appendllll(out_ch, get_scorenote_values_as_llll((t_notation_obj *) x, nt, last_one ? k_CONSIDER_FOR_COLLAPSING_AS_NOTE_END : k_CONSIDER_FOR_COLLAPSING_AS_NOTE_MIDDLE), 0, WHITENULL_llll);    
+                        llll_appendllll(out_ch, get_scorenote_values_as_llll((t_notation_obj *) x, nt, last_one ? k_CONSIDER_FOR_COLLAPSING_AS_NOTE_END : k_CONSIDER_FOR_COLLAPSING_AS_NOTE_MIDDLE, 0), 0, WHITENULL_llll);
                     }
                     
                     if (last_one) {
@@ -3582,7 +3578,7 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
 
                     for (nt = these_ch[i]->firstnote; nt; nt = nt->next){
                         these_ch[i]->r_it.flags = (e_bach_internal_notation_flags) (these_ch[i]->r_it.flags | k_FLAG_COLLAPSE);
-                        llll_appendllll(out_ch, get_scorenote_values_as_llll((t_notation_obj *) x, nt, ended ? k_CONSIDER_FOR_DUMPING : k_CONSIDER_FOR_COLLAPSING_AS_NOTE_BEGINNING), 0, WHITENULL_llll);    
+                        llll_appendllll(out_ch, get_scorenote_values_as_llll((t_notation_obj *) x, nt, ended ? k_CONSIDER_FOR_DUMPING : k_CONSIDER_FOR_COLLAPSING_AS_NOTE_BEGINNING, 0), 0, WHITENULL_llll);
                     }
                     
                     if (!ended) {
@@ -3592,7 +3588,7 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
                 }
                 
                 if (out_ch->l_size == 1 && chordref_slots) {
-                    llll_appendllll(out_ch, notation_item_get_slots_values_as_llll((t_notation_obj *)x, (t_notation_item *)chordref_slots, chordref_slots_mode, false));
+                    llll_appendllll(out_ch, notation_item_get_slots_values_as_llll((t_notation_obj *)x, (t_notation_item *)chordref_slots, chordref_slots_mode, false, 0));
                 }
 
                 llll_appendlong(out_ch, 0, 0, WHITENULL_llll); // locked / muted
@@ -3679,7 +3675,7 @@ char legato(t_score *x, long mode)
                     }
                     if (last_nonrest_chord_llll)
                         llll_free(last_nonrest_chord_llll);
-                    last_nonrest_chord_llll = get_scorechord_values_as_llll((t_notation_obj *) x, chord, k_CONSIDER_FOR_DUMPING, false);
+                    last_nonrest_chord_llll = get_scorechord_values_as_llll((t_notation_obj *) x, chord, k_CONSIDER_FOR_DUMPING, false, 0);
                 }
             }
         }
@@ -3797,6 +3793,7 @@ void score_split(t_score *x, t_symbol *s, long argc, t_atom *argv)
                 }
             }
         }
+        llll_free(proportions_ll);
     } else {
         if (ll && ll->l_head && is_hatom_number(&ll->l_head->l_hatom)) {
             how_many = hatom_getlong(&ll->l_head->l_hatom);
@@ -4100,880 +4097,6 @@ void score_setmeasureparameters(t_score *x, t_symbol *s, long argc, t_atom *argv
     llll_free(arguments);
 }
 
-void score_clock(t_score *x, t_symbol *s) 
-{
-    void *old = x->r_ob.setclock->s_thing; 
-    t_object *c = 0; 
-    
-    // the line below can be restated as: 
-    // if s is the empty symbol 
-    // or s->s_thing is zero 
-    // or s->s_thing is non-zero and a setclock object  
-    if (s && (s == gensym("") || ((c = s->s_thing) && zgetfn(c, gensym("unset"))))) 
-    { 
-        if (old) 
-            score_stop(x, NULL, 0, NULL); 
-        x->r_ob.setclock = s; 
-        /*        if (x->m_running) 
-         setclock_delay(c, x->r_clock, 0L); */
-    } 
-}
-
-void score_playselection(t_score *x, t_symbol *s, long argc, t_atom *argv)
-{
-    // we set all the SELECTED chords as NON-played, the other ones as PLAYED
-    double start_ms = -1;
-    t_notation_item *selitem;
-    char offline = (argc >= 1 && atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("offline"));
-    char preschedule = (argc >= 1 && atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("preschedule"));
-    t_atom av[3];
-    
-    notationobj_parse_play_arguments((t_notation_obj *)x, argc, argv, NULL, NULL, NULL, &x->r_ob.playback_deferlow);
-
-    // find selected chords and ms_boundaries
-    lock_general_mutex((t_notation_obj *)x);
-    for (selitem = x->r_ob.firstselecteditem; selitem; selitem = selitem->next_selected) {
-        if (selitem->type == k_CHORD) {
-            t_chord *chord = (t_chord *) selitem;
-            double this_onset = chord_get_onset_ms((t_notation_obj *)x, chord);
-            if (start_ms < 0 || this_onset < start_ms)
-                start_ms = this_onset;
-        } else if (selitem->type == k_NOTE) {
-            t_chord *chord = ((t_note *) selitem)->parent;
-            double this_onset = chord_get_onset_ms((t_notation_obj *)x, chord);
-            if (start_ms < 0 || this_onset < start_ms)
-                start_ms = this_onset;
-        } else if (selitem->type == k_MEASURE) {
-            t_measure *measure = (t_measure *) selitem;
-            double this_onset = measure_get_onset_ms((t_notation_obj *)x, measure);
-            if (start_ms < 0 || this_onset < start_ms)
-                start_ms = this_onset;
-        } else if (selitem->type == k_VOICE) {
-            start_ms = 0;
-            break;
-        } 
-    }
-    unlock_general_mutex((t_notation_obj *)x);
-    
-    start_ms -= CONST_EPSILON2; // we remove an "epsilon" from the start_ms
-    if (start_ms < 0.) 
-        start_ms = 0.;
-    
-    x->r_ob.only_play_selection = true;
-    
-    long acount = 0;
-    if (offline) {
-        atom_setsym(av, gensym("offline"));
-        if (x->r_ob.playback_deferlow) {
-            atom_setsym(av+1, gensym("deferlow"));
-            atom_setfloat(av+2, start_ms);
-            acount = 3;
-        } else {
-            atom_setfloat(av + 1, start_ms);
-            acount = 2;
-        }
-    } else if (preschedule) {
-        atom_setsym(av, gensym("preschedule"));
-        atom_setfloat(av + 1, start_ms);
-        acount = 2;
-    } else {
-        atom_setfloat(av, start_ms);
-        acount = 1;
-    }
-    score_play(x, NULL, acount, av);
-}
-
-void score_pause(t_score *x)
-{
-    if (x->r_ob.playing && x->r_ob.playing_scheduling_type == k_SCHEDULING_PRESCHEDULE) {
-        object_warn((t_object *)x, "Can't pause during prescheduled playback.");
-    } else {
-        x->r_ob.show_playhead = true;
-        x->r_ob.play_head_start_ms = x->r_ob.play_head_ms;
-        x->r_ob.play_head_start_ux = x->r_ob.play_head_ux;
-        score_stop(x, _llllobj_sym_pause, 0, NULL);
-    }
-}
-
-void score_play(t_score *x, t_symbol *s, long argc, t_atom *argv)
-{
-    notationobj_parse_play_arguments((t_notation_obj *)x, argc, argv, NULL, NULL, NULL, &x->r_ob.playback_deferlow);
-
-    if (argc >= 1 && atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("selection")) {
-        score_playselection(x, s, argc-1, argv+1);
-        return;
-    }
-
-    char offline = (argc >= 1 && atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("offline"));
-    long preschedule = (argc >= 1 && atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("preschedule"));
-
-    long offset = (x->r_ob.playback_deferlow ? 2 : 1);
-    
-    if (offline) {
-        if (bach_atomic_trylock(&x->r_ob.c_atomic_lock_play)) {
-            object_warn((t_object *) x, "Already playing offline!");
-            return;
-        }
-        score_play_offline(x, s, argc - offset, argv + offset);
-        bach_atomic_unlock(&x->r_ob.c_atomic_lock_play);
-        return;
-    }
-    
-    if (preschedule) {
-        // play in preschedule mode (more accurate)
-        score_play_preschedule(x, s, argc - offset, argv + offset);
-        return;
-    }
-
-    if (x->r_ob.playing) {
-        if (x->r_ob.playing_scheduling_type == k_SCHEDULING_OFFLINE) {
-            object_warn((t_object *)x, "Can't play: already playing offline");
-        } else if (x->r_ob.playing_scheduling_type == k_SCHEDULING_PRESCHEDULE) {
-            object_warn((t_object *)x, "Can't play: already playing in preschedule mode");
-        } else {
-            // normal play called when a previous normal play was already ongoing.
-            // For bw compatibility this will stop the existing play and trigger a new play
-            score_do_stop(x, s, argc, argv);
-            x->r_ob.playing_scheduling_type = k_SCHEDULING_STANDARD;
-            schedule_delay(x, (method) score_do_play, 0, s, argc, argv);
-            //            object_warn((t_object *)x, "Can't play: already playing!");
-        }
-    } else {
-        x->r_ob.playing_scheduling_type = k_SCHEDULING_STANDARD;
-        schedule_delay(x, (method) score_do_play, 0, s, argc, argv);
-    }
-}
-
-void score_play_offline(t_score *x, t_symbol *s, long argc, t_atom *argv)
-{
-    if (x->r_ob.playing) {
-        object_warn((t_object *)x, "Can't play offline: already playing");
-    } else {
-        x->r_ob.playing_scheduling_type = k_SCHEDULING_OFFLINE;
-        score_do_play(x, s, argc, argv);
-        if (x->r_ob.playback_deferlow) {
-            score_task_chain_deferlow(x, NULL, 0, NULL);
-        } else {
-            while (x->r_ob.playing) {
-                x->r_ob.play_step_count = x->r_ob.play_num_steps;
-                score_task(x);
-            }
-        }
-    }
-}
-
-
-void score_play_preschedule(t_score *x, t_symbol *s, long argc, t_atom *argv)
-{
-    double start_ms = (argc > 0) ? atom_getfloat(argv) : x->r_ob.play_head_start_ms;
-    
-    if (x->r_ob.playing) {
-        object_warn((t_object *)x, "Can't play in preschedule mode: already playing");
-    } else {
-        x->r_ob.playing_scheduling_type = k_SCHEDULING_PRESCHEDULE;
-        notationobj_clear_prescheduled_events((t_notation_obj *)x);
-        
-        // Gathering information about items to be scheduled inside x->r_ob.to_schedule
-        score_do_play(x, s, argc, argv);
-        while (x->r_ob.playing) {
-            x->r_ob.play_step_count = x->r_ob.play_num_steps;
-            score_task(x);
-        }
-        
-        x->r_ob.playing = true; // we are still to play! :)
-        x->r_ob.play_head_ms = start_ms;
-
-        // Scheduling stuff
-        x->r_ob.preschedule_cursor = x->r_ob.to_preschedule->l_head;
-        for (t_llllelem *el = x->r_ob.to_preschedule->l_head; el; el = el->l_next) {
-            t_scheduled_event *ev = (t_scheduled_event *)hatom_getobj(&el->l_hatom);
-            setclock_fdelay(x->r_ob.setclock->s_thing, ev->clock, ev->time - start_ms);
-        }
-    }
-}
-
-
-
-void score_do_play(t_score *x, t_symbol *s, long argc, t_atom *argv)
-{
-    // let's find the first chord to play
-    long i = 0;
-    t_notation_item *firstplayeditem = NULL; 
-    double start_ms = 0, end_ms = 0, firstplayeditem_onset = 0;
-    t_measure *temp_meas = NULL;
-    t_chord *temp_ch = NULL;
-    t_scorevoice *voice;
-    
-    x->r_ob.are_there_solos = are_there_solos((t_notation_obj *) x);
-    x->r_ob.are_there_repeats = are_there_repeats((t_notation_obj *) x, true);
-
-    x->r_ob.play_head_reset_start_ms_when_play_ends = -1; // which means: don't reset
-    
-    // setting automatic end
-    end_ms = x->r_ob.length_ms_till_last_note;
-    x->r_ob.play_head_fixed_end_ms = -1;
-
-    // detecting start_ms
-    if (argc > 0) {
-        char err;
-        t_llll *start_timepoint_syntax = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
-        if (start_timepoint_syntax->l_size == 2) {
-            char err2;
-            t_llll *end_timepoint_syntax = llll_clone(start_timepoint_syntax);
-            llll_behead(end_timepoint_syntax);
-            llll_betail(start_timepoint_syntax);
-            err2 = parse_open_timepoint_syntax((t_notation_obj *)x, end_timepoint_syntax, NULL, &end_ms, NULL);
-            llll_free(end_timepoint_syntax);
-            if (err2) {
-                object_error((t_object *) x, "Error in defining play end position");
-                return;
-            }
-            x->r_ob.play_head_fixed_end_ms = end_ms;
-        }
-        err = parse_open_timepoint_syntax((t_notation_obj *)x, start_timepoint_syntax, NULL, &start_ms, NULL);
-//        if (start_timepoint_syntax->l_depth > 1)
-//            start_ms -= CONST_EPSILON2;
-        llll_free(start_timepoint_syntax);
-        if (err) {
-            object_error((t_object *) x, "Error in defining play start position");
-            return;
-        }
-        x->r_ob.play_head_start_ms = start_ms;
-        x->r_ob.play_head_start_ux = ms_to_unscaled_xposition((t_notation_obj *)x, start_ms, 1);
-        
-    } else if (argc == 0) {
-        start_ms = x->r_ob.play_head_start_ms;
-    } else {
-        x->r_ob.play_head_start_ms = start_ms;
-        if (start_ms == 0) 
-            start_ms = get_first_onset_ms_for_grace_notes(x);
-        x->r_ob.play_head_start_ux = ms_to_unscaled_xposition((t_notation_obj *)x, start_ms, 1);
-    }
-    update_playhead_cant_trespass_loop_end((t_notation_obj *)x);
-    
-
-    // first we send the playhead starting position
-    send_playhead_position((t_notation_obj *) x, 7);
-
-    // This line is no longer needed, since we do it constantly at the stop method:
-    // set_everything_unplayed(x)
-
-    t_llll *to_send = NULL;
-    t_llll *to_send_references = NULL;
-    char is_notewise = true;
-    
-    // then we send partial notes, if needed
-    // i.e. the chords whose onset is < start_ms but whose duration continue at start_ms
-    if (x->r_ob.play_partial_notes) {
-        to_send = llll_get();
-        to_send_references = llll_get();
-
-        lock_general_mutex((t_notation_obj *)x);
-        
-        for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next) {
-            for (temp_meas = voice->firstmeasure; temp_meas; temp_meas = temp_meas->next) {
-                double measure_start_ms = measure_get_onset_ms((t_notation_obj *)x, temp_meas);
-                double measure_end_ms = notation_item_get_tail_ms_accurate((t_notation_obj *)x, (t_notation_item *)temp_meas);
-
-                if (measure_start_ms > start_ms)
-                    break;
-                else if (measure_end_ms < start_ms)
-                    continue;
-                
-                for (temp_ch = temp_meas->firstchord; temp_ch; temp_ch = temp_ch->next) {
-                    if (temp_ch->onset > start_ms || (temp_ch->onset == start_ms && !chord_is_all_tied_from(temp_ch, false))) {
-                        break;
-                    } else if (should_element_be_played((t_notation_obj *) x, (t_notation_item *)temp_ch) &&
-                               temp_ch->onset + temp_ch->duration_ms - CONST_EPSILON1 > start_ms) {
-                        t_llll *references, *this_llll;
-
-                        // we play the partial notes
-                        t_note *temp_nt;
-                        t_chord *next;
-                        
-                        temp_ch->played = true;
-                        for (temp_nt = temp_ch->firstnote; temp_nt; temp_nt = temp_nt->next) {
-                            temp_nt->played = true;
-                            llll_appendobj(x->r_ob.notes_being_played, temp_nt, 0, WHITENULL_llll);
-                        }
-                        
-                        // and we set as played all the rest sequences (if any)
-                        if (temp_ch->r_sym_duration.r_num < 0 && !x->r_ob.play_rests_separately) {
-                            t_chord *tmp = temp_ch, *end = rest_get_last_in_seq(temp_ch, false);
-                            while (tmp) {
-                                tmp->played = true;
-                                tmp = chord_get_next(tmp);
-                                if (!tmp || tmp == end || tmp->r_sym_duration.r_num >= 0)
-                                    break;
-                            }
-                        }
-                        
-                        // and we set as played all the tied notes
-                        if (!x->r_ob.play_tied_elements_separately) {
-                            t_chord *tmp = temp_ch;
-                            while (tmp && (next = chord_get_next(tmp)) && chord_is_all_tied_to((t_notation_obj *) x, tmp, 0, NULL)) {
-                                next->played = true;
-                                tmp = next;
-                            }
-                        }
-                        for (temp_nt = temp_ch->firstnote; temp_nt; temp_nt = temp_nt->next) {
-                            t_note *tmp_tied_note = temp_nt;
-                            while (tmp_tied_note && tmp_tied_note->tie_to && tmp_tied_note->tie_to != WHITENULL) {
-                                tmp_tied_note = tmp_tied_note->tie_to;
-                                tmp_tied_note->played = true;
-//                                llll_appendobj(x->r_ob.notes_being_played, tmp_tied_note, 0, WHITENULL_llll); // NO NEED TO STORE TIED NOTES
-                            }
-                        }
-                        
-                        this_llll = chord_get_as_llll_for_sending((t_notation_obj *) x, temp_ch, x->r_ob.play_partial_notes > 1 ? k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE : k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE, -1, NULL, &references, &is_notewise);
-                        llll_appendllll(to_send, this_llll, 0, WHITENULL_llll);
-                        llll_appendllll(to_send_references, references, 0, WHITENULL_llll);
-                    }
-                }
-            }
-        }
-
-        llll_flatten(to_send, 1, 0);
-        llll_flatten(to_send_references, 0, 0);
-        
-        unlock_general_mutex((t_notation_obj *)x);
-    }
-    
-    // setting the chord_play_cursor to NULL for every voice (why for every voice and not just the used ones??? because if one changes the number
-    // of voices during playback this could be an issue...)
-    for (i = 0; i < CONST_MAX_VOICES; i++) {
-        x->r_ob.chord_play_cursor[i] = NULL;
-        x->r_ob.tempo_play_cursor[i] = NULL;
-        x->r_ob.measure_play_cursor[i] = NULL;
-    }
-    x->r_ob.marker_play_cursor = NULL;
-
-    lock_general_mutex((t_notation_obj *)x);
-
-    x->r_ob.dont_schedule_loop_end = x->r_ob.dont_schedule_loop_start = false;
-
-    firstplayeditem = get_next_item_to_play((t_notation_obj *)x, start_ms);
-    if (firstplayeditem)
-        firstplayeditem_onset = notation_item_get_onset_ms((t_notation_obj *)x, firstplayeditem);
-    
-    // if the first chord is beyond the end limit, we stop
-    if (firstplayeditem && firstplayeditem_onset >= end_ms) 
-        firstplayeditem = NULL; 
-
-    if (firstplayeditem || start_ms <= end_ms) {
-        
-        x->r_ob.scheduled_item = firstplayeditem;
-        x->r_ob.scheduled_ms = firstplayeditem ? firstplayeditem_onset : end_ms;
-
-        // if we're scheduling loop start or end, we don't want it to be rescheduled for next event
-        x->r_ob.dont_schedule_loop_start = (x->r_ob.scheduled_item && x->r_ob.scheduled_item->type == k_LOOP_START) ? true : false;
-        x->r_ob.dont_schedule_loop_end = (x->r_ob.scheduled_item && x->r_ob.scheduled_item->type == k_LOOP_END) ? true : false;
-
-        unlock_general_mutex((t_notation_obj *)x);
-
-        x->r_ob.play_head_ms = start_ms;
-        x->r_ob.play_head_ux = ms_to_unscaled_xposition((t_notation_obj *)x, x->r_ob.play_head_ms, 1);
-
-        if ((x->r_ob.catch_playhead == k_PLAYHEAD_DOMAINCHANGE_PAGES && force_inscreen_ux_rolling(x, x->r_ob.play_head_ux, 0, true, false)) ||
-            (x->r_ob.catch_playhead == k_PLAYHEAD_DOMAINCHANGE_FIXPOS && force_inscreenpos_ux (x, x->r_ob.playhead_fixed_pos, x->r_ob.play_head_ux, true, false))) {
-            notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
-        }
-
-        x->r_ob.playing = true;
-        llllobj_outlet_symbol_as_llll((t_object *)x, LLLL_OBJ_UI, 7, _llllobj_sym_play);
-        
-        if (x->r_ob.theoretical_play_step_ms <= 0) {
-            // step at each scheduled event
-            x->r_ob.play_num_steps = 1;
-            x->r_ob.play_step_ms = (x->r_ob.scheduled_ms - start_ms);
-        } else {
-            // fluid scheduling for redraw
-            x->r_ob.play_num_steps = MAX(1, round((x->r_ob.scheduled_ms - start_ms) / x->r_ob.theoretical_play_step_ms));
-            x->r_ob.play_step_ms = (x->r_ob.scheduled_ms - start_ms)/x->r_ob.play_num_steps;
-        }
-        x->r_ob.play_step_count = 0;
-        
-        if (x->r_ob.playing_scheduling_type == k_SCHEDULING_STANDARD) {
-            setclock_getftime(x->r_ob.setclock->s_thing, &x->r_ob.start_play_time);
-            setclock_fdelay(x->r_ob.setclock->s_thing, x->r_ob.m_clock, x->r_ob.play_step_ms);
-            if (x->r_ob.highlight_played_notes)
-                notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
-            else
-                notationobj_redraw((t_notation_obj *) x);
-        }
-
-    } else 
-        unlock_general_mutex((t_notation_obj *)x);
-    
-    if (to_send)
-        send_sublists_through_playout_and_free((t_notation_obj *) x, 7, to_send, to_send_references, is_notewise);
-
-}
-
-void score_stop(t_score *x, t_symbol *s, long argc, t_atom *argv)
-{
-    if (x->r_ob.playing && x->r_ob.playing_scheduling_type == k_SCHEDULING_PRESCHEDULE)
-        notationobj_preschedule_end((t_notation_obj *)x, NULL, 0, NULL);
-    schedule_delay(x, (method) score_do_stop, 0, s, argc, argv);
-}
-
-void score_do_stop(t_score *x, t_symbol *s, long argc, t_atom *argv){
-    lock_general_mutex((t_notation_obj *)x);
-    x->r_ob.playing = false;
-    set_everything_unplayed(x);
-    x->r_ob.play_head_ms = -1;
-    x->r_ob.dont_schedule_loop_end = x->r_ob.dont_schedule_loop_start = false;
-    setclock_unset(x->r_ob.setclock->s_thing, x->r_ob.m_clock);
-    x->r_ob.only_play_selection = false;
-    x->r_ob.playback_deferlow = false;
-    x->r_ob.play_step_count = 0;
-    unlock_general_mutex((t_notation_obj *)x);
-
-    llllobj_outlet_symbol_as_llll((t_object *)x, LLLL_OBJ_UI, 7, s ? s : _llllobj_sym_stop);
-    notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
-}
-
-void set_everything_unplayed(t_score *x){
-    t_scorevoice *voice; t_measure *meas; t_chord *chord; t_note *note;
-    for (voice = x->firstvoice; voice && (voice->v_ob.number < x->r_ob.num_voices); voice = voice->next)
-        for (meas = voice->firstmeasure; meas; meas = meas->next) {
-            for (chord = meas->firstchord; chord; chord = chord->next) {
-                chord->played = false;
-                for (note = chord->firstnote; note; note = note->next) 
-                    note->played = false;
-            }
-        }
-    llll_clear(x->r_ob.notes_being_played);
-}
-
-void score_task_chain_deferlow(t_score *x, t_symbol *s, long argc, t_atom *argv)
-{
-    if (x->r_ob.playing) {
-        x->r_ob.play_step_count = x->r_ob.play_num_steps;
-        defer_low(x, (method)score_task_gimme, NULL, 0, NULL);
-        defer_low(x, (method)score_task_chain_deferlow, NULL, 0, NULL);
-    }
-}
-
-void score_task_gimme(t_score *x, t_symbol *s, long argc, t_atom *argv)
-{
-    score_task(x);
-}
-
-void score_task(t_score *x)
-{
-// clock activation.
-// Time is not spanned uniformously from beginning to end, cause we want to have great precision on each note!
-// So, each interval (from note to note) is divided into x->r_ob.play_num_steps steps, when we get to the last one, we compute the next note values.
-
-    x->r_ob.play_head_ms += x->r_ob.play_step_ms;
-    x->r_ob.play_step_count++;
-
-    if (x->r_ob.highlight_played_notes)
-        check_unplayed_notes((t_notation_obj *) x, x->r_ob.play_head_ms);
-
-    if (x->r_ob.playhead_notify_during_playback) {
-        send_playhead_position((t_notation_obj *)x, 7);
-    }
-
-    if (x->r_ob.play_step_count < x->r_ob.play_num_steps) {
-
-        // we haven't reached the next event: we just redraw the playline
-        
-        lock_general_mutex((t_notation_obj *)x);
-        x->r_ob.play_head_ux = ms_to_unscaled_xposition((t_notation_obj *)x, x->r_ob.play_head_ms, 1);
-        unlock_general_mutex((t_notation_obj *)x);
-        
-        setclock_fdelay(x->r_ob.setclock->s_thing, x->r_ob.m_clock, x->r_ob.play_step_ms);
-
-        if (x->r_ob.theoretical_play_step_ms > 0) {
-            if ((x->r_ob.catch_playhead == k_PLAYHEAD_DOMAINCHANGE_PAGES && force_inscreen_ux_rolling(x, x->r_ob.play_head_ux, 0, true, false)) ||
-                (x->r_ob.catch_playhead == k_PLAYHEAD_DOMAINCHANGE_FIXPOS && force_inscreenpos_ux (x, x->r_ob.playhead_fixed_pos, x->r_ob.play_head_ux, true, false))) {
-                notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
-            }
-
-            notationobj_redraw((t_notation_obj *) x);
-        }
-    
-    } else {
-        
-        // we have reached the next scheduled event
-        
-        lock_general_mutex((t_notation_obj *)x);
-
-        if (x->r_ob.scheduled_item) {
-            
-            char scheduled_item_type = x->r_ob.scheduled_item->type;
-            t_scorevoice *voice;
-            t_notation_item *nextitemtoplay = NULL; 
-            t_chord *temp_ch;
-            t_marker *marker;
-            t_tempo *tempo;
-            t_measure *measure;
-            long count = 0, i;
-            double last_scheduled_ms, nextitemtoplay_onset = 0;
-            long max_chord_per_scheduler_tick = MAX(x->r_ob.max_num_chord_per_scheduler_event, 1);
-            t_notation_item **items_to_send;
-
-            t_llll *to_send = llll_get();
-            t_llll *to_send_references = llll_get();
-            char is_notewise = true;
-
-            items_to_send = (t_notation_item **) bach_newptr(max_chord_per_scheduler_tick * sizeof(t_notation_item *));
-
-            // finding synchronous items
-            if (scheduled_item_type == k_CHORD || scheduled_item_type == k_MARKER || scheduled_item_type == k_MEASURE || scheduled_item_type == k_TEMPO) {
-                items_to_send[0] = x->r_ob.scheduled_item;
-                
-                if (items_to_send[0]->type == k_CHORD) {
-                    long voice_num = CLAMP(((t_chord *)items_to_send[0])->parent->voiceparent->v_ob.number, 0, CONST_MAX_VOICES - 1);
-                    x->r_ob.chord_play_cursor[voice_num] = (t_chord *)items_to_send[0];
-                    
-                    if (x->r_ob.play_mode == k_PLAYMODE_CHORDWISE && !x->r_ob.play_tied_elements_separately && chord_is_all_tied_to((t_notation_obj *)x, (t_chord *)items_to_send[0], false, NULL))
-                        x->r_ob.chord_play_cursor[voice_num] = chord_get_last_in_tieseq((t_chord *)items_to_send[0]);
-                    
-                } else if (items_to_send[0]->type == k_TEMPO) {
-                    long voice_num = CLAMP(((t_tempo *)items_to_send[0])->owner->voiceparent->v_ob.number, 0, CONST_MAX_VOICES - 1);
-                    x->r_ob.tempo_play_cursor[voice_num] = (t_tempo *)items_to_send[0];
-                } else if (items_to_send[0]->type == k_MEASURE) {
-                    long voice_num = CLAMP(((t_measure *)items_to_send[0])->voiceparent->v_ob.number, 0, CONST_MAX_VOICES - 1);
-                    x->r_ob.measure_play_cursor[voice_num] = (t_measure *)items_to_send[0];
-                } else if (items_to_send[0]->type == k_MARKER)
-                    x->r_ob.marker_play_cursor = (t_marker *)items_to_send[0];
-
-                count = 1; 
-
-                if (x->r_ob.play_markers) {
-                    for (marker = x->r_ob.marker_play_cursor ? x->r_ob.marker_play_cursor->next : x->r_ob.firstmarker;
-                         marker && count < x->r_ob.max_num_chord_per_scheduler_event; marker = marker->next) {
-                        if (should_element_be_played((t_notation_obj *) x, (t_notation_item *)marker)) {
-                            if (marker->position_ms == x->r_ob.scheduled_ms) {
-                                if (count < max_chord_per_scheduler_tick)
-                                    items_to_send[count++] = (t_notation_item *)marker;
-                                x->r_ob.marker_play_cursor = marker;
-                            } else if (marker->position_ms > x->r_ob.scheduled_ms) {
-                                break;
-                            }
-                        }
-                    }
-                }
-                
-                if (x->r_ob.play_measures) {
-                    for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices && count < x->r_ob.max_num_chord_per_scheduler_event; voice = voice->next){
-                        for (measure = x->r_ob.measure_play_cursor[voice->v_ob.number] ? measure_get_next(x->r_ob.measure_play_cursor[voice->v_ob.number]) : voice->firstmeasure;
-                             measure && count < x->r_ob.max_num_chord_per_scheduler_event; measure = measure_get_next(measure)){
-                            
-                            if (should_element_be_played((t_notation_obj *) x, (t_notation_item *)measure)){
-                                double measure_onset = notation_item_get_onset_ms((t_notation_obj *)x, (t_notation_item *)measure);
-                                if (measure_onset == x->r_ob.scheduled_ms) {
-                                    if (count < max_chord_per_scheduler_tick)
-                                        items_to_send[count++] = (t_notation_item *)measure;
-                                    x->r_ob.measure_play_cursor[voice->v_ob.number] = measure;
-                                } else if (measure_onset > x->r_ob.scheduled_ms) {
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (x->r_ob.play_tempi) {
-                    for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices && count < x->r_ob.max_num_chord_per_scheduler_event; voice = voice->next){
-                        for (tempo = x->r_ob.tempo_play_cursor[voice->v_ob.number] ? tempo_get_next(x->r_ob.tempo_play_cursor[voice->v_ob.number]) : (voice->firstmeasure ? voice->firstmeasure->firsttempo : NULL);
-                             tempo && count < x->r_ob.max_num_chord_per_scheduler_event; tempo = tempo_get_next(tempo)){
-                            
-                            if (should_element_be_played((t_notation_obj *) x, (t_notation_item *)tempo)){
-                                if (tempo->onset == x->r_ob.scheduled_ms) {
-                                    if (count < max_chord_per_scheduler_tick)
-                                        items_to_send[count++] = (t_notation_item *)tempo;
-                                    x->r_ob.tempo_play_cursor[voice->v_ob.number] = tempo;
-                                } else if (tempo->onset > x->r_ob.scheduled_ms) {
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices && count < x->r_ob.max_num_chord_per_scheduler_event; voice = voice->next){
-                    for (temp_ch = x->r_ob.chord_play_cursor[voice->v_ob.number] ? chord_get_next(x->r_ob.chord_play_cursor[voice->v_ob.number]) : (voice->firstmeasure ? voice->firstmeasure->firstchord : NULL);
-                         temp_ch && count < x->r_ob.max_num_chord_per_scheduler_event; temp_ch = chord_get_next(temp_ch)){
-                        
-                        if (should_element_be_played((t_notation_obj *) x, (t_notation_item *)temp_ch)){
-                            if (temp_ch->onset == x->r_ob.scheduled_ms) {
-                                if (count < max_chord_per_scheduler_tick)
-                                    items_to_send[count++] = (t_notation_item *)temp_ch;
-                                x->r_ob.chord_play_cursor[voice->v_ob.number] = temp_ch;
-                                
-                                if (x->r_ob.play_mode == k_PLAYMODE_CHORDWISE && !x->r_ob.play_tied_elements_separately && chord_is_all_tied_to((t_notation_obj *)x, temp_ch, false, NULL)) {
-                                    x->r_ob.chord_play_cursor[voice->v_ob.number] = temp_ch = chord_get_last_in_tieseq(temp_ch);
-                                }
-                            } else if (temp_ch->onset > x->r_ob.scheduled_ms) {
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            
-            // we now have to find the next item to schedule
-            if (x->r_ob.playing_scheduling_type == k_SCHEDULING_STANDARD && scheduled_item_type == k_LOOP_END) {
-                // looping: setting the chord_play_cursor, measure_play_cursor and tempo_play_cursor to NULL for every voice
-                for (i = 0; i < x->r_ob.num_voices; i++) {
-                    x->r_ob.chord_play_cursor[i] = NULL;
-                    x->r_ob.tempo_play_cursor[i] = NULL;
-                    x->r_ob.measure_play_cursor[i] = NULL;
-                }
-                x->r_ob.marker_play_cursor = NULL;
-                
-                // we reset the start play time, and we set the starting playhead position to the loop start position 
-                setclock_getftime(x->r_ob.setclock->s_thing, &x->r_ob.start_play_time);
-                if (x->r_ob.play_head_start_ms != x->r_ob.loop_region.start.position_ms) {
-                    x->r_ob.play_head_start_ms = x->r_ob.loop_region.start.position_ms; 
-                    x->r_ob.play_head_start_ux = ms_to_unscaled_xposition((t_notation_obj *)x, x->r_ob.loop_region.start.position_ms, 1);
-                }
-                
-                last_scheduled_ms = x->r_ob.loop_region.start.position_ms;
-                x->r_ob.play_head_ms = last_scheduled_ms;
-                x->r_ob.dont_schedule_loop_start = false;
-            } else if (x->r_ob.playing_scheduling_type == k_SCHEDULING_STANDARD && scheduled_item_type == k_MEASURE_END_BARLINE) {
-                // scheduling repeat jump
-                // gotta find the position we jump to
-                t_measure *owner = ((t_measure_end_barline *)x->r_ob.scheduled_item)->owner;
-                double teleport_to_ms = 0;
-                for (t_measure *m = owner ? owner->prev : NULL; m; m = m->prev) {
-                    if (m->end_barline->barline_type == k_BARLINE_REPEAT_START || m->end_barline->barline_type == k_BARLINE_REPEAT_END_AND_START) {
-                        teleport_to_ms = notation_item_get_onset_ms_accurate((t_notation_obj *)x, (t_notation_item *)m->next);
-                        break;
-                    }
-                }
-                
-                // increase count
-                t_measure_end_barline *barline = (t_measure_end_barline *)x->r_ob.scheduled_item;
-                barline->repeat_count = positive_mod(barline->repeat_count + 1, MAX(1, barline->repeat_num));
-                
-                // repeat: setting the chord_play_cursor, measure_play_cursor and tempo_play_cursor to NULL for every voice
-                for (i = 0; i < x->r_ob.num_voices; i++) {
-                    x->r_ob.chord_play_cursor[i] = NULL;
-                    x->r_ob.tempo_play_cursor[i] = NULL;
-                    x->r_ob.measure_play_cursor[i] = NULL;
-                }
-                x->r_ob.marker_play_cursor = NULL;
-                
-                // we reset the start play time, and we set the starting playhead position to the loop start position
-                setclock_getftime(x->r_ob.setclock->s_thing, &x->r_ob.start_play_time);
-                if (x->r_ob.play_head_start_ms != teleport_to_ms) {
-                    if (x->r_ob.play_head_reset_start_ms_when_play_ends < 0) {
-                        x->r_ob.play_head_reset_start_ms_when_play_ends = x->r_ob.play_head_start_ms;
-                    }
-                    x->r_ob.play_head_start_ms = teleport_to_ms;
-                    x->r_ob.play_head_start_ux = ms_to_unscaled_xposition((t_notation_obj *)x, teleport_to_ms, 1);
-                }
-                
-                last_scheduled_ms = teleport_to_ms;
-                x->r_ob.play_head_ms = last_scheduled_ms;
-//                x->r_ob.dont_schedule_loop_start = false;
-                
-            } else {
-                last_scheduled_ms = x->r_ob.scheduled_ms;
-                if (scheduled_item_type == k_LOOP_START)
-                    x->r_ob.dont_schedule_loop_end = false;
-            }
-            
-            nextitemtoplay = get_next_item_to_play((t_notation_obj *)x, last_scheduled_ms);
-            if (nextitemtoplay)
-                nextitemtoplay_onset = notation_item_get_onset_ms((t_notation_obj *)x, nextitemtoplay);
-                
-            #ifdef BACH_PLAY_DEBUG
-                if (nextitemtoplay)
-                    post("Next item to play has onset: %.2f ms", nextitemtoplay_onset);
-            #endif
-            
-            if (x->r_ob.play_head_fixed_end_ms > 0 && nextitemtoplay && nextitemtoplay_onset >= x->r_ob.play_head_fixed_end_ms)
-                nextitemtoplay = NULL;            
-            
-            // loop start must be scheduled once: if we schedule loop start, then we schedule a chord falling ON the loop start, we don't want next item to be the loop start again
-            // we check if we can resume scheduling the loop start or end
-            if (x->r_ob.dont_schedule_loop_start && x->r_ob.loop_region.start.position_ms != nextitemtoplay_onset)
-                x->r_ob.dont_schedule_loop_start = false;
-            if (x->r_ob.dont_schedule_loop_start && x->r_ob.loop_region.start.position_ms != nextitemtoplay_onset)
-                x->r_ob.dont_schedule_loop_end = false;
-
-            // we schedule the next item
-            x->r_ob.scheduled_ms = nextitemtoplay ? nextitemtoplay_onset : (x->r_ob.play_head_fixed_end_ms > 0 ? x->r_ob.play_head_fixed_end_ms : x->r_ob.length_ms);
-            if (x->r_ob.theoretical_play_step_ms <= 0){
-                // just one step per scheduled event
-                x->r_ob.play_num_steps = 1;
-                x->r_ob.play_step_ms = (x->r_ob.scheduled_ms - last_scheduled_ms);
-            } else {
-                // fluid steps for redraw
-                x->r_ob.play_num_steps = MAX(1, round((x->r_ob.scheduled_ms - last_scheduled_ms) / x->r_ob.theoretical_play_step_ms));
-                x->r_ob.play_step_ms = (x->r_ob.scheduled_ms - last_scheduled_ms)/x->r_ob.play_num_steps;
-            }
-
-            if (nextitemtoplay) { // we check if we should or should not prevent loops from being scheduled
-                if (nextitemtoplay->type == k_LOOP_START)
-                    x->r_ob.dont_schedule_loop_start = true;
-                else if (nextitemtoplay->type == k_LOOP_END)
-                    x->r_ob.dont_schedule_loop_end = true;
-            }
-
-            x->r_ob.play_step_count = 0;
-            x->r_ob.scheduled_item = nextitemtoplay; // this has to be within the mutex!
-
-
-            // gathering chord values as llll
-            for (i = 0; i < count; i++) {
-                t_llll *this_llll = NULL, *references = NULL;
-                
-                if (items_to_send[i]->type == k_CHORD) {
-                    
-                    // chord is played
-                    ((t_chord *)items_to_send[i])->played = true;
-                    // and we set as played all the rest sequences (if any)
-                    if (((t_chord *)items_to_send[i])->r_sym_duration.r_num < 0 && !x->r_ob.play_rests_separately) {
-                        t_chord *tmp = ((t_chord *)items_to_send[i]), *end = rest_get_last_in_seq(((t_chord *)items_to_send[i]), false);
-                        while (tmp) {
-                            tmp->played = true;
-                            if (tmp == end || tmp->r_sym_duration.r_num >= 0)
-                                break;
-                            tmp = chord_get_next(tmp);
-                        }
-                    }
-                    
-                    if (((t_chord *)items_to_send[i])->r_sym_duration.r_num >= 0 && !x->r_ob.play_tied_elements_separately) {
-                        t_chord *tmp = (t_chord *)items_to_send[i];
-                        t_note *temp_nt;
-                        t_chord *next;
-                        for (temp_nt = tmp->firstnote; temp_nt; temp_nt = temp_nt->next) {
-                            temp_nt->played = true;
-                            if (!temp_nt->tie_from) // we don't keep track of notes continuing ties in the "notes_being_played" llll
-                                llll_appendobj(x->r_ob.notes_being_played, temp_nt, 0, WHITENULL_llll);
-                        }
-                        while (tmp && (next = chord_get_next(tmp)) && chord_is_all_tied_to((t_notation_obj *) x, tmp, 0, NULL)) {
-                            if (next->num_notes == tmp->num_notes)
-                                next->played = true;
-                            tmp = next;
-                        }
-                        if (x->r_ob.play_mode == k_PLAYMODE_NOTEWISE) {
-                            for (temp_nt = tmp->firstnote; temp_nt; temp_nt = temp_nt->next) {
-                                t_note *tmp_tied_note = temp_nt;
-                                while (tmp_tied_note && tmp_tied_note->tie_to && tmp_tied_note->tie_to != WHITENULL) {
-                                    tmp_tied_note = tmp_tied_note->tie_to;
-                                    tmp_tied_note->played = true;
-                                    //                                llll_appendobj(x->r_ob.notes_being_played, tmp_tied_note, 0, WHITENULL_llll); // we don't keep track of notes continuing ties in the "notes_being_played" llll
-                                }
-                            }
-                        }
-                    }
-                    this_llll = chord_get_as_llll_for_sending((t_notation_obj *) x, (t_chord *)items_to_send[i], k_CONSIDER_FOR_PLAYING, -1, NULL, &references, &is_notewise);
-                    
-                } else if (items_to_send[i]->type == k_MEASURE) {
-                    t_llll *temp = measure_get_as_llll_for_sending((t_notation_obj *) x, (t_measure *)items_to_send[i], k_CONSIDER_FOR_PLAYING);
-                    this_llll = llll_get();
-                    references = llll_get();
-                    llll_appendobj(this_llll, temp, 0, WHITENULL_llll);
-                    llll_appendobj(references, (t_measure *)items_to_send[i], 0, WHITENULL_llll);
-                } else if (items_to_send[i]->type == k_TEMPO) {
-                    t_llll *temp = get_tempo_as_llll_for_sending((t_notation_obj *) x, (t_tempo *)items_to_send[i], k_CONSIDER_FOR_PLAYING);
-                    this_llll = llll_get();
-                    references = llll_get();
-                    llll_appendobj(this_llll, temp, 0, WHITENULL_llll);
-                    llll_appendobj(references, items_to_send[i], 0, WHITENULL_llll);
-                } else if (items_to_send[i]->type == k_MARKER) {
-                    t_llll *temp = marker_get_as_llll((t_notation_obj *) x, (t_marker *)items_to_send[i], true, true, k_CONSIDER_FOR_PLAYING);
-                    this_llll = llll_get();
-                    references = llll_get();
-                    llll_appendobj(this_llll, temp, 0, WHITENULL_llll);
-                    llll_appendobj(references, items_to_send[i], 0, WHITENULL_llll);
-                }
-                if (this_llll && references) {
-                    llll_appendllll(to_send, this_llll, 0, WHITENULL_llll);
-                    llll_appendllll(to_send_references, references, 0, WHITENULL_llll);
-                }
-            }
-            
-            llll_flatten(to_send, 1, 0);
-            llll_flatten(to_send_references, 0, 0);
-            
-            unlock_general_mutex((t_notation_obj *)x);
-            
-            if (x->r_ob.playing_scheduling_type == k_SCHEDULING_STANDARD)
-                setclock_fdelay(x->r_ob.setclock->s_thing, x->r_ob.m_clock, x->r_ob.play_step_ms);
-            
-            x->r_ob.play_head_ms = last_scheduled_ms;
-            x->r_ob.play_head_ux = ms_to_unscaled_xposition((t_notation_obj *)x, x->r_ob.play_head_ms, 1);
-            
-            if (x->r_ob.playing_scheduling_type == k_SCHEDULING_STANDARD) {
-                if ((x->r_ob.catch_playhead == k_PLAYHEAD_DOMAINCHANGE_PAGES && force_inscreen_ux_rolling(x, x->r_ob.play_head_ux, 0, true, false)) ||
-                    (x->r_ob.catch_playhead == k_PLAYHEAD_DOMAINCHANGE_FIXPOS && force_inscreenpos_ux (x, x->r_ob.playhead_fixed_pos, x->r_ob.play_head_ux, true, false))) {
-                    notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
-                }
-            }
-            
-            // outputting chord values
-            if (x->r_ob.playing_scheduling_type == k_SCHEDULING_PRESCHEDULE) {
-                notationobj_append_prescheduled_event((t_notation_obj *)x, last_scheduled_ms, to_send, is_notewise, false);
-                llll_free(to_send_references);
-            } else {
-                if (count > 0)
-                    send_sublists_through_playout_and_free((t_notation_obj *) x, 7, to_send, to_send_references, is_notewise);
-                else if (scheduled_item_type == k_LOOP_START || scheduled_item_type == k_LOOP_END) {
-                    llllobj_outlet_symbol_couple_as_llll((t_object *)x, LLLL_OBJ_UI, 7, _llllobj_sym_loop, scheduled_item_type == k_LOOP_START ? _llllobj_sym_start : _llllobj_sym_end);
-                    llll_free(to_send);
-                    llll_free(to_send_references);
-                }
-                
-                if (x->r_ob.playing_scheduling_type == k_SCHEDULING_STANDARD) {
-                    if (x->r_ob.highlight_played_notes)
-                        notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
-                    else
-                        notationobj_redraw((t_notation_obj *) x);
-                }
-            }
-
-            bach_freeptr(items_to_send);
-            
-        } else {
-
-            // next event is the end of the score
-            double end_time = x->r_ob.play_head_ms;
-            if (x->r_ob.playing_scheduling_type == k_SCHEDULING_PRESCHEDULE)
-                end_time = x->r_ob.length_ms_till_last_note;
-
-            char need_repaint = (x->r_ob.playing_scheduling_type == k_SCHEDULING_STANDARD);
-            set_everything_unplayed(x);
-            x->r_ob.playing = false;
-            x->r_ob.play_head_ms = -1;
-            x->r_ob.play_head_ux = -1;
-            x->r_ob.scheduled_item = NULL;
-            x->r_ob.only_play_selection = false;
-            x->r_ob.playback_deferlow = false;
-            x->r_ob.play_step_count = 0;
-            if (x->r_ob.play_head_reset_start_ms_when_play_ends >= 0) {
-                x->r_ob.play_head_start_ms = x->r_ob.play_head_reset_start_ms_when_play_ends;
-                x->r_ob.play_head_start_ux = ms_to_unscaled_xposition((t_notation_obj *)x, x->r_ob.play_head_start_ms, 1);
-            }
-
-            unlock_general_mutex((t_notation_obj *)x);
-            
-            
-            if (x->r_ob.playing_scheduling_type == k_SCHEDULING_PRESCHEDULE) {
-                notationobj_append_prescheduled_event((t_notation_obj *)x, end_time, NULL, 0, true);
-            } else {
-                // send "end" message
-                t_llll *end_llll = llll_get();
-                llll_appendsym(end_llll, _llllobj_sym_end, 0, WHITENULL_llll);
-                llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 7, end_llll);
-                llll_free(end_llll);
-            }
-            
-            if (need_repaint)
-                notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
-        }
-    }
-}
-
 
 
 void C74_EXPORT ext_main(void *moduleRef){
@@ -4983,28 +4106,28 @@ void C74_EXPORT ext_main(void *moduleRef){
     llllobj_common_symbols_init();
     
     bach_inspector_ui_classinit();
-
+    
     if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
         error("bach: bad installation");
         return;
     }
     
-    CLASS_NEW_CHECK_SIZE(c, "bach.score", 
-                            (method)score_new,
-                            (method)score_free,
-                            sizeof(t_score),
-                            (method)NULL,
-                            A_GIMME,
-                            0L);
+    CLASS_NEW_CHECK_SIZE(c, "bach.score",
+                         (method)score_new,
+                         (method)score_free,
+                         sizeof(t_score),
+                         (method)NULL,
+                         A_GIMME,
+                         0L);
     
     c->c_flags |= CLASS_FLAG_NEWDICTIONARY;
-
-//    jbox_initclass(c, JBOX_COLOR | JBOX_FIXWIDTH | JBOX_FONTATTR);
+    
+    //    jbox_initclass(c, JBOX_COLOR | JBOX_FIXWIDTH | JBOX_FONTATTR);
     jbox_initclass(c, JBOX_TEXTFIELD);
     
     class_addmethod(c, (method) score_paint, "paint", A_CANT, 0);
-
-
+    
+    
     // @method subscore @digest Output a portion of <o>bach.score</o>
     // @description The <m>subscore</m> message outputs the gathered syntax information of a portion of the <o>bach.score</o>,
     // namely it outputs only certain voices and within a certain time interval.
@@ -5013,7 +4136,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // <m>VOICES</m> is an llll of the kind <b>[<m>voice_number1</m> <m>voice_number2</m>...]</b>
     // containing the number of the voices to be output; leave <b>nil</b> or <b>[]</b> if you want to output all voices. <br />
     // <m>MEASURE_RANGE</m> is an llll of the kind <b>[<m>start_measure_number</m> <m>end_measure_number</m>]</b> representing the
-    // range of measures that has to be output (the defined one are included). 
+    // range of measures that has to be output (the defined one are included).
     // Leave such list as <b>nil</b> or <b>[]</b> if you want this range to be all the measures of the <o>bach.score</o>.
     // Otherwise <m>start_measure_number</m> is the number of the starting measure in the range, and
     // <m>end_measure_number</m> is the number of the ending measure in the range; leave any negative value
@@ -5022,7 +4145,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // which handles what part of the header should be dumped. By default all header is output. Options for these symbols are exactly
     // the same as for the <m>dump</m> message (see its documentation to know more). For instance <b>subscore [4 5] [4 9] [clefs markers body]</b>
     // output voices 4 and 5 in the portion of the <o>bach.score</o> going from measure 4 to measure 9, and outputs in addition to the musical content (the body)
-    // the information about clefs and the markers. 
+    // the information about clefs and the markers.
     // Leave <b>[body]</b> as third parameter if you only want to dump the music content, and no header information
     // @marg 0 @name voices @optional 0 @type llll
     // @marg 1 @name measure_range @optional 0 @type llll
@@ -5035,20 +4158,20 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example subroll [1 3] [4 -1] [clefs markers body] @caption only dump clefs, markers and body
     // @seealso dump
     class_addmethod(c, (method) score_subscore, "subscore", A_GIMME, 0);
-
-
+    
+    
     // @method merge @digest Merge notes or chords
-    // @description You can use the <m>merge</m> message to perform a merging of chords whose duration is too small, 
-    // and/or of notes too near (with respect to the pitch). The two tasks are separate: the first implies that small chords will be deleted, 
-    // and their duration will increase other chords' duration; the second implies that notes whose pitches differ by less then a pitch 
+    // @description You can use the <m>merge</m> message to perform a merging of chords whose duration is too small,
+    // and/or of notes too near (with respect to the pitch). The two tasks are separate: the first implies that small chords will be deleted,
+    // and their duration will increase other chords' duration; the second implies that notes whose pitches differ by less then a pitch
     // threshold will be merged to a single one. <br />
     // Two arguments are needed for the "merge" command: the time threshold (in symbolic units, e.g.: <b>1/32</b> merges all the
     // chords whose duration is less or equal to 1/32) and the pitch threshold (in cents).
     // If any of the two threshold is set as negative, this means that there will be no corresponding merging: leave the time threshold as negative
     // if you only want to merge in the pitch direction, leave the pitch threshold as negative if you only want to merge chords in the time coordinate. <br />
-    // Two additional optional arguments can be given specifying, respectively: the time merging policy (-1 = merge towards the left chord, 
-    // 0 = split small chord's duration between left and right chords, 1 = merge towards the right chord), the pitch merging policy (-1 = set pitch to the bottommost 
-    // pitch, 0 = set pitch to the average of pitches, 1 = set pitch to the topmost pitch). 
+    // Two additional optional arguments can be given specifying, respectively: the time merging policy (-1 = merge towards the left chord,
+    // 0 = split small chord's duration between left and right chords, 1 = merge towards the right chord), the pitch merging policy (-1 = set pitch to the bottommost
+    // pitch, 0 = set pitch to the average of pitches, 1 = set pitch to the topmost pitch).
     // The merging policies are optional parameters: if you don't specify them, by default they are 0 (= merge to the average). <br />
     // If an optional "selection" symbol is put in front of the time threshold argument, the merging is performend only on the current selection,
     // otherwise it is performed on the whole score.
@@ -5067,7 +4190,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example merge 1/32 10 0 -1 @caption merge chords to the average and notes to the lowest one
     // @seealso split
     class_addmethod(c, (method) score_merge, "merge", A_GIMME, 0);
-
+    
     
     // @method overtype @digest Replace score content at given points
     // @description You can use the <m>overtype</m> message to replace the score content at given points in time for given voices, independently
@@ -5094,12 +4217,12 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example overtype [[1 1 3/8] [2 2 1/4]] [[[1/8 [C4 100 0]] [1/8 [E4 100 0]] [1/8 [G4 100 0]]] [[[leveltype 25] [1/12 [7200. 100 0]] [1/12 [7400 100 0]] [1/12 [7600. 100 0]]] [[1/8 [7700 100 0]] [1/8 [7900 100 0]]] [[-1/8] [1/8 [7700 100 0]]]]] @caption replace portion of score spanning multiple voices, with content containing rhythmic tree specification
     // @seealso llll, autobeam
     class_addmethod(c, (method) score_anything, "overtype", A_GIMME, 0);
-
-
+    
+    
     // @method collapse @digest Collapse score to a single voice
     // @description Use the <m>collapse</m> message to reduce the score to a single voice, containing the .
     // Polyphonies are collapsed to sequence of chords whose notes are properly tied (exactly as the original content).
-    // A simple <m>collapse</m> message will collapse the content of all voices. You can add up to two llll optional arguments, 
+    // A simple <m>collapse</m> message will collapse the content of all voices. You can add up to two llll optional arguments,
     // to obtain the general syntax:
     // <b>collapse <m>VOICES</m> <m>SELECTIVE_OPTIONS</m></b>,
     // <m>VOICES</m> is an llll of the kind <b>[<m>voice_number1</m> <m>voice_number2</m>...]</b>
@@ -5108,7 +4231,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // which handle what part of the header should be dumped. By default all header is output. Options for these symbols are exactly
     // the same as for the <m>dump</m> message (see its documentation to know more). For instance <b>collapse [4 5 8] [markers body]</b>
     // will collapse voices 4, 5 and 8 into a single voice, preserving also markers. <br />
-    // By default the measureinfo (see <m>llll</m> message) of the first voice is kept. If a <m>VOICES</m> llll is specified, the measureinfo 
+    // By default the measureinfo (see <m>llll</m> message) of the first voice is kept. If a <m>VOICES</m> llll is specified, the measureinfo
     // of the first entered voice number is kept as reference. If you want to change such reference, just change the order of the numbers inside
     // <m>VOICES</m>. For instance <b>collapse [5 4 8] [markers body]</b> will act as before, but keeping measureinfo of voice 5.
     // @marg 0 @name voices @optional 0 @type llll
@@ -5119,11 +4242,11 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example collapse [] [body] @caption collapse all voices, but only send out the body
     // @seealso quantize
     class_addmethod(c, (method) score_collapse, "collapse", A_GIMME, 0);
-
-
+    
+    
     // @method ceilmeasures @digest Pad measures
     // @description The message <m>ceilmeasures</m> forces all voices have the same number of measures,
-    // by possibly appending blank measures at the end of some voice. 
+    // by possibly appending blank measures at the end of some voice.
     // If the voice have the same tempi and time signatures, this message force all voices to end together
     // (otherwise this is not necessarily the case). <br />
     // If an integer argument is provided, then all voices are padded so to have that number of measures.
@@ -5131,7 +4254,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example ceilmeasures @caption Make all voice have the same number of measures
     // @example ceilmeasures 100 @caption Pad all voices to have 100 measures
     class_addmethod(c, (method) score_ceilmeasures, "ceilmeasures", A_GIMME, 0);
-
+    
     
     // @method filltiesequenceswithslots @digest Fill tie sequences with slots
     // @description Fills each note in a sequence of ties with the slots of the first tied note, provided that the <m>singleslotfortiednotes</m> specification
@@ -5139,7 +4262,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // while preserving the correct slot information.
     // @seealso setslot
     class_addmethod(c, (method) score_copy_slots_to_tied_noted_sequences, "filltiesequenceswithslots", 0);
-
+    
     
     // @method clear @digest Clear all the measures or a specific parameter inlet
     // @description A <m>clear</m> message sent in the first inlet will delete all the measures the <o>bach.score</o>, and all the markers.
@@ -5151,23 +4274,23 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example clear 3 @caption the same, only for voice 3
     // @seealso clearall, clearbreakpoints, delete
     class_addmethod(c, (method) score_anything, "clear", A_GIMME, 0);
-
-
+    
+    
     // @method clearall @digest Clear all separate parameters inlets
     // @description @copy BACH_DOC_MESSAGE_CLEARALL
     // @seealso clear
     class_addmethod(c, (method) score_anything, "clearall", A_GIMME, 0);
-
+    
     // @method clearmarkers @digest Delete all markers
     // @description @copy BACH_DOC_MESSAGE_CLEARMARKERS
     // @seealso addmarker, deletemarker
     class_addmethod(c, (method) score_clearmarkers, "clearmarkers", 0);
-
+    
     // @method clearslurs @digest Delete all slurs
     // @description @copy BACH_DOC_MESSAGE_CLEARSLURS
     // @seealso addslur
     class_addmethod(c, (method) score_clearslurs, "clearslurs", 0);
-
+    
     
     // @method addslur @digest Add a slur
     // @description @copy BACH_DOC_MESSAGE_ADDSLUR
@@ -5181,12 +4304,12 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example addslur [1 1 1] [1 3 2] @name john @caption the same, with a name
     // @seealso clearslur
     class_addmethod(c, (method) score_addslur, "addslur", A_GIMME, 0);
-
+    
     
     // @method appendmeasures @digest Append several measures
     // @description An <m>appendmeasures</m> message will append one or more measures to the existing ones.
     // If the message has no arguments, the separate parameters are supposed to have been inserted through the separate parameter inlets,
-    // and the <m>addmeasures</m> message will essentially act like a <m>bang</m> which in turns will preserve the existing content, 
+    // and the <m>addmeasures</m> message will essentially act like a <m>bang</m> which in turns will preserve the existing content,
     // and append the newly introduced measures. Refer to the <m>llll</m> message to know more about separate parameter syntax of the inlets.<br />
     // If the message has a single integer argument <m>N</m>, <m>N</m> empty measures will be appended to all voices. <br />
     // If the message has a two arguments <m>voice_num</m> and <m>N</m>, <m>N</m> measures will be appended to the specified voice; <m>voice_num</m>
@@ -5215,7 +4338,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @seealso llll, appendmeasure, insertmeasure, insertmeasures, deletemeasures
     class_addmethod(c, (method) score_anything, "appendmeasures", A_GIMME, 0);
     class_addmethod(c, (method) score_anything, "addmeasures", A_GIMME, 0);
-
+    
     
     
     
@@ -5232,7 +4355,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example addtempo 2 [1/4 30 1/3] @voices 1 3 @caption add the tempo quarter = 30 in measure 2, with offset 1/3
     // @seealso cleartempi
     class_addmethod(c, (method) score_anything, "addtempo", A_GIMME, 0);
-
+    
     
     
     // @method appendmeasure @digest Append a single measure
@@ -5256,7 +4379,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example appendmeasure [2 3] [[[[3 2] 8] []] [3/8 [6000 100]] [-1/4]] [[[5 8] []] [1/4 [5900 100]] [-3/4]] @caption append first measure to voice 2, second measure to voice 3
     // @seealso appendmeasures, insertmeasure, insertmeasures, deletemeasures
     class_addmethod(c, (method) score_anything, "appendmeasure", A_GIMME, 0);
-
+    
     
     // @method insertmeasures @digest Insert several measures
     // @description An <m>insertmeasures</m> message will insert one or more measures at a given score position.
@@ -5339,7 +4462,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @seealso deletevoice
     class_addmethod(c, (method) score_anything, "insertvoice", A_GIMME, 0);
     
-
+    
     // @method clearnotes @digest Clear all the chords
     // @description A <m>clearnotes</m> message sent in the first inlet will delete all the chords the <o>bach.score</o>, but will keep the existing measures
     // as they are (only they will be voided).
@@ -5360,7 +4483,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @seealso clearchords, clearbreakpoints, cleararticulations, delete, clear
     class_addmethod(c, (method) score_cleartempi, "cleartempi", A_GIMME, 0);
     
-
+    
     // @method clearbreakpoints @digest Clear all the pitch breakpoints
     // @description A <m>clearbreakpoints</m> message sent in the first inlet will delete all the pitch breakpoints inside the <o>bach.score</o>, and
     // reset the note tails.
@@ -5370,7 +4493,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example clearbreakpoints 2 @caption clear all the clearbreakpoints in voice 2
     // @seealso clearchords, cleartempi, cleararticulations, delete, clear
     class_addmethod(c, (method) score_anything, "clearbreakpoints", A_GIMME, 0);
-
+    
     
     // @method cleararticulations @digest Clear all the articulations
     // @description A <m>cleararticulations</m> message sent in the first inlet will delete all the articulations inside the <o>bach.score</o>.
@@ -5380,14 +4503,14 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example cleararticulations 2 @caption clear all the articulations in voice 2
     // @seealso clearchords, cleartempi, clearbreakpoints, delete, clear
     class_addmethod(c, (method) score_cleararticulations, "cleararticulations", A_GIMME, 0);
-
+    
     
     // @method interp @digest Obtain active notes data at a given instant
     // @description The <m>interp</m> message, followed by a time value (in milliseconds) retrieves
     // the instantaneous data of all the notes which are active at the given time instant.
     // The answer is sent through the playout in the following form: <b>interp <m>VOICE1</m> <m>VOICE2</m>...</b>
-    // where each <m>VOICE</m> is in the form <b>[<m>CHORD</m>]</b>, being the chord active at the 
-    // given time instant (if any, or null if none), with <m>CHORD</m> being in the form <b>[<m>NOTE1</m> <m>NOTE2</m>...]</b>, 
+    // where each <m>VOICE</m> is in the form <b>[<m>CHORD</m>]</b>, being the chord active at the
+    // given time instant (if any, or null if none), with <m>CHORD</m> being in the form <b>[<m>NOTE1</m> <m>NOTE2</m>...]</b>,
     // being the chord notes active at
     // the given time instant, each in the standard note gathered syntax, with two important variations:
     // there is no tie element, and for each slot marked as temporal only the slot element at the given time instant
@@ -5416,8 +4539,8 @@ void C74_EXPORT ext_main(void *moduleRef){
     
     
     // @method sample @digest Sample score data
-    // @description The <m>sample</m> message, followed by a integer (the number of sampling points), 
-    // samples the note data (exactly as <m>interp</m> does) throughout the score, at the (uniformly taken) sampling point. 
+    // @description The <m>sample</m> message, followed by a integer (the number of sampling points),
+    // samples the note data (exactly as <m>interp</m> does) throughout the score, at the (uniformly taken) sampling point.
     // The answer is sent through the playout in the following form: <b>sample [<m>t1</m> <m>t2</m>...] [<m>RES1</m> <m>RES2</m>...]...</b>
     // where each <m>t</m> is an instant in milliseconds, and each <m>RES</m> is the result of the <m>interp</m> message performed
     // on such instant (see <m>interp</m> to know more). <br />
@@ -5440,10 +4563,10 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @seealso interp, getcurrentchord
     class_addmethod(c, (method) score_anything, "sample", A_GIMME, 0);
     
-
+    
     // @method dump @digest Dump information
-    // @description A <m>dump</m> message will simply output 
-    // the content of all separate parameters from all separate outlets (in separate syntax, right-to-left), and 
+    // @description A <m>dump</m> message will simply output
+    // the content of all separate parameters from all separate outlets (in separate syntax, right-to-left), and
     // all the content of <o>bach.score</o> in gathered syntax from the first outlet (header information included). See below to know more
     // about gathered and separate syntaxes. <br />
     // The <m>dump</m> message also accepts as argument one of the following symbols, which will only dump a portion of the global information: <br />
@@ -5457,18 +4580,18 @@ void C74_EXPORT ext_main(void *moduleRef){
     // - <b>ties</b>: only dump the velocities (in separate syntax) from the fifth outlet. <br />
     // - <b>extras</b>: only dump the extras (in separate syntax) from the sixth outlet. <br />
     // - <b>score</b>: only dump the whole <o>bach.score</o> gathered syntax from the first outlet (and nothing from the separate parameters outlets). <br />
-    // - <b>body</b>: only dump the whole <o>bach.score</o> gathered syntax from the first outlet, and drop all the header specifications: only dump the 
+    // - <b>body</b>: only dump the whole <o>bach.score</o> gathered syntax from the first outlet, and drop all the header specifications: only dump the
     // body (content) of the <o>bach.score</o>. <br />
-    // - <b>header</b>: only dump the whole <o>bach.score</o> from the first outlet, dropping all the content (body) specification, and only 
+    // - <b>header</b>: only dump the whole <o>bach.score</o> from the first outlet, dropping all the content (body) specification, and only
     // outputting all the header specification. <br />
     // Moreover, if one needs to only dump specific header elements, the <m>dump</m> message may also accept a list of symbols referring to them.
     // Namely, the possibilities are the following ones: "keys", "clefs", "voicenames", "midichannels", "markers", "slotinfo", "command".
     // Also the "body" symbol can always be added, in order to also dump the music content.
-    // For instance, <b>dump keys slotinfo voicenames</b> will dump the key signatures, the slotinfo and the voicenames, 
-    // while, <b>dump keys slotinfo voicenames body</b> will do the same but will also output the music content (body). 
+    // For instance, <b>dump keys slotinfo voicenames</b> will dump the key signatures, the slotinfo and the voicenames,
+    // while, <b>dump keys slotinfo voicenames body</b> will do the same but will also output the music content (body).
     // The order of the dumped elements does not correspond in general to the order of the symbols in the list.
     // <br /> <br />
-    // @copy BACH_DOC_SCORE_GATHERED_SYNTAX 
+    // @copy BACH_DOC_SCORE_GATHERED_SYNTAX
     // @copy BACH_DOC_SCORE_SEPARATE_SYNTAX
     // @copy BACH_DOC_SEPARATE_SYNTAX_EXTRAS
     // @marg 0 @name selective_dump_options @optional 1 @type list
@@ -5499,8 +4622,8 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @mattr markdivisions @type int @default 0 @digest If non-zero, converts measure divisions to markers
     // @example score2roll @markmeasures 1 @caption convert score to roll and put a marker at each measure
     class_addmethod(c, (method) score_score2roll, "score2roll", A_GIMME, 0);
-
-
+    
+    
     // @method openslotwin @digest Open a slot window
     // @description @copy BACH_DOC_MESSAGE_OPENSLOTWINS
     // @marg 0 @name slot_number_or_name @optional 0 @type int/symbol
@@ -5508,20 +4631,20 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example openslotwin amplienv @caption open slot window for slot named 'amplienv'
     // @seealso setslot
     class_addmethod(c, (method) score_openslotwin, "openslotwin", A_GIMME, 0);
-
-
+    
+    
     // @method getfocus @digest Query whether the object has focus
     // @description The <m>getfocus</m> message outputs a <b>focus 1</b> message from the playout if the object has focus, and <b>focus 0</b> otherwise.
     // @copy BACH_DOC_QUERY_LABELS
     // @marg 0 @name query_label @optional 1 @type llll
     class_addmethod(c, (method) score_getfocus, "getfocus", A_GIMME, 0);
-
+    
     
     // @method getdomain @digest Get the current domain
     // @description The <m>getdomain</m> message forces <o>bach.score</o> to output from the playout the current domain,
     // i.e. the portion of <o>bach.score</o> currently displayed inside the screen. The output information is both in milliseconds
     // and in timepoints.
-    // The syntax of the output answer is: <b>domain <m>start_ms</m> <m>end_ms</m> <m>VOICE1</m> <m>VOICE2</m>...</b>, where the 
+    // The syntax of the output answer is: <b>domain <m>start_ms</m> <m>end_ms</m> <m>VOICE1</m> <m>VOICE2</m>...</b>, where the
     // two elements following the "domain" symbol are the starting and ending point of the domain in milliseconds,
     // and each <m>VOICE</m> is an llll containing the information about the timepoints of each voice (i.e. at which measure and point in measure,
     // for each voice, the domain starts and ends]: its syntax is: <b>[[<m>start_measure_number</m> <m>start_sym_onset</m>]
@@ -5533,28 +4656,28 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @copy BACH_DOC_QUERY_LABELS
     // @marg 0 @name query_label @optional 1 @type llll
     class_addmethod(c, (method) score_getdomain, "getdomain", A_GIMME, 0);
-
-
+    
+    
     // @method getdomainpixels @digest Get the pixel position of the domain
     // @description The <m>getdomainpixels</m> message forces <o>bach.score</o> to output from the playout the current position
     // (in pixels) of the domain, i.e. the starting (left) and ending (right) pixels of the currently displayed portion of music.
     // These pixels are referred to the notation object box.
-    // The syntax of the output answer is: <b>domainpixels <m>start_pixel</m> <m>end_pixel</m></b>, where the 
+    // The syntax of the output answer is: <b>domainpixels <m>start_pixel</m> <m>end_pixel</m></b>, where the
     // two elements following the "domainpixels" symbol are the leftmost and rightmost horizontal points (in pixels) of the domain. <br />
     // @copy BACH_DOC_QUERY_LABELS
     // @marg 0 @name query_label @optional 1 @type llll
     // @seealso getdomainpixels, domain, getlength, testdomain
     class_addmethod(c, (method) score_getdomainpixels, "getdomainpixels", A_GIMME, 0);
-
-
-    // @method testdomain @digest Test hypotetical domain 
-    // @description The <m>testdomain</m> message forces <o>bach.score</o> to output from the playout a hypotetical domain, 
+    
+    
+    // @method testdomain @digest Test hypotetical domain
+    // @description The <m>testdomain</m> message forces <o>bach.score</o> to output from the playout a hypotetical domain,
     // given a fixed domain starting point. The idea is that the user asks <o>bach.score</o> which would be the complete domain if such domain
-    // started at a given point. 
+    // started at a given point.
     // The hypotetical starting point of the domain is given as argument, and can be expressed either as absolute millisecond position (a single floating point
     // number) or as a timepoint (an llll).
     // @copy BACH_DOC_TIMEPOINT_SYNTAX_SCORE
-    // The syntax of the output answer is: <b>testdomain <m>start_ms</m> <m>end_ms</m> <m>VOICE1</m> <m>VOICE2</m>...</b>, where the 
+    // The syntax of the output answer is: <b>testdomain <m>start_ms</m> <m>end_ms</m> <m>VOICE1</m> <m>VOICE2</m>...</b>, where the
     // two elements following the "testdomain" symbol are the starting and ending point of the hypotetical domain in milliseconds,
     // and each <m>VOICE</m> is an llll containing the information about the timepoints of each voice (i.e. at which measure and point in measure,
     // for each voice, the domain would start and end]: its syntax is: <b>[[<m>start_measure_number</m> <m>start_sym_onset</m>]
@@ -5614,7 +4737,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @seealso pixeltotime, timepoint
     class_addmethod(c, (method) score_timetopixel, "timetopixel", A_GIMME, 0);
     class_addmethod(c, (method) score_getpixelpos, "getpixelpos", A_GIMME, 0); // old, deprecated
-
+    
     
     // @method timepoint @digest Perform conversions between timepoint and millisecond syntaxes
     // @description The <m>timepoint</m> message, either followed by a single number, considered as milliseconds position,
@@ -5635,7 +4758,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example timepoint [4 2 3/8] @caption the same for position at measure 2, after 3/8, for voice 4
     // @seealso timetopixel, pixeltotime
     class_addmethod(c, (method) score_timepoint, "timepoint", A_GIMME, 0);
-
+    
     
     // @method pixeltotime @digest Convert a pixel position into a time position
     // @description The <m>pixeltotime</m> message converts a position given in pixels (as argument) into a temporal position, output both in milliseconds and
@@ -5646,7 +4769,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // for each voice, fall on the introduced pixel): its syntax is: <b>[<m>measure_number</m> <m>sym_onset</m>]</b>, where <m>measure_number</m> is the measure number of the
     // measure where the pixel lies, and <m>sym_onset</m> is the symbolic onset (point inside the measure) to which the pixel correspond.
     // If the pixel does not fall exactly on a chord, by default, the timepoints are output by properly interpolating the timepoints of the chords whose onset are
-    // immediately at left and at right of the pixels. On the other hand, one can modify this behavior by introducing a final symbol argument (the "snap" type), which can be one 
+    // immediately at left and at right of the pixels. On the other hand, one can modify this behavior by introducing a final symbol argument (the "snap" type), which can be one
     // of the followings: <br />
     // - <b>left</b>: always return the timepoint of the chord whose onset falls immediately at left of the inserted pixel. <br />
     // - <b>right</b>: always return the timepoint of the chord whose onset falls immediately at right of the inserted pixel. <br />
@@ -5664,13 +4787,13 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @seealso timetopixel, timepoint
     class_addmethod(c, (method) score_pixeltotime, "pixeltotime", A_GIMME, 0);
     class_addmethod(c, (method) score_gettimeatpixel, "gettimeatpixel", A_GIMME, 0); // old deprecated
-
+    
     
     // @method refresh @digest Force recomputation and redraw
     // @description The <m>refresh</m> message forces the recomputation of all the features and forces the object box to be redrawn.
     class_addmethod(c, (method) score_anything, "refresh", A_GIMME, 0);
-
-
+    
+    
     // @method realtime @digest Toggle real-time mode
     // @description The <m>realtime 1</m> message will toggle the real-time mode, i.e. will change some attribute values in order to
     // disable the play highlight, the undo system and the legend. This will increase the object performance for real-time tasks.
@@ -5679,15 +4802,15 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example realtime 1 @caption turn real-time mode on
     // @example realtime 0 @caption turn real-time mode off
     class_addmethod(c, (method) score_anything, "realtime", A_GIMME, 0);
-
+    
     
     // @method dumpnotepixelpos @digest Retrieve pixel position of every chord and note
     // @description The <m>dumpnotepixelpos</m> message retrieves the pixel position of any chord and note, and outputs it from the playout.
-    // The output answer has the syntax: 
+    // The output answer has the syntax:
     // <b>notepixelpos <m>VOICE1</m> <m>VOICE2</m>...</b>, where each <m>VOICE</m> is an llll of the form:
-    // <b>[<m>MEASURE1</m> <m>MEASURE2</m>...]</b>, and where each <m>MEASURE</m> is in turn an llll of the form 
+    // <b>[<m>MEASURE1</m> <m>MEASURE2</m>...]</b>, and where each <m>MEASURE</m> is in turn an llll of the form
     // <b>[<m>CHORD1</m> <m>CHORD2</m>...]</b>, and where each <m>CHORD</m> is an llll accounting for the pixel position of the chord
-    // and all its notes, in the form: 
+    // and all its notes, in the form:
     // <b>(<m>x-pixel_onset</m> (<m>duration_in_horizontal_pixels_note1</m>  <m>duration_in_horizontal_pixels_note2</m> ...)
     // (<m>y_pixel_noteheadcenter_note1</m>   <m>y_pixel_noteheadcenter_note2</m> ...)
     // (<m>x_pixel_accidental_left_position_note1</m> <m>x_pixel_accidental_left_position_note2</m> ...))</b>.
@@ -5696,12 +4819,12 @@ void C74_EXPORT ext_main(void *moduleRef){
     // of the noteheads, and each <m>x_pixel_accidental_left_position_note</m> is the pixel position of the left boundary of the leftmost accidental
     // for each note (or, if a note has no accidentals, the leftmost point of the notehead). <br />
     // @copy BACH_DOC_QUERY_LABELS
-    // @marg 0 @name query_label @optional 1 @type llll    
+    // @marg 0 @name query_label @optional 1 @type llll
     // @seealso dumpvoicepixelpos, dumpmeasurepixelpos
     class_addmethod(c, (method) score_dumpnotepixelpos, "dumpnotepixelpos", A_GIMME, 0);
     class_addmethod(c, (method) score_dumpnotepixelpos, "dumppixelpos", A_GIMME, 0); // old, deprecated
-
-
+    
+    
     
     // @method dumpvoicepixelpos @digest Retrieve pixel position of every voice
     // @description @copy BACH_DOC_MESSAGE_DUMPVOICEPIXELPOS
@@ -5709,7 +4832,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @seealso dumpnotepixelpos, dumpmeasurepixelpos
     class_addmethod(c, (method) score_dumpvoicepixelpos, "dumpvoicepixelpos", A_GIMME, 0);
     class_addmethod(c, (method) score_dumpvoicepixelpos, "getvoicepixelpos", A_GIMME, 0); // old, deprecated
-
+    
     
     // @method dumpmeasurepixelpos @digest Retrieve pixel position of every measure
     // @description The <m>dumpmeasurepixelpos</m> message retrieves the pixel position of any measure, and outputs it from the playout.
@@ -5722,29 +4845,29 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @marg 0 @name query_label @optional 1 @type llll
     // @seealso dumpvoicepixelpos, dumpnotepixelpos
     class_addmethod(c, (method) score_dumpmeasurepixelpos, "dumpmeasurepixelpos", A_GIMME, 0);
-
     
-
+    
+    
     // @method getvzoom @digest Retrieve the current vertical zoom
     // @description @copy BACH_DOC_MESSAGE_GETVZOOM
     // @marg 0 @name query_label @optional 1 @type llll
     // @seealso getzoom, fixvzoom
     class_addmethod(c, (method) score_getvzoom, "getvzoom", A_GIMME, 0);
-
-
+    
+    
     // @method getzoom @digest Retrieve the current horizontal zoom
     // @description @copy BACH_DOC_MESSAGE_GETZOOM
     // @marg 0 @name query_label @optional 1 @type llll
     // @seealso getvzoom
     class_addmethod(c, (method) score_getzoom, "getzoom", A_GIMME, 0);
-
-
+    
+    
     // @method getlength @digest Get the total length
     // @description @copy BACH_DOC_MESSAGE_GETLENGTH
     // @marg 0 @name query_label @optional 1 @type llll
     class_addmethod(c, (method) score_getlength, "getlength", A_GIMME, 0);
-
-
+    
+    
     // @method getnumvoices @digest Get the number of voices
     // @description The <m>getnumvoices</m> message forces <o>bach.score</o> to output from the playout the current number of voices.
     // The syntax of the output answer is: <b>numvoices <m>num_voices</m></b>, where the last element is the number of voices. <br />
@@ -5752,47 +4875,47 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @marg 0 @name query_label @optional 1 @type llll
     // @seealso getnummeasures, getnumchords, getnumnotes
     class_addmethod(c, (method) score_getnumvoices, "getnumvoices", A_GIMME, 0);
-
-
+    
+    
     // @method getnummeasures @digest Get the number of measures
     // @description The <m>getnummeasures</m> message forces <o>bach.score</o> to output from the playout the current number of measures, for each voice.
-    // The syntax of the output answer is: <b>nummeasures <m>num_measures_voice1</m> <m>num_measures_voice2</m>...</b>, 
+    // The syntax of the output answer is: <b>nummeasures <m>num_measures_voice1</m> <m>num_measures_voice2</m>...</b>,
     // i.e. after the "nummeasures" symbol, a list of integers is given, representing the number of measures for each one of the voices. <br />
     // @copy BACH_DOC_QUERY_LABELS
     // @marg 0 @name query_label @optional 1 @type llll
     // @seealso getnumvoices, getnumchords, getnumnotes
     class_addmethod(c, (method) score_getnummeasures, "getnummeasures", A_GIMME, 0);
-
-
+    
+    
     // @method getnumchords @digest Get the number of chords
     // @description The <m>getnumchords</m> message forces <o>bach.score</o> to output from the playout the number of chord, for each measure and for each voice.
     // The syntax of the output answer is: <b>numchords <m>VOICE1</m> <m>VOICE2</m>...</b>, where each <m>VOICE</m> is an llll of the form
-    // <b>[<m>num_chords_measure1</m> <m>num_chords_measure1</m>...]</b>, 
+    // <b>[<m>num_chords_measure1</m> <m>num_chords_measure1</m>...]</b>,
     // i.e. after the "numchords" symbol, a list of lists is given: each outer list represents a voice, and innerly contains an integer for each one
     // of its measures: such integer is the number of chords of the measure. <br />
     // @copy BACH_DOC_QUERY_LABELS
     // @marg 0 @name query_label @optional 1 @type llll
     // @seealso getnumvoices, getnummeasures, getnumnotes
     class_addmethod(c, (method) score_getnumchords, "getnumchords", A_GIMME, 0);
-
-
+    
+    
     // @method getnumnotes @digest Get the number of notes
     // @description The <m>getnumnotes</m> message forces <o>bach.score</o> to output from the playout the number of notes, for each chord, for each measure and for each voice.
     // The syntax of the output answer is: <b>numnotes <m>VOICE1</m> <m>VOICE2</m>...</b>, where each <m>VOICE</m> is an llll of the form
     // <b>[<m>MEASURE1</m> <m>MEASURE2</m>...]</b>, and each <m>MEASURE</m> is in turn an llll of the form <b>[<m>num_notes_chord1</m> <m>num_notes_chord2</m>...]</b>,
-    // i.e. after the "numnotes" symbol, a list of lists of lists is given: each outer list represents a voice, then one has a level for each measure, 
+    // i.e. after the "numnotes" symbol, a list of lists of lists is given: each outer list represents a voice, then one has a level for each measure,
     // containing contains an integer for each one of its chords: such integer is the number of notes of the chord. <br />
     // @copy BACH_DOC_QUERY_LABELS
     // @marg 0 @name query_label @optional 1 @type llll
     // @seealso getnumvoices, getnummeasures, getnumchords
     class_addmethod(c, (method) score_getnumnotes, "getnumnotes", A_GIMME, 0);
-
-
-    // @method fixvzoom @digest Fix the vertical zoom value 
+    
+    
+    // @method fixvzoom @digest Fix the vertical zoom value
     // @description @copy BACH_DOC_MESSAGE_FIXVZOOM
     // @seealso getvzoom
     class_addmethod(c, (method) score_fixvzoom, "fixvzoom", 0);
-
+    
     class_addmethod(c, (method) score_preset, "preset", 0);
     class_addmethod(c, (method) score_begin_preset, "begin_preset", A_GIMME, 0);
     class_addmethod(c, (method) score_restore_preset, "restore_preset", A_GIMME, 0);
@@ -5800,16 +4923,16 @@ void C74_EXPORT ext_main(void *moduleRef){
     CLASS_METHOD_ATTR_PARSE(c, "begin_preset", "undocumented", gensym("long"), 0L, "1");
     CLASS_METHOD_ATTR_PARSE(c, "restore_preset", "undocumented", gensym("long"), 0L, "1");
     CLASS_METHOD_ATTR_PARSE(c, "end_preset", "undocumented", gensym("long"), 0L, "1");
-
-
+    
+    
     // @method paintjit @digest Draw the score onto a jitter matrix
     // @description @copy BACH_DOC_PAINTJIT
     class_addmethod(c, (method) score_paint_to_jitter_matrix, "paintjit", A_SYM, 0);
-
+    
     
     // @method llll @digest Function depends on inlet
     // @description In the first inlet, an llll is expected to be a gathered syntax content of the entire <o>bach.score</o> (building
-    // the new <o>bach.score</o> content from scratch), or an llll containing just some header specification 
+    // the new <o>bach.score</o> content from scratch), or an llll containing just some header specification
     // (thus not affecting the body of the object). See below for more information on the gathered syntax. <br />
     // In any of the other inlets, an llll is expected to contain the separate syntax of some parameter. Namely: <br />
     // - second inlet: Measureinfo <br />
@@ -5827,37 +4950,37 @@ void C74_EXPORT ext_main(void *moduleRef){
     class_addmethod(c, (method) score_anything, "anything", A_GIMME, 0);
     class_addmethod(c, (method) score_int, "int", A_LONG, 0);
     class_addmethod(c, (method) score_float, "float", A_FLOAT, 0);
-
+    
     // multitouch handling from Mira/MiraWeb
     class_addmethod(c, (method) notationobj_mt, "mt", A_GIMME, 0);
-
+    
     // @method bang @digest Build content from separate parameters
     // @description A <m>bang</m> in any of the inlets will first rebuild new <o>bach.score</o> content starting from
-    // the parameters given as input in the separate inlets (see <m>llll</m> method). 
-    // If the <m>autoclear</m> attribute is set to 1, 
+    // the parameters given as input in the separate inlets (see <m>llll</m> method).
+    // If the <m>autoclear</m> attribute is set to 1,
     // first of all the <m>bang</m> will clear the content of the <o>bach.score</o>; if on the other hand
     // the <m>autoclear</m> attribute is set to 0, the new parameter will modify the existing content.
     // Not all the separate parameters need to be given to build the new content: if some are not given, default values
-    // will be used instead. Default measureinfo is a 4/4 time signature, with quarter = 60 tempo. 
+    // will be used instead. Default measureinfo is a 4/4 time signature, with quarter = 60 tempo.
     // Default durations are given by the equal division of the measure duration by the number of chords (i.e. if eight chords are needed in a 4/4 measure,
     // default duration will be 1/8 each). Default pitch in cents is 6000 (middle C).
     // Default velocity is 100, but the last one is padded if more chords than the input velocities are
-    // to be created. Default extras are no extras. 
+    // to be created. Default extras are no extras.
     class_addmethod(c, (method) score_bang, "bang", 0);
-
-
+    
+    
     // @method clock @digest Select a clock source
-    // @description The word <m>clock</m>, followed by the name of an existing <m>setclock</m> objects, sets the <o>bach.roll</o> 
-    // object to be controlled by that <m>setclock</m> object rather than by Max's internal millisecond clock. 
+    // @description The word <m>clock</m>, followed by the name of an existing <m>setclock</m> objects, sets the <o>bach.roll</o>
+    // object to be controlled by that <m>setclock</m> object rather than by Max's internal millisecond clock.
     // The word <m>clock</m> by itself sets the <o>bach.roll</o> object back to using Max's regular millisecond clock.
     // @marg 0 @name setclock_name @optional 1 @type symbol
     // @example clock ticker @caption link to 'ticker' setclock
     // @example clock @caption link to default clock
-    class_addmethod(c, (method) score_clock, "clock", A_DEFSYM, 0);
-
-
+    class_addmethod(c, (method) notationobj_clock, "clock", A_DEFSYM, 0);
+    
+    
     // @method play @digest Play
-    // @description The <m>play</m> message plays a portion or all the <o>bach.score</o>.
+    // @description The <m>play</m> message plays a portion or all the <o>bach.score</o> (with one or multiple playheads).
     // "Playing" means that <o>bach.score</o> sends from the "playout" outlet, at the timing corresponding to each chord onset,
     // the information about all the chord, or about all the notes of the chord (depending on the <m>playmode</m> attribute, to which you
     // should refer to know more). Rests are sequenced if the <m>playrests</m> attribute is set to 1.
@@ -5868,26 +4991,42 @@ void C74_EXPORT ext_main(void *moduleRef){
     // if elements are muted, they will not be sequences; if some elements are set as "solo", just those elements will be sequenced.
     // If multiple chords or notes are simultaneous, the order is from topmost voice to bottommost voice, then from lowest note to highest note.
     // Sequencing can be controlled with a variable speed via the <m>clock</m> message and the <o>setclock</o> object.
-    // The <m>play</m> message, without any further argument, plays the <o>bach.score</o> from the current playhead cursor position 
+    // The <m>play</m> message, without any further argument, plays the <o>bach.score</o> from the current playhead cursor position
     // (by default: the beginning of the <o>bach.score</o>) to the end. <br />
     // If you put as first optional argument the "selection" symbol, only the selected content is played:
     // playback starts at the beginning of the selection and ends once the last selected item is played. <br />
-     // If you put as additional argument the "offset" symbol, all the playing will be done in non-real-time mode, i.e. with no sequencing involved; playing messages
+    // If you put as additional argument the "offset" symbol, all the playing will be done in non-real-time mode, i.e. with no sequencing involved; playing messages
     // will be still output from the playout, but one after another, "immediately". <br />
     // If you put as additional argument the "preschedule" symbol, all the playing events will be prescheduled.
     // @copy BACH_DOC_PRESCHEDULED_PLAYBACK
     // The "selection" symbol can be combined with both "offline" and "preschedule" symbols, but "offline" and
     // "preschedule" are mutually exclusive. <br />
     // If you use the "offline" symbol, you can follow it by a "deferlow" symbol to force a defer-low operation for every output note. <br />
+    // You can always add a "loop" symbol to only play the current loop region. <br />
+    // After the symbolic argument(s) come the numeric ones.
     // If you give a single numeric argument, it will be the starting point in milliseconds
     // of the region to be played: <o>bach.roll</o> will play from that point to the end. If you give two numeric arguments, they will be the starting and
     // ending point in milliseconds of the region to be played.
-    // Each one of such numbers can be replaced by a <o>bach.score</o> timepoint. <br />
+    // Each one of such numbers can be replaced by a <o>bach.score</o> timepoint (more about this at the bottom). <br />
+    // Additional attribute-like specifications address multi-playhead playback: <br />
+    // - a "numplayheads" message attribute specifies the number of playheads that the playback should have;
+    // - the "start" and "stop" message attributes specify the limits of the playback (in milliseconds or as timepoints),
+    // and expect a list with one element for each playhead (you can also use "loop" to refer to the loop start/end);
+    // - the "rate" message attribute specifies the playback speed (2 meaning: double speed; 1/2 meaning half speed; -1 meaning:
+    // reading backward; and so on), one element for each playhead is expected;
+    // - the "name" message attribute sets playhead names as a list of symbols, one element for each playhead;
+    // - the "namerestrict" message attribute specifies, with a 0 or 1 integer, whether the playhead only plays the notation items
+    // bearing that same name, with one element for each playhead, once again. <br /> <br />
     // @copy BACH_DOC_TIMEPOINT_SYNTAX_SCORE
     // @copy BACH_DOC_PLAYOUT_SYNTAX_SCORE
     // @marg 0 @name scheduling_mode @optional 1 @type symbol
     // @marg 1 @name start @optional 1 @type float/llll
-    // @marg 2 @name end @optional 2 @type float/llll
+    // @marg 2 @name stop @optional 2 @type float/llll
+    // @mattr start @type number/llll @default none @digest Starting position for each playhead, in milliseconds or as a timepoint
+    // @mattr stop @type number/llll @default none @digest Stopping position for each playhead, in milliseconds or as a timepoint
+    // @mattr rate @type number/llll @default 1 @digest Playback rate for each playhead
+    // @mattr name @type symbol/llll @default none @digest Name of each playhead
+    // @mattr namerestrict @type number/llll @default 0 @digest List of 0/1s, possibly restricting playback to items with the same name
     // @example play @caption play from current playhead position
     // @example play offline @caption play in non-realtime mode ("uzi-like")
     // @example play preschedule @caption accurate prescheduled playback (with limitations)
@@ -5903,38 +5042,99 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example play [2 4 1/4] [5 10 1/12] @caption the same, but only till measure 10 of voice 5, after 1/12
     // @example play offline [2 4 1/4] [5 10 1/12] @caption the same, in non-realtime mode
     // @example play [3.5] [10] @caption play from half of measure 3 to beginning of measure 10 (i.e. end of measure 9)
+    // @example play @numplayheads 2 @start 0 -2000 @caption activates two playheads, in a 2sec canon
+    // @example play @numplayheads 3 @rate 1 2 1/2 @caption activates three playheads, the second at double speed, the third at half speed
+    // @example play @numplayheads 2 @start 0 -2000 @name dux comes @caption same, with two names for the playheads
+    // @example play @numplayheads 2 @start 0 -2000 @name dux comes @namerestrict 1 @caption same, but each playhead only plays elements bearing the same name
     // @seealso stop, pause, setcursor, playselection
-    class_addmethod(c, (method) score_play, "play", A_GIMME, 0);
-
-
+    class_addmethod(c, (method) notationobj_play, "play", A_GIMME, 0);
+    
+    
     // @method playselection @digest Only play selected items
-    // @description The <m>playselection</m> message only plays the selected content. It works exactly like <m>play</m>, but it starts playing
-    // at the beginning of the selection, and ends playing at the end of the last selected item. Only selected items are sequenced.
-    // Mute and solo status are also taken into account (see <m>play</m>). <br />
-    // If you put as first argument the "offset" symbol, all the playing will be done in non-real-time mode, i.e. with no sequencing involved; playing messages
-    // will be still output from the playout, but one after another, "immediately", in the low-priority queue. <br />
-    // If you put as first argument the "preschedule" symbol, all the playing events will be prescheduled.
-    // @copy BACH_DOC_PRESCHEDULED_PLAYBACK
+    // @description The <m>playselection</m> message only plays the selected content. It works exactly like <m>play</m>, 
+    // but it starts playing at the beginning of the selection, and ends playing at the end of the last selected item.
+    // Only selected items are sequenced. This is equivalent to <m>play selection</m>, so please refer to the documentation
+    // for the <m>play</m> method to have information on all the relevant arguments ("offline", "preschedule"...) and attributes
+    // (handling the properties of playheads).
     // @marg 0 @name scheduling_mode @optional 1 @type symbol
     // @example playselection @caption play selected items only
     // @example playselection offline @caption the same, in non-realtime mode ("uzi-like")
     // @seealso stop, pause, play
-    class_addmethod(c, (method) score_playselection, "playselection", A_GIMME, 0);
+    class_addmethod(c, (method) notationobj_play, "playselection", A_GIMME, 0);
+    
+    // @method launch @digest Launch
+    // @description The <m>launch</m> message activates the playback of a new playhead during
+    // an existing playback session.
+    // This differs from <m>play</m> in that <m>play</m> begins a brand new playback session.
+    // The optional argument sets the index of the playhead to be launched; if the argument isn't set,
+    // the first available playhead is launched.
+    // Additional attribute-like arguments may set: <br />
+    // - the starting and stopping point for the playback
+    // (respectively: "start" and "stop" attributes), which can be either in milliseconds or in
+    // timepoint syntax, explained below (you can also use "loop" to refer to the loop start/end); <br />
+    // - the playback rate, via the "rate" attribute; <br />
+    // - the playhead name, via the "name" attribute; <br />
+    // - a flag telling whether the playback should be limited to items bearing the same name
+    // (via the "@namerestrict attribute). <br /> <br />
+    // @copy BACH_DOC_TIMEPOINT_SYNTAX_SCORE
+    // @marg 0 @name playhead_index @optional 1 @type int
+    // @mattr start @type number/llll @default none @digest Sets the starting position, in milliseconds or as a timepoint
+    // @mattr stop @type number/llll @default none @digest Sets the stopping position, in milliseconds or as a timepoint
+    // @mattr rate @type number @default 1 @digest Sets the playback rate
+    // @mattr name @type symbol @default none @digest Sets the playhead name
+    // @mattr namerestrict @type 0/1 @default 0 @digest If set to 1, it restricts playback to notation items bearing the same name as the playhead.
+    // @seealso play
+    // @example launch @caption launch a new playhead from the beginning
+    // @example launch 2 @start 1000 @caption launch playhead 2 from 1s
+    // @example launch 3 @start [10] @end [13] @caption launch playhead 3 from measure 10 to 13
+    // @example launch 2 @start 2000 @rate 3 @caption launch playhead 2 from 2s at triple speed
+    // @example launch 2 @start 2000 @rate 1/2 @caption same, at half speed
+    // @example launch 4 @name bass @namerestrict 1 @caption activate playhead 4, called bass, only playing notation items bearing the same name
+    class_addmethod(c, (method) notationobj_launch, "launch", A_GIMME, 0);
+
+    
+    // @method resume @digest Resume
+    // @description The <m>resume</m> message reactivates the playback of a new playhead after having been paused.
+    // @marg 0 @name playhead_index @optional 0 @type int
+    // @seealso pause, play, stop
+    // @example resume 3 @caption resume playing of third playhead
+    class_addmethod(c, (method) notationobj_resume, "resume", A_GIMME, 0);
+
+    // @method seek @digest Seek
+    // @description The <m>seek</m> message instantly moves a given playhead to a new location during playback.
+    // The first argument is the playhead index, while the second argument is the new location, either in milliseconds
+    // or as a timepoint.
+    // @marg 0 @name playhead_index @optional 0 @type int
+    // @marg 1 @name new_position @optional 0 @type number/llll
+    // @example seek 2 2000 @caption moves second playhead to 2sec
+    // @example seek 3 [5 1/4] @caption moves third playhead to measure 5, after 1/4
+    // @seealso pause, play, stop
+    class_addmethod(c, (method) notationobj_seek, "seek", A_GIMME, 0);
 
 
     // @method stop @digest Stop
-    // @description The <m>stop</m> message stops any ongoing playing, if <o>bach.score</o> was in play mode (nothing happens otherwise).
+    // @description The <m>stop</m> message stops any ongoing playing, if the object was in play mode (nothing happens otherwise).
+    // An optional argument sets the number of the playhead to be stopped (if no argument is given, all playheads are stopped).
+    // @marg 0 @name playhead_index @optional 1 @type int
+    // @example stop 3 @caption stop third playhead
+    // @example stop @caption stop all playheads
     // @seealso pause, play, playselection
-    class_addmethod(c, (method) score_stop, "stop", A_GIMME, 0);
+    class_addmethod(c, (method) notationobj_stop, "stop", A_GIMME, 0);
 
 
     // @method pause @digest Pause
-    // @description The <m>pause</m> message pause any ongoing playing, if <o>bach.score</o> was in play mode (nothing happens otherwise).
-    // When paused, the play head cursor is updated to its last reached position while playing, so that a new play will begin by default
+    // @description The <m>pause</m> message pause any ongoing playing, if <o>bach.score</o> was in play mode 
+    // (nothing happens otherwise).
+    // When paused, the play head cursor is updated to its last reached position while playing, so that a new play will begin
+    // by default at that position.
+    // An optional argument sets the number of the playhead to be paused (if no argument is given, all playheads are paused).
+    // A paused playback can be resumed via the <m>resume</m> message.
+    // @marg 0 @name playhead_index @optional 1 @type int
+    // @example pause 3 @caption pause third playhead
+    // @example pause @caption pause all playheads
+    // @seealso resume, play, stop.
     // @seealso play, playselection, stop
-    // at that position. 
-    // @seealso play, playselection, stop
-    class_addmethod(c, (method) score_pause, "pause", A_GIMME, 0);
+    class_addmethod(c, (method) notationobj_pause, "pause", A_GIMME, 0);
 
 
     // @method resetslotinfo @digest Reset the slotinfo to the default one
@@ -5980,8 +5180,11 @@ void C74_EXPORT ext_main(void *moduleRef){
 
     // @method getcurrentchord @digest Get notes at cursor position
     // @description @copy BACH_DOC_MESSAGE_GETCURRENTCHORD 
+    // @marg 0 @name playhead @optional 1 @type int
+    // @example getcurrentchord @caption get notes at main cursor position
+    // @example getcurrentchord 3  @caption get notes at the position of playhead No. 3
     // @seealso interp, sample
-    class_addmethod(c, (method) score_send_current_chord, "getcurrentchord", 0);
+    class_addmethod(c, (method) score_send_current_chord, "getcurrentchord", A_DEFLONG, 0);
     
     
     // @method getloop @digest Get current loop region position 
@@ -9858,7 +9061,7 @@ void score2roll(t_score *x, char markmeasures, char marktimesig, char marktempi,
                         llll_appendsym(note_llll, _llllobj_sym_note, 0, WHITENULL_llll);
                         llll_appendlong(note_llll, chord->parent->voiceparent->v_ob.number + 1, 0, WHITENULL_llll); // voices are 1-based
                         llll_appendlong(note_llll, chord->parent->voiceparent->v_ob.midichannel, 0, WHITENULL_llll);
-                        llll_appendllll(note_llll, get_single_scorenote_values_as_llll((t_notation_obj *) x, note, k_CONSIDER_FOR_SCORE2ROLL), 0, WHITENULL_llll);
+                        llll_appendllll(note_llll, get_single_scorenote_values_as_llll((t_notation_obj *) x, note, k_CONSIDER_FOR_SCORE2ROLL, 0), 0, WHITENULL_llll);
                         llll_appendllll(voice_llll, note_llll, 0, WHITENULL_llll);
                     }
                     note = note->next;
@@ -10894,6 +10097,11 @@ t_score* score_new(t_symbol *s, long argc, t_atom *argv)
 
     x->r_ob.inscreenmeas_function = (notationobj_inscreenmeas_fn)scoreapi_inscreenmeas_do;
     
+    x->r_ob.force_inscreenpos_ux_function = (notationobj_force_inscreenpos_ux)force_inscreenpos_ux;
+    x->r_ob.force_inscreen_ux_rolling_function = (notationobj_force_inscreen_ux_rolling)force_inscreen_ux_rolling;
+    x->r_ob.force_inscreenpos_ms_function = NULL;
+    x->r_ob.force_inscreen_ms_rolling_function = NULL;
+
     x->r_ob.timepoint_to_unscaled_xposition = (notationobj_timepoint_to_ux_fn)timepoint_to_unscaled_xposition;
     
     scoreapi_initscore_step01(x);
@@ -10940,7 +10148,7 @@ t_score* score_new(t_symbol *s, long argc, t_atom *argv)
     scoreapi_initscore_step02(x);
 
     // clock
-    x->r_ob.m_clock = clock_new_debug((t_object *)x, (method) score_task);
+    x->r_ob.m_clock = clock_new_debug((t_object *)x, (method) notationobj_task);
     x->r_ob.step_y = CONST_STEP_UY * x->r_ob.zoom_y; // we need it before set_score_from_llll
     calculate_voice_offsets((t_notation_obj *) x);
     compute_middleC_position_for_all_voices((t_notation_obj *) x);
@@ -10964,8 +10172,8 @@ t_score* score_new(t_symbol *s, long argc, t_atom *argv)
             set_score_from_llll(x, llll_for_rebuild, true);
             if (x->r_ob.send_rebuild_done_at_startup)
                 handle_rebuild_done((t_notation_obj *) x);
-            double first_onset_ms = get_first_onset_ms_for_grace_notes(x);
-            x->r_ob.play_head_start_ms = (first_onset_ms < 0 ? first_onset_ms - CONST_EPSILON2 : first_onset_ms);
+            double first_onset_ms = notationobj_get_first_onset_ms_for_grace_notes((t_notation_obj *)x);
+            x->r_ob.play_head_start_ms[0] = (first_onset_ms < 0 ? first_onset_ms - CONST_EPSILON2 : first_onset_ms);
             llll_free(llll_for_rebuild);
         } else { // old method, or brand new object
             long ac; t_atom *av = NULL;
@@ -11415,19 +10623,20 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 
         if (!is_editable((t_notation_obj *)x, k_PLAYCURSOR, k_ELEMENT_ACTIONS_NONE)) return;
 
+        long playhead = 0;
         if (x->r_ob.playhead_dragging_mode == 1)
-            x->r_ob.play_head_start_ux += deltaxpixels_to_deltauxpixels((t_notation_obj *)x, pt.x - prev_mousedrag_point.x);
+            x->r_ob.play_head_start_ux[playhead] += deltaxpixels_to_deltauxpixels((t_notation_obj *)x, pt.x - prev_mousedrag_point.x);
         else
-            x->r_ob.play_head_start_ux = CLAMP(xposition_to_unscaled_xposition((t_notation_obj *)x, pt.x), 0, scoreapi_get_end_ux(x));
-        x->r_ob.play_head_start_ms = unscaled_xposition_to_ms((t_notation_obj *)x, x->r_ob.play_head_start_ux, 1);
+            x->r_ob.play_head_start_ux[playhead] = CLAMP(xposition_to_unscaled_xposition((t_notation_obj *)x, pt.x), 0, scoreapi_get_end_ux(x));
+        x->r_ob.play_head_start_ms[playhead] = unscaled_xposition_to_ms((t_notation_obj *)x, x->r_ob.play_head_start_ux[playhead], 1);
         
-        min_onset = get_first_onset_ms_for_grace_notes(x);
-        if (x->r_ob.play_head_start_ms < min_onset)
-            x->r_ob.play_head_start_ms = min_onset;
+        min_onset = notationobj_get_first_onset_ms_for_grace_notes((t_notation_obj *)x);
+        if (x->r_ob.play_head_start_ms[playhead] < min_onset)
+            x->r_ob.play_head_start_ms[playhead] = min_onset;
 
-        force_inscreen_ux_to_boundary_and_set_mouse_position(x, x->r_ob.play_head_start_ux, patcherview, pt, false);
+        force_inscreen_ux_to_boundary_and_set_mouse_position(x, x->r_ob.play_head_start_ux[playhead], patcherview, pt, false);
 
-        send_moved_playhead_position((t_notation_obj *) x, 7);
+        send_moved_playhead_position((t_notation_obj *) x, 7, playhead);
 
         redraw = 1;
         changed = 0;
@@ -14235,15 +13444,16 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
     if (!clicked_ptr && x->r_ob.show_playhead && (modifiers == eAltKey)) {
         clicked_ptr = WHITENULL; //doesn't really matter, but NON 0...
         clicked_obj = k_PLAYCURSOR;
+        long playhead = 0;
         if (x->r_ob.playhead_dragging_mode != 1 && is_editable((t_notation_obj *)x, k_PLAYCURSOR, k_ELEMENT_ACTIONS_NONE)) {
-            x->r_ob.play_head_start_ux = CLAMP(xposition_to_unscaled_xposition((t_notation_obj *)x, x->r_ob.j_mousedrag_point.x), 0, scoreapi_get_end_ux(x));
-            x->r_ob.play_head_start_ms = unscaled_xposition_to_ms((t_notation_obj *)x, x->r_ob.play_head_start_ux, 1);
+            x->r_ob.play_head_start_ux[playhead] = CLAMP(xposition_to_unscaled_xposition((t_notation_obj *)x, x->r_ob.j_mousedrag_point.x), 0, scoreapi_get_end_ux(x));
+            x->r_ob.play_head_start_ms[playhead] = unscaled_xposition_to_ms((t_notation_obj *)x, x->r_ob.play_head_start_ux[playhead], 1);
         }
         unlock_markers_mutex((t_notation_obj *)x);;
         unlock_general_mutex((t_notation_obj *)x);
         notationobj_redraw((t_notation_obj *) x);
         if (x->r_ob.playhead_dragging_mode != 1 && is_editable((t_notation_obj *)x, k_PLAYCURSOR, k_ELEMENT_ACTIONS_NONE)) {
-            send_moved_playhead_position((t_notation_obj *) x, 7);
+            send_moved_playhead_position((t_notation_obj *) x, 7, playhead);
         }
         set_mousedown((t_notation_obj *) x, clicked_ptr, clicked_obj);
         return;
@@ -16582,20 +15792,22 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
         
     } else if (keycode == JKEY_RETURN && is_editable((t_notation_obj *)x, k_PLAYCURSOR, k_ELEMENT_ACTIONS_NONE)) {
         if (!x->r_ob.playing) {
-            if (x->r_ob.show_loop_region && !(modifiers & eShiftKey)) {
-                x->r_ob.play_head_start_ux = timepoint_to_unscaled_xposition((t_notation_obj *)x, x->r_ob.loop_region.start.timepoint, k_PARSETIMEPOINT_FLAG_ZEROPIMISFIRSTCHORD);
-                x->r_ob.play_head_start_ms = unscaled_xposition_to_ms((t_notation_obj *)x, x->r_ob.play_head_start_ux, 1);
-            } else {
-                double first_onset_ms = get_first_onset_ms_for_grace_notes(x);
-                x->r_ob.play_head_start_ux = 0;
-                x->r_ob.play_head_start_ms = (first_onset_ms < 0 ? first_onset_ms - CONST_EPSILON2 : first_onset_ms);
+            for (long ph = 0; ph < x->r_ob.num_playheads; ph++) {
+                if (x->r_ob.show_loop_region && !(modifiers & eShiftKey)) {
+                    x->r_ob.play_head_start_ux[ph] = timepoint_to_unscaled_xposition((t_notation_obj *)x, x->r_ob.loop_region.start.timepoint, k_PARSETIMEPOINT_FLAG_ZEROPIMISFIRSTCHORD);
+                    x->r_ob.play_head_start_ms[ph] = unscaled_xposition_to_ms((t_notation_obj *)x, x->r_ob.play_head_start_ux[ph], 1);
+                } else {
+                    double first_onset_ms = notationobj_get_first_onset_ms_for_grace_notes((t_notation_obj *)x);
+                    x->r_ob.play_head_start_ux[ph] = 0;
+                    x->r_ob.play_head_start_ms[ph] = (first_onset_ms < 0 ? first_onset_ms - CONST_EPSILON2 : first_onset_ms);
+                }
+                send_moved_playhead_position((t_notation_obj *) x, 7, ph);
             }
-            send_moved_playhead_position((t_notation_obj *) x, 7);
             if (!x->r_ob.show_loop_region || modifiers & eShiftKey) {
                 x->r_ob.hscrollbar_pos = 0.;
                 redraw_hscrollbar((t_notation_obj *) x, 1);
             } else {
-                force_inscreen_ux_to_boundary(x, x->r_ob.play_head_start_ux, false, true, false);
+                force_inscreen_ux_to_boundary(x, x->r_ob.play_head_start_ux[CLAMP(x->r_ob.catch_playhead_which-1, 0, CONST_MAX_PLAYHEADS-1)], false, true, false);
                 notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
             }
             send_domain(x, 7, NULL);
@@ -17783,18 +16995,12 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
     
     if (textcharacter == 32 && x->r_ob.allow_play_from_interface) {
         if (x->r_ob.playing) {
-            if (modifiers == eShiftKey) { // acts like a "pause" command: playhead stays visible where it is
-                x->r_ob.show_playhead = true;
-                x->r_ob.play_head_start_ms = x->r_ob.play_head_ms;
-                x->r_ob.play_head_start_ux = x->r_ob.play_head_ux;
-                score_stop(x, _llllobj_sym_pause, 0, NULL);
+            if (modifiers == eShiftKey) { 
+                notationobj_pause((t_notation_obj *)x, NULL, 0, NULL);
             } else
-                score_stop(x, NULL, 0, NULL);
+                notationobj_stop((t_notation_obj *)x, NULL, 0, NULL);
         } else {
-            if (modifiers == eShiftKey)
-                score_playselection(x, NULL, 0, NULL);
-            else
-                score_play(x, NULL, 0, NULL);
+            notationobj_play((t_notation_obj *)x, modifiers == eShiftKey ? gensym("playselection") : NULL, 0, NULL);
         }
         return 1;
     }

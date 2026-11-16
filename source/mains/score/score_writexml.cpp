@@ -1163,7 +1163,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                         
                         for (this_slotnum_elem = export_slots->l_head; this_slotnum_elem; this_slotnum_elem = this_slotnum_elem->l_next) {
                             long slotnum = hatom_getlong(&this_slotnum_elem->l_hatom);
-                            t_llll *slot_contents = note_get_single_slot_values_as_llll((t_notation_obj *) x, note, k_CONSIDER_FOR_DUMPING, slotnum, false);
+                            t_llll *slot_contents = note_get_single_slot_values_as_llll((t_notation_obj *) x, note, k_CONSIDER_FOR_DUMPING, slotnum, false, 0);
                             t_bool single = x->r_ob.slotinfo[slotnum].slot_singleslotfortiednotes;
                             if (slot_contents->l_size > 1 && !(note->tie_from && single)) {
                                 llll_destroyelem(slot_contents->l_head);

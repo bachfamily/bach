@@ -6671,7 +6671,7 @@ void move_notationitem_slot(t_notation_obj *r_ob, t_notation_item *nitem, int sl
     if (!nitem || slot_from < 0 || slot_from >= CONST_MAX_SLOTS || slot_to < 0 || slot_to >= CONST_MAX_SLOTS)
         return;
     
-    t_llll *ll = notation_item_get_single_slot_values_as_llll(r_ob, nitem, k_CONSIDER_FOR_DUMPING, slot_from, false);
+    t_llll *ll = notation_item_get_single_slot_values_as_llll(r_ob, nitem, k_CONSIDER_FOR_DUMPING, slot_from, false, 0);
     llll_behead(ll);
     llll_prependlong(ll, slot_to + 1);
     llll_wrap(&ll);
@@ -8159,7 +8159,7 @@ char slot_handle_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
 						else
 							object_attr_setchar(r_ob->m_editor, _sym_visible, 1);
 
-						t_llll *ll = notation_item_get_single_slot_values_as_llll(r_ob, r_ob->active_slot_notationitem, k_CONSIDER_FOR_SLOT_LLLL_EDITOR, r_ob->active_slot_num, false);
+						t_llll *ll = notation_item_get_single_slot_values_as_llll(r_ob, r_ob->active_slot_notationitem, k_CONSIDER_FOR_SLOT_LLLL_EDITOR, r_ob->active_slot_num, false, 0);
 						char *buf = NULL;
 						llll_behead(ll);
                         
@@ -9747,7 +9747,7 @@ void append_note_slot_formatted_for_pwgl(t_notation_obj *r_ob, t_llll *this_note
 				llll_appendllll(this_slot_llll, breakpoint_functions, 0, WHITENULL_llll);
 			} else {
 				char *buf = NULL;
-				t_llll *slotval = note_get_single_slot_values_as_llll(r_ob, note, k_CONSIDER_FOR_EXPORT_PWGL, i, false);
+				t_llll *slotval = note_get_single_slot_values_as_llll(r_ob, note, k_CONSIDER_FOR_EXPORT_PWGL, i, false, 0);
 				snprintf_zero(slot_id, 99, ":group/%d", r_ob->private_count);
 				llll_appendsym(this_slot_llll, gensym(slot_id), 0, WHITENULL_llll);
 				llll_appendsym(this_slot_llll, gensym(":print-symbol"), 0, WHITENULL_llll);
@@ -10825,9 +10825,9 @@ long notation_item_reducefunction(t_notation_obj *r_ob, t_notation_item *nitem, 
     long changed = 0;
     t_llll *ll = NULL;
     if (slot_number >= 0)
-        ll = notation_item_get_single_slot_values_as_llll(r_ob, nitem, k_CONSIDER_FOR_SLOT_VALUES_ONLY, slot_number, false);
+        ll = notation_item_get_single_slot_values_as_llll(r_ob, nitem, k_CONSIDER_FOR_SLOT_VALUES_ONLY, slot_number, false, 0);
     else if (nitem->type == k_NOTE)
-        ll = note_get_breakpoints_values_no_router_as_llll(r_ob, (t_note *)nitem);
+        ll = note_get_breakpoints_values_no_router_as_llll(r_ob, (t_note *)nitem, 0);
     else // nothing to reduce
         return changed;
     

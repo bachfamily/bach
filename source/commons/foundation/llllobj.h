@@ -322,6 +322,16 @@ void llllobj_outlet_symbol_as_llll(t_object *x, e_llllobj_obj_types llllobj_obj_
  */
 void llllobj_outlet_symbol_couple_as_llll(t_object *x, e_llllobj_obj_types llllobj_obj_type, long outlet_num, t_symbol *sym1, t_symbol *sym2);
 
+/** Send one symbol and a long number as an llll, through a given outlet of a given
+ object (the routine also destroys the llll afterwards).
+ @ingroup                                        llll_utilities
+ @param  x                                       The object sending the llll
+ @param  llllobj_obj_type        The object type (one of the #e_llllobj_obj_types)
+ @param  outlet_num                      The index of the outlet
+ @param  sym                            The symbol
+ @param  num                            The number
+ */void llllobj_outlet_symbol_and_long_as_llll(t_object *x, e_llllobj_obj_types llllobj_obj_type, long outlet_num, t_symbol *sym, long num);
+
 
 // directly output a llll
 // it manages native / text format

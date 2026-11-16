@@ -91,9 +91,6 @@ BEGIN_CHECK_LINKAGE
 void score_hidecursor(t_score *x);
 void score_showcursor(t_score *x);
 
-void scoreapi_setcursor_from_double(t_score *x, double pos);
-void scoreapi_setcursor_from_llll(t_score *x, t_llll *args, long flags);
-
 // inscreen and playing
 char scoreapi_inscreen(t_score *x, t_llll *inscreen);
 char scoreapi_inscreenpos(t_score *x, t_llll *inscreen);
@@ -378,7 +375,6 @@ void sync_all_markers_absolute_ms_onset(t_score *x);
 void sync_marker_absolute_ms_onset(t_score *x, t_marker *marker);
 void sync_selected_markers_absolute_ms_onset(t_score *x);
 
-double get_first_onset_ms_for_grace_notes(t_score *x);
 t_scorevoice *get_longest_scorevoice(t_score *x);
 char measure_barlines_coincide_for_all_voices(t_score *x, long up_to_this_measure_num);
 t_llll *score_get_interp_at_timepoint(t_score *x, t_timepoint tp);
