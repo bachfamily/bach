@@ -38241,6 +38241,7 @@ void notationobj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, n
     r_ob->voicenames_as_llll = get_nilnil();
     
     r_ob->shift_voiceensemble_unisons = 1;
+    r_ob->num_playheads = 1;
     
     r_ob->uwidth_after_barline_with_no_ts = 5;
     r_ob->uwidth_after_barline_with_ts = 6;

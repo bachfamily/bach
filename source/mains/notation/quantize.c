@@ -345,6 +345,13 @@ t_max_err quantize_setattr_minimal_units(t_quantize *x, t_object *attr, long ac,
         
         x->minimal_units = llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, NULL, ac, av, LLLL_PARSE_CLONE);
         
+        if (!x->minimal_units) {
+            object_error((t_object *)x, "Wrong minimal units. Reverting to default");
+            x->minimal_units = llll_from_text_buf((char *)"dynamic ( 1/16 1/12 ) 10 ( 1/16 1/24 ) 15 ( 1/32 1/24 )"); // dynamic: new default
+            x->use_dynamic_minimal_units = true;
+            return MAX_ERR_GENERIC;
+        }
+        
         // to do: filter longs and rats only and avoid repetitions, take absolute values
         elem = x->minimal_units->l_head;
         while (elem){

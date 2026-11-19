@@ -984,12 +984,6 @@ void notationobj_task(t_notation_obj *r_ob)
             }
         }
     }
-    
-    
-//    if (specs->playing_scheduling_type == k_SCHEDULING_STANDARD)
-//        notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
-    
-//    check_scheduled_events(r_ob);
 }
 
 void notationobj_clock(t_notation_obj *r_ob, t_symbol *s)
@@ -1522,7 +1516,7 @@ void notationobj_parse_playback_arguments(t_notation_obj *r_ob, t_symbol *s, lon
     t_llll *args = llllobj_parse_llll((t_object *) r_ob, LLLL_OBJ_UI, s, argc, argv, LLLL_PARSE_CLONE);
     t_llll *start = NULL, *stop = NULL, *rate = NULL, *name = NULL, *namerestrict = NULL;
     bool must_play_loop = false;
-    long num_playheads = 0;
+    long num_playheads = 1;
     llll_parseargs_and_attrs_destructive((t_object *) r_ob, args, "llllli", gensym("start"), &start, gensym("stop"), &stop, gensym("rate"), &rate, gensym("name"), &name, gensym("namerestrict"), &namerestrict, gensym("numplayheads"), &num_playheads);
 
     t_llllelem *first_nonsymbol_el = NULL;

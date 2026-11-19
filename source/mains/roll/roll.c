@@ -15353,45 +15353,47 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
             if (voicenum < 0)
                 voicenum = yposition_to_voicenumber((t_notation_obj *)x, pt.y, -1, k_VOICEENSEMBLE_INTERFACE_ANY);
             
-            lock_general_mutex((t_notation_obj *)x);
-            
-            temp = addchord_from_values(x, voicenum, 1, onset, -1, 2, argv, NULL, NULL, 0, NULL, false, 0, NULL, true);
-            if (temp && temp->firstnote)
-                note_set_slots_from_llll((t_notation_obj *)x, temp->firstnote, x->r_ob.default_noteslots);
-
-            undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)temp, k_UNDO_MODIFICATION_TYPE_REMOVE, _llllobj_sym_state);
-            
-            if (temp){
-                if (is_editable((t_notation_obj *)x, k_SELECTION, x->r_ob.num_selecteditems > 0 ? k_MULTIPLE_SELECTION : k_SINGLE_SELECTION))
-                    notation_item_add_to_selection((t_notation_obj *) x, (t_notation_item *)temp, false);
-                if (temp->voiceparent->v_ob.notation_style == k_VOICE_NOTATION_STYLE_JI) {
-                    t_note *nt = temp->firstnote;
-                    if (nt) {
-                        t_rational r = get_best_jilimited_approximation(notationobj_cents_to_freqratio((t_notation_obj *)x, nt->midicents), x->r_ob.ji_limit, x->r_ob.ji_limit_approx_mcthresh);
-                        nt->midicents = notationobj_freqratio_to_cents((t_notation_obj *)x, (double)r);
-                        nt->pitch_original.setJI(r * x->r_ob.ji_base_for_ratios.getJIRatio());
+            if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)voice_get_nth((t_notation_obj *)x, voicenum))) {
+                lock_general_mutex((t_notation_obj *)x);
+                
+                temp = addchord_from_values(x, voicenum, 1, onset, -1, 2, argv, NULL, NULL, 0, NULL, false, 0, NULL, true);
+                if (temp && temp->firstnote)
+                    note_set_slots_from_llll((t_notation_obj *)x, temp->firstnote, x->r_ob.default_noteslots);
+                
+                undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)temp, k_UNDO_MODIFICATION_TYPE_REMOVE, _llllobj_sym_state);
+                
+                if (temp){
+                    if (is_editable((t_notation_obj *)x, k_SELECTION, x->r_ob.num_selecteditems > 0 ? k_MULTIPLE_SELECTION : k_SINGLE_SELECTION))
+                        notation_item_add_to_selection((t_notation_obj *) x, (t_notation_item *)temp, false);
+                    if (temp->voiceparent->v_ob.notation_style == k_VOICE_NOTATION_STYLE_JI) {
+                        t_note *nt = temp->firstnote;
+                        if (nt) {
+                            t_rational r = get_best_jilimited_approximation(notationobj_cents_to_freqratio((t_notation_obj *)x, nt->midicents), x->r_ob.ji_limit, x->r_ob.ji_limit_approx_mcthresh);
+                            nt->midicents = notationobj_freqratio_to_cents((t_notation_obj *)x, (double)r);
+                            nt->pitch_original.setJI(r * x->r_ob.ji_base_for_ratios.getJIRatio());
+                        }
                     }
-                }
-                if (x->r_ob.snap_pitch_to_grid_when_editing) {
-                    t_note *nt;
-                    for (nt = temp->firstnote; nt; nt = nt->next){
-                        note_compute_approximation((t_notation_obj *) x, nt);
-                        note_snap_midicents_to_displayed_pitch((t_notation_obj *) x, nt);
+                    if (x->r_ob.snap_pitch_to_grid_when_editing) {
+                        t_note *nt;
+                        for (nt = temp->firstnote; nt; nt = nt->next){
+                            note_compute_approximation((t_notation_obj *) x, nt);
+                            note_snap_midicents_to_displayed_pitch((t_notation_obj *) x, nt);
+                        }
                     }
+                    if (x->r_ob.snap_onset_to_grid_when_editing)
+                        snap_onset_to_grid_for_chord((t_notation_obj *) x, temp, NULL);
+                    if (x->r_ob.snap_tail_to_grid_when_editing)
+                        snap_tail_to_grid_for_note((t_notation_obj *) x, temp->firstnote, NULL);
+                    note_constrain_pitch_depending_on_editing_ranges((t_notation_obj *)x, temp->firstnote, voicenum);
+                    //                constraint_midicents_depending_on_editing_ranges((t_notation_obj *)x, &temp->firstnote->midicents, voicenum);
                 }
-                if (x->r_ob.snap_onset_to_grid_when_editing)
-                    snap_onset_to_grid_for_chord((t_notation_obj *) x, temp, NULL);
-                if (x->r_ob.snap_tail_to_grid_when_editing)
-                    snap_tail_to_grid_for_note((t_notation_obj *) x, temp->firstnote, NULL);
-                note_constrain_pitch_depending_on_editing_ranges((t_notation_obj *)x, temp->firstnote, voicenum);
-//                constraint_midicents_depending_on_editing_ranges((t_notation_obj *)x, &temp->firstnote->midicents, voicenum);
+                
+                x->r_ob.item_changed_at_mousedown = 1;
+                unlock_general_mutex((t_notation_obj *)x);
+                //            x->r_ob.changed_while_dragging = true;
+                handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_ADD_NOTE);
+                return;
             }
-            
-            x->r_ob.item_changed_at_mousedown = 1;
-            unlock_general_mutex((t_notation_obj *)x);    
-//            x->r_ob.changed_while_dragging = true;
-            handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_ADD_NOTE);
-            return;
         }
     }
     
@@ -18280,7 +18282,7 @@ char change_selection_tail(t_roll *x, double delta_ms){
 */
 
 char align_selection_onsets(t_roll *x){
-    // align all the onsets to the first onset
+    // align all the onsets to the first NON-locked onset
     // (it has to be like this in order for breakpoint alignment to work properly, otherwise one should
     // take precautions of perhaps sorting in reversed order)
 
@@ -18289,27 +18291,43 @@ char align_selection_onsets(t_roll *x){
     t_notation_item *curr_it = x->r_ob.firstselecteditem;
     char changed = 0;
     double leftmost_onset = -DBL_MAX; // local default for non-defined
-    
-    // TO DO: deal with the fact that some notes may be locked, and in this case we're not aligning to them
-    
+        
     lock_general_mutex((t_notation_obj *)x);
-    while (curr_it) { // cycle on the selected items
-        if (curr_it->type == k_NOTE) { // it is a note
-            if ((leftmost_onset == -DBL_MAX) || (((t_note *)curr_it)->parent->onset < leftmost_onset))
-                leftmost_onset = ((t_note *)curr_it)->parent->onset;
-        } else if (curr_it->type == k_CHORD) { // it is a chord
-            if ((leftmost_onset == -DBL_MAX) || (((t_chord *)curr_it)->onset < leftmost_onset))
-                leftmost_onset = ((t_chord *)curr_it)->onset;
-        } else if (curr_it->type == k_PITCH_BREAKPOINT && !((t_bpt *)curr_it)->next) { // it is a note tail
-            double thisonset = breakpoint_get_absolute_onset((t_notation_obj *)x, (t_bpt *) curr_it);
-            if (leftmost_onset == -DBL_MAX || thisonset < leftmost_onset)
-                leftmost_onset = thisonset;
-        } else if (curr_it->type == k_PITCH_BREAKPOINT && ((t_bpt *)curr_it)->next) { // it is an inner breakpoint
-            double thisonset = breakpoint_get_absolute_onset((t_notation_obj *)x, (t_bpt *) curr_it);
-            if (leftmost_onset == -DBL_MAX || thisonset < leftmost_onset)
-                leftmost_onset = thisonset;
+    // if something is locked, we align this to the first locked onset
+    bool some_locked = false;
+    double leftmost_onset_locked = -DBL_MAX; // local default for non-defined
+    while (curr_it) {
+        if (notation_item_is_globally_locked((t_notation_obj *)x, curr_it)) {
+            some_locked = true;
+            double this_onset = notation_item_get_onset_ms((t_notation_obj *)x, curr_it);
+            if ((leftmost_onset_locked == -DBL_MAX) || (this_onset < leftmost_onset_locked))
+                leftmost_onset_locked = this_onset;
         }
         curr_it = curr_it->next_selected;
+    }
+    
+    if (some_locked) {
+        leftmost_onset = leftmost_onset_locked;
+    } else {
+        curr_it = x->r_ob.firstselecteditem;
+        while (curr_it) { // cycle on the selected items
+            if (curr_it->type == k_NOTE) { // it is a note
+                if ((leftmost_onset == -DBL_MAX) || (((t_note *)curr_it)->parent->onset < leftmost_onset))
+                    leftmost_onset = ((t_note *)curr_it)->parent->onset;
+            } else if (curr_it->type == k_CHORD) { // it is a chord
+                if ((leftmost_onset == -DBL_MAX) || (((t_chord *)curr_it)->onset < leftmost_onset))
+                    leftmost_onset = ((t_chord *)curr_it)->onset;
+            } else if (curr_it->type == k_PITCH_BREAKPOINT && !((t_bpt *)curr_it)->next) { // it is a note tail
+                double thisonset = breakpoint_get_absolute_onset((t_notation_obj *)x, (t_bpt *) curr_it);
+                if (leftmost_onset == -DBL_MAX || thisonset < leftmost_onset)
+                    leftmost_onset = thisonset;
+            } else if (curr_it->type == k_PITCH_BREAKPOINT && ((t_bpt *)curr_it)->next) { // it is an inner breakpoint
+                double thisonset = breakpoint_get_absolute_onset((t_notation_obj *)x, (t_bpt *) curr_it);
+                if (leftmost_onset == -DBL_MAX || thisonset < leftmost_onset)
+                    leftmost_onset = thisonset;
+            }
+            curr_it = curr_it->next_selected;
+        }
     }
     
     //changing onsets
