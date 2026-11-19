@@ -2588,6 +2588,14 @@ void notation_class_add_settings_attributes(t_class *c, char obj_type){
         // @exclude bach.slot
         // @description Sets the number of subdivisions for each ruler and grid period. Defaults to 10.
 
+        CLASS_ATTR_DOUBLE(c,"gridoffsetms",0, t_notation_obj, grid_offset_ms);
+        CLASS_ATTR_STYLE_LABEL(c,"gridoffsetms",0,"text","Ruler/Grid Offset (ms)");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"gridoffsetms",0,"0");
+        CLASS_ATTR_FILTER_MIN(c, "gridoffsetms", 0.);
+        // @exclude bach.slot
+        // @description Sets the time offset (in milliseconds) for the grid origin.
+        // Grid lines are placed at offset + n * period. Defaults to 0.
+
         CLASS_ATTR_DOUBLE(c,"lyricsvadj",0, t_notation_obj, lyrics_uy_pos);
         CLASS_ATTR_STYLE_LABEL(c,"lyricsvadj",0,"text","Lyrics Vertical Adjustment");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"lyricsvadj",0,"-16");
