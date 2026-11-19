@@ -985,7 +985,7 @@ void codableobj_filechanged(t_codableobj *x, char *filename, short path)
 
 
 
-void codableclass_add_standard_methods_and_attrs(t_class *c)
+void codableclass_add_standard_methods_and_attrs(t_class *c, bool isUI)
 {
     class_addmethod(c, (method)codableobj_forceread,   "forceread",            A_DEFSYM,    0);
     class_addmethod(c, (method)codableobj_read,   "read",            A_DEFSYM,    0);
@@ -996,8 +996,9 @@ void codableclass_add_standard_methods_and_attrs(t_class *c)
     class_addmethod(c, (method)codableobj_writeagain, "writeagain", 0);
 
     
-    class_addmethod(c, (method)codableobj_appendtodictionary,    "appendtodictionary", A_CANT, 0);
-    
+    if (!isUI)
+        class_addmethod(c, (method)codableobj_appendtodictionary,    "appendtodictionary", A_CANT, 0);
+
     class_addmethod(c, (method)codableobj_okclose,  "okclose",       A_CANT, 0);
     class_addmethod(c, (method)codableobj_edclose,  "edclose",        A_CANT, 0);
     

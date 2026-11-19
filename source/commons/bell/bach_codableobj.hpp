@@ -111,7 +111,9 @@ inline void codableobj_set_rebuild(t_codableobj *x)
 void codableobj_notify_codechanged(t_codableobj *x);
 
 
-void codableclass_add_standard_methods_and_attrs(t_class *c);
+// isUI must be true for UI classes: they must not override the jbox "appendtodictionary" method
+// (which writes maxclass, patching_rect etc.), but save their data through "jsave" instead
+void codableclass_add_standard_methods_and_attrs(t_class *c, bool isUI = false);
 void codableclass_add_extended_methods_and_attrs(t_class *c);
 
 

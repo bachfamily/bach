@@ -641,6 +641,188 @@ public:
         anchor = a;
         changed();
     }
+
+    // --- automatic indentation ---
+    // The indentation is driven by ( ) and [ ] brackets:
+    // a line inside an open bracket is indented one level more than the line containing that bracket,
+    // and a line beginning with a closing bracket is aligned with the line containing the matching opening one.
+    // Brackets inside comments, strings, {max messages} and include(...) are ignored:
+    // we use the highlighting spans to know where they are.
+
+    void ensureSpans() {
+        if (spansDirty) {
+            cb_highlight(text, spans);
+            spansDirty = false;
+        }
+    }
+
+    static bool isOpener(char c) { return c == '(' || c == '['; }
+    static bool isCloser(char c) { return c == ')' || c == ']'; }
+
+    // the positions of the brackets that count for indentation, up to (and excluding) upTo
+    std::vector<long> significantBrackets(long upTo) {
+        ensureSpans();
+        std::vector<long> out;
+        size_t si = 0;
+        for (long i = 0; i < upTo; i++) {
+            char c = text[i];
+            if (!isOpener(c) && !isCloser(c))
+                continue;
+            while (si < spans.size() && spans[si].end <= i)
+                si++;
+            // '[' and ']' are highlighted as operators, ( and ) aren't highlighted at all:
+            // anything else covering them means they're in a comment, string, etc.
+            if (si < spans.size() && spans[si].start <= i && spans[si].scope != CB_SCOPE_OPERATOR)
+                continue;
+            out.push_back(i);
+        }
+        return out;
+    }
+
+    long indentWidth(long line) const {
+        return colOf(lineStart(line) + (long) leadingWhitespace(line).size());
+    }
+
+    // true if the line begins inside a token started on a previous line,
+    // e.g. a #( block comment )# or {max message}: its indentation must be left alone
+    bool startsInsideToken(long line) {
+        ensureSpans();
+        long ls = lineStart(line);
+        auto it = std::lower_bound(spans.begin(), spans.end(), ls,
+                                   [](const t_cbSpan &sp, long pos) { return sp.end <= pos; });
+        // a span covering the line start must have started on a previous line
+        // (the preceding newline is part of it)
+        return it != spans.end() && it->start < ls;
+    }
+
+    // The desired indentation, in columns, of each line in [l0, l1],
+    // or -1 for the lines that must be left as they are (see startsInsideToken()).
+    // Lines before l0 keep their own indentation, and their brackets are taken into account.
+    std::vector<long> computeIndents(long l0, long l1) {
+        std::vector<long> brackets = significantBrackets(lineEnd(l1));
+        std::vector<long> stack; // for each open bracket, the indentation of its line
+        std::vector<long> result;
+        size_t bi = 0;
+        for (long l = 0; l <= l1; l++) {
+            const long ls = lineStart(l), le = lineEnd(l);
+            const long first = ls + (long) leadingWhitespace(l).size();
+            long indent;
+            if (l < l0) {
+                indent = indentWidth(l);
+            } else if (startsInsideToken(l)) {
+                indent = indentWidth(l);
+                result.push_back(-1);
+            } else {
+                // skip the brackets before this line's first character (there shouldn't be any)
+                while (bi < brackets.size() && brackets[bi] < first)
+                    bi++;
+                bool startsWithCloser = first < le && bi < brackets.size() && brackets[bi] == first && isCloser(text[first]);
+                if (stack.empty())
+                    indent = 0;
+                else
+                    indent = startsWithCloser ? stack.back() : stack.back() + tabSize;
+                result.push_back(indent);
+            }
+            for ( ; bi < brackets.size() && brackets[bi] < le; bi++) {
+                if (isOpener(text[brackets[bi]]))
+                    stack.push_back(indent);
+                else if (!stack.empty())
+                    stack.pop_back();
+            }
+        }
+        return result;
+    }
+
+    // Reindent the lines in [l0, l1].
+    // Blank lines are emptied, except keepLine, which gets its indentation anyway
+    // (it's the one where the caret is after a Return).
+    // Returns true if something changed.
+    bool reindentLines(long l0, long l1, bool undoable, long keepLine = -1) {
+        std::vector<long> ind = computeIndents(l0, l1);
+        struct t_change { long start, len; std::string ws; };
+        std::vector<t_change> changes;
+        for (long l = l0; l <= l1; l++) {
+            if (ind[l - l0] < 0)
+                continue;
+            long ls = lineStart(l);
+            long ws = (long) leadingWhitespace(l).size();
+            bool blank = ls + ws >= lineEnd(l);
+            std::string newWs = blank && l != keepLine ? "" : std::string(ind[l - l0], ' ');
+            if (text.compare(ls, ws, newWs) != 0)
+                changes.push_back({ ls, ws, newWs });
+        }
+        if (changes.empty())
+            return false;
+        if (undoable)
+            pushUndo(CB_EDIT_OTHER);
+        // from the last one, so that the positions of the previous ones stay valid
+        for (auto it = changes.rbegin(); it != changes.rend(); ++it) {
+            long delta = (long) it->ws.size() - it->len;
+            auto adjust = [&](long &p) {
+                if (p >= it->start + it->len)
+                    p += delta;
+                else if (p > it->start) // inside the old indentation: go to the first character
+                    p = it->start + (long) it->ws.size();
+            };
+            adjust(caret);
+            adjust(anchor);
+            text.replace(it->start, it->len, it->ws);
+        }
+        changed();
+        return true;
+    }
+
+    // Reindent the selected lines, or everything if there's no selection
+    void reindentSelectionOrAll() {
+        long l0 = 0, l1 = numLines() - 1;
+        if (hasSelection()) {
+            l0 = lineOf(selStart());
+            l1 = lineOf(selEnd());
+            if (l1 > l0 && selEnd() == lineStart(l1))
+                l1--;
+        }
+        reindentLines(l0, l1, true);
+    }
+
+    // Return key
+    void newline(bool autoIndent) {
+        if (!autoIndent) {
+            insert("\n" + leadingWhitespace(lineOf(selStart())), CB_EDIT_OTHER);
+            return;
+        }
+        pushUndo(CB_EDIT_OTHER);
+        long a = selStart(), b = selEnd();
+
+        // between a pair of brackets, like (|): put the closing one on a line of its own
+        long p = a, q = b;
+        while (p > lineStart(lineOf(a)) && (text[p - 1] == ' ' || text[p - 1] == '\t'))
+            p--;
+        while (q < lineEnd(lineOf(b)) && (text[q] == ' ' || text[q] == '\t'))
+            q++;
+        bool split = p > 0 && isOpener(text[p - 1]) && q < (long) text.size() && isCloser(text[q]);
+        if (split) {
+            std::vector<long> br = significantBrackets(q + 1);
+            split = br.size() >= 2 && br[br.size() - 1] == q && br[br.size() - 2] == p - 1;
+        }
+
+        // the whitespace around the caret goes away
+        text.replace(p, q - p, split ? "\n\n" : "\n");
+        caret = anchor = p + 1;
+        rebuildLines();
+        spansDirty = true;
+        long line = lineOf(caret);
+        reindentLines(line, split ? line + 1 : line, false, line);
+        // reindentLines() calls changed(), but not if nothing needed reindenting
+        changed();
+    }
+
+    // after typing a closing bracket as the first character of a line, align it with its opening one
+    void autoDedentAfterCloser() {
+        long line = lineOf(caret);
+        long first = lineStart(line) + (long) leadingWhitespace(line).size();
+        if (caret == first + 1 && isCloser(text[first]))
+            reindentLines(line, line, false);
+    }
 };
 
 
@@ -692,6 +874,7 @@ typedef struct _codebox
     char n_hammerHover;
     char n_hammerPressed;
     char n_linenumbers;
+    char n_autoindent;
     t_atom_long n_tabsize;
 
     t_jrgba n_bgcolor;
@@ -732,6 +915,7 @@ void codebox_deferbang(t_codebox *x, t_symbol *msg, long ac, t_atom *av);
 
 void codebox_expr(t_codebox *x, t_symbol *msg, long ac, t_atom *av);
 void codebox_compilemsg(t_codebox *x);
+void codebox_reindentmsg(t_codebox *x);
 void codebox_compile(t_codebox *x, long mode);
 void codebox_bellcodechanged(t_codebox *x);
 void codebox_dblclick(t_codebox *x);
@@ -885,7 +1069,7 @@ void C74_EXPORT ext_main(void *moduleRef)
     c->c_flags |= CLASS_FLAG_NEWDICTIONARY;
     jbox_initclass(c, JBOX_FONTATTR);
 
-    codableclass_add_standard_methods_and_attrs(c);
+    codableclass_add_standard_methods_and_attrs(c, true);
 
     // UI
     class_addmethod(c, (method)codebox_paint,            "paint",            A_CANT, 0);
@@ -901,9 +1085,10 @@ void C74_EXPORT ext_main(void *moduleRef)
     class_addmethod(c, (method)codebox_focuslost,        "focuslost",        A_CANT, 0);
     class_addmethod(c, (method)codebox_notify,           "notify",           A_CANT, 0);
 
-    // saving: the code saved is the one in the editor, even if it has not been compiled
+    // saving: the code saved is the one in the editor, even if it has not been compiled.
+    // NB: never register "appendtodictionary" here: the jbox one writes maxclass, patching_rect etc.
+    // and then calls "jsave" for our own data
     class_addmethod(c, (method)codebox_jsave,            "jsave",            A_CANT, 0);
-    class_addmethod(c, (method)codebox_jsave,            "appendtodictionary", A_CANT, 0); // overrides the codableobj one
 
     // @method llll @digest Store values for the inlet variables
     // @description
@@ -928,6 +1113,12 @@ void C74_EXPORT ext_main(void *moduleRef)
     // exactly as clicking on the hammer button.
     // If the code is valid, the number of inlets and outlets is updated accordingly.
     class_addmethod(c, (method)codebox_compilemsg,  "compile",      0);
+
+    // @method reindent @digest Fix the indentation of the code
+    // @description Reindents the whole code according to its ( ) and [ ] brackets,
+    // as Ctrl+I (Ctrl+Shift+I on Windows) does on the selected lines while editing.
+    // The code is not recompiled.
+    class_addmethod(c, (method)codebox_reindentmsg, "reindent",     0);
 
     // @method (doubleclick) @digest Open external text editor
     // @description In an unlocked patcher, double-clicking on the object opens the code in an external text editor.
@@ -1004,6 +1195,14 @@ void C74_EXPORT ext_main(void *moduleRef)
     CLASS_ATTR_ACCESSORS(c, "tabsize", NULL, codebox_setattr_tabsize);
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c, "tabsize", 0, "4");
     // @description Number of spaces inserted by the Tab key, and width of tab characters.
+
+    CLASS_ATTR_CHAR(c, "autoindent", 0, t_codebox, n_autoindent);
+    CLASS_ATTR_STYLE_LABEL(c, "autoindent", 0, "onoff", "Automatic Indentation");
+    CLASS_ATTR_DEFAULT_SAVE(c, "autoindent", 0, "1");
+    // @description When set to 1, the indentation follows the ( ) and [ ] brackets while typing:
+    // pressing Return after an opening bracket indents the new line by one more level,
+    // and a closing bracket typed at the beginning of a line is aligned with the line of its opening bracket.
+    // When set to 0, Return just keeps the indentation of the current line.
 
     CLASS_STICKY_ATTR_CLEAR(c, "category");
 
@@ -1564,6 +1763,18 @@ void codebox_compile_deferred(t_codebox *x, t_symbol *s, long ac, t_atom *av)
     codebox_compile(x, CB_COMPILE_USER);
 }
 
+void codebox_reindent_deferred(t_codebox *x, t_symbol *s, long ac, t_atom *av)
+{
+    t_cbState *st = x->n_state;
+    if (st->numLines() > 0 && st->reindentLines(0, st->numLines() - 1, true))
+        jbox_redraw((t_jbox *) x);
+}
+
+void codebox_reindentmsg(t_codebox *x)
+{
+    defer(x, (method) codebox_reindent_deferred, NULL, 0, NULL);
+}
+
 void codebox_compilemsg(t_codebox *x)
 {
     defer(x, (method) codebox_compile_deferred, NULL, 0, NULL);
@@ -1668,6 +1879,7 @@ void *codebox_new(t_symbol *s, long argc, t_atom *argv)
     x->n_triggers = llll_get();
     llll_appendlong(x->n_triggers, 1);
     x->n_linenumbers = 1;
+    x->n_autoindent = 1;
     x->n_tabsize = 4;
 
     attr_dictionary_process(x, d);
@@ -2367,6 +2579,11 @@ static void cb_move_vertically(t_cbState *st, long dLines, bool extend)
 
 long codebox_key(t_codebox *x, t_object *patcherview, long keycode, long modifiers, long textcharacter)
 {
+    // the box keeps the keyboard focus when the patcher is unlocked:
+    // in that case the keys belong to the patcher (copy/paste/duplicate of the object etc.)
+    if (!patcherview_get_locked(patcherview))
+        return 0;
+
     t_cbState *st = x->n_state;
     const bool shift = modifiers & eShiftKey;
     const bool cmd = modifiers & eCommandKey; // Cmd on Mac, Ctrl on Windows
@@ -2381,15 +2598,25 @@ long codebox_key(t_codebox *x, t_object *patcherview, long keycode, long modifie
     const long n = (long) st->text.size();
     bool vertical = false;
 
+#ifdef MAC_VERSION
+    // Ctrl+I: reindent the selected lines (or everything).
+    // Depending on the keyboard layout, Max may report it as 'i' or as a tab character.
+    if ((modifiers & eControlKey) && !cmd &&
+        (tolower((int) (keycode & 0xFF)) == 'i' || keycode == JKEY_TAB || textcharacter == 9)) {
+        st->reindentSelectionOrAll();
+        cb_scroll_to_caret(x);
+        jbox_redraw((t_jbox *) x);
+        return 1;
+    }
+#endif
+
     switch (keycode) {
         case JKEY_RETURN:
             if (cmd || (modifiers & eControlKey)) {
                 codebox_compile(x, CB_COMPILE_USER);
                 return 1;
             } else {
-                // newline, keeping the indentation of the current line
-                std::string indent = st->leadingWhitespace(st->lineOf(st->selStart()));
-                st->insert("\n" + indent, CB_EDIT_OTHER);
+                st->newline(x->n_autoindent);
             }
             break;
 
@@ -2497,19 +2724,21 @@ long codebox_key(t_codebox *x, t_object *patcherview, long keycode, long modifie
                         st->caret = n;
                         break;
                     case 'c':
-                        if (st->hasSelection())
-                            cb_clipboard_set(st->selectedText());
+                        if (!st->hasSelection())
+                            return 0; // nothing to copy: let Max handle it
+                        cb_clipboard_set(st->selectedText());
                         return 1;
                     case 'x':
-                        if (st->hasSelection()) {
-                            cb_clipboard_set(st->selectedText());
-                            st->insert("", CB_EDIT_OTHER);
-                        }
+                        if (!st->hasSelection())
+                            return 0;
+                        cb_clipboard_set(st->selectedText());
+                        st->insert("", CB_EDIT_OTHER);
                         break;
                     case 'v': {
                         std::string s = cb_normalize_newlines(cb_clipboard_get());
-                        if (!s.empty())
-                            st->insert(s, CB_EDIT_OTHER);
+                        if (s.empty())
+                            return 0; // no text (e.g. Max objects on the clipboard): let Max handle it
+                        st->insert(s, CB_EDIT_OTHER);
                         break;
                     }
                     case 'z':
@@ -2524,11 +2753,20 @@ long codebox_key(t_codebox *x, t_object *patcherview, long keycode, long modifie
                     case 'b': // like a build command
                         codebox_compile(x, CB_COMPILE_USER);
                         return 1;
+#ifdef WIN_VERSION
+                    case 'i': // Ctrl+Shift+I: reindent (Ctrl+I alone is the Max inspector)
+                        if (!shift)
+                            return 0;
+                        st->reindentSelectionOrAll();
+                        break;
+#endif
                     default:
                         return 0; // let Max handle its own shortcuts
                 }
             } else if (textcharacter >= 32 && textcharacter != 127) {
                 st->insert(cb_utf8(textcharacter), textcharacter == ' ' ? CB_EDIT_OTHER : CB_EDIT_TYPING);
+                if (x->n_autoindent && (textcharacter == ')' || textcharacter == ']'))
+                    st->autoDedentAfterCloser();
             } else
                 return 0;
             break;
