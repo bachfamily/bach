@@ -1178,6 +1178,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 
     CLASS_ATTR_LLLL(c, "params", 0, t_codableobj, c_paramsll, codableobj_params_get, codableobj_params_set);
     CLASS_ATTR_LABEL(c, "params", 0, "Extra Parameters");
+    CLASS_ATTR_SAVE(c, "params", 0);
     // @description Same as <o>bach.eval</o>'s <m>params</m> attribute.
 
     CLASS_STICKY_ATTR_CLEAR(c, "category");

@@ -409,6 +409,8 @@ void codableobj_params_set(t_codableobj *x, t_object *attr, long ac, t_atom *av)
             }
         }
         
+        if (!ll) // couldn't parse: keep the previous params
+            return;
         llll_free(x->c_paramsll);
         x->c_paramsll = ll;
         x->c_nparams = ll->l_size;
@@ -1028,6 +1030,16 @@ void codableclass_add_standard_methods_and_attrs(t_class *c, bool isUI)
 #else
     CLASS_ATTR_FILTER_CLIP(c, "bellversion", 0, 2);
 #endif
+
+    if (isUI) {
+        // UI objects have no object box text from which to retrieve their attributes,
+        // so they must be saved with the patcher.
+        // NB: "file" is not saved on purpose: reading the file at load time
+        // would override the code saved with the patcher.
+        CLASS_ATTR_SAVE(c, "maxtime", 0);
+        CLASS_ATTR_SAVE(c, "watch", 0);
+        CLASS_ATTR_SAVE(c, "bellversion", 0);
+    }
 }
 
 
