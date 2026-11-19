@@ -69,6 +69,7 @@ VERSION NOTES:
 
 - bell: new engine, with countless bug fixes, various new functions and some changes to the syntax
     bach.sum, bach.prod now work
+    new "immediate" attribute for codable objects, allowing code parsing in the scheduler thread
 
 - bach.fareyser, bach.jilimit, bach.continuedfraction: new objects
 
