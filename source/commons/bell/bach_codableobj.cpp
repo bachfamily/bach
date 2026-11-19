@@ -198,6 +198,7 @@ void codableobj_okclose(t_codableobj *x, char *s, short *result)
                     } else
                         *result = 3;
                     object_error((t_object *) x, "Ignoring bad code in the editor");
+                    codableobj_notify_codechanged(x);
                     break;
                 case 3: // revert
                     codableobj_reject_bad_code(x, oldMain, oldCode);
@@ -243,7 +244,7 @@ void codableobj_lambda_set(t_codableobj *x, t_object *attr, long ac, t_atom *av)
         x->c_main->decrease();
         x->c_main = nullptr;
     }
-    x->c_ob.l_rebuild = 1;
+    codableobj_set_rebuild(x);
     return;
 }
 
@@ -374,7 +375,7 @@ void codableobj_params_set(t_codableobj *x, t_object *attr, long ac, t_atom *av)
     t_llll *ll = nullptr;
     t_llll *subll = nullptr;
     if (ac == 0 || av) {
-        if ((ll = llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, NULL, ac, av, LLLL_PARSE_CLONE))) {
+        if ((ll = llllobj_parse_llll((t_object *) x, codableobj_get_llllobj_type(x), NULL, ac, av, LLLL_PARSE_CLONE))) {
             
             t_llllelem *elem;
             long i;
@@ -412,8 +413,8 @@ void codableobj_params_set(t_codableobj *x, t_object *attr, long ac, t_atom *av)
         x->c_paramsll = ll;
         x->c_nparams = ll->l_size;
     }
-    
-    x->c_ob.l_rebuild = 1;
+
+    codableobj_set_rebuild(x);
     return;
     
 codableobj_params_set_error:
@@ -675,6 +676,7 @@ t_bool codableobj_readfile(t_codableobj *x, char *filename, short path)
             if (!x->c_filechanged)
                 codableobj_replace_default_filewatcher(x);
             x->c_filechanged = false;
+            codableobj_notify_codechanged(x);
             return true;
         } else {
             codableobj_reject_bad_code(x, oldMain, oldCode);
@@ -885,7 +887,16 @@ void codableobj_free(t_codableobj *x)
     codableobj_clear_all_filewatchers(x);
     delete x->c_ofTable;
     object_free_debug(x->c_editor);
-    llllobj_obj_free((t_llllobj_object *) x);
+    if (x->c_isUI)
+        llllobj_jbox_free(&x->c_box); // jbox_free() must have been called by the UI object before
+    else
+        llllobj_obj_free(&x->c_ob);
+}
+
+void codableobj_notify_codechanged(t_codableobj *x)
+{
+    if (x->c_isUI)
+        object_method(x, gensym("bellcodechanged"));
 }
 
 void codableobj_accept_good_code(t_codableobj *x, t_mainFunction* oldMain, char* oldCode)
@@ -898,6 +909,7 @@ void codableobj_accept_good_code(t_codableobj *x, t_mainFunction* oldMain, char*
     codableobj_resolve_trigger_vars(x, NULL, 0, NULL);
     if (x->c_watch)
         codableobj_start_all_filewatchers(x);
+    codableobj_notify_codechanged(x);
     if (x->c_auto) {
         object_method(x, _sym_bang);
     }

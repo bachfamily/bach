@@ -34,7 +34,15 @@ typedef std::unordered_map<std::string, t_ownedFunction *> t_ofTable;
 
 typedef struct _codableobj
 {
-    t_llllobj_object c_ob;
+    // The header can be either a vanilla llllobj (bach.eval, lambda objects...)
+    // or a UI llllobj (bach.codebox).
+    // Using a union keeps the offsets of all the following fields identical
+    // in both cases, so that all the codableobj_* functions work for both.
+    // c_isUI tells which member of the union is the active one.
+    union {
+        t_llllobj_object c_ob;
+        t_llllobj_jbox c_box;
+    };
     t_ofTable *c_ofTable;
     t_object *c_editor;
     
@@ -80,8 +88,27 @@ typedef struct _codableobj
     
     long c_bellversion;
     t_bool c_ready;
-    
+
+    t_bool c_isUI; // true if the header is a t_llllobj_jbox (see above)
+
 } t_codableobj;
+
+inline e_llllobj_obj_types codableobj_get_llllobj_type(const t_codableobj *x)
+{
+    return x->c_isUI ? LLLL_OBJ_UI : LLLL_OBJ_VANILLA;
+}
+
+inline void codableobj_set_rebuild(t_codableobj *x)
+{
+    if (x->c_isUI)
+        x->c_box.l_rebuild = 1;
+    else
+        x->c_ob.l_rebuild = 1;
+}
+
+// For UI objects only: sends them the "bellcodechanged" message
+// whenever the code has been changed from outside (read, file watcher, external editor...)
+void codableobj_notify_codechanged(t_codableobj *x);
 
 
 void codableclass_add_standard_methods_and_attrs(t_class *c);

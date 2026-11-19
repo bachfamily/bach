@@ -335,10 +335,10 @@ t_llll *llllobj_get_retained_store_contents(t_object *x, e_llllobj_obj_types typ
             store = ((t_llllobj_pxobject *) x)->l_incache + num;
             break;
         case LLLL_OBJ_UI:
-            store = ((t_llllobj_pxobject *) x)->l_incache + num;
+            store = ((t_llllobj_jbox *) x)->l_incache + num;
             break;
         case LLLL_OBJ_UIMSP:
-            store = ((t_llllobj_pxobject *) x)->l_incache + num;
+            store = ((t_llllobj_pxjbox *) x)->l_incache + num;
             break;
         default:
             return NULL;
