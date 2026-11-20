@@ -408,6 +408,9 @@ public:
     double metricsSize = 0;
     double boxW = 100, boxH = 100;
     bool dragging = false;
+    int sbDrag = 0;             // 1: dragging the vertical scrollbar, 2: the horizontal one
+    double sbStartMouse = 0;
+    double sbStartScroll = 0;
 
     // highlighting
     std::vector<t_cbSpan> spans;
@@ -842,6 +845,9 @@ enum e_cbCompileMode {
 };
 
 #define CB_TOOLBAR_H    20.
+#define CB_HEADER_H     22.
+#define CB_RMARGIN      8.      // frame on the right of the text area
+#define CB_SB_W         6.      // scrollbar thickness
 #define CB_PAD          4.
 #define CB_HAMMER_W     22.
 #define CB_MAX_DATA_OUTLETS     127
@@ -875,6 +881,13 @@ typedef struct _codebox
     char n_hammerPressed;
     char n_linenumbers;
     char n_autoindent;
+    char n_lockededit;  // attribute: allow editing in a locked patcher
+    char n_header;      // attribute: show the strip with the object name
+    t_jrgba n_scrollbarcolor;
+    char n_editing;     // edit mode in an unlocked patcher (entered by double-clicking)
+    char n_caretOn;     // blinking phase
+    void *n_blinkClock;
+    void *n_dragClock;  // polls the mouse while dragging during an unlocked edit (see codebox_mousedownonchar())
     t_atom_long n_tabsize;
 
     t_jrgba n_bgcolor;
@@ -918,7 +931,15 @@ void codebox_compilemsg(t_codebox *x);
 void codebox_reindentmsg(t_codebox *x);
 void codebox_compile(t_codebox *x, long mode);
 void codebox_bellcodechanged(t_codebox *x);
-void codebox_dblclick(t_codebox *x);
+long codebox_keyfilter(t_codebox *x, t_object *patcherview, long *keycode, long *modifiers, long *textcharacter);
+void codebox_enter(t_codebox *x);
+void codebox_entertext(t_codebox *x);
+void codebox_mousedownonchar(t_codebox *x, long index, long character, char *word);
+void codebox_dragpoll_tick(t_codebox *x);
+void codebox_getcaretcolor(t_codebox *x, t_jrgba *color);
+static void cb_end_edit(t_codebox *x);
+void codebox_openeditor(t_codebox *x);
+void codebox_blink_tick(t_codebox *x);
 
 void codebox_update_io(t_codebox *x);
 void codebox_resize_io(t_codebox *x, long di, long dout, long dri, long dro);
@@ -934,6 +955,8 @@ void codebox_mousemove(t_codebox *x, t_object *patcherview, t_pt pt, long modifi
 void codebox_mouseleave(t_codebox *x, t_object *patcherview, t_pt pt, long modifiers);
 void codebox_mousedoubleclick(t_codebox *x, t_object *patcherview, t_pt pt, long modifiers);
 void codebox_mousewheel(t_codebox *x, t_object *patcherview, t_pt pt, long modifiers, double x_inc, double y_inc);
+long codebox_wantsunlockedinteraction(t_codebox *x, t_object *patcherview, t_pt pt, long modifiers);
+void codebox_mousewheeldirect(t_codebox *x, t_object *patcherview, const void *juceMouseEvent, const float *juceWheelDetails);
 long codebox_key(t_codebox *x, t_object *patcherview, long keycode, long modifiers, long textcharacter);
 void codebox_focusgained(t_codebox *x, t_object *patcherview);
 void codebox_focuslost(t_codebox *x, t_object *patcherview);
@@ -1067,7 +1090,7 @@ void C74_EXPORT ext_main(void *moduleRef)
     CLASS_NEW_CHECK_SIZE(c, "bach.codebox", (method)codebox_new, (method)codebox_free, (long) sizeof(t_codebox), 0L, A_GIMME, 0);
 
     c->c_flags |= CLASS_FLAG_NEWDICTIONARY;
-    jbox_initclass(c, JBOX_FONTATTR);
+    jbox_initclass(c, JBOX_TEXTFIELD | JBOX_FONTATTR); // the textfield is only used to get the edit mode in unlocked patchers
 
     codableclass_add_standard_methods_and_attrs(c, true);
 
@@ -1080,6 +1103,9 @@ void C74_EXPORT ext_main(void *moduleRef)
     class_addmethod(c, (method)codebox_mouseleave,       "mouseleave",       A_CANT, 0);
     class_addmethod(c, (method)codebox_mousedoubleclick, "mousedoubleclick", A_CANT, 0);
     class_addmethod(c, (method)codebox_mousewheel,       "mousewheel",       A_CANT, 0);
+    // interaction in unlocked patchers (undocumented, see codebox_wantsunlockedinteraction())
+    class_addmethod(c, (method)codebox_wantsunlockedinteraction, "wantsunlockedinteraction", A_CANT, 0);
+    class_addmethod(c, (method)codebox_mousewheeldirect, "mousewheeldirect", A_CANT, 0);
     class_addmethod(c, (method)codebox_key,              "key",              A_CANT, 0);
     class_addmethod(c, (method)codebox_focusgained,      "focusgained",      A_CANT, 0);
     class_addmethod(c, (method)codebox_focuslost,        "focuslost",        A_CANT, 0);
@@ -1120,9 +1146,24 @@ void C74_EXPORT ext_main(void *moduleRef)
     // The code is not recompiled.
     class_addmethod(c, (method)codebox_reindentmsg, "reindent",     0);
 
-    // @method (doubleclick) @digest Open external text editor
-    // @description In an unlocked patcher, double-clicking on the object opens the code in an external text editor.
-    class_addmethod(c, (method)codebox_dblclick,    "dblclick",     A_CANT, 0);
+    // @method (doubleclick) @digest Edit the code
+    // @description In an unlocked patcher, double-clicking on the object starts editing the code.
+    // Press Esc, or click elsewhere, to stop editing.
+    // (This is done through the box textfield, which Max activates in unlocked patchers:
+    // the textfield is invisible and never gets the keys, which go to "keyfilter" and "key".)
+    class_addmethod(c, (method)codebox_keyfilter,   "keyfilter",    A_CANT, 0);
+    class_addmethod(c, (method)codebox_enter,       "enter",        A_CANT, 0);
+    class_addmethod(c, (method)codebox_entertext,   "entertext",    A_CANT, 0);
+    class_addmethod(c, (method)codebox_mousedownonchar, "mousedownonchar", A_CANT, 0);
+    // asked by Max's text editor when the box editing starts (TextfieldComponent::initTextEditorColors)
+    class_addmethod(c, (method)codebox_getcaretcolor,  "getcaretcolor",  A_CANT, 0);
+    // NB: never define "willpainttext": if it answers 1, textfield_getlayoutinfo() calls the box's
+    // "measuretext" method, whose default (jbox_measuretext) calls textfield_getlayoutinfo() again
+    // (infinite recursion at instantiation)
+
+    // @method open @digest Open external text editor
+    // @description Opens the code in an external text editor.
+    class_addmethod(c, (method)codebox_openeditor,  "open",         0);
 
     class_addmethod(c, (method)codebox_assist,      "assist",       A_CANT, 0);
     class_addmethod(c, (method)codebox_inletinfo,   "inletinfo",    A_CANT, 0);
@@ -1186,6 +1227,11 @@ void C74_EXPORT ext_main(void *moduleRef)
 
     CLASS_STICKY_ATTR(c, "category", 0, "Appearance");
 
+    CLASS_ATTR_CHAR(c, "header", 0, t_codebox, n_header);
+    CLASS_ATTR_STYLE_LABEL(c, "header", 0, "onoff", "Show Header");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c, "header", 0, "1");
+    // @description Toggles the strip at the top of the object, showing its name.
+
     CLASS_ATTR_CHAR(c, "linenumbers", 0, t_codebox, n_linenumbers);
     CLASS_ATTR_STYLE_LABEL(c, "linenumbers", 0, "onoff", "Show Line Numbers");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c, "linenumbers", 0, "1");
@@ -1205,42 +1251,53 @@ void C74_EXPORT ext_main(void *moduleRef)
     // and a closing bracket typed at the beginning of a line is aligned with the line of its opening bracket.
     // When set to 0, Return just keeps the indentation of the current line.
 
+    CLASS_ATTR_CHAR(c, "lockededit", 0, t_codebox, n_lockededit);
+    CLASS_ATTR_STYLE_LABEL(c, "lockededit", 0, "onoff", "Edit Code In Locked Patcher");
+    CLASS_ATTR_DEFAULT_SAVE(c, "lockededit", 0, "0");
+    // @description By default, as for Max's own code boxes, the code is edited in an unlocked patcher
+    // (double-click on the object to start editing, press Esc or click elsewhere to stop),
+    // and is read-only in a locked patcher, where it can still be scrolled, selected and copied.
+    // When set to 1, the code can also be edited in a locked patcher, by clicking on it.
+
     CLASS_STICKY_ATTR_CLEAR(c, "category");
 
 
     CLASS_STICKY_ATTR(c, "category", 0, "Color");
 
-    CB_COLOR_ATTR("bgcolor",            n_bgcolor,          "Background Color",             "1. 1. 1. 1.");
+    CB_COLOR_ATTR("bgcolor",            n_bgcolor,          "Background Color",             "0.1 0.1 0.1 1.");
     CLASS_ATTR_BASIC(c, "bgcolor", 0);
-    CB_COLOR_ATTR("textcolor",          n_textcolor,        "Text Color",                   "0.12 0.12 0.12 1.");
+    CB_COLOR_ATTR("textcolor",          n_textcolor,        "Text Color",                   "0.88 0.88 0.88 1.");
     CLASS_ATTR_BASIC(c, "textcolor", 0);
-    CB_COLOR_ATTR("bordercolor",        n_bordercolor,      "Border Color",                 "0.6 0.6 0.6 1.");
-    CB_COLOR_ATTR("focusbordercolor",   n_focusbordercolor, "Border Color When Editing",    "0.25 0.5 0.85 1.");
-    CB_COLOR_ATTR("guttercolor",        n_guttercolor,      "Line Numbers Background Color","0.95 0.95 0.95 1.");
-    CB_COLOR_ATTR("linenumcolor",       n_linenumcolor,     "Line Numbers Color",           "0.6 0.6 0.6 1.");
-    CB_COLOR_ATTR("selectioncolor",     n_selcolor,         "Selection Color",              "0.71 0.84 1. 1.");
-    CB_COLOR_ATTR("currentlinecolor",   n_curlinecolor,     "Current Line Color",           "0.96 0.97 1. 1.");
-    CB_COLOR_ATTR("caretcolor",         n_caretcolor,       "Caret Color",                  "0. 0. 0. 1.");
-    CB_COLOR_ATTR("toolbarcolor",       n_toolbarcolor,     "Toolbar Color",                "0.91 0.91 0.91 1.");
-    CB_COLOR_ATTR("hammercolor",        n_hammercolor,      "Compile Button Color",         "0.35 0.35 0.35 1.");
-    CB_COLOR_ATTR("modifiedcolor",      n_modifiedcolor,    "Modified Code Color",          "0.93 0.55 0.1 1.");
-    CB_COLOR_ATTR("okcolor",            n_okcolor,          "Compiled Code Color",          "0.25 0.65 0.3 1.");
-    CB_COLOR_ATTR("errorcolor",         n_errorcolor,       "Syntax Error Color",           "0.85 0.2 0.2 1.");
+    CB_COLOR_ATTR("bordercolor",        n_bordercolor,      "Border Color",                 "0.21 0.21 0.21 1.");
+    CB_COLOR_ATTR("focusbordercolor",   n_focusbordercolor, "Border Color When Editing",    "0.36 0.53 0.8 1.");
+    CB_COLOR_ATTR("guttercolor",        n_guttercolor,      "Line Numbers Background Color","0.16 0.16 0.16 1.");
+    CB_COLOR_ATTR("linenumcolor",       n_linenumcolor,     "Line Numbers Color",           "0.62 0.62 0.62 1.");
+    CB_COLOR_ATTR("selectioncolor",     n_selcolor,         "Selection Color",              "0.22 0.33 0.5 1.");
+    CB_COLOR_ATTR("currentlinecolor",   n_curlinecolor,     "Current Line Color",           "0.14 0.14 0.14 1.");
+    // NB: not "caretcolor": Max's text editor calls a "getcaretcolor" method on the box,
+    // and the attribute would automatically define one with the wrong signature (crash). See codebox_getcaretcolor().
+    CB_COLOR_ATTR("cursorcolor",        n_caretcolor,       "Cursor Color",                 "0.92 0.92 0.92 1.");
+    CB_COLOR_ATTR("toolbarcolor",       n_toolbarcolor,     "Toolbar Color",                "0.16 0.16 0.16 1.");
+    CB_COLOR_ATTR("hammercolor",        n_hammercolor,      "Compile Button Color",         "0.88 0.88 0.88 1.");
+    CB_COLOR_ATTR("modifiedcolor",      n_modifiedcolor,    "Modified Code Color",          "0.98 0.65 0.25 1.");
+    CB_COLOR_ATTR("okcolor",            n_okcolor,          "Compiled Code Color",          "0.45 0.78 0.45 1.");
+    CB_COLOR_ATTR("errorcolor",         n_errorcolor,       "Syntax Error Color",           "0.95 0.38 0.35 1.");
+    CB_COLOR_ATTR("scrollbarcolor",     n_scrollbarcolor,   "Scrollbar Color",              "0.8 0.8 0.8 0.55");
 
-    CB_SYNTAX_COLOR_ATTR(CB_SCOPE_COMMENT,           "commentcolor",     "Comments Color",               "0.42 0.53 0.42 1.");
-    CB_SYNTAX_COLOR_ATTR(CB_SCOPE_CONTROL,           "keywordcolor",     "Control Keywords Color",       "0.67 0.05 0.57 1.");
-    CB_SYNTAX_COLOR_ATTR(CB_SCOPE_STORAGE,           "storagecolor",     "Storage Modifiers Color",      "0.55 0.15 0.65 1.");
-    CB_SYNTAX_COLOR_ATTR(CB_SCOPE_OPERATOR,          "operatorcolor",    "Operators Color",              "0.45 0.32 0.1 1.");
-    CB_SYNTAX_COLOR_ATTR(CB_SCOPE_KEYWORD_OTHER,     "otherkeywordcolor","Other Keywords Color",         "0.6 0.3 0.05 1.");
-    CB_SYNTAX_COLOR_ATTR(CB_SCOPE_NUMBER,            "numbercolor",      "Numbers Color",                "0.11 0.0 0.81 1.");
-    CB_SYNTAX_COLOR_ATTR(CB_SCOPE_CONSTANT_OTHER,    "pitchcolor",       "Pitches With Tones Color",     "0.0 0.42 0.62 1.");
-    CB_SYNTAX_COLOR_ATTR(CB_SCOPE_CONSTANT_LANGUAGE, "constantcolor",    "Language Constants Color",     "0.67 0.05 0.57 1.");
-    CB_SYNTAX_COLOR_ATTR(CB_SCOPE_STRING,            "stringcolor",      "Strings Color",                "0.77 0.1 0.09 1.");
-    CB_SYNTAX_COLOR_ATTR(CB_SCOPE_MAXMESSAGE,        "maxmessagecolor",  "Max Messages Color",           "0.24 0.43 0.45 1.");
-    CB_SYNTAX_COLOR_ATTR(CB_SCOPE_FUNCTION,          "functioncolor",    "Functions Color",              "0.24 0.43 0.45 1.");
-    CB_SYNTAX_COLOR_ATTR(CB_SCOPE_VARIABLE,          "variablecolor",    "Variables Color",              "0.15 0.25 0.45 1.");
-    CB_SYNTAX_COLOR_ATTR(CB_SCOPE_PSEUDOVARIABLE,    "pseudovarcolor",   "Pseudovariables Color",        "0.0 0.5 0.3 1.");
-    CB_SYNTAX_COLOR_ATTR(CB_SCOPE_PARAMETER,         "parametercolor",   "Named Parameters Color",       "0.45 0.3 0.6 1.");
+    CB_SYNTAX_COLOR_ATTR(CB_SCOPE_COMMENT,           "commentcolor",     "Comments Color",               "0.48 0.56 0.48 1.");
+    CB_SYNTAX_COLOR_ATTR(CB_SCOPE_CONTROL,           "keywordcolor",     "Control Keywords Color",       "0.78 0.55 0.78 1.");
+    CB_SYNTAX_COLOR_ATTR(CB_SCOPE_STORAGE,           "storagecolor",     "Storage Modifiers Color",      "0.78 0.55 0.78 1.");
+    CB_SYNTAX_COLOR_ATTR(CB_SCOPE_OPERATOR,          "operatorcolor",    "Operators Color",              "0.88 0.88 0.88 1.");
+    CB_SYNTAX_COLOR_ATTR(CB_SCOPE_KEYWORD_OTHER,     "otherkeywordcolor","Other Keywords Color",         "0.86 0.62 0.42 1.");
+    CB_SYNTAX_COLOR_ATTR(CB_SCOPE_NUMBER,            "numbercolor",      "Numbers Color",                "0.71 0.82 0.65 1.");
+    CB_SYNTAX_COLOR_ATTR(CB_SCOPE_CONSTANT_OTHER,    "pitchcolor",       "Pitches With Tones Color",     "0.55 0.82 0.78 1.");
+    CB_SYNTAX_COLOR_ATTR(CB_SCOPE_CONSTANT_LANGUAGE, "constantcolor",    "Language Constants Color",     "0.86 0.62 0.42 1.");
+    CB_SYNTAX_COLOR_ATTR(CB_SCOPE_STRING,            "stringcolor",      "Strings Color",                "0.96 0.6 0.5 1.");
+    CB_SYNTAX_COLOR_ATTR(CB_SCOPE_MAXMESSAGE,        "maxmessagecolor",  "Max Messages Color",           "0.9 0.78 0.5 1.");
+    CB_SYNTAX_COLOR_ATTR(CB_SCOPE_FUNCTION,          "functioncolor",    "Functions Color",              "0.9 0.78 0.5 1.");
+    CB_SYNTAX_COLOR_ATTR(CB_SCOPE_VARIABLE,          "variablecolor",    "Variables Color",              "0.94 0.4 0.32 1.");
+    CB_SYNTAX_COLOR_ATTR(CB_SCOPE_PSEUDOVARIABLE,    "pseudovarcolor",   "Pseudovariables Color",        "0.45 0.7 0.88 1.");
+    CB_SYNTAX_COLOR_ATTR(CB_SCOPE_PARAMETER,         "parametercolor",   "Named Parameters Color",       "0.62 0.76 0.92 1.");
 
     CLASS_STICKY_ATTR_CLEAR(c, "category");
 
@@ -1831,7 +1888,71 @@ void codebox_bellcodechanged(t_codebox *x)
     defer_low(x, (method) codebox_bellcodechanged_do, NULL, 0, NULL);
 }
 
-void codebox_dblclick(t_codebox *x)
+#define CB_BLINK_MS 530
+
+// show the caret and restart its blinking cycle (called after any interaction)
+static void cb_restart_blink(t_codebox *x)
+{
+    x->n_caretOn = 1;
+    if (x->n_blinkClock && x->n_hasFocus)
+        clock_fdelay(x->n_blinkClock, CB_BLINK_MS);
+}
+
+void codebox_blink_tick(t_codebox *x)
+{
+    if (!x->n_hasFocus) {
+        x->n_caretOn = 1;
+        return;
+    }
+    x->n_caretOn = !x->n_caretOn;
+    jbox_redraw((t_jbox *) x);
+    clock_fdelay(x->n_blinkClock, CB_BLINK_MS);
+}
+
+// can the code be edited in this view right now?
+// unlocked patcher: only in edit mode (double-click); locked patcher: only if @lockededit 1
+static bool cb_can_edit(t_codebox *x, t_object *patcherview)
+{
+    return patcherview_get_locked(patcherview) ? x->n_lockededit : x->n_editing;
+}
+
+// ---- edit mode in an unlocked patcher ----
+// We use the same mechanism as bach.hypercomment:
+// the box has a textfield with the (undocumented) "editwhenunlocked" attribute,
+// so that double-clicking on it in an unlocked patcher starts the box editing.
+// The textfield is invisible and must stay empty.
+// During the editing, Max's TextfieldTextEditor::keyPressed() sends each key to "keyfilter" first:
+// if it returns 0, the key is consumed; if it returns 1, Max's own (hidden) text editor
+// processes the key, and only afterwards "key" is called.
+// So we handle the keys in codebox_keyfilter() and always return 0:
+// otherwise both editors would process each key.
+// "enter" is sent when the editing ends.
+
+static void cb_start_editing(t_codebox *x)
+{
+    if (x->n_editing)
+        return;
+    x->n_editing = 1;
+    x->n_hasFocus = 1;
+    cb_restart_blink(x);
+    jbox_redraw((t_jbox *) x);
+}
+
+long codebox_keyfilter(t_codebox *x, t_object *patcherview, long *keycode, long *modifiers, long *textcharacter)
+{
+    if (*keycode == JKEY_ESC) {
+        t_atom rv;
+        object_method_typed(patcherview, gensym("endeditbox"), 0, NULL, &rv);
+        cb_end_edit(x); // in case Max doesn't call "entertext"
+        return 0;
+    }
+    cb_start_editing(x);
+    codebox_key(x, patcherview, *keycode, *modifiers, *textcharacter);
+    return 0; // never let Max's hidden text editor see the key
+}
+
+
+void codebox_openeditor(t_codebox *x)
 {
     // let the external editor see the current text, even if not compiled
     if (x->n_state->modified)
@@ -1862,9 +1983,22 @@ void *codebox_new(t_symbol *s, long argc, t_atom *argv)
     | JBOX_DRAWINLAST
     | JBOX_GROWBOTH
     | JBOX_HILITE
+    | JBOX_TEXTFIELD
     ;
     jbox_new(&x->n_ob.c_box.l_box, flags, argc, argv);
     x->n_ob.c_box.l_box.b_firstin = (t_object *) x;
+
+    // the textfield is only used to get the edit mode in unlocked patchers (see codebox_keyfilter())
+    if (t_object *textfield = jbox_get_textfield((t_object *) x)) {
+        t_jrgba transparent = { 0., 0., 0., 0. };
+        object_attr_setchar(textfield, gensym("editwhenunlocked"), 1);
+        textfield_set_noactivate(textfield, 1);     // no textfield editing in locked patchers
+        textfield_set_editonclick(textfield, 0);
+        textfield_set_wantsreturn(textfield, 1);    // Return and Tab must not end the editing
+        textfield_set_wantstab(textfield, 1);
+        textfield_set_textcolor(textfield, &transparent);
+        object_attr_setchar(textfield, gensym("visible"), 0);
+    }
 
     t_codableobj *cx = &x->n_ob;
     t_cbState *st = x->n_state = new t_cbState;
@@ -1880,7 +2014,11 @@ void *codebox_new(t_symbol *s, long argc, t_atom *argv)
     x->n_triggers = llll_get();
     llll_appendlong(x->n_triggers, 1);
     x->n_linenumbers = 1;
+    x->n_header = 1;
     x->n_autoindent = 1;
+    x->n_caretOn = 1;
+    x->n_blinkClock = clock_new(x, (method) codebox_blink_tick);
+    x->n_dragClock = clock_new(x, (method) codebox_dragpoll_tick);
     x->n_tabsize = 4;
 
     attr_dictionary_process(x, d);
@@ -1958,6 +2096,17 @@ void *codebox_new(t_symbol *s, long argc, t_atom *argv)
 
     jbox_ready(&x->n_ob.c_box.l_box);
 
+    // the hidden textfield must not be empty, otherwise Max doesn't send us "mousedownonchar"
+    // while editing in an unlocked patcher (see codebox_mousedownonchar()).
+    // Nothing is ever typed in it, as codebox_keyfilter() consumes all the keys.
+    if (t_object *textfield = jbox_get_textfield((t_object *) x)) {
+        char *text = nullptr;
+        long size = 0;
+        object_method(textfield, gensym("gettextptr"), &text, &size);
+        if (!text || !*text)
+            object_method(textfield, gensym("settext"), " ");
+    }
+
     llllobj_set_current_version_number_and_ss((t_object *) x, LLLL_OBJ_UI);
 
     if (cx->c_auto)
@@ -1968,6 +2117,14 @@ void *codebox_new(t_symbol *s, long argc, t_atom *argv)
 
 void codebox_free(t_codebox *x)
 {
+    if (x->n_dragClock) {
+        clock_unset(x->n_dragClock);
+        object_free(x->n_dragClock);
+    }
+    if (x->n_blinkClock) {
+        clock_unset(x->n_blinkClock);
+        object_free(x->n_blinkClock);
+    }
     jbox_free(&x->n_ob.c_box.l_box);
     for (void *p : x->n_state->proxies)
         object_free(p);
@@ -2018,10 +2175,19 @@ t_max_err codebox_notify(t_codebox *x, t_symbol *s, t_symbol *msg, void *sender,
 
 struct t_cbGeom {
     double w, h;
-    double gutterW;
-    double textX, textY, textW, textH;  // the text area
+    double headerH;                     // the strip at the top with the object name
+    double gutterW;                     // the line numbers
+    t_rect area;                        // the (darker) text area, inside the frame
+    double textX, textY, textW, textH;  // where the text goes, inside the area
     double toolbarY;
     t_rect hammer;
+};
+
+struct t_cbScrollbar {
+    bool visible;
+    t_rect track;
+    t_rect thumb;
+    double maxScroll;
 };
 
 static void cb_update_metrics(t_codebox *x)
@@ -2061,13 +2227,47 @@ static t_cbGeom cb_geom(t_codebox *x, double w, double h)
         g.gutterW = digits * st->charW + 12;
     } else
         g.gutterW = 0;
+    if (!x->n_linenumbers)
+        g.gutterW = CB_RMARGIN; // still a thin frame on the left
+    g.headerH = x->n_header ? CB_HEADER_H : CB_RMARGIN;
     g.toolbarY = h - CB_TOOLBAR_H;
-    g.textX = g.gutterW + CB_PAD;
-    g.textY = CB_PAD;
-    g.textW = std::max(1., w - g.textX - CB_PAD);
-    g.textH = std::max(1., g.toolbarY - g.textY);
+    g.area = { g.gutterW, g.headerH,
+               std::max(1., w - g.gutterW - CB_RMARGIN),
+               std::max(1., g.toolbarY - g.headerH) };
+    g.textX = g.area.x + CB_PAD;
+    g.textY = g.area.y + CB_PAD;
+    g.textW = std::max(1., g.area.width - 2 * CB_PAD);
+    g.textH = std::max(1., g.area.height - CB_PAD);
     g.hammer = { 3, g.toolbarY + 2, CB_HAMMER_W, CB_TOOLBAR_H - 4 };
     return g;
+}
+
+// the overlay scrollbars, shown only when the text doesn't fit
+static void cb_scrollbars(t_codebox *x, const t_cbGeom &g, t_cbScrollbar *v, t_cbScrollbar *h)
+{
+    t_cbState *st = x->n_state;
+    const double m = 2.;
+    const double contentH = st->numLines() * st->lineH + CB_PAD;
+    const double contentW = (st->maxCols() + 2) * st->charW;
+    v->maxScroll = std::max(0., contentH - g.textH);
+    h->maxScroll = std::max(0., contentW - g.textW);
+    v->visible = v->maxScroll > 0.5;
+    h->visible = h->maxScroll > 0.5;
+
+    if (v->visible) {
+        double len = g.area.height - 2 * m - (h->visible ? CB_SB_W + m : 0);
+        v->track = { g.area.x + g.area.width - CB_SB_W - m, g.area.y + m, CB_SB_W, std::max(1., len) };
+        double thumbLen = std::min(v->track.height, std::max(20., v->track.height * g.textH / contentH));
+        double pos = v->track.y + (v->track.height - thumbLen) * st->scrollY / v->maxScroll;
+        v->thumb = { v->track.x, pos, CB_SB_W, thumbLen };
+    }
+    if (h->visible) {
+        double len = g.area.width - 2 * m - (v->visible ? CB_SB_W + m : 0);
+        h->track = { g.area.x + m, g.area.y + g.area.height - CB_SB_W - m, std::max(1., len), CB_SB_W };
+        double thumbLen = std::min(h->track.width, std::max(20., h->track.width * g.textW / contentW));
+        double pos = h->track.x + (h->track.width - thumbLen) * st->scrollX / h->maxScroll;
+        h->thumb = { pos, h->track.y, thumbLen, CB_SB_W };
+    }
 }
 
 static bool cb_in_rect(t_pt pt, const t_rect &r)
@@ -2169,15 +2369,21 @@ void codebox_paint(t_codebox *x, t_object *view)
     const long nLines = st->numLines();
     const long caretLine = st->lineOf(st->caret);
     const long selS = st->selStart(), selE = st->selEnd();
+    const bool locked = patcherview_get_locked(view);
+    const bool editable = x->n_hasFocus && cb_can_edit(x, view);
 
-    // background
-    jgraphics_set_source_jrgba(g, &x->n_bgcolor);
+    // the frame (header, gutter, right margin, toolbar)...
+    jgraphics_set_source_jrgba(g, &x->n_toolbarcolor);
     jgraphics_rectangle(g, 0, 0, rect.width, rect.height);
+    jgraphics_fill(g);
+    // ...and the darker text area inside it
+    jgraphics_set_source_jrgba(g, &x->n_bgcolor);
+    jgraphics_rectangle(g, gm.area.x, gm.area.y, gm.area.width, gm.area.height);
     jgraphics_fill(g);
 
     // ------- text area -------
     jgraphics_save(g);
-    jgraphics_clip(g, gm.gutterW, 0, rect.width - gm.gutterW, gm.toolbarY);
+    jgraphics_clip(g, gm.area.x, gm.area.y, gm.area.width, gm.area.height);
 
     long first = std::max(0L, (long) (st->scrollY / lineH) - 1);
     long last = std::min(nLines - 1, (long) ((st->scrollY + gm.textH) / lineH) + 1);
@@ -2185,9 +2391,9 @@ void codebox_paint(t_codebox *x, t_object *view)
     auto colX = [&](long col) { return gm.textX + col * charW - st->scrollX; };
 
     // current line
-    if (x->n_hasFocus && !st->hasSelection() && caretLine >= first && caretLine <= last) {
+    if (editable && !st->hasSelection() && caretLine >= first && caretLine <= last) {
         jgraphics_set_source_jrgba(g, &x->n_curlinecolor);
-        jgraphics_rectangle(g, gm.gutterW, lineY(caretLine), rect.width - gm.gutterW, lineH);
+        jgraphics_rectangle(g, gm.area.x, lineY(caretLine), gm.area.width, lineH);
         jgraphics_fill(g);
     }
 
@@ -2264,8 +2470,8 @@ void codebox_paint(t_codebox *x, t_object *view)
         }
     }
 
-    // caret
-    if (x->n_hasFocus && caretLine >= first && caretLine <= last) {
+    // caret (blinking; only when the code can be edited)
+    if (editable && x->n_caretOn && caretLine >= first && caretLine <= last) {
         double cx = colX(st->colOf(st->caret));
         jgraphics_set_source_jrgba(g, &x->n_caretcolor);
         jgraphics_set_line_width(g, 1.5);
@@ -2274,21 +2480,46 @@ void codebox_paint(t_codebox *x, t_object *view)
         jgraphics_stroke(g);
     }
 
+    // scrollbars (overlaid on the text)
+    {
+        t_cbScrollbar vsb, hsb;
+        cb_scrollbars(x, gm, &vsb, &hsb);
+        t_jrgba sbc = x->n_scrollbarcolor;
+        if (st->sbDrag)
+            sbc.alpha = std::min(1., sbc.alpha * 1.5);
+        jgraphics_set_source_jrgba(g, &sbc);
+        if (vsb.visible) {
+            jgraphics_rectangle_rounded(g, vsb.thumb.x, vsb.thumb.y, vsb.thumb.width, vsb.thumb.height, CB_SB_W, CB_SB_W);
+            jgraphics_fill(g);
+        }
+        if (hsb.visible) {
+            jgraphics_rectangle_rounded(g, hsb.thumb.x, hsb.thumb.y, hsb.thumb.width, hsb.thumb.height, CB_SB_W, CB_SB_W);
+            jgraphics_fill(g);
+        }
+    }
+
     jgraphics_restore(g);
+
+    // ------- header -------
+    if (x->n_header) {
+        jgraphics_select_font_face(g, "Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD);
+        jgraphics_set_font_size(g, 12);
+        const char *title = "bach.codebox";
+        double tw, th;
+        jgraphics_text_measure(g, title, &tw, &th);
+        jgraphics_set_source_jrgba(g, &x->n_textcolor);
+        jgraphics_move_to(g, rect.width - tw - CB_RMARGIN - 2, (CB_HEADER_H + th) / 2. - 2);
+        jgraphics_show_text(g, title);
+    }
 
     // ------- gutter -------
     if (x->n_linenumbers) {
         jgraphics_set_source_jrgba(g, &x->n_guttercolor);
-        jgraphics_rectangle(g, 0, 0, gm.gutterW, gm.toolbarY);
+        jgraphics_rectangle(g, 0, gm.headerH, gm.gutterW, gm.toolbarY - gm.headerH);
         jgraphics_fill(g);
-        jgraphics_set_source_jrgba(g, &x->n_bordercolor);
-        jgraphics_set_line_width(g, 0.5);
-        jgraphics_move_to(g, gm.gutterW - 0.5, 0);
-        jgraphics_line_to(g, gm.gutterW - 0.5, gm.toolbarY);
-        jgraphics_stroke(g);
 
         jgraphics_save(g);
-        jgraphics_clip(g, 0, 0, gm.gutterW, gm.toolbarY);
+        jgraphics_clip(g, 0, gm.area.y, gm.gutterW, gm.area.height);
         jgraphics_select_font_face(g, fontname->s_name, slant, JGRAPHICS_FONT_WEIGHT_NORMAL);
         jgraphics_set_font_size(g, fontsize);
         for (long l = first; l <= last; l++) {
@@ -2303,19 +2534,15 @@ void codebox_paint(t_codebox *x, t_object *view)
         jgraphics_restore(g);
     }
 
-    // ------- toolbar -------
-    jgraphics_set_source_jrgba(g, &x->n_toolbarcolor);
-    jgraphics_rectangle(g, 0, gm.toolbarY, rect.width, CB_TOOLBAR_H);
-    jgraphics_fill(g);
-    jgraphics_set_source_jrgba(g, &x->n_bordercolor);
-    jgraphics_set_line_width(g, 0.5);
-    jgraphics_move_to(g, 0, gm.toolbarY + 0.25);
-    jgraphics_line_to(g, rect.width, gm.toolbarY + 0.25);
-    jgraphics_stroke(g);
+    // ------- toolbar (part of the frame, already filled) -------
 
     // the hammer button
     if (x->n_hammerHover || x->n_hammerPressed) {
-        t_jrgba hb = jgraphics_jrgba_darker(&x->n_toolbarcolor, x->n_hammerPressed ? 0.2 : 0.1);
+        const t_jrgba &tb = x->n_toolbarcolor;
+        const double amount = x->n_hammerPressed ? 0.2 : 0.1;
+        const bool darkToolbar = 0.299 * tb.red + 0.587 * tb.green + 0.114 * tb.blue < 0.5;
+        t_jrgba hb = darkToolbar ? jgraphics_jrgba_brighter(&x->n_toolbarcolor, amount * 2)
+                                 : jgraphics_jrgba_darker(&x->n_toolbarcolor, amount);
         jgraphics_set_source_jrgba(g, &hb);
         jgraphics_rectangle_rounded(g, gm.hammer.x, gm.hammer.y, gm.hammer.width, gm.hammer.height, 4, 4);
         jgraphics_fill(g);
@@ -2337,6 +2564,12 @@ void codebox_paint(t_codebox *x, t_object *view)
         case CB_STATUS_ERROR:   status = "syntax error (see the Max Console)";  dotcolor = &x->n_errorcolor;    break;
         default:                status = "no code";                             dotcolor = &x->n_linenumcolor;  break;
     }
+    std::string statusWithHint = status;
+    if (!locked && !x->n_editing)
+        statusWithHint += " \xE2\x80\x94 double-click to edit"; // em dash
+    else if (!locked && x->n_editing)
+        statusWithHint += " \xE2\x80\x94 Esc to stop editing";
+    status = statusWithHint.c_str();
     double sx = gm.hammer.x + gm.hammer.width + 6;
     double sy = gm.toolbarY + CB_TOOLBAR_H / 2.;
     jgraphics_set_source_jrgba(g, dotcolor);
@@ -2365,7 +2598,7 @@ void codebox_paint(t_codebox *x, t_object *view)
     jgraphics_restore(g);
 
     // ------- border -------
-    if (x->n_hasFocus) {
+    if (editable) {
         jgraphics_set_source_jrgba(g, &x->n_focusbordercolor);
         jgraphics_set_line_width(g, 2);
         jgraphics_rectangle(g, 1, 1, rect.width - 2, rect.height - 2);
@@ -2394,8 +2627,41 @@ void codebox_mousedown(t_codebox *x, t_object *patcherview, t_pt pt, long modifi
         jbox_redraw((t_jbox *) x);
         return;
     }
-    if (pt.y >= gm.toolbarY)
+    if (pt.y >= gm.toolbarY || pt.y < gm.headerH)
         return;
+
+    // scrollbars: a click on the thumb drags it, a click elsewhere on the track jumps there (and drags)
+    {
+        t_cbScrollbar vsb, hsb;
+        cb_scrollbars(x, gm, &vsb, &hsb);
+        const double slop = 3.; // the bars are thin: be generous
+        t_rect vhit = { vsb.track.x - slop, vsb.track.y, vsb.track.width + 2 * slop, vsb.track.height };
+        t_rect hhit = { hsb.track.x, hsb.track.y - slop, hsb.track.width, hsb.track.height + 2 * slop };
+        if (vsb.visible && cb_in_rect(pt, vhit)) {
+            if (pt.y < vsb.thumb.y || pt.y > vsb.thumb.y + vsb.thumb.height) {
+                double free = vsb.track.height - vsb.thumb.height;
+                double frac = free > 0 ? (pt.y - vsb.track.y - vsb.thumb.height / 2.) / free : 0;
+                st->scrollY = std::max(0., std::min(1., frac)) * vsb.maxScroll;
+            }
+            st->sbDrag = 1;
+            st->sbStartMouse = pt.y;
+            st->sbStartScroll = st->scrollY;
+            jbox_redraw((t_jbox *) x);
+            return;
+        }
+        if (hsb.visible && cb_in_rect(pt, hhit)) {
+            if (pt.x < hsb.thumb.x || pt.x > hsb.thumb.x + hsb.thumb.width) {
+                double free = hsb.track.width - hsb.thumb.width;
+                double frac = free > 0 ? (pt.x - hsb.track.x - hsb.thumb.width / 2.) / free : 0;
+                st->scrollX = std::max(0., std::min(1., frac)) * hsb.maxScroll;
+            }
+            st->sbDrag = 2;
+            st->sbStartMouse = pt.x;
+            st->sbStartScroll = st->scrollX;
+            jbox_redraw((t_jbox *) x);
+            return;
+        }
+    }
 
     long pos;
     if (pt.x < gm.gutterW) { // click on the line numbers: select the line
@@ -2412,6 +2678,7 @@ void codebox_mousedown(t_codebox *x, t_object *patcherview, t_pt pt, long modifi
     st->preferredCol = -1;
     st->dragging = true;
     st->lastEditKind = CB_EDIT_OTHER;
+    cb_restart_blink(x);
     jbox_redraw((t_jbox *) x);
 }
 
@@ -2450,6 +2717,24 @@ void codebox_mousedrag(t_codebox *x, t_object *patcherview, t_pt pt, long modifi
         }
         return;
     }
+
+    if (st->sbDrag) {
+        t_cbScrollbar vsb, hsb;
+        cb_scrollbars(x, gm, &vsb, &hsb);
+        if (st->sbDrag == 1 && vsb.visible) {
+            double free = vsb.track.height - vsb.thumb.height;
+            if (free > 0)
+                st->scrollY = st->sbStartScroll + (pt.y - st->sbStartMouse) * vsb.maxScroll / free;
+        } else if (st->sbDrag == 2 && hsb.visible) {
+            double free = hsb.track.width - hsb.thumb.width;
+            if (free > 0)
+                st->scrollX = st->sbStartScroll + (pt.x - st->sbStartMouse) * hsb.maxScroll / free;
+        }
+        cb_clamp_scroll(x);
+        jbox_redraw((t_jbox *) x);
+        return;
+    }
+
     if (!st->dragging)
         return;
 
@@ -2481,6 +2766,10 @@ void codebox_mouseup(t_codebox *x, t_object *patcherview, t_pt pt, long modifier
             codebox_compile(x, CB_COMPILE_USER);
         jbox_redraw((t_jbox *) x);
     }
+    if (st->sbDrag) {
+        st->sbDrag = 0;
+        jbox_redraw((t_jbox *) x);
+    }
     st->dragging = false;
 }
 
@@ -2494,7 +2783,11 @@ void codebox_mousemove(t_codebox *x, t_object *patcherview, t_pt pt, long modifi
         x->n_hammerHover = hover;
         jbox_redraw((t_jbox *) x);
     }
-    if (pt.y < gm.toolbarY && pt.x >= gm.gutterW)
+    t_cbScrollbar vsb, hsb;
+    cb_scrollbars(x, gm, &vsb, &hsb);
+    bool onScrollbar = (vsb.visible && pt.x >= vsb.track.x - 3 && pt.y >= vsb.track.y && pt.y <= vsb.track.y + vsb.track.height) ||
+                       (hsb.visible && pt.y >= hsb.track.y - 3 && pt.x >= hsb.track.x && pt.x <= hsb.track.x + hsb.track.width);
+    if (cb_in_rect(pt, gm.area) && !onScrollbar)
         jmouse_setcursor(patcherview, (t_object *) x, JMOUSE_CURSOR_IBEAM);
     else if (hover)
         jmouse_setcursor(patcherview, (t_object *) x, JMOUSE_CURSOR_POINTINGHAND);
@@ -2521,17 +2814,189 @@ void codebox_mousewheel(t_codebox *x, t_object *patcherview, t_pt pt, long modif
     jbox_redraw((t_jbox *) x);
 }
 
+// ---- mouse interaction in unlocked patchers ----
+// (Undocumented; found in Max 9's BoxComponent::mouseDown and mouseWheelMove.)
+// In an unlocked patcher, before handling a click or a wheel event over a box,
+// Max calls its "wantsunlockedinteraction" method, with the same arguments as a mouse message.
+// If it returns non-zero:
+// - for a (single) click, Max deselects the boxes, gives the keyboard focus to the box
+//   and sends it mousedown/mousedrag/mouseup as if the patcher were locked;
+// - for the wheel, Max calls "mousewheeldirect" (box, patcherview, juce::MouseEvent&, juce::MouseWheelDetails&).
+// We want:
+// - the wheel over the text area;
+// - clicks on the scrollbars and on the hammer.
+// We must NOT take clicks on the text itself: the first click of a double-click would be ours,
+// so Max would never start the box editing (the only way to get the keys in an unlocked patcher,
+// see codebox_keyfilter()). Keys are not sent to a box's "key" method in an unlocked patcher.
+// A click is told from a wheel event by the mouse buttons in the modifiers.
+
+long codebox_wantsunlockedinteraction(t_codebox *x, t_object *patcherview, t_pt pt, long modifiers)
+{
+    t_cbState *st = x->n_state;
+    cb_get_box_size(x, patcherview);
+    t_cbGeom gm = cb_geom(x, st->boxW, st->boxH);
+    const bool isClick = modifiers & (eLeftButton | eRightButton | eMiddleButton);
+    if (!isClick)
+        return cb_in_rect(pt, gm.area); // wheel
+    if (cb_in_rect(pt, gm.hammer))
+        return 1;
+    t_cbScrollbar vsb, hsb;
+    cb_scrollbars(x, gm, &vsb, &hsb);
+    const double slop = 3.;
+    t_rect vhit = { vsb.track.x - slop, vsb.track.y, vsb.track.width + 2 * slop, vsb.track.height };
+    t_rect hhit = { hsb.track.x, hsb.track.y - slop, hsb.track.width, hsb.track.height + 2 * slop };
+    return (vsb.visible && cb_in_rect(pt, vhit)) || (hsb.visible && cb_in_rect(pt, hhit));
+}
+
+void codebox_mousewheeldirect(t_codebox *x, t_object *patcherview, const void *juceMouseEvent, const float *juceWheelDetails)
+{
+    // juce::MouseWheelDetails begins with float deltaX, deltaY:
+    // these are the same values Max passes to "mousewheel" in a locked patcher
+    if (!juceWheelDetails)
+        return;
+    t_pt dummy = { 0, 0 };
+    codebox_mousewheel(x, patcherview, dummy, 0, juceWheelDetails[0], juceWheelDetails[1]);
+}
+
+// the current mouse position, in box coordinates
+static t_pt cb_mouse_in_box(t_codebox *x, t_object *patcherview)
+{
+    int sx, sy;
+    double cx, cy;
+    t_rect rect;
+    jmouse_getposition_global(&sx, &sy);
+    patcherview_screen_to_canvas(patcherview, sx, sy, &cx, &cy);
+    jbox_get_rect_for_view((t_object *) x, patcherview, &rect);
+    x->n_state->boxW = rect.width;
+    x->n_state->boxH = rect.height;
+    t_pt pt = { cx - rect.x, cy - rect.y };
+    return pt;
+}
+
+static t_object *cb_first_view(t_codebox *x)
+{
+    t_object *patcher = jbox_get_patcher((t_object *) x);
+    return patcher ? jpatcher_get_firstview(patcher) : nullptr;
+}
+
+// Start the edit mode of an unlocked patcher (after a double-click).
+// Max doesn't send us the mouse events, so we put the caret where the mouse is.
+static void cb_begin_unlocked_edit(t_codebox *x, t_object *patcherview)
+{
+    if (x->n_editing)
+        return;
+    x->n_editing = 1;
+    if (patcherview) {
+        t_cbState *st = x->n_state;
+        t_pt pt = cb_mouse_in_box(x, patcherview);
+        t_cbGeom gm = cb_geom(x, st->boxW, st->boxH);
+        if (cb_in_rect(pt, gm.area))
+            st->moveCaret(cb_pos_from_point(x, pt), false);
+    }
+    x->n_hasFocus = 1;
+    cb_restart_blink(x);
+    jbox_redraw((t_jbox *) x);
+}
+
+static void cb_end_edit(t_codebox *x)
+{
+    x->n_hasFocus = 0;
+    x->n_editing = 0;
+    x->n_state->dragging = false;
+    if (x->n_blinkClock)
+        clock_unset(x->n_blinkClock);
+    x->n_caretOn = 1;
+    jbox_redraw((t_jbox *) x);
+}
+
+// Max's text editor calls this directly on the box when the box editing starts
+// (TextfieldComponent::beginEdit -> createTextEditor -> initTextEditorColors), as method(box, t_jrgba *).
+// - we answer transparent, to hide the caret of Max's (hidden) text editor
+// - and we use it as the notification that the editing has started, as our box doesn't get the focus
+void codebox_getcaretcolor(t_codebox *x, t_jrgba *color)
+{
+    if (color) {
+        color->red = color->green = color->blue = 0.;
+        color->alpha = 0.;
+    }
+    t_object *patcher = jbox_get_patcher((t_object *) x);
+    t_object *view = patcher ? jpatcher_get_firstview(patcher) : nullptr;
+    if (!view || !patcherview_get_locked(view))
+        cb_begin_unlocked_edit(x, view);
+}
+
+// called when the box editing ends:
+// "entertext" if the box text hasn't changed (our case: nothing is ever typed in the hidden textfield), "enter" otherwise
+void codebox_entertext(t_codebox *x)
+{
+    cb_end_edit(x);
+}
+
+// ---- clicks while editing in an unlocked patcher ----
+// (Undocumented; found in Max 9's TextfieldTextEditor::mouseDown.)
+// While the box is being edited, Max's hidden text editor covers it and gets the clicks.
+// After each mouse down, it sends "mousedownonchar" (index, character, word) to the box,
+// but only if its text is not empty: that's why the hidden textfield contains a space (see codebox_new()).
+// We use it to run our own mousedown at the mouse position. Max doesn't tell us about
+// the drag and the mouse up, so we poll the mouse until the button is released.
+
+#define CB_DRAGPOLL_MS 15
+
+void codebox_mousedownonchar(t_codebox *x, long index, long character, char *word)
+{
+    if (!x->n_editing)
+        return;
+    t_object *view = cb_first_view(x);
+    if (!view)
+        return;
+    long modifiers = jkeyboard_getcurrentmodifiers();
+    codebox_mousedown(x, view, cb_mouse_in_box(x, view), modifiers | eLeftButton);
+    if (x->n_dragClock)
+        clock_fdelay(x->n_dragClock, CB_DRAGPOLL_MS);
+}
+
+// runs on the main thread
+void codebox_dragpoll_do(t_codebox *x, t_symbol *s, long ac, t_atom *av)
+{
+    t_object *view = cb_first_view(x);
+    if (!view)
+        return;
+    long modifiers = jkeyboard_getcurrentmodifiers(); // includes the mouse buttons
+    t_pt pt = cb_mouse_in_box(x, view);
+    if (modifiers & eLeftButton) {
+        codebox_mousedrag(x, view, pt, modifiers);
+        clock_fdelay(x->n_dragClock, CB_DRAGPOLL_MS);
+    } else {
+        codebox_mouseup(x, view, pt, modifiers);
+    }
+}
+
+// the clock may fire in the scheduler thread: do the work on the main thread
+void codebox_dragpoll_tick(t_codebox *x)
+{
+    defer_low(x, (method) codebox_dragpoll_do, NULL, 0, NULL);
+}
+
+void codebox_enter(t_codebox *x)
+{
+    // NB: don't touch the textfield here (e.g. "settext"): it could end the editing again
+    cb_end_edit(x);
+}
+
 void codebox_focusgained(t_codebox *x, t_object *patcherview)
 {
+    if (!patcherview_get_locked(patcherview)) {
+        cb_begin_unlocked_edit(x, patcherview);
+        return;
+    }
     x->n_hasFocus = 1;
+    cb_restart_blink(x);
     jbox_redraw((t_jbox *) x);
 }
 
 void codebox_focuslost(t_codebox *x, t_object *patcherview)
 {
-    x->n_hasFocus = 0;
-    x->n_state->dragging = false;
-    jbox_redraw((t_jbox *) x);
+    cb_end_edit(x);
 }
 
 
@@ -2580,15 +3045,49 @@ static void cb_move_vertically(t_cbState *st, long dLines, bool extend)
 
 long codebox_key(t_codebox *x, t_object *patcherview, long keycode, long modifiers, long textcharacter)
 {
-    // the box keeps the keyboard focus when the patcher is unlocked:
-    // in that case the keys belong to the patcher (copy/paste/duplicate of the object etc.)
-    if (!patcherview_get_locked(patcherview))
+    const bool locked = patcherview_get_locked(patcherview);
+
+    // unlocked and not in edit mode: the keys belong to the patcher
+    // (copy/paste/duplicate of the object etc.)
+    if (!locked && !x->n_editing)
         return 0;
 
     t_cbState *st = x->n_state;
     const bool shift = modifiers & eShiftKey;
     const bool cmd = modifiers & eCommandKey; // Cmd on Mac, Ctrl on Windows
     const bool alt = modifiers & eAltKey;
+
+    // Esc ends the edit mode
+    if (keycode == JKEY_ESC) {
+        if (!locked && x->n_editing) {
+            cb_end_edit(x); // also restores the patcherview's "unlockedinteraction"
+            return 1;
+        }
+        return 0;
+    }
+
+    // read-only (locked patcher without @lockededit 1):
+    // only moving, selecting, copying and compiling
+    if (!cb_can_edit(x, patcherview)) {
+        bool allowed = false;
+        switch (keycode) {
+            case JKEY_LEFTARROW: case JKEY_RIGHTARROW: case JKEY_UPARROW: case JKEY_DOWNARROW:
+            case JKEY_PAGEUP: case JKEY_PAGEDOWN: case JKEY_HOME: case JKEY_END:
+                allowed = true;
+                break;
+            case JKEY_RETURN:
+                allowed = cmd || (modifiers & eControlKey); // compile
+                break;
+            default:
+                if (cmd && keycode > 0) {
+                    int k = tolower((int) (keycode & 0xFF));
+                    allowed = k == 'a' || k == 'c' || k == 'b';
+                }
+                break;
+        }
+        if (!allowed)
+            return 0;
+    }
 #ifdef MAC_VERSION
     const bool wordMod = alt;
     const bool lineMod = cmd;
@@ -2785,6 +3284,7 @@ long codebox_key(t_codebox *x, t_object *patcherview, long keycode, long modifie
             break;
     }
     cb_scroll_to_caret(x);
+    cb_restart_blink(x);
     jbox_redraw((t_jbox *) x);
     return 1;
 }
