@@ -249,7 +249,7 @@ long bach_weights_cmd(t_weights_iteration_data *x, long cmd)
 	if (x->w_evaluate) { // this is not true at the first call, or if no atom has been passed for at least one list
 		t_llll *result_llll = llll_get();
 		llll_appendhatom(result_llll, &x->w_sum, 0, WHITENULL_llll);
-		collector_get(x->w_collector, result_llll, 0, 0);
+		collector_get(x->w_collector, result_llll, 0);
 	}
 	if (cmd)
 		collector_change_level(x->w_collector, cmd);

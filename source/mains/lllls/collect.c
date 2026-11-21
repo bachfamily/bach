@@ -86,7 +86,6 @@ typedef struct _collect
 	long				n_outwrap;
 	long				n_size;
 	long				n_autosize;
-	long				n_bipolar;
 } t_collect;
 
 
@@ -218,14 +217,6 @@ void C74_EXPORT ext_main(void *moduleRef)
 	CLASS_ATTR_BASIC(c, "autosize", 0);
 	// @description When set to 1 (default), the number of allowed collections is automatically raised as soon as a non-existing collection is requested.
 	// When a <m>clearall</m> message is received, the number of allowed collections is set to 1.
-	
-	CLASS_ATTR_LONG(c, "bipolar",	0,	t_collect, n_bipolar);
-	CLASS_ATTR_FILTER_CLIP(c, "bipolar", 0, 1);
-	CLASS_ATTR_STYLE(c, "bipolar", 0, "onoff");
-	CLASS_ATTR_LABEL(c, "bipolar", 0, "Bipolar");	
-	CLASS_ATTR_BASIC(c, "bipolar", 0);
-	// @description When set to 1 (default), a <m>bang</m> or <m>0</m> in the left inlet will also clear the active collections, 
-	// and a <m>all</m> message will clear all the collections.
 	
 	CLASS_ATTR_LONG(c, "inwrap",	0,	t_collect, n_inwrap);
 	CLASS_ATTR_FILTER_MIN(c, "inwrap", 0);
@@ -378,7 +369,7 @@ void collect_anything(t_collect *x, t_symbol *msg, long ac, t_atom *av)
 				llll_appendllll(wrapped, in_llll, 0, WHITENULL_llll);
 				in_llll = wrapped;
 			}
-			collector_get(x->n_collector[inlet - 1], in_llll, x->n_nullmode, x->n_bipolar);
+			collector_get(x->n_collector[inlet - 1], in_llll, x->n_nullmode);
 			x->n_ob.l_rebuild = 1;
 		}
 	}

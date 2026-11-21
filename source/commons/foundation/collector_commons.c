@@ -76,7 +76,7 @@ void collector_free(t_collector *x)
 
 // ---DESTRUCTIVE--- 
 // load newthings in the collector, in the currently selected stack
-void collector_get(t_collector *x, t_llll *newthings, long nullmode, long bipolar)
+void collector_get(t_collector *x, t_llll *newthings, long nullmode)
 {
 	t_llll *inlist;
 	t_llll_stack **this_stack;

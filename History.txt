@@ -165,6 +165,8 @@ VERSION NOTES:
 
 - bach.llll2dict: fixed bug causing crashes with some  unexpected non-llll values
 
+- bach.collect: removed unused "bipolar" attribute
+
 v0.8.3
 
 ***********************

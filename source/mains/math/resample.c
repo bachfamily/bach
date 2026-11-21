@@ -709,11 +709,11 @@ long bach_expr_cmd(t_resample_iteration_data *x, long cmd)
             if (type == H_SYM || hatom_type_is_number(type)) {
                 result_llll = llll_get();
                 llll_appendhatom(result_llll, result_hatom, 0, WHITENULL_llll);
-                collector_get(x->e_collector, result_llll, 0, 0);
+                collector_get(x->e_collector, result_llll, 0);
             }
             bach_freeptr(result_hatom);
         } else { // if there was an empty llll in the incoming data
-            collector_get(x->e_collector, llll_get(), 0, 0);
+            collector_get(x->e_collector, llll_get(), 0);
         }
         
     }

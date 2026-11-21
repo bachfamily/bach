@@ -28,7 +28,7 @@ long llllIterator<1>::iterCmd(t_iterationData *x, long cmd) {
         CALL_METHOD_SAFE(void, (t_hatom*, t_hatom*), x->fn, x->data, &result_hatom);
         result_llll = llll_get();
         llll_appendhatom(result_llll, &result_hatom, 0, WHITENULL_llll);
-        collector_get(x->collector, result_llll, 0, 0);
+        collector_get(x->collector, result_llll, 0);
     }
     x->data[0].h_type = A_NOTHING;
     
@@ -50,7 +50,7 @@ long llllIterator<2>::iterCmd(t_iterationData *x, long cmd) {
         x->fn, &x->data[0], &x->data[1], &result_hatom);
         result_llll = llll_get();
         llll_appendhatom(result_llll, &result_hatom, 0, WHITENULL_llll);
-        collector_get(x->collector, result_llll, 0, 0);
+        collector_get(x->collector, result_llll, 0);
     }
     x->data[0].h_type = A_NOTHING;
     x->data[1].h_type = A_NOTHING;
@@ -70,7 +70,7 @@ long llllIterator<3>::iterCmd(t_iterationData *x, long cmd) {
         CALL_METHOD_SAFE(void, (t_hatom*, t_hatom*, t_hatom*, t_hatom*), x->fn, &x->data[0], &x->data[1], &x->data[2], &result_hatom);
         result_llll = llll_get();
         llll_appendhatom(result_llll, &result_hatom, 0, WHITENULL_llll);
-        collector_get(x->collector, result_llll, 0, 0);
+        collector_get(x->collector, result_llll, 0);
     }
     x->data[0].h_type = A_NOTHING;
     x->data[1].h_type = A_NOTHING;
@@ -91,7 +91,7 @@ long llllIterator<4>::iterCmd(t_iterationData *x, long cmd) {
         CALL_METHOD_SAFE(void, (t_hatom*, t_hatom*, t_hatom*, t_hatom*, t_hatom*), x->fn, &x->data[0], &x->data[1], &x->data[2], &x->data[3], &result_hatom);
         result_llll = llll_get();
         llll_appendhatom(result_llll, &result_hatom, 0, WHITENULL_llll);
-        collector_get(x->collector, result_llll, 0, 0);
+        collector_get(x->collector, result_llll, 0);
     }
     x->data[0].h_type = A_NOTHING;
     x->data[1].h_type = A_NOTHING;
@@ -113,7 +113,7 @@ long llllIterator<9>::iterCmd(t_iterationData *x, long cmd) {
         CALL_METHOD_SAFE(void, (t_hatom*, t_hatom*, t_hatom*, t_hatom*, t_hatom*, t_hatom*, t_hatom*, t_hatom*, t_hatom*, t_hatom*), x->fn, &x->data[0], &x->data[1], &x->data[2], &x->data[3], &x->data[4], &x->data[5], &x->data[6], &x->data[7], &x->data[8], &result_hatom);
         result_llll = llll_get();
         llll_appendhatom(result_llll, &result_hatom, 0, WHITENULL_llll);
-        collector_get(x->collector, result_llll, 0, 0);
+        collector_get(x->collector, result_llll, 0);
     }
     x->data[0].h_type = A_NOTHING;
     x->data[1].h_type = A_NOTHING;
@@ -141,7 +141,7 @@ long llllIterator<11>::iterCmd(t_iterationData *x, long cmd) {
         CALL_METHOD_SAFE(void, (t_hatom*, t_hatom*, t_hatom*, t_hatom*, t_hatom*, t_hatom*, t_hatom*, t_hatom*, t_hatom*, t_hatom*, t_hatom*, t_hatom*), x->fn, &x->data[0], &x->data[1], &x->data[2], &x->data[3], &x->data[4], &x->data[5], &x->data[6], &x->data[7], &x->data[8], &x->data[9], &x->data[10], &result_hatom);
         result_llll = llll_get();
         llll_appendhatom(result_llll, &result_hatom, 0, WHITENULL_llll);
-        collector_get(x->collector, result_llll, 0, 0);
+        collector_get(x->collector, result_llll, 0);
     }
     x->data[0].h_type = A_NOTHING;
     x->data[1].h_type = A_NOTHING;
