@@ -103,7 +103,7 @@
         //#define BACH_QUANTIZE_DEBUG                    ///< Debug the quantize task
         //#define BACH_SPACING_DEBUG                    ///< Debug the spacing task (and display alignment points)
         //#define BACH_PAINT_IDS                        ///< Paint the IDs for all elements having one
-        //#define BACH_UNDO_DEBUG                        ///< Debug the undo task
+        #define BACH_UNDO_DEBUG                        ///< Debug the undo task
         //#define BACH_ARTICULATION_POSITION_DEBUG      ///< Debug for articulation position
         //#define BACH_CHECK_NOTATION_ITEMS               ///< Debug for notation items
 
@@ -11816,7 +11816,7 @@ void clear_preselection(t_notation_obj *r_ob);
     @ingroup        selection
     @param    r_ob    The notation object
  */ 
-void clear_selection(t_notation_obj *r_ob);
+void clear_selection(t_notation_obj *r_ob, char also_add_undo_tick = true);
 
 // private
 void test_selection(t_notation_obj *r_ob);

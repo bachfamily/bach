@@ -28345,10 +28345,10 @@ void test_selection(t_notation_obj *r_ob)
 
 
 // selection
-void clear_selection(t_notation_obj *r_ob)
+void clear_selection(t_notation_obj *r_ob, char also_add_undo_ticks)
 {
 // clear all the "selection"-linkedlist
-    if (r_ob->undo_selection) {
+    if (also_add_undo_ticks && r_ob->undo_selection) {
         undo_tick_create_for_multiple_selected_notation_items(r_ob, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_selection);
     }
 

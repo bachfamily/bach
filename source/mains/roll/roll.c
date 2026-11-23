@@ -1483,7 +1483,7 @@ void roll_delete_selection(t_roll *x, char ripple, t_llll *slots_to_transfer_to_
         unlock_general_mutex((t_notation_obj *)x);
         change_selection_onset(x, &delta);
         lock_general_mutex((t_notation_obj *)x);
-        clear_selection((t_notation_obj *)x);
+        clear_selection((t_notation_obj *)x, false);
     }
     
     if (also_lock_general_mutex)
@@ -7727,7 +7727,10 @@ void roll_anything(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                 }
                     
                 if (hatom_gettype(&firstelem->l_hatom) == H_LLLL || (is_firstelem_symbol && hatom_getsym(&firstelem->l_hatom) == _llllobj_sym_roll)) {
-                    create_whole_roll_undo_tick(x);
+                    if (mode != k_CONSTRUCTIONMODE_REPLACESELECTION) {
+                        // with replacesel, it's more convenient to put undo ticks for every deleted/added element.
+                        create_whole_roll_undo_tick(x);
+                    }
                     set_roll_from_llll(x, inputlist, true, mode);
                     handle_rebuild_done((t_notation_obj *) x);
                     handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_ROLL);
@@ -9486,7 +9489,7 @@ void set_roll_from_llll(t_roll *x, t_llll* inputlist, char also_lock_general_mut
                     clear_all_markers((t_notation_obj *) x);
             }
             close_slot_window((t_notation_obj *)x);
-            clear_selection((t_notation_obj *) x);
+            clear_selection((t_notation_obj *) x, false);
         } else if (mode == k_CONSTRUCTIONMODE_REPLACESELECTION) {
             roll_delete_selection(x, false, NULL, false, false);
             
@@ -9707,7 +9710,7 @@ void clear_roll_body(t_roll *x, long voicenum){
 // clears all the chords
 
     clear_preselection((t_notation_obj *) x);
-    clear_selection((t_notation_obj *) x);
+    clear_selection((t_notation_obj *) x, false);
     close_slot_window((t_notation_obj *)x); // if we were in slot view...
 
     clear_all_groups((t_notation_obj *) x);
@@ -11178,7 +11181,7 @@ t_roll* roll_new(t_symbol *s, long argc, t_atom *argv)
     set_mousedown((t_notation_obj *)x, NULL, k_NONE);
 
     lock_general_mutex((t_notation_obj *)x);
-    clear_selection((t_notation_obj *) x);
+    clear_selection((t_notation_obj *) x, false);
     clear_preselection((t_notation_obj *) x);
     unlock_general_mutex((t_notation_obj *)x);
     

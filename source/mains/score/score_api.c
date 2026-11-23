@@ -3421,7 +3421,7 @@ void set_score_from_llll(t_score *x, t_llll* inputlist, char also_lock_general_m
             if (x->r_ob.firstmarker && !markers_are_given) 
                 clear_all_markers((t_notation_obj *) x);
             clear_preselection((t_notation_obj *) x);
-            clear_selection((t_notation_obj *) x);
+            clear_selection((t_notation_obj *) x, false);
             close_slot_window((t_notation_obj *)x);
         } else if (markers_are_given)
             clear_all_markers((t_notation_obj *) x);
@@ -3635,7 +3635,7 @@ void clear_score_body(t_score *x, long voicenum, long min_num_voices_to_be_clear
     // clears all the score (or just a specific voice)
     
     clear_preselection((t_notation_obj *) x);
-    clear_selection((t_notation_obj *) x);
+    clear_selection((t_notation_obj *) x, false);
     
     clear_all_groups((t_notation_obj *) x);
 
@@ -5298,7 +5298,7 @@ void scoreapi_initscore_step02(t_score *x)
     x->r_ob.num_systems = 1; // for now
     
     lock_general_mutex((t_notation_obj *)x);
-    clear_selection((t_notation_obj *) x);
+    clear_selection((t_notation_obj *) x, false);
     clear_preselection((t_notation_obj *) x);
     unlock_general_mutex((t_notation_obj *)x);
     

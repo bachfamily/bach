@@ -1126,7 +1126,7 @@ void score_sel_delete(t_score *x, t_symbol *s, long argc, t_atom *argv)
         score_sel_delete_item(x, curr_it, &need_check_scheduling, transfer_slots, even_if_empty, even_to_rests);
     }
     
-    clear_selection((t_notation_obj *)x);
+    clear_selection((t_notation_obj *)x, false);
     
     if (transfer_slots)
         llll_free(transfer_slots);
@@ -1192,7 +1192,7 @@ void score_sel_deletemeasurecontent(t_score *x, t_symbol *s, long argc, t_atom *
         }
     }
     
-    clear_selection((t_notation_obj *)x);
+    clear_selection((t_notation_obj *)x, false);
     
     if (transfer_slots)
         llll_free(transfer_slots);
@@ -17409,7 +17409,7 @@ char delete_selected_measures(t_score *x)
     if (need_check_scheduling)
         check_correct_scheduling((t_notation_obj *)x, false);
     
-    clear_selection((t_notation_obj *) x);
+    clear_selection((t_notation_obj *) x, false);
     
     recompute_all_except_for_beamings_and_autocompletion(x);
     perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DONT_CHANGE_ANYTHING);
@@ -17443,7 +17443,7 @@ char clear_selected_measures(t_score *x) {
     
     update_solos((t_notation_obj *)x);
 
-    clear_selection((t_notation_obj *) x);
+    clear_selection((t_notation_obj *) x, false);
     unlock_general_mutex((t_notation_obj *)x);
     recompute_all_except_for_beamings_and_autocompletion(x);
     return changed;
@@ -17476,7 +17476,7 @@ char delete_selected_tempi(t_score *x, char also_synchronous_tempi)
         }
         temp = next;
     }
-    clear_selection((t_notation_obj *) x);
+    clear_selection((t_notation_obj *) x, false);
     unlock_general_mutex((t_notation_obj *)x);
     recompute_all(x);
     return changed;
