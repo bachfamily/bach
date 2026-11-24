@@ -8926,9 +8926,10 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
     bool locked = notationitem_is_flag_set((t_notation_obj *)x, (t_notation_item *)voice, k_FLAG_LOCKED);
     bool muted = notationitem_is_flag_set((t_notation_obj *)x, (t_notation_item *)voice, k_FLAG_MUTED);
     bool solo = notationitem_is_flag_set((t_notation_obj *)x, (t_notation_item *)voice, k_FLAG_SOLO);
+    bool selected = notationitem_is_flag_set((t_notation_obj *)x, (t_notation_item *)voice, k_FLAG_SELECTED);
 
-	t_jrgba mainstaffcolor = get_mainstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, locked, muted, solo);
-	t_jrgba auxstaffcolor = get_auxstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, locked, muted, solo);
+	t_jrgba mainstaffcolor = get_mainstaff_color((t_notation_obj *) x, selected, locked, muted, solo);
+	t_jrgba auxstaffcolor = get_auxstaff_color((t_notation_obj *) x, selected, locked, muted, solo);
     t_jrgba beamcolor = beam_get_color((t_notation_obj *)x, (t_voice *)voice);
     t_jrgba tupletcolor = tuplet_get_color((t_notation_obj *)x, (t_voice *)voice);
 
@@ -10796,11 +10797,13 @@ void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
             bool locked = notationitem_is_flag_set((t_notation_obj *)x, (t_notation_item *)voice, k_FLAG_LOCKED);
             bool muted = notationitem_is_flag_set((t_notation_obj *)x, (t_notation_item *)voice, k_FLAG_MUTED);
             bool solo = notationitem_is_flag_set((t_notation_obj *)x, (t_notation_item *)voice, k_FLAG_SOLO);
-            t_jrgba mainstaffcolor = get_mainstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, locked, muted, solo);
-            t_jrgba keysigcolor = get_keysig_color((t_notation_obj *) x, voice->v_ob.r_it.selected, locked, muted, solo);
-			t_jrgba auxstaffcolor = get_auxstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, locked, muted, solo);
-			t_jrgba clefcolor = clef_get_color((t_notation_obj *) x, voice->v_ob.r_it.selected, locked, muted, solo);
-            t_jrgba auxclefcolor = get_auxclef_color((t_notation_obj *) x, voice->v_ob.r_it.selected, locked, muted, solo);
+            bool selected = notationitem_is_flag_set((t_notation_obj *)x, (t_notation_item *)voice, k_FLAG_SELECTED);
+
+            t_jrgba mainstaffcolor = get_mainstaff_color((t_notation_obj *) x, selected, locked, muted, solo);
+            t_jrgba keysigcolor = get_keysig_color((t_notation_obj *) x, selected, locked, muted, solo);
+			t_jrgba auxstaffcolor = get_auxstaff_color((t_notation_obj *) x, selected, locked, muted, solo);
+			t_jrgba clefcolor = clef_get_color((t_notation_obj *) x, selected, locked, muted, solo);
+            t_jrgba auxclefcolor = get_auxclef_color((t_notation_obj *) x, selected, locked, muted, solo);
             double staff_top_y = voice_get_staff_top_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
             double staff_bottom_y = voice_get_staff_bottom_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
 

@@ -1119,7 +1119,7 @@ void score_sel_delete(t_score *x, t_symbol *s, long argc, t_atom *argv)
                           notation_item_is_ancestor_of((t_notation_obj *)x, curr_it, lambda_it))) { // or one of its progeny...
 //            cpost("Trying to delete item %p (type %ld). Can't.", curr_it, curr_it->type);
             object_error((t_object *)x, "Can't delete item, it's being output from the playout!");
-            curr_it->flags = k_FLAG_TO_BE_DELETED;
+            notationitem_flag_set((t_notation_obj *)x, curr_it, k_FLAG_TO_BE_DELETED);
             continue;
         }
         
@@ -1167,7 +1167,7 @@ void score_sel_deletemeasurecontent(t_score *x, t_symbol *s, long argc, t_atom *
                           notation_item_is_ancestor_of((t_notation_obj *)x, curr_it, lambda_it))) { // or one of its progeny...
 //            cpost("Trying to delete item %p (type %ld). Can't.", curr_it, curr_it->type);
             object_error((t_object *)x, "Can't delete item, it's being output from the playout!");
-            curr_it->flags = k_FLAG_TO_BE_DELETED;
+            notationitem_flag_set((t_notation_obj *)x, curr_it, k_FLAG_TO_BE_DELETED);
             continue;
         } else if (curr_it && curr_it->type == k_MEASURE) {
             t_measure *meas = ((t_measure *)curr_it);
@@ -12581,7 +12581,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
     if (!clicked_ptr && x->r_ob.show_slurs && is_editable((t_notation_obj *)x, k_SLUR, k_MODIFICATION_GENERIC)) {
         for (t_llllelem *slur_el = x->r_ob.slurs->l_head; slur_el; slur_el = slur_el->l_next) {
             t_slur *slur = (t_slur *)hatom_getobj(&slur_el->l_hatom);
-            if (slur && slur->r_it.selected) {
+            if (slur && notationitem_is_flag_set((t_notation_obj *)x, &slur->r_it, k_FLAG_SELECTED)) {
                 double start_pt_x, end_pt_x, start_pt_y, end_pt_y;
                 start_pt_x = unscaled_xposition_to_xposition((t_notation_obj *)x, slur->start_ux);
                 end_pt_x = unscaled_xposition_to_xposition((t_notation_obj *)x, slur->end_ux);
@@ -13553,9 +13553,10 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 
     // see if we've clicked on a note which itself constitues a chord. In this case, change to chord selection.
     if (clicked_obj == k_NOTE && 
-        ( !(((t_note *)clicked_ptr)->r_it.selected || ((t_note *)clicked_ptr)->parent->r_it.selected) || // the note is NOT selected...
-          (((t_note *)clicked_ptr)->parent->r_it.selected && ((t_note *)clicked_ptr)->parent->num_notes == 1)) // ...or: the note is selected, but as the single-note whole chord
-        ) { 
+        ( !(notationitem_is_flag_set((t_notation_obj *)x, &((t_note *)clicked_ptr)->r_it, k_FLAG_SELECTED) ||
+            notationitem_is_flag_set((t_notation_obj *)x, &((t_note *)clicked_ptr)->parent->r_it, k_FLAG_SELECTED)) || // the note is NOT selected...
+          (notationitem_is_flag_set((t_notation_obj *)x, &((t_note *)clicked_ptr)->parent->r_it, k_FLAG_SELECTED) && ((t_note *)clicked_ptr)->parent->num_notes == 1)) // ...or: the note is selected, but as the single-note whole chord
+        ) {
 
         // let's see if we're selecting a note of a chord with just 1 note. In that case, the whole chord is selected.
         long count_notes_in_region = 0;

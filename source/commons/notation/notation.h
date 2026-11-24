@@ -1106,29 +1106,30 @@ typedef enum _bach_internal_notation_flags {
     k_FLAG_RHYTHMICTREELOCKED = 1 << 3,    ///< The element (measure) has a locked rhythmic tree
     k_FLAG_SELECTED = 1 << 4,           ///< The element is selected
     // All the others are internal flaggs
-    k_FLAG_PLAYED = 1 << 5,                            ///< (OBSOLETE) Element is being played (now see e.g. the t_chord#played field of the structures)
-    k_FLAG_BEAM = 1 << 6,                            ///< (OBSOLETE) Element's beams have been computed
-    k_FLAG_COUNT = 1 << 7,                            ///< Element has been counted
-    k_FLAG_MODIFIED = 1 << 8,                        ///< Element has been modified
-    k_FLAG_DEFINES_LOCAL_SPACING_WIDTH = 1 << 9,    ///< Element has to define a local spacing multiplier
-    k_FLAG_DEFINES_FIXED_WIDTH = 1 << 10,            ///< Element has to define a fixed width
-    k_FLAG_REMOVES_FIXED_WIDTH = 1 << 11,            ///< Element has to remove a fixed width
-    k_FLAG_SHIFT = 1 << 12,                            ///< Element has been shifted
-    k_FLAG_SPLIT = 1 << 13,                            ///< Element has been split
-    k_FLAG_MERGE = 1 << 14,                            ///< Element has been merged
-    k_FLAG_DONETUPLETS = 1 << 15,                    ///< We're done calculating tuplets on element
-    k_FLAG_VALIDATEACCIDENTALS = 1 << 16,            ///< Element's accidentals have been validated
-    k_FLAG_DUPLICATE = 1 << 17,                        ///< Element has been duplicated
-    k_FLAG_COLLAPSE = 1 << 18,                        ///< Element has been collapsed
-    k_FLAG_MODIF_UNDO = 1 << 19,                    ///< We have stored element's undo information in the currently free ticks at the beginning of the undo llll; if the undo operation is performed, no chord order checking will be required.
-    k_FLAG_MODIF_FLAG_UNDO = 1 << 20,                ///< We have stored element's flag undo information in the currently free ticks at the beginning of the undo llll
-    k_FLAG_MODIF_CHECK_ORDER_UNDO = 1 << 21,        ///< We have stored element's undo information in the currently free ticks at the beginning of the undo llll, and also this will require to check the chords order when the undo operation will be performed
-    k_FLAG_MODIF_NAME_UNDO = 1 << 22,                ///< We have stored element's name undo information in the currently free ticks at the beginning of the undo llll
-    k_FLAG_TO_BE_MODIFIED = 1 << 23,                ///< Element needs to be modified
-    k_FLAG_TO_BE_DELETED = 1 << 24,                    ///< Element needs to be deleted
-    k_FLAG_OVERFLOW_TO_NEXT = 1 << 25,                ///< Content exceeding duration must overflow to next measure
-    k_FLAG_TO_BE_SNAPPED = 1 << 26,                 ///< Element needs to be snapped later on
-    k_FLAG_TO_BE_KEPT = 1 << 27,                    ///< Element needs to be kept
+    k_FLAG_PRESELECTED = 1 << 5,           ///< The element is preselected
+    k_FLAG_PLAYED = 1 << 6,                            ///< (OBSOLETE) Element is being played (now see e.g. the t_chord#played field of the structures)
+    k_FLAG_BEAM = 1 << 7,                            ///< (OBSOLETE) Element's beams have been computed
+    k_FLAG_COUNT = 1 << 8,                            ///< Element has been counted
+    k_FLAG_MODIFIED = 1 << 9,                        ///< Element has been modified
+    k_FLAG_DEFINES_LOCAL_SPACING_WIDTH = 1 << 10,    ///< Element has to define a local spacing multiplier
+    k_FLAG_DEFINES_FIXED_WIDTH = 1 << 11,            ///< Element has to define a fixed width
+    k_FLAG_REMOVES_FIXED_WIDTH = 1 << 12,            ///< Element has to remove a fixed width
+    k_FLAG_SHIFT = 1 << 13,                            ///< Element has been shifted
+    k_FLAG_SPLIT = 1 << 14,                            ///< Element has been split
+    k_FLAG_MERGE = 1 << 15,                            ///< Element has been merged
+    k_FLAG_DONETUPLETS = 1 << 16,                    ///< We're done calculating tuplets on element
+    k_FLAG_VALIDATEACCIDENTALS = 1 << 17,            ///< Element's accidentals have been validated
+    k_FLAG_DUPLICATE = 1 << 18,                        ///< Element has been duplicated
+    k_FLAG_COLLAPSE = 1 << 19,                        ///< Element has been collapsed
+    k_FLAG_MODIF_UNDO = 1 << 20,                    ///< We have stored element's undo information in the currently free ticks at the beginning of the undo llll; if the undo operation is performed, no chord order checking will be required.
+    k_FLAG_MODIF_FLAG_UNDO = 1 << 21,                ///< We have stored element's flag undo information in the currently free ticks at the beginning of the undo llll
+    k_FLAG_MODIF_CHECK_ORDER_UNDO = 1 << 22,        ///< We have stored element's undo information in the currently free ticks at the beginning of the undo llll, and also this will require to check the chords order when the undo operation will be performed
+    k_FLAG_MODIF_NAME_UNDO = 1 << 23,                ///< We have stored element's name undo information in the currently free ticks at the beginning of the undo llll
+    k_FLAG_TO_BE_MODIFIED = 1 << 24,                ///< Element needs to be modified
+    k_FLAG_TO_BE_DELETED = 1 << 25,                    ///< Element needs to be deleted
+    k_FLAG_OVERFLOW_TO_NEXT = 1 << 26,                ///< Content exceeding duration must overflow to next measure
+    k_FLAG_TO_BE_SNAPPED = 1 << 27,                 ///< Element needs to be snapped later on
+    k_FLAG_TO_BE_KEPT = 1 << 28,                    ///< Element needs to be kept
 } e_bach_internal_notation_flags;
 
 #define k_FLAG_MODIF_UNDO_WITH_OR_WO_CHECK_ORDER (k_FLAG_MODIF_UNDO | k_FLAG_MODIF_CHECK_ORDER_UNDO)    ///< We have stored element's undo information in the currently free ticks at the beginning of the undo llll (with or without the need to check chords' order) @ingroup notation
@@ -2237,8 +2238,8 @@ typedef struct _notation_item
     ///  be the pointer respectively to a #t_note, #t_chord, #t_duration_line, #t_bpt, #t_lyrics, #t_dynamics, #t_measure, #t_voice, #t_tempo, #t_marker.
     
     // these two are here high because of alignment (if I put them here the whole structure is lighter)
-    char                    selected;            ///< Is the notation element selected?
-    char                    preselected;        ///< Is the notation element preselected?
+//    char                    selected;            ///< Is the notation element selected?
+//    char                    preselected;        ///< Is the notation element preselected?
     
     unsigned long    ID;            ///< ID (> 0) of the notation item, or 0 if none. Not all items have ID, only the ones whose tracking is meaningful for undo purposes.
     ///< Beware that, for instance, if #type = #k_MEASURE, this ID is by no means the measure number, just a variously assigned ID.

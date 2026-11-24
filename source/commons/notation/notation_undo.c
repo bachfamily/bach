@@ -1110,7 +1110,7 @@ void undo_op_to_string(long undo_op, char *buf)
             sprintf(buf, "Convert tails to grace chords");
             break;
         case k_UNDO_OP_CHANGE_SELECTION:
-            sprintf(buf, "Change selection");
+            sprintf(buf, "Change Selection");
             break;
         default:
             sprintf(buf, "Generic Operation");
@@ -2096,7 +2096,8 @@ long selection_to_undo_notation_items(t_notation_obj *r_ob, t_notation_item ***u
         return 0;
     
     for (item = r_ob->firstselecteditem; item; item = item->next_selected){
-        item->flags = (e_bach_internal_notation_flags) (item->flags & ~k_FLAG_COUNT);
+        notationitem_flag_unset(r_ob, item, k_FLAG_COUNT);
+//        item->flags = (e_bach_internal_notation_flags) (item->flags & ~k_FLAG_COUNT);
         count++;
     }
     
@@ -2127,12 +2128,15 @@ long selection_to_undo_notation_items(t_notation_obj *r_ob, t_notation_item ***u
         if (genealogy != 1) {
             if (count < num_flagged)
                 (*undo_items)[count++] = item_to_save;
-            item_to_save->flags = (e_bach_internal_notation_flags) (item_to_save->flags | k_FLAG_COUNT);
+            notationitem_flag_set(r_ob, item, k_FLAG_COUNT);
+//            item_to_save->flags = (e_bach_internal_notation_flags) (item_to_save->flags | k_FLAG_COUNT);
         }
     }
     
-    for (item = r_ob->firstselecteditem; item; item = item->next_selected)
-        item->flags = (e_bach_internal_notation_flags) (item->flags & ~k_FLAG_COUNT);
+    for (item = r_ob->firstselecteditem; item; item = item->next_selected) {
+        notationitem_flag_unset(r_ob, item, k_FLAG_COUNT);
+//        item->flags = (e_bach_internal_notation_flags) (item->flags & ~k_FLAG_COUNT);
+    }
     
     return count;
 }
@@ -2361,20 +2365,24 @@ void undo_tick_create_for_selected_notation_item(t_notation_obj *r_ob, t_notatio
     
     if (modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE && param == _llllobj_sym_name && !(undo_item->flags & k_FLAG_MODIF_NAME_UNDO)){
         undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, param, automatically_add_undo_ticks_for_slurs_from);
-        undo_item->flags = (e_bach_internal_notation_flags) (undo_item->flags | k_FLAG_MODIF_NAME_UNDO);
+        notationitem_flag_set(r_ob, undo_item, k_FLAG_MODIF_NAME_UNDO);
+//        undo_item->flags = (e_bach_internal_notation_flags) (undo_item->flags | k_FLAG_MODIF_NAME_UNDO);
         
     } else if (modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE && (param == _llllobj_sym_flag || param == _llllobj_sym_selection) && !(undo_item->flags & k_FLAG_MODIF_FLAG_UNDO)){
         undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, param, automatically_add_undo_ticks_for_slurs_from);
-        undo_item->flags = (e_bach_internal_notation_flags) (undo_item->flags | k_FLAG_MODIF_FLAG_UNDO);
+        notationitem_flag_set(r_ob, undo_item, k_FLAG_MODIF_FLAG_UNDO);
+//        undo_item->flags = (e_bach_internal_notation_flags) (undo_item->flags | k_FLAG_MODIF_FLAG_UNDO);
         
     } else if (modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE_CHECK_ORDER && !(undo_item->flags & k_FLAG_MODIF_CHECK_ORDER_UNDO)){
         undo_tick_create_for_notation_item(r_ob, undo_item, modif_type, param, automatically_add_undo_ticks_for_slurs_from);
-        undo_item->flags = (e_bach_internal_notation_flags) (undo_item->flags | k_FLAG_MODIF_CHECK_ORDER_UNDO);
+        notationitem_flag_set(r_ob, undo_item, k_FLAG_MODIF_CHECK_ORDER_UNDO);
+//        undo_item->flags = (e_bach_internal_notation_flags) (undo_item->flags | k_FLAG_MODIF_CHECK_ORDER_UNDO);
         
     } else if (!(modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE && (param == _llllobj_sym_flag || param == _llllobj_sym_selection)) && modif_type != k_UNDO_MODIFICATION_TYPE_CHANGE_CHECK_ORDER &&
                (modif_type == k_UNDO_MODIFICATION_TYPE_INSERT || modif_type == k_UNDO_MODIFICATION_TYPE_REMOVE || !(undo_item->flags & k_FLAG_MODIF_UNDO_WITH_OR_WO_CHECK_ORDER))){
         undo_tick_create_for_notation_item(r_ob, undo_item, modif_type, param, automatically_add_undo_ticks_for_slurs_from);
-        undo_item->flags = (e_bach_internal_notation_flags) (undo_item->flags | k_FLAG_MODIF_UNDO);
+        notationitem_flag_set(r_ob, undo_item, k_FLAG_MODIF_UNDO);
+//        undo_item->flags = (e_bach_internal_notation_flags) (undo_item->flags | k_FLAG_MODIF_UNDO);
     }
 }
 
@@ -2440,10 +2448,14 @@ void undo_ticks_remove_modif_undo_flag_to_last(t_notation_obj *r_ob){
     t_llllelem *elem;
     for (elem = r_ob->undo_notation_items_under_tick->l_head; elem; elem = elem->l_next) {
         t_notation_item *item = (t_notation_item *)hatom_getobj(&elem->l_hatom);
-        item->flags = (e_bach_internal_notation_flags) (item->flags & ~k_FLAG_MODIF_UNDO);
-        item->flags = (e_bach_internal_notation_flags) (item->flags & ~k_FLAG_MODIF_FLAG_UNDO);
-        item->flags = (e_bach_internal_notation_flags) (item->flags & ~k_FLAG_MODIF_CHECK_ORDER_UNDO);
-        item->flags = (e_bach_internal_notation_flags) (item->flags & ~k_FLAG_MODIF_NAME_UNDO);
+        notationitem_flag_unset(r_ob, item, k_FLAG_MODIF_UNDO);
+        notationitem_flag_unset(r_ob, item, k_FLAG_MODIF_FLAG_UNDO);
+        notationitem_flag_unset(r_ob, item, k_FLAG_MODIF_CHECK_ORDER_UNDO);
+        notationitem_flag_unset(r_ob, item, k_FLAG_MODIF_NAME_UNDO);
+//        item->flags = (e_bach_internal_notation_flags) (item->flags & ~k_FLAG_MODIF_UNDO);
+//        item->flags = (e_bach_internal_notation_flags) (item->flags & ~k_FLAG_MODIF_FLAG_UNDO);
+//        item->flags = (e_bach_internal_notation_flags) (item->flags & ~k_FLAG_MODIF_CHECK_ORDER_UNDO);
+//        item->flags = (e_bach_internal_notation_flags) (item->flags & ~k_FLAG_MODIF_NAME_UNDO);
     }
     r_ob->header_undo_flags = 0;
 }

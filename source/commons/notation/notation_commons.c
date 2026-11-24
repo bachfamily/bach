@@ -13905,7 +13905,7 @@ char notation_item_is_globally_solo(t_notation_obj *r_ob, t_notation_item *item)
             break;
 #ifdef BACH_MARKERS_HAVE_FLAGS
         case k_MARKER:
-            return (item->flags & k_FLAG_SOLO) != 0;
+            return notationitem_is_flag_set(r_ob, item, k_FLAG_SOLO);
             break;
 #endif
         default:
@@ -13924,27 +13924,41 @@ char notation_item_is_globally_selected(t_notation_obj *r_ob, t_notation_item *i
     
     switch (item->type) {
         case k_VOICE:
-            return item->selected;
+            return notationitem_is_flag_set(r_ob, item, k_FLAG_SELECTED);
             break;
         case k_MEASURE:
-            return (item->selected || ((t_measure *)item)->voiceparent->v_ob.r_it.selected);
+            return (notationitem_is_flag_set(r_ob, item, k_FLAG_SELECTED) ||
+                    notationitem_is_flag_set(r_ob, &((t_measure *)item)->voiceparent->v_ob.r_it, k_FLAG_SELECTED));
             break;
         case k_CHORD:
-            if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
-                return (((t_chord *)item)->r_it.selected || ((t_chord *)item)->voiceparent->v_ob.r_it.selected);
-            else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
-                return (((t_chord *)item)->r_it.selected || ((t_chord *)item)->parent->r_it.selected || ((t_chord *)item)->parent->voiceparent->v_ob.r_it.selected);
+            if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
+                return (notationitem_is_flag_set(r_ob, &((t_chord *)item)->r_it, k_FLAG_SELECTED) ||
+                        notationitem_is_flag_set(r_ob, &((t_chord *)item)->voiceparent->v_ob.r_it, k_FLAG_SELECTED));
+            } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
+                return (notationitem_is_flag_set(r_ob, &((t_chord *)item)->r_it, k_FLAG_SELECTED) ||
+                        notationitem_is_flag_set(r_ob, &((t_chord *)item)->parent->r_it, k_FLAG_SELECTED) ||
+                        notationitem_is_flag_set(r_ob, &((t_chord *)item)->parent->voiceparent->v_ob.r_it, k_FLAG_SELECTED));
+            }
             break;
         case k_NOTE:
-            if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
-                return (((t_note *)item)->r_it.selected || ((t_note *)item)->parent->r_it.selected || ((t_note *)item)->parent->voiceparent->v_ob.r_it.selected);
-            else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
-                return (((t_note *)item)->r_it.selected || ((t_note *)item)->parent->r_it.selected || ((t_note *)item)->parent->parent->r_it.selected || ((t_note *)item)->parent->parent->voiceparent->v_ob.r_it.selected);
+            if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
+                return (notationitem_is_flag_set(r_ob, &((t_note *)item)->r_it, k_FLAG_SELECTED) ||
+                        notationitem_is_flag_set(r_ob, &((t_note *)item)->parent->r_it, k_FLAG_SELECTED) ||
+                        notationitem_is_flag_set(r_ob, &((t_note *)item)->parent->voiceparent->v_ob.r_it, k_FLAG_SELECTED));
+            } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
+                return (notationitem_is_flag_set(r_ob, &((t_note *)item)->r_it, k_FLAG_SELECTED) ||
+                        notationitem_is_flag_set(r_ob, &((t_note *)item)->parent->r_it, k_FLAG_SELECTED) ||
+                        notationitem_is_flag_set(r_ob, &((t_note *)item)->parent->parent->r_it, k_FLAG_SELECTED) ||
+                        notationitem_is_flag_set(r_ob, &((t_note *)item)->parent->parent->voiceparent->v_ob.r_it, k_FLAG_SELECTED));
+            }
 #ifdef BACH_MARKERS_HAVE_FLAGS
         case k_MARKER:
-            return item->selected;
+            return notationitem_is_flag_set(r_ob, item, k_FLAG_SELECTED);
             break;
 #endif
+        case k_TEMPO:
+            return notationitem_is_flag_set(r_ob, item, k_FLAG_SELECTED);
+            break;
         default:
             break;
     }
@@ -28357,7 +28371,7 @@ void clear_selection(t_notation_obj *r_ob, char also_add_undo_ticks)
         t_notation_item *next = temp->next_selected;
         temp->prev_selected = NULL;
         temp->next_selected = NULL;
-        temp->selected = false;
+        notationitem_flag_unset(r_ob, temp, k_FLAG_SELECTED);
         temp = next;
     }
     r_ob->selection_type = k_NONE;
@@ -28372,7 +28386,7 @@ void clear_preselection(t_notation_obj *r_ob)
     while (temp){
         t_notation_item *next = temp->next_preselected;
         temp->prev_preselected = temp->next_preselected = NULL;
-        temp->preselected = false;
+        notationitem_flag_unset(r_ob, temp, k_FLAG_PRESELECTED);
         temp = next;
     }
     r_ob->firstpreselecteditem = NULL;
@@ -28478,7 +28492,6 @@ void notation_item_init(t_notation_item *it, e_element_types item_type)
 #ifdef BACH_GROUPS_ARE_DOUBLY_LINKED
     it->prev_group_item = NULL;
 #endif
-    it->selected = it->preselected = false;
     it->type = item_type;
     it->flags = (e_bach_internal_notation_flags) 0;
 }
@@ -28504,14 +28517,14 @@ void notation_item_clone(t_notation_obj *r_ob, t_notation_item *new_it, t_notati
     }
     
     // cloning SOME of the flags
-    if ((old_it->flags & k_FLAG_SOLO) != 0)
-        new_it->flags |= k_FLAG_SOLO;
-    if ((old_it->flags & k_FLAG_LOCKED) != 0)
-        new_it->flags |= k_FLAG_LOCKED;
-    if ((old_it->flags & k_FLAG_MUTED) != 0)
-        new_it->flags |= k_FLAG_MUTED;
-    if ((old_it->flags & k_FLAG_RHYTHMICTREELOCKED) != 0)
-        new_it->flags |= k_FLAG_RHYTHMICTREELOCKED;
+    if (notationitem_is_flag_set(r_ob, old_it, k_FLAG_SOLO))
+        notationitem_flag_set(r_ob, new_it, k_FLAG_SOLO);
+    if (notationitem_is_flag_set(r_ob, old_it, k_FLAG_LOCKED))
+        notationitem_flag_set(r_ob, new_it, k_FLAG_LOCKED);
+    if (notationitem_is_flag_set(r_ob, old_it, k_FLAG_MUTED))
+        notationitem_flag_set(r_ob, new_it, k_FLAG_MUTED);
+    if (notationitem_is_flag_set(r_ob, old_it, k_FLAG_RHYTHMICTREELOCKED))
+        notationitem_flag_set(r_ob, new_it, k_FLAG_RHYTHMICTREELOCKED);
 
 //    verbose_post_label_families(r_ob);
 }
@@ -28537,7 +28550,7 @@ t_notationel* build_notationel_mem(void *item_pointer, char item_type){
 
 t_notation_item* notation_item_add_to_preselection(t_notation_obj *r_ob, t_notation_item *item){
 // add an item to the "preselection"-linkedlist
-    if (item && !item->preselected) {
+    if (item && !notationitem_is_flag_set(r_ob, item, k_FLAG_PRESELECTED)) {
         if (r_ob->firstpreselecteditem) { // put the item at the end of the list
             item->next_preselected = NULL;
             item->prev_preselected = r_ob->lastpreselecteditem;
@@ -28550,7 +28563,7 @@ t_notation_item* notation_item_add_to_preselection(t_notation_obj *r_ob, t_notat
             r_ob->firstpreselecteditem->next_preselected = NULL; 
         }
         
-        item->preselected = true;
+        notationitem_flag_set(r_ob, item, k_FLAG_PRESELECTED);
     }
     
     return item;
@@ -28574,13 +28587,13 @@ void notation_item_delete_from_preselection(t_notation_obj *r_ob, t_notation_ite
         }
         item->prev_preselected = item->next_preselected = NULL;
         
-        item->preselected = false;
+        notationitem_flag_unset(r_ob, item, k_FLAG_PRESELECTED);
     }
 }
 
 t_notation_item* notation_item_add_to_selection(t_notation_obj *r_ob, t_notation_item *item, char add_undo_step_if_necessary){
 // add an item to the "selection"-linkedlist
-    if (item && !item->selected) {
+    if (item && !notationitem_is_flag_set(r_ob, item, k_FLAG_SELECTED)) {
     
         if (add_undo_step_if_necessary && r_ob->undo_selection) {
             undo_tick_create_for_notation_item(r_ob, item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_selection);
@@ -28600,20 +28613,20 @@ t_notation_item* notation_item_add_to_selection(t_notation_obj *r_ob, t_notation
             r_ob->firstselecteditem->next_selected = NULL; 
         }
         
-        item->selected = true; 
-    } 
+        notationitem_flag_set(r_ob, item, k_FLAG_SELECTED);
+    }
     
     return item;
 }
 
 long notation_item_is_preselected(t_notation_obj *r_ob, t_notation_item *item)
 {
-    return item->preselected;
+    return notationitem_is_flag_set(r_ob, item, k_FLAG_PRESELECTED);
 }
 
 long notation_item_is_selected(t_notation_obj *r_ob, t_notation_item *item)
 {
-    return item->selected;
+    return notationitem_is_flag_set(r_ob, item, k_FLAG_SELECTED);
 }
 
 
@@ -28707,10 +28720,10 @@ void move_preselecteditems_to_selection(t_notation_obj *r_ob, e_selection_modes 
             
             if (el_is_selected) {
                 // mark selected element as the one to be kept!
-                this_notation_item_preselected2->flags |= k_FLAG_TO_BE_KEPT;
+                notationitem_flag_set(r_ob, this_notation_item_preselected2, k_FLAG_TO_BE_KEPT);
             } else {
                 // explode selected chord into series of selected notes.
-                this_notation_item_preselected2->flags |= k_FLAG_TO_BE_KEPT;
+                notationitem_flag_set(r_ob, this_notation_item_preselected2, k_FLAG_TO_BE_KEPT);
                 ((t_note *)this_notation_item_preselected2)->parent->r_it.flags |= k_FLAG_TO_BE_MODIFIED;
             }
             
@@ -28784,8 +28797,9 @@ void move_preselecteditems_to_selection(t_notation_obj *r_ob, e_selection_modes 
         t_llll *toadd = llll_get();
         while (temp) {
             t_notation_item *nexttemp = temp->next_selected;
-            if (temp->flags & k_FLAG_TO_BE_KEPT) {
-                temp->flags &= ~k_FLAG_TO_BE_KEPT;
+            if (notationitem_is_flag_set(r_ob, temp, k_FLAG_TO_BE_KEPT)) {
+                notationitem_flag_unset(r_ob, temp, k_FLAG_TO_BE_KEPT);
+//                temp->flags &= ~k_FLAG_TO_BE_KEPT;
             } else if (temp->type == k_CHORD && temp->flags & k_FLAG_TO_BE_MODIFIED) {
                 t_note *nt;
                 t_chord *ch = (t_chord *)temp;
@@ -28805,7 +28819,8 @@ void move_preselecteditems_to_selection(t_notation_obj *r_ob, e_selection_modes 
                 
                 for (nt = ch->firstnote; nt; nt = nt->next)
                     nt->r_it.flags &= ~k_FLAG_TO_BE_KEPT;
-                temp->flags &= ~k_FLAG_TO_BE_MODIFIED;
+                notationitem_flag_unset(r_ob, temp, k_FLAG_TO_BE_MODIFIED);
+//                temp->flags &= ~k_FLAG_TO_BE_MODIFIED;
             } else {
                 notation_item_delete_from_selection(r_ob, temp, false);
             }
@@ -29066,7 +29081,7 @@ void sort_selection(t_notation_obj *r_ob, char inverse_order)
     while (temp){
         t_notation_item *next = temp->next_selected;
         temp->prev_selected = temp->next_selected = NULL;
-        temp->selected = false;
+        notationitem_flag_unset(r_ob, temp, k_FLAG_SELECTED);
         temp = next;
     }
     r_ob->firstselecteditem = NULL;
@@ -29483,7 +29498,7 @@ char notation_item_set_flags_from_llllelem(t_notation_obj *r_ob, t_llllelem *ele
         if (selected) {
             notation_item_add_to_preselection(r_ob, item);
         } else {
-            if (item->selected) {
+            if (notationitem_is_flag_set(r_ob, item, k_FLAG_SELECTED)) {
                 notation_item_delete_from_selection(r_ob, item, false);
             }
         }
@@ -29529,7 +29544,7 @@ void delete_item_type_from_selection(t_notation_obj *r_ob, long type, char add_u
 void notation_item_delete_from_selection(t_notation_obj *r_ob, t_notation_item *item, char add_undo_step_if_necessary)
 {
     // delete an item from the "selection"-linkedlist
-    if (item && item->selected) {
+    if (item && notationitem_is_flag_set(r_ob, item, k_FLAG_SELECTED)) {
         if (add_undo_step_if_necessary && r_ob->undo_selection) {
             undo_tick_create_for_notation_item(r_ob, item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_selection);
         }
@@ -29551,7 +29566,7 @@ void notation_item_delete_from_selection(t_notation_obj *r_ob, t_notation_item *
         // decrease the number of selected items
         r_ob->num_selecteditems--;
         
-        item->selected = false;
+        notationitem_flag_unset(r_ob, item, k_FLAG_SELECTED);
         
         // let's check if the selected items are all of the same kind
         r_ob->selection_type = get_selected_items_common_type(r_ob);
@@ -32031,7 +32046,7 @@ long get_element_flag(t_notation_obj *r_ob, t_notation_item *item)
     val = k_FLAG_LOCKED * locked + k_FLAG_MUTED * muted + k_FLAG_SOLO * solo + k_FLAG_RHYTHMICTREELOCKED * beamingtreelocked;
 
 #ifdef BACH_NOTATIONITEM_FLAG_HAS_SELECTION
-    if (item->selected)
+    if (notationitem_is_flag_set(r_ob, item, k_FLAG_SELECTED))
         val += k_FLAG_SELECTED;
 #endif
     return val;
@@ -37284,7 +37299,8 @@ char change_selected_markers_name(t_notation_obj *r_ob, t_llll *new_names, char 
                     llll_appendhatom_clone(out_names, &new_names->l_head->l_hatom, 0, WHITENULL_llll);
                 }
                 change_marker_names(r_ob, (t_marker *) curr_it, out_names);
-                curr_it->flags &= ~k_FLAG_TO_BE_MODIFIED;
+                notationitem_flag_unset(r_ob, curr_it, k_FLAG_TO_BE_MODIFIED);
+//                curr_it->flags &= ~k_FLAG_TO_BE_MODIFIED;
                 changed = 1;
                 llll_free(out_names);
             }
@@ -37321,7 +37337,7 @@ t_llll *find_unused_marker_names(t_notation_obj *r_ob, t_hatom *default_name, t_
         for (marker = r_ob->firstmarker; marker; marker = marker->next) {
             if (marker == ignore_this_marker)
                 continue;
-            if (marker->r_it.selected && marker->r_it.flags & k_FLAG_TO_BE_MODIFIED)
+            if (notationitem_is_flag_set(r_ob, &marker->r_it, k_FLAG_SELECTED) && marker->r_it.flags & k_FLAG_TO_BE_MODIFIED)
                 continue;
             if (are_all_names_contained(names_try, marker->r_it.names)) {
                 is_ok = false;
@@ -42969,7 +42985,8 @@ char change_selection_name(t_notation_obj *r_ob, t_llll *newnames, t_llll *only_
             else 
                 newnames_ok = llll_clone(names);
             res |= change_marker_names(r_ob, (t_marker *)curr_it, newnames_ok);
-            curr_it->flags &= ~k_FLAG_TO_BE_MODIFIED;
+            notationitem_flag_unset(r_ob, curr_it, k_FLAG_TO_BE_MODIFIED);
+//            curr_it->flags &= ~k_FLAG_TO_BE_MODIFIED;
             llll_free(newnames_ok);
         } else if (curr_it->type == k_VOICE && ((!only_change_this_elems || only_change_this_elems->l_size == 0) || is_symbol_in_llll_first_level(only_change_this_elems, _llllobj_sym_voice))) {
             if (!is_editable(r_ob, k_VOICE, k_MODIFICATION_NAME)) continue;

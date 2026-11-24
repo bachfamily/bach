@@ -1364,9 +1364,9 @@ char roll_sel_delete_item(t_roll *x, t_notation_item *curr_it, char *need_check_
     if (curr_it->type == k_NOTE) {
         t_note *nt = (t_note *) curr_it;
         t_rollvoice *voice = nt->parent->voiceparent;
-        notation_item_delete_from_selection((t_notation_obj *) x, curr_it, false);
         if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)nt)){
             undo_tick_create_for_selected_notation_item((t_notation_obj *)x, (t_notation_item *)nt, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+            notation_item_delete_from_selection((t_notation_obj *) x, curr_it, false);
             note_transfer_slots_to_siebling((t_notation_obj *)x, nt, slots_to_transfer_to_next_note_in_chord_1based, transfer_slots_even_if_empty, false);
             note_delete((t_notation_obj *)x, nt, false);
             update_all_accidentals_for_voice_if_needed((t_notation_obj *)x, (t_voice *)voice);
@@ -1375,11 +1375,11 @@ char roll_sel_delete_item(t_roll *x, t_notation_item *curr_it, char *need_check_
     } else if (curr_it->type == k_CHORD) {
         t_chord *ch = (t_chord *) curr_it;
         t_rollvoice *voice = ch->voiceparent;
-        notation_item_delete_from_selection((t_notation_obj *) x, curr_it, false);
         if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)ch)){
             if (are_any_chord_notes_locked((t_notation_obj *)x, ch)) {
                 t_note *nt;
                 undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)ch, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+                notation_item_delete_from_selection((t_notation_obj *) x, curr_it, false);
                 for (nt = ch->firstnote; nt; nt = nt->next)
                     if (!notationitem_is_flag_set((t_notation_obj *)x, (t_notation_item *)nt, k_FLAG_LOCKED))
                         note_delete((t_notation_obj *)x, nt, false);
@@ -1387,6 +1387,7 @@ char roll_sel_delete_item(t_roll *x, t_notation_item *curr_it, char *need_check_
                 changed = 1;
             } else {
                 undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)ch, k_UNDO_MODIFICATION_TYPE_INSERT, _llllobj_sym_state);
+                notation_item_delete_from_selection((t_notation_obj *) x, curr_it, false);
                 if (chord_delete((t_notation_obj *)x, ch, ch->prev, false)) {
                     if (need_check_scheduling) *need_check_scheduling = true;
                     update_all_accidentals_for_voice_if_needed((t_notation_obj *)x, (t_voice *)voice);
@@ -1396,33 +1397,33 @@ char roll_sel_delete_item(t_roll *x, t_notation_item *curr_it, char *need_check_
         }
     } else if (curr_it->type == k_PITCH_BREAKPOINT) {
         t_bpt *bpt = (t_bpt *) curr_it;
-        notation_item_delete_from_selection((t_notation_obj *) x, curr_it, false);
         if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)bpt->owner)){
             undo_tick_create_for_selected_notation_item((t_notation_obj *)x, (t_notation_item *)bpt->owner->parent, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+            notation_item_delete_from_selection((t_notation_obj *) x, curr_it, false);
             delete_breakpoint((t_notation_obj *) x, bpt);
             changed = 1;
         }
     } else if (curr_it->type == k_MARKER) {
         if (!notation_item_is_globally_locked((t_notation_obj *)x, curr_it)){
-            notation_item_delete_from_selection((t_notation_obj *) x, curr_it, false);
             undo_tick_create_for_notation_item((t_notation_obj *)x, curr_it, k_UNDO_MODIFICATION_TYPE_INSERT, _llllobj_sym_state);
+            notation_item_delete_from_selection((t_notation_obj *) x, curr_it, false);
             delete_marker((t_notation_obj *) x, (t_marker *)curr_it);
             changed = 1;
         }
     } else if (curr_it->type == k_VOICE) {
         t_voice *voice = (t_voice *) curr_it;
         if (!notation_item_is_globally_locked((t_notation_obj *)x, curr_it)){
-            notation_item_delete_from_selection((t_notation_obj *) x, curr_it, false);
             create_whole_roll_undo_tick(x, false);
+            notation_item_delete_from_selection((t_notation_obj *) x, curr_it, false);
             roll_delete_voice(x, (t_rollvoice *)voice);
             update_solos((t_notation_obj *)x);
             changed = 1;
         }
     } else if (curr_it->type == k_SLUR) {
         t_slur *slur = (t_slur *) curr_it;
-        notation_item_delete_from_selection((t_notation_obj *) x, curr_it, false);
         if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)slur)){
             undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)slur->start_chord, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+            notation_item_delete_from_selection((t_notation_obj *) x, curr_it, false);
             slur_delete((t_notation_obj *)x, slur);
             changed = 1;
         }
@@ -1461,7 +1462,7 @@ void roll_delete_selection(t_roll *x, char ripple, t_llll *slots_to_transfer_to_
                           notation_item_is_ancestor_of((t_notation_obj *)x, curr_it, lambda_it))) { // or one of its progeny...
 //            cpost("Trying to delete item %p (type %ld). Can't.", curr_it, curr_it->type);
 //            object_error((t_object *)x, "Can't delete item, it's being output from the playout!");
-            curr_it->flags = k_FLAG_TO_BE_DELETED;
+            notationitem_flag_set((t_notation_obj *)x, curr_it, k_FLAG_TO_BE_DELETED);
             continue;
         }
         
@@ -12149,8 +12150,9 @@ void paint_static_stuff1(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
             bool locked = notationitem_is_flag_set((t_notation_obj *)x, &voice->v_ob.r_it, k_FLAG_LOCKED);
             bool muted = notationitem_is_flag_set((t_notation_obj *)x, &voice->v_ob.r_it, k_FLAG_MUTED);
             bool solo = notationitem_is_flag_set((t_notation_obj *)x, &voice->v_ob.r_it, k_FLAG_SOLO);
-            t_jrgba mainstaffcolor = get_mainstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, locked, muted, solo);
-            t_jrgba auxstaffcolor = get_auxstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, locked, muted, solo);
+            bool selected = notationitem_is_flag_set((t_notation_obj *)x, &voice->v_ob.r_it, k_FLAG_SELECTED);
+            t_jrgba mainstaffcolor = get_mainstaff_color((t_notation_obj *) x, selected, locked, muted, solo);
+            t_jrgba auxstaffcolor = get_auxstaff_color((t_notation_obj *) x, selected, locked, muted, solo);
             t_chord *curr_ch;
             double staff_bottom_y, staff_top_y;
             long k; 
@@ -12350,8 +12352,9 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
                 bool locked = notationitem_is_flag_set((t_notation_obj *)x, &voice->v_ob.r_it, k_FLAG_LOCKED);
                 bool muted = notationitem_is_flag_set((t_notation_obj *)x, &voice->v_ob.r_it, k_FLAG_MUTED);
                 bool solo = notationitem_is_flag_set((t_notation_obj *)x, &voice->v_ob.r_it, k_FLAG_SOLO);
-                t_jrgba mainstaffcolor = get_mainstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, locked, muted, solo);
-                t_jrgba auxstaffcolor = get_auxstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, locked, muted, solo);
+                bool selected = notationitem_is_flag_set((t_notation_obj *)x, &voice->v_ob.r_it, k_FLAG_SELECTED);
+                t_jrgba mainstaffcolor = get_mainstaff_color((t_notation_obj *) x, selected, locked, muted, solo);
+                t_jrgba auxstaffcolor = get_auxstaff_color((t_notation_obj *) x, selected, locked, muted, solo);
                 double staff_bottom_y, staff_top_y;
                 long k;
                 long vn = voice->v_ob.number;
@@ -12489,11 +12492,12 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
                 bool locked = notationitem_is_flag_set((t_notation_obj *)x, &voice->v_ob.r_it, k_FLAG_LOCKED);
                 bool muted = notationitem_is_flag_set((t_notation_obj *)x, &voice->v_ob.r_it, k_FLAG_MUTED);
                 bool solo = notationitem_is_flag_set((t_notation_obj *)x, &voice->v_ob.r_it, k_FLAG_SOLO);
-                t_jrgba mainstaffcolor = get_mainstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, locked, muted, solo);
-                t_jrgba keysigcolor = get_keysig_color((t_notation_obj *) x, voice->v_ob.r_it.selected, locked, muted, solo);
-                t_jrgba auxstaffcolor = get_auxstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, locked, muted, solo);
-                t_jrgba clefcolor = clef_get_color((t_notation_obj *) x, voice->v_ob.r_it.selected, locked, muted, solo);
-                t_jrgba auxclefcolor = get_auxclef_color((t_notation_obj *) x, voice->v_ob.r_it.selected, locked, muted, solo);
+                bool selected = notationitem_is_flag_set((t_notation_obj *)x, &voice->v_ob.r_it, k_FLAG_SELECTED);
+                t_jrgba mainstaffcolor = get_mainstaff_color((t_notation_obj *) x, selected, locked, muted, solo);
+                t_jrgba keysigcolor = get_keysig_color((t_notation_obj *) x, selected, locked, muted, solo);
+                t_jrgba auxstaffcolor = get_auxstaff_color((t_notation_obj *) x, selected, locked, muted, solo);
+                t_jrgba clefcolor = clef_get_color((t_notation_obj *) x, selected, locked, muted, solo);
+                t_jrgba auxclefcolor = get_auxclef_color((t_notation_obj *) x, selected, locked, muted, solo);
                 double staff_top_y = voice_get_staff_top_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
                 double staff_bottom_y = voice_get_staff_bottom_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
                 char is_in_voiceensemble = (voiceensemble_get_numparts((t_notation_obj *)x, (t_voice *)voice) > 1);
@@ -12711,11 +12715,12 @@ void paint_static_stuff2(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
             bool locked = notationitem_is_flag_set((t_notation_obj *)x, &voice->v_ob.r_it, k_FLAG_LOCKED);
             bool muted = notationitem_is_flag_set((t_notation_obj *)x, &voice->v_ob.r_it, k_FLAG_MUTED);
             bool solo = notationitem_is_flag_set((t_notation_obj *)x, &voice->v_ob.r_it, k_FLAG_SOLO);
-            t_jrgba mainstaffcolor = get_mainstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, locked, muted, solo);
-            t_jrgba keysigcolor = get_keysig_color((t_notation_obj *) x, voice->v_ob.r_it.selected, locked, muted, solo);
-			t_jrgba auxstaffcolor = get_auxstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, locked, muted, solo);
-			t_jrgba clefcolor = clef_get_color((t_notation_obj *) x, voice->v_ob.r_it.selected, locked, muted, solo);
-            t_jrgba auxclefcolor = get_auxclef_color((t_notation_obj *) x, voice->v_ob.r_it.selected, locked, muted, solo);
+            bool selected = notationitem_is_flag_set((t_notation_obj *)x, &voice->v_ob.r_it, k_FLAG_SELECTED);
+            t_jrgba mainstaffcolor = get_mainstaff_color((t_notation_obj *) x, selected, locked, muted, solo);
+            t_jrgba keysigcolor = get_keysig_color((t_notation_obj *) x, selected, locked, muted, solo);
+			t_jrgba auxstaffcolor = get_auxstaff_color((t_notation_obj *) x, selected, locked, muted, solo);
+			t_jrgba clefcolor = clef_get_color((t_notation_obj *) x, selected, locked, muted, solo);
+            t_jrgba auxclefcolor = get_auxclef_color((t_notation_obj *) x, selected, locked, muted, solo);
             double staff_top_y = voice_get_staff_top_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
             double staff_bottom_y = voice_get_staff_bottom_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
 
@@ -13261,7 +13266,7 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
         }
     } else if (x->r_ob.j_mousedown_obj_type == k_MARKER_REGION_TAIL) { // the ending point of a marker region is being dragged
         t_marker *mk = (t_marker *)x->r_ob.j_mousedown_ptr;
-        if (notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)mk)) {
+        if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)mk)) {
             double this_ms = xposition_to_onset((t_notation_obj *) x, pt.x, yposition_to_systemnumber((t_notation_obj *) x, x->r_ob.j_mousedrag_point.y));
             if (modifiers & eShiftKey) {
                 double ux_orig = ms_to_unscaled_xposition((t_notation_obj *)x, this_ms, 0);
@@ -14851,7 +14856,7 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
     if (!clicked_ptr && x->r_ob.show_slurs && is_editable((t_notation_obj *)x, k_SLUR, k_MODIFICATION_GENERIC)) {
         for (t_llllelem *slur_el = x->r_ob.slurs->l_head; slur_el; slur_el = slur_el->l_next) {
             t_slur *slur = (t_slur *)hatom_getobj(&slur_el->l_hatom);
-            if (slur && slur->r_it.selected) {
+            if (slur && notationitem_is_flag_set((t_notation_obj *)x, &slur->r_it, k_FLAG_SELECTED)) {
                 double start_pt_x, end_pt_x, start_pt_y, end_pt_y;
                 start_pt_x = unscaled_xposition_to_xposition((t_notation_obj *)x, slur->start_ux);
                 end_pt_x = unscaled_xposition_to_xposition((t_notation_obj *)x, slur->end_ux);
@@ -15227,12 +15232,12 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
         clicked_ptr_note = clicked_ptr;
     
     e_element_actions selection_action = (x->r_ob.num_selecteditems == 0) ? k_SINGLE_SELECTION : k_MULTIPLE_SELECTION;
-    
+        
     // see if we've clicked on a note which itself constitues a chord. In this case, change to chord selection.
     if (clicked_obj == k_NOTE &&
-        ( !(((t_note *)clicked_ptr)->r_it.selected || ((t_note *)clicked_ptr)->parent->r_it.selected) || // the note is NOT selected...
-          (((t_note *)clicked_ptr)->parent->r_it.selected && ((t_note *)clicked_ptr)->parent->num_notes == 1)) // ...or: the note is selected, but as the single-note whole chord
-        ) { 
+        ( !(notationitem_is_flag_set((t_notation_obj *)x, &((t_note *)clicked_ptr)->r_it, k_FLAG_SELECTED) || notationitem_is_flag_set((t_notation_obj *)x, &((t_note *)clicked_ptr)->parent->r_it, k_FLAG_SELECTED)) || // the note is NOT selected...
+          (notationitem_is_flag_set((t_notation_obj *)x, &((t_note *)clicked_ptr)->parent->r_it, k_FLAG_SELECTED) && ((t_note *)clicked_ptr)->parent->num_notes == 1)) // ...or: the note is selected, but as the single-note whole chord
+        ) {
         
         // let's see if we're selecting a note of a chord with just 1 note. In that case, the whole chord is selected.
         long count_notes_in_region = 0;
